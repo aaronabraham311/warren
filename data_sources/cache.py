@@ -1,0 +1,42 @@
+import sqlite3
+from datetime import datetime, timedelta, timezone
+from hashlib import sha256
+
+
+def make_key(tool_name: str, ticker: str) -> str:
+    return sha256(f"{tool_name}:{ticker}".encode()).hexdigest()
+
+
+class CacheStore:
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+        self._ensure_table()
+
+    def _ensure_table(self) -> None:
+        self._conn.execute(
+            "CREATE TABLE IF NOT EXISTS cache ("
+            "  key        TEXT PRIMARY KEY,"
+            "  data       TEXT NOT NULL,"
+            "  expires_at TEXT NOT NULL"
+            ")"
+        )
+        self._conn.commit()
+
+    def get(self, key: str) -> str | None:
+        now = datetime.now(timezone.utc).isoformat()
+        # Evict expired entry first so a fresh fetch can replace it.
+        self._conn.execute(
+            "DELETE FROM cache WHERE key = ? AND expires_at <= ?", (key, now)
+        )
+        row = self._conn.execute(
+            "SELECT data FROM cache WHERE key = ?", (key,)
+        ).fetchone()
+        return str(row[0]) if row is not None else None
+
+    def set(self, key: str, data: str, ttl_hours: float) -> None:
+        expires_at = (datetime.now(timezone.utc) + timedelta(hours=ttl_hours)).isoformat()
+        self._conn.execute(
+            "INSERT OR REPLACE INTO cache (key, data, expires_at) VALUES (?, ?, ?)",
+            (key, data, expires_at),
+        )
+        self._conn.commit()

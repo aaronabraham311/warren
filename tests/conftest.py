@@ -1,3 +1,4 @@
+import sqlite3
 from collections.abc import Callable, Generator
 from unittest.mock import MagicMock
 
@@ -19,6 +20,14 @@ def db_engine(monkeypatch: pytest.MonkeyPatch) -> Generator[Engine, None, None]:
     monkeypatch.setattr(eng, "engine", test_engine)
     yield test_engine
     test_engine.dispose()
+
+
+@pytest.fixture()
+def yf_conn() -> Generator[sqlite3.Connection, None, None]:
+    """In-memory SQLite connection for YFinanceClient cache tests."""
+    conn = sqlite3.connect(":memory:")
+    yield conn
+    conn.close()
 
 
 @pytest.fixture()
