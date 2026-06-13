@@ -248,3 +248,36 @@ def test_budget_cost_exceeded() -> None:
     budget2 = Budget(max_cost_usd=1.0)
     budget2.total_cost_usd = 0.99
     assert budget2.cost_exceeded() is False
+
+
+# ── JSON list column round-trip ───────────────────────────────────────────────
+
+
+def test_analysis_list_columns_roundtrip(db_engine: object, db_session: Session) -> None:
+    """lynch_signals/buffett_signals/key_risks/data_quality_notes must survive a write/read
+    as Python lists, not raw JSON strings."""
+    from datetime import datetime, timezone
+
+    write_run_start("run-jsontest", datetime.now(timezone.utc))
+    upsert_analysis(
+        "run-jsontest",
+        "AAPL",
+        AnalysisData(
+            analysis_type="holding",
+            recommendation="buy",
+            confidence=0.8,
+            thesis="Strong moat.",
+            lynch_signals=["dominant brand", "consistent earnings"],
+            buffett_signals=["high ROE"],
+            key_risks=["valuation stretched"],
+            data_quality_notes=[],
+            tool_calls_made=1,
+            tokens_used=500,
+        ),
+    )
+
+    row = db_session.query(Analysis).filter_by(run_id="run-jsontest", ticker="AAPL").one()
+    assert row.lynch_signals == ["dominant brand", "consistent earnings"]
+    assert row.buffett_signals == ["high ROE"]
+    assert row.key_risks == ["valuation stretched"]
+    assert row.data_quality_notes == []

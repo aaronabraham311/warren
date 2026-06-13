@@ -2,6 +2,7 @@ from datetime import date, datetime, timezone
 from typing import Literal, TypedDict
 
 from sqlalchemy import (
+    JSON,
     Boolean,
     Date,
     DateTime,
@@ -93,10 +94,10 @@ class Analysis(Base):
     recommendation: Mapped[str | None] = mapped_column(Text)
     confidence: Mapped[float | None] = mapped_column(Float)
     thesis: Mapped[str | None] = mapped_column(Text)
-    lynch_signals: Mapped[str | None] = mapped_column(Text)
-    buffett_signals: Mapped[str | None] = mapped_column(Text)
-    key_risks: Mapped[str | None] = mapped_column(Text)
-    data_quality_notes: Mapped[str | None] = mapped_column(Text)
+    lynch_signals: Mapped[list[str] | None] = mapped_column(JSON)
+    buffett_signals: Mapped[list[str] | None] = mapped_column(JSON)
+    key_risks: Mapped[list[str] | None] = mapped_column(JSON)
+    data_quality_notes: Mapped[list[str] | None] = mapped_column(JSON)
     tool_calls_made: Mapped[int | None] = mapped_column(Integer)
     tokens_used: Mapped[int | None] = mapped_column(Integer)
     created_at: Mapped[datetime | None] = mapped_column(DateTime, default=_utcnow)
