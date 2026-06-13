@@ -6,7 +6,7 @@ from uuid import uuid4
 from dotenv import load_dotenv
 
 from agent.budget import Budget, RunContext
-from agent.loop import CostAbortedError, SchemaRepairError, analyze_ticker
+from agent.loop import CostAbortedError, analyze_ticker
 from agent.persona import DefaultPersona
 from agent.routing import HardcodedSonnetRouting
 
@@ -63,11 +63,6 @@ def main() -> None:
         status = "cost_aborted"
         error_msg = str(e)
         print(f"Aborted: {e}", file=sys.stderr)
-        sys.exit(1)
-    except SchemaRepairError as e:
-        status = "failed"
-        error_msg = str(e)
-        print(f"Schema repair failed: {e}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
         status = "failed"
