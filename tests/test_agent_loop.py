@@ -5,7 +5,9 @@ SQLite runs in-memory via the db_engine fixture.
 """
 
 import json
+import tempfile
 from datetime import datetime, timezone
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -23,12 +25,21 @@ from agent.routing import HardcodedSonnetRouting
 from agent.tools.base import ToolResultError, ToolResultOk
 from agent.tools.quote import GetQuoteTool
 from storage.engine import upsert_analysis, write_run_end, write_run_start
+from storage.logger import RunLogger
 from storage.models import Analysis, AnalysisData, Run, ToolCall
 from tests.conftest import VALID_ANALYSIS_JSON, make_end_turn, make_tool_use
 
 
-def _ctx(run_id: str = "run-test") -> RunContext:
-    return RunContext(run_id=run_id, budget=Budget())
+def _ctx(
+    run_id: str = "run-test",
+    logger: RunLogger | None = None,
+    budget: Budget | None = None,
+) -> RunContext:
+    # Every RunContext needs a logger; default to a throwaway trace in a temp dir for
+    # tests that don't assert on the JSONL/DB projection.
+    if logger is None:
+        logger = RunLogger(run_id, Path(tempfile.mkdtemp()))
+    return RunContext(run_id=run_id, budget=budget or Budget(), logger=logger)
 
 
 def _persona() -> DefaultPersona:
@@ -98,7 +109,7 @@ def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Sessi
 
 
 def test_tool_call_persisted(
-    db_engine: object, mock_claude: MagicMock, db_session: Session
+    db_engine: object, mock_claude: MagicMock, db_session: Session, tmp_path: Path
 ) -> None:
     mock_claude(
         [
@@ -106,7 +117,8 @@ def test_tool_call_persisted(
             make_end_turn(VALID_ANALYSIS_JSON),
         ]
     )
-    ctx = _ctx("run-persist")
+    logger = RunLogger("run-persist", tmp_path)
+    ctx = _ctx("run-persist", logger=logger)
     mock_fast_info = MagicMock()
     mock_fast_info.last_price = 210.0
     mock_fast_info.previous_close = 205.0
@@ -114,6 +126,8 @@ def test_tool_call_persisted(
     with patch("data_sources.yfinance_client.yf.Ticker") as mock_ticker:
         mock_ticker.return_value.fast_info = mock_fast_info
         analyze_ticker("TSLA", _persona(), _routing(), ctx)
+    # tool_calls are a projection of the JSONL WAL — materialised at reconcile time.
+    logger.flush_to_db(db_session)
 
     rows = db_session.query(ToolCall).filter_by(run_id="run-persist").all()
     assert len(rows) == 1
@@ -127,7 +141,7 @@ def test_tool_call_persisted(
 
 
 def test_tool_call_error_persisted(
-    db_engine: object, mock_claude: MagicMock, db_session: Session
+    db_engine: object, mock_claude: MagicMock, db_session: Session, tmp_path: Path
 ) -> None:
     mock_claude(
         [
@@ -135,8 +149,10 @@ def test_tool_call_error_persisted(
             make_end_turn(VALID_ANALYSIS_JSON),
         ]
     )
+    logger = RunLogger("run-err", tmp_path)
     with patch("data_sources.yfinance_client.yf.Ticker", side_effect=RuntimeError("network error")):
-        analyze_ticker("AAPL", _persona(), _routing(), _ctx("run-err"))
+        analyze_ticker("AAPL", _persona(), _routing(), _ctx("run-err", logger=logger))
+    logger.flush_to_db(db_session)
 
     row = db_session.query(ToolCall).filter_by(run_id="run-err").first()
     assert row is not None
@@ -195,7 +211,7 @@ def test_iteration_cap(db_engine: object, mock_claude: MagicMock) -> None:
 def test_token_cap(mock_claude: MagicMock) -> None:
     budget = Budget(max_input_tokens=100)
     budget.total_input_tokens = 100  # already at limit
-    ctx = RunContext(run_id="run-tokencap", budget=budget)
+    ctx = _ctx("run-tokencap", budget=budget)
     mock_client = mock_claude([make_end_turn(VALID_ANALYSIS_JSON)])
     result = analyze_ticker("AAPL", _persona(), _routing(), ctx)
     assert isinstance(result, AnalysisOutput)
@@ -210,7 +226,7 @@ def test_token_cap(mock_claude: MagicMock) -> None:
 def test_cost_aborted(mock_claude: MagicMock) -> None:
     budget = Budget(max_cost_usd=0.001)
     budget.total_cost_usd = 0.001  # already at ceiling
-    ctx = RunContext(run_id="run-costabort", budget=budget)
+    ctx = _ctx("run-costabort", budget=budget)
     mock_claude([])
     with pytest.raises(CostAbortedError):
         analyze_ticker("AAPL", _persona(), _routing(), ctx)

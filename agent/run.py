@@ -1,6 +1,7 @@
 import argparse
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 from uuid import uuid4
 
 import anthropic
@@ -8,6 +9,7 @@ from dotenv import load_dotenv
 
 from agent.budget import Budget, RunContext
 from agent.loop import CostAbortedError, analyze_ticker
+from agent.models import DEFAULT_MODEL_ID
 from agent.persona import DefaultPersona
 from agent.routing import HardcodedSonnetRouting
 
@@ -15,12 +17,16 @@ load_dotenv()  # must precede storage.engine import so WARREN_DB is applied befo
 
 from storage.engine import (  # noqa: E402
     ensure_prompt_version,
+    get_session,
     migrate,
     upsert_analysis,
-    write_run_end,
     write_run_start,
 )
+from storage.logger import RunLogger  # noqa: E402
 from storage.models import AnalysisData, RunStatus  # noqa: E402
+from storage.recovery import reconcile_orphans  # noqa: E402
+
+_LOG_DIR = Path("logs/runs")
 
 
 def main() -> None:
@@ -30,6 +36,7 @@ def main() -> None:
 
     ticker = args.ticker.upper()
     migrate()
+    reconcile_orphans(_LOG_DIR)  # self-heal any run left "running" by a previous crash
 
     persona = DefaultPersona()
     routing_policy = HardcodedSonnetRouting()
@@ -45,8 +52,11 @@ def main() -> None:
     write_run_start(run_id, started_at, prompt_version_id=prompt_version_id)
 
     budget = Budget()
-    run_context = RunContext(run_id=run_id, budget=budget)
+    logger = RunLogger(run_id, _LOG_DIR)
+    run_context = RunContext(run_id=run_id, budget=budget, logger=logger)
     client = anthropic.Anthropic()
+    logger.log("run_started", tickers=[ticker])
+    logger.log("ticker_started", ticker=ticker, phase="deep", model=DEFAULT_MODEL_ID)
 
     status: RunStatus = "success"
     error_msg: str | None = None
@@ -58,6 +68,16 @@ def main() -> None:
             routing_policy=routing_policy,
             run_context=run_context,
             client=client,
+        )
+        logger.log(
+            "ticker_completed",
+            ticker=ticker,
+            recommendation=result.recommendation,
+            confidence=result.confidence,
+            iterations=run_context.iterations,
+            tokens=budget.total_input_tokens + budget.total_output_tokens,
+            cost_usd=budget.total_cost_usd,
+            termination="success",
         )
         upsert_analysis(
             run_id,
@@ -88,16 +108,18 @@ def main() -> None:
         print(f"Failed: {e}", file=sys.stderr)
         sys.exit(1)
     finally:
-        write_run_end(
-            run_id=run_id,
+        duration_seconds = (datetime.now(timezone.utc) - started_at).total_seconds()
+        logger.log(
+            "run_completed",
             status=status,
-            total_input_tokens=budget.total_input_tokens,
-            total_output_tokens=budget.total_output_tokens,
             total_cost_usd=budget.total_cost_usd,
-            num_tool_calls=budget.total_tool_calls,
-            completed_at=datetime.now(timezone.utc),
+            duration_seconds=duration_seconds,
             error_msg=error_msg,
         )
+        # Reconcile the JSONL trace (source of truth) into the runs + tool_calls tables.
+        with get_session() as session:
+            logger.flush_to_db(session)
+        logger.close()
 
 
 if __name__ == "__main__":
