@@ -23,7 +23,7 @@ from agent.routing import HardcodedSonnetRouting
 from agent.tools.base import ToolResultError, ToolResultOk
 from agent.tools.quote import GetQuoteTool
 from storage.engine import upsert_analysis, write_run_end, write_run_start
-from storage.models import Analysis, AnalysisData, Run
+from storage.models import Analysis, AnalysisData, Run, ToolCall
 from tests.conftest import VALID_ANALYSIS_JSON, make_end_turn, make_tool_use
 
 
@@ -94,6 +94,56 @@ def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Sessi
     assert analysis.confidence == pytest.approx(0.72)
 
 
+# ── Tool-call persistence ─────────────────────────────────────────────────────
+
+
+def test_tool_call_persisted(
+    db_engine: object, mock_claude: MagicMock, db_session: Session
+) -> None:
+    mock_claude(
+        [
+            make_tool_use("get_quote", {"ticker": "TSLA"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
+    ctx = _ctx("run-persist")
+    mock_fast_info = MagicMock()
+    mock_fast_info.last_price = 210.0
+    mock_fast_info.previous_close = 205.0
+    mock_fast_info.three_month_average_volume = 40_000_000
+    with patch("data_sources.yfinance_client.yf.Ticker") as mock_ticker:
+        mock_ticker.return_value.fast_info = mock_fast_info
+        analyze_ticker("TSLA", _persona(), _routing(), ctx)
+
+    rows = db_session.query(ToolCall).filter_by(run_id="run-persist").all()
+    assert len(rows) == 1
+    row = rows[0]
+    assert row.tool_name == "get_quote"
+    assert row.input_json == '{"ticker": "TSLA"}'
+    assert row.error_msg is None
+    assert row.cached is False
+    assert row.latency_ms is not None
+    assert row.latency_ms >= 0
+
+
+def test_tool_call_error_persisted(
+    db_engine: object, mock_claude: MagicMock, db_session: Session
+) -> None:
+    mock_claude(
+        [
+            make_tool_use("get_quote", {"ticker": "AAPL"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=RuntimeError("network error")):
+        analyze_ticker("AAPL", _persona(), _routing(), _ctx("run-err"))
+
+    row = db_session.query(ToolCall).filter_by(run_id="run-err").first()
+    assert row is not None
+    assert row.error_msg is not None
+    assert "network error" in row.error_msg
+
+
 # ── Schema repair ─────────────────────────────────────────────────────────────
 
 
@@ -125,7 +175,7 @@ def test_schema_repair_failure(mock_claude: MagicMock) -> None:
 _TICKERS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "BRK"]
 
 
-def test_iteration_cap(mock_claude: MagicMock) -> None:
+def test_iteration_cap(db_engine: object, mock_claude: MagicMock) -> None:
     # Use a different ticker each time so tool-loop detection (same input ≥3x) doesn't fire first
     tool_responses = [
         make_tool_use("get_quote", {"ticker": _TICKERS[i]}, tool_id=f"toolu_{i:02d}")
@@ -169,7 +219,7 @@ def test_cost_aborted(mock_claude: MagicMock) -> None:
 # ── Tool-loop broken ──────────────────────────────────────────────────────────
 
 
-def test_tool_loop_broken(mock_claude: MagicMock) -> None:
+def test_tool_loop_broken(db_engine: object, mock_claude: MagicMock) -> None:
     same_tool = make_tool_use("get_quote", {"ticker": "AAPL"})
     mock_client = mock_claude([same_tool, same_tool, same_tool, make_end_turn(VALID_ANALYSIS_JSON)])
     result = analyze_ticker("AAPL", _persona(), _routing(), _ctx())
@@ -182,7 +232,7 @@ def test_tool_loop_broken(mock_claude: MagicMock) -> None:
 # ── Tool error recovered ──────────────────────────────────────────────────────
 
 
-def test_tool_error_recovered(mock_claude: MagicMock) -> None:
+def test_tool_error_recovered(db_engine: object, mock_claude: MagicMock) -> None:
     mock_claude(
         [
             make_tool_use("get_quote", {"ticker": "AAPL"}),

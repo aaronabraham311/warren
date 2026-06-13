@@ -10,7 +10,7 @@ from typing import Protocol
 from sqlalchemy import Engine, create_engine, delete, event
 from sqlalchemy.orm import Session
 
-from storage.models import Analysis, AnalysisData, Run, RunStatus
+from storage.models import Analysis, AnalysisData, Run, RunStatus, ToolCall
 
 
 class _DBAPICursor(Protocol):
@@ -95,6 +95,40 @@ def write_run_end(
         run.num_tool_calls = num_tool_calls
         run.completed_at = completed_at
         run.error_msg = error_msg
+        session.commit()
+
+
+def write_tool_call(
+    run_id: str,
+    tool_name: str,
+    input_json: str,
+    raw_output: str,
+    latency_ms: int,
+    cached: bool,
+    error_msg: str | None,
+    seq: int,
+) -> None:
+    truncated = truncate_tool_output(raw_output, run_id, seq)
+    output_file_path: str | None = None
+    if truncated != raw_output:
+        try:
+            marker = json.loads(truncated)
+            output_file_path = marker.get("path")
+        except (json.JSONDecodeError, AttributeError):
+            pass
+    with Session(engine) as session:
+        session.add(
+            ToolCall(
+                run_id=run_id,
+                tool_name=tool_name,
+                input_json=input_json,
+                output_json=truncated,
+                output_file_path=output_file_path,
+                latency_ms=latency_ms,
+                cached=cached,
+                error_msg=error_msg,
+            )
+        )
         session.commit()
 
 
