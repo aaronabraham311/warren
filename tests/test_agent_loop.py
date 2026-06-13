@@ -43,10 +43,12 @@ def _routing() -> HardcodedSonnetRouting:
 
 
 def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Session) -> None:
-    mock_claude([
-        make_tool_use("get_quote", {"ticker": "AAPL"}),
-        make_end_turn(VALID_ANALYSIS_JSON),
-    ])
+    mock_claude(
+        [
+            make_tool_use("get_quote", {"ticker": "AAPL"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
     ctx = _ctx("run-happy")
     write_run_start("run-happy", datetime.now(timezone.utc))
 
@@ -96,19 +98,23 @@ def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Sessi
 
 
 def test_schema_repair_success(mock_claude: MagicMock) -> None:
-    mock_claude([
-        make_end_turn("this is not json at all"),
-        make_end_turn(VALID_ANALYSIS_JSON),
-    ])
+    mock_claude(
+        [
+            make_end_turn("this is not json at all"),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
     result = analyze_ticker("AAPL", _persona(), _routing(), _ctx())
     assert result.recommendation == "hold"
 
 
 def test_schema_repair_failure(mock_claude: MagicMock) -> None:
-    mock_claude([
-        make_end_turn("bad json #1"),
-        make_end_turn("bad json #2"),
-    ])
+    mock_claude(
+        [
+            make_end_turn("bad json #1"),
+            make_end_turn("bad json #2"),
+        ]
+    )
     with pytest.raises(SchemaRepairError):
         analyze_ticker("AAPL", _persona(), _routing(), _ctx())
 
@@ -177,10 +183,12 @@ def test_tool_loop_broken(mock_claude: MagicMock) -> None:
 
 
 def test_tool_error_recovered(mock_claude: MagicMock) -> None:
-    mock_claude([
-        make_tool_use("get_quote", {"ticker": "AAPL"}),
-        make_end_turn(VALID_ANALYSIS_JSON),
-    ])
+    mock_claude(
+        [
+            make_tool_use("get_quote", {"ticker": "AAPL"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
     with patch("data_sources.yfinance_client.yf.Ticker", side_effect=RuntimeError("network error")):
         result = analyze_ticker("AAPL", _persona(), _routing(), _ctx())
     assert isinstance(result, AnalysisOutput)
