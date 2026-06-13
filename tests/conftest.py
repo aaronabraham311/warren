@@ -1,5 +1,4 @@
 from collections.abc import Callable, Generator
-from typing import Any
 from unittest.mock import MagicMock
 
 import anthropic
@@ -49,7 +48,7 @@ def make_end_turn(
 
 def make_tool_use(
     tool_name: str,
-    tool_input: dict[str, Any],
+    tool_input: dict[str, object],
     tool_id: str = "toolu_01",
     input_tokens: int = 100,
     output_tokens: int = 50,

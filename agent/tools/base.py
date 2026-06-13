@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from agent.budget import RunContext
@@ -22,12 +22,12 @@ ToolResult = ToolResultOk | ToolResultError
 class Tool(ABC):
     name: str
     description: str
-    input_schema: dict[str, Any]
+    input_schema: dict[str, object]
 
     @abstractmethod
-    def run(self, input: dict[str, Any], run_context: "RunContext") -> ToolResult: ...
+    def run(self, input: dict[str, object], run_context: "RunContext") -> ToolResult: ...
 
-    def to_api_dict(self) -> dict[str, Any]:
+    def to_api_dict(self) -> dict[str, object]:
         return {
             "name": self.name,
             "description": self.description,

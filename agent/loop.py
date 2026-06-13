@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Any, Literal, cast
+from typing import Literal, Protocol, cast
 
 import anthropic
 from pydantic import BaseModel, Field, ValidationError
@@ -8,6 +8,18 @@ from pydantic import BaseModel, Field, ValidationError
 from agent.budget import RunContext
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import ToolResultOk
+
+
+class _Persona(Protocol):
+    @property
+    def system_prompt(self) -> str: ...
+
+
+class _RoutingPolicy(Protocol):
+    def select(
+        self, iteration: int, messages: list[anthropic.types.MessageParam], ticker: str
+    ) -> str: ...
+
 
 _MAX_ITERATIONS = 8
 _MAX_TOOL_REPEATS = 3
@@ -65,7 +77,7 @@ def _parse_output(text: str) -> AnalysisOutput:
     return AnalysisOutput.model_validate_json(_extract_json(text))
 
 
-def _last_text(content: list[Any]) -> str:
+def _last_text(content: list[anthropic.types.ContentBlock]) -> str:
     for block in reversed(content):
         if isinstance(block, anthropic.types.TextBlock):
             return block.text
@@ -96,7 +108,7 @@ def _call_claude(
     return client.messages.create(
         model=model,
         system=system,
-        tools=cast(Any, TOOL_DEFINITIONS),
+        tools=cast(list[anthropic.types.ToolParam], TOOL_DEFINITIONS),
         messages=messages,
         max_tokens=max_tokens,
     )
@@ -104,8 +116,8 @@ def _call_claude(
 
 def analyze_ticker(
     ticker: str,
-    persona: Any,
-    routing_policy: Any,
+    persona: _Persona,
+    routing_policy: _RoutingPolicy,
     run_context: RunContext,
 ) -> AnalysisOutput:
     client = anthropic.Anthropic()
@@ -152,7 +164,7 @@ def analyze_ticker(
                 if schema_repair_attempt:
                     raise SchemaRepairError(
                         "Schema repair failed: Claude produced invalid JSON twice"
-                    )
+                    ) from None
                 schema_repair_attempt = True
                 messages.append(
                     cast(
@@ -177,7 +189,7 @@ def analyze_ticker(
 
         # ── tool_use → dispatch tools ─────────────────────────────────────────
         if response.stop_reason == "tool_use":
-            tool_results: list[dict[str, Any]] = []
+            tool_results: list[anthropic.types.ToolResultBlockParam] = []
             force_tool_loop = False
 
             for block in response.content:
@@ -198,11 +210,13 @@ def analyze_ticker(
                     else:
                         result_content = f"ERROR: {result.error}"
 
-                tool_results.append({
-                    "type": "tool_result",
-                    "tool_use_id": block.id,
-                    "content": result_content,
-                })
+                tool_results.append(
+                    {
+                        "type": "tool_result",
+                        "tool_use_id": block.id,
+                        "content": result_content,
+                    }
+                )
 
             messages.append(
                 cast(

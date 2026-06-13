@@ -1,5 +1,4 @@
 import json
-from typing import Any
 
 from agent.budget import RunContext
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
@@ -9,7 +8,7 @@ from data_sources.yfinance_client import get_quote
 class GetQuoteTool(Tool):
     name = "get_quote"
     description = "Get current price, previous close, day change pct, and volume for a ticker."
-    input_schema: dict[str, Any] = {
+    input_schema: dict[str, object] = {
         "type": "object",
         "properties": {
             "ticker": {
@@ -20,8 +19,8 @@ class GetQuoteTool(Tool):
         "required": ["ticker"],
     }
 
-    def run(self, input: dict[str, Any], run_context: RunContext) -> ToolResult:
-        ticker = input.get("ticker", "")
+    def run(self, input: dict[str, object], run_context: RunContext) -> ToolResult:
+        ticker = str(input.get("ticker", ""))
         try:
             quote = get_quote(ticker)
             return ToolResultOk(
