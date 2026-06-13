@@ -1,7 +1,6 @@
 import hashlib
 import json
 from dataclasses import dataclass, field
-from typing import Any
 
 # Sonnet 4.6 pricing (USD per token)
 _SONNET_INPUT = 3.0 / 1_000_000
@@ -64,10 +63,8 @@ class RunContext:
     # key = (tool_name, input_hash_prefix) → call count; for tool-loop detection
     tool_call_counts: dict[tuple[str, str], int] = field(default_factory=dict)
 
-    def record_tool_call(self, tool_name: str, tool_input: dict[str, Any]) -> int:
-        digest = hashlib.sha256(
-            json.dumps(tool_input, sort_keys=True).encode()
-        ).hexdigest()[:8]
+    def record_tool_call(self, tool_name: str, tool_input: dict[str, object]) -> int:
+        digest = hashlib.sha256(json.dumps(tool_input, sort_keys=True).encode()).hexdigest()[:8]
         key = (tool_name, digest)
         self.tool_call_counts[key] = self.tool_call_counts.get(key, 0) + 1
         self.budget.total_tool_calls += 1

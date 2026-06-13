@@ -5,18 +5,29 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Protocol
 
 from sqlalchemy import create_engine, delete, event
 from sqlalchemy.orm import Session
 
 from storage.models import Analysis, AnalysisData, Run, RunStatus
 
+
+class _DBAPICursor(Protocol):
+    def execute(self, statement: str) -> object: ...
+    def close(self) -> None: ...
+
+
+class _DBAPIConnection(Protocol):
+    def cursor(self) -> _DBAPICursor: ...
+
+
 _DB_URL = f"sqlite:///{os.environ.get('WARREN_DB', 'warren.db')}"
 engine = create_engine(_DB_URL, echo=False)
 
+
 @event.listens_for(engine, "connect")
-def _set_wal_mode(dbapi_connection: Any, connection_record: Any) -> None:
+def _set_wal_mode(dbapi_connection: _DBAPIConnection, connection_record: object) -> None:
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA journal_mode=WAL")
     cursor.close()
