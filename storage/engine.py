@@ -15,9 +15,6 @@ from storage.models import Analysis, AnalysisData, Run, RunStatus
 _DB_URL = f"sqlite:///{os.environ.get('WARREN_DB', 'warren.db')}"
 engine = create_engine(_DB_URL, echo=False)
 
-_SCALAR = (str, int, float, bool, type(None))
-
-
 @event.listens_for(engine, "connect")
 def _set_wal_mode(dbapi_connection: Any, connection_record: Any) -> None:
     cursor = dbapi_connection.cursor()
@@ -43,16 +40,11 @@ _TOOL_OUTPUT_MAX_BYTES = 8192
 
 
 def upsert_analysis(run_id: str, ticker: str, data: AnalysisData) -> None:
-    # Serialize list/dict/other non-scalar values to JSON strings for Text columns
-    payload: dict[str, str | int | float | bool | None] = {
-        k: json.dumps(v) if not isinstance(v, _SCALAR) else v
-        for k, v in data.items()
-    }
     with Session(engine) as session:
         session.execute(
             delete(Analysis).where(Analysis.run_id == run_id, Analysis.ticker == ticker)
         )
-        session.add(Analysis(run_id=run_id, ticker=ticker, **payload))
+        session.add(Analysis(run_id=run_id, ticker=ticker, **data))
         session.commit()
 
 
