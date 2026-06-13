@@ -41,8 +41,6 @@ def record_fixtures(ticker: str, output_dir: Path) -> None:
     Overwrites any existing fixture files for *ticker*.
     Requires network access; no API key needed for yfinance.
     """
-    import sqlite3
-
     import yfinance as yf
 
     key = _input_hash(ticker)
@@ -90,4 +88,3 @@ def record_fixtures(ticker: str, output_dir: Path) -> None:
     except Exception:
         pass
     _write("get_growth_metrics", fin_data)
-    del sqlite3  # imported for type-check clarity only; suppress F401

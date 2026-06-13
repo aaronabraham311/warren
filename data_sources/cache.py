@@ -24,14 +24,20 @@ class CacheStore:
 
     def get(self, key: str) -> str | None:
         now = datetime.now(timezone.utc).isoformat()
-        # Evict expired entry first so a fresh fetch can replace it.
+        # Check for a live (non-expired) entry first — no DML on cache hits,
+        # so no implicit transaction is opened on the happy path.
+        row = self._conn.execute(
+            "SELECT data FROM cache WHERE key = ? AND expires_at > ?", (key, now)
+        ).fetchone()
+        if row is not None:
+            return str(row[0])
+        # Cache miss: evict any expired entry and commit so the lock is released
+        # before the caller fetches fresh data and calls set().
         self._conn.execute(
             "DELETE FROM cache WHERE key = ? AND expires_at <= ?", (key, now)
         )
-        row = self._conn.execute(
-            "SELECT data FROM cache WHERE key = ?", (key,)
-        ).fetchone()
-        return str(row[0]) if row is not None else None
+        self._conn.commit()
+        return None
 
     def set(self, key: str, data: str, ttl_hours: float) -> None:
         expires_at = (datetime.now(timezone.utc) + timedelta(hours=ttl_hours)).isoformat()
