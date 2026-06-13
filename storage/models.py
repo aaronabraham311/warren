@@ -1,11 +1,4 @@
-import hashlib
-import json
-import os
-from collections.abc import Generator
-from contextlib import contextmanager
 from datetime import date, datetime
-from pathlib import Path
-from typing import Any
 
 from sqlalchemy import (
     Date,
@@ -15,21 +8,8 @@ from sqlalchemy import (
     Integer,
     Text,
     UniqueConstraint,
-    create_engine,
-    delete,
-    event,
 )
-from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
-
-_DB_URL = f"sqlite:///{os.environ.get('WARREN_DB', 'warren.db')}"
-engine = create_engine(_DB_URL, echo=False)
-
-
-@event.listens_for(engine, "connect")
-def _set_wal_mode(dbapi_connection: Any, connection_record: Any) -> None:
-    cursor = dbapi_connection.cursor()
-    cursor.execute("PRAGMA journal_mode=WAL")
-    cursor.close()
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
@@ -146,48 +126,8 @@ class DiscoveryCooldown(Base):
     suppression_reason: Mapped[str | None] = mapped_column(Text)
 
 
-# Performance indexes (Tech Spec §7.5) — defined after models so column refs resolve
 Index("idx_analyses_ticker_created", Analysis.ticker, Analysis.created_at.desc())
 Index("idx_analyses_run", Analysis.run_id)
 Index("idx_tool_calls_run", ToolCall.run_id)
 Index("idx_runs_started", Run.started_at.desc())
 Index("idx_eval_runs_run", EvalRun.run_id)
-
-
-def migrate() -> None:
-    from alembic import command
-    from alembic.config import Config
-
-    alembic_cfg = Config("alembic.ini")
-    command.upgrade(alembic_cfg, "head")
-
-
-@contextmanager
-def get_session() -> Generator[Session, None, None]:
-    with Session(engine) as session:
-        yield session
-
-
-_TOOL_OUTPUT_MAX_BYTES = 8192
-
-
-def upsert_analysis(run_id: str, ticker: str, data: dict[str, Any]) -> None:
-    with Session(engine) as session:
-        session.execute(
-            delete(Analysis).where(Analysis.run_id == run_id, Analysis.ticker == ticker)
-        )
-        session.add(Analysis(run_id=run_id, ticker=ticker, **data))
-        session.commit()
-
-
-def truncate_tool_output(output_json: str, run_id: str, tool_call_id: int) -> str:
-    if len(output_json.encode()) <= _TOOL_OUTPUT_MAX_BYTES:
-        return output_json
-
-    out_dir = Path(f"logs/runs/{run_id}/tool_outputs")
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_path = out_dir / f"{tool_call_id}.json"
-    out_path.write_text(output_json)
-
-    sha256 = hashlib.sha256(output_json.encode()).hexdigest()
-    return json.dumps({"truncated": True, "path": str(out_path), "sha256": sha256})

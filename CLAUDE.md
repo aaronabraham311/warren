@@ -36,9 +36,10 @@ data_sources/
   finnhub_client.py    # Wraps Finnhub REST API (quotes, news)
 
 storage/
-  db.py           # SQLAlchemy engine, session factory (get_session)
+  models.py       # ORM models (Base + all table classes + indexes) — no I/O
+  engine.py       # Engine, WAL hook, get_session, migrate(), helper fns
   schema.sql      # Raw DDL for reference
-  migrations/     # Schema migration scripts
+  migrations/     # Alembic migration scripts
 
 eval/
   golden_set.py   # Loads YAML golden examples from eval/examples/
@@ -62,7 +63,7 @@ logs/runs/        # Per-run JSONL traces (gitignored)
 
 ## Code conventions
 
-- `__init__.py` files are empty. Import directly from the submodule, e.g. `from storage.db import get_session`. Do not re-export through `__init__.py`.
+- `__init__.py` files are empty. Import directly from the submodule, e.g. `from storage.engine import get_session` or `from storage.models import Run`. Do not re-export through `__init__.py`.
 - Use SQLAlchemy 2.x style (`with Session(engine) as s:`, not legacy `Session()` context).
 - All external API calls live in `data_sources/`; `agent/tools/` calls into `data_sources/`, never directly into yfinance/finnhub.
 - Environment variables are loaded once at startup via `dotenv.load_dotenv()` in `agent/run.py`. Everywhere else, read with `os.environ["KEY"]` — no repeated `load_dotenv()` calls.
@@ -87,4 +88,4 @@ pytest                         # run tests
 |---|---|
 | `ANTHROPIC_API_KEY` | `agent/loop.py` — Claude API |
 | `FINNHUB_API_KEY` | `data_sources/finnhub_client.py` |
-| `WARREN_DB` | `storage/db.py` — SQLite path override (default: `warren.db`) |
+| `WARREN_DB` | `storage/engine.py` — SQLite path override (default: `warren.db`) |
