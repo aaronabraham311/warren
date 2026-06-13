@@ -276,6 +276,6 @@ def _record_usage(run_context: RunContext, response: anthropic.types.Message) ->
     run_context.budget.record_usage(
         input_tokens=usage.input_tokens,
         output_tokens=usage.output_tokens,
-        cache_read_tokens=getattr(usage, "cache_read_input_tokens", 0) or 0,
-        cache_creation_tokens=getattr(usage, "cache_creation_input_tokens", 0) or 0,
+        cache_read_tokens=usage.cache_read_input_tokens or 0,
+        cache_creation_tokens=usage.cache_creation_input_tokens or 0,
     )
