@@ -7,6 +7,7 @@ from sqlalchemy import (
     Date,
     DateTime,
     Float,
+    ForeignKey,
     Index,
     Integer,
     Text,
@@ -88,7 +89,7 @@ class Analysis(Base):
     __table_args__ = (UniqueConstraint("run_id", "ticker", name="uq_analyses_run_ticker"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    run_id: Mapped[str] = mapped_column(Text, nullable=False)
+    run_id: Mapped[str] = mapped_column(Text, ForeignKey("runs.id"), nullable=False)
     ticker: Mapped[str] = mapped_column(Text, nullable=False)
     analysis_type: Mapped[str | None] = mapped_column(Text)
     recommendation: Mapped[str | None] = mapped_column(Text)
@@ -107,7 +108,7 @@ class ToolCall(Base):
     __tablename__ = "tool_calls"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    run_id: Mapped[str | None] = mapped_column(Text)
+    run_id: Mapped[str | None] = mapped_column(Text, ForeignKey("runs.id"))
     tool_name: Mapped[str | None] = mapped_column(Text)
     input_json: Mapped[str | None] = mapped_column(Text)
     output_json: Mapped[str | None] = mapped_column(Text)
@@ -132,7 +133,7 @@ class EvalRun(Base):
     __tablename__ = "eval_runs"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    run_id: Mapped[str | None] = mapped_column(Text)
+    run_id: Mapped[str | None] = mapped_column(Text, ForeignKey("runs.id"))
     example_ticker: Mapped[str | None] = mapped_column(Text)
     passed: Mapped[bool | None] = mapped_column(Boolean)
     check_results: Mapped[str | None] = mapped_column(Text)

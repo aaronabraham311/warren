@@ -7,10 +7,9 @@ Warren is an AI stock-analysis agent. The user asks a natural-language question;
 - **Python 3.13**, managed with **uv** (`uv sync` to install, `uv add <pkg>` to add dependencies)
 - **Anthropic SDK** — tool-use / agentic loop lives in `agent/`
 - **SQLAlchemy 2.x** with a local SQLite file `warren.db`
-- **Streamlit** for the dashboard
 - **ruff** for linting (`ruff check .` / `ruff format .`)
 - **mypy** for type checking
-- **pytest** + **pytest-recording** for tests (recorded HTTP fixtures in `eval/fixtures/`)
+- **pytest** + **pytest-recording** for tests
 
 ## Directory map
 
@@ -19,45 +18,32 @@ agent/
   run.py          # CLI entrypoint: python -m agent.run [TICKER]
   loop.py         # Main agentic loop — sends messages, handles tool calls
   persona.py      # System prompt / persona definition
-  routing.py      # Decides which tools to invoke for a given query
+  routing.py      # Decides which model to route each call to
   budget.py       # Token / cost budget tracking
+  models.py       # Model ID and per-token pricing constants (single source of truth)
   tools/          # One file per Claude tool; __init__.py holds the registry
-    quote.py
-    fundamentals.py
-    growth.py
-    filings.py
-    news.py
-    screen.py
-    holdings.py
+    base.py       # Tool ABC, ToolResult, ToolResultOk, ToolResultError
+    quote.py      # get_quote tool (current price via yfinance)
+    # planned: fundamentals, growth, filings, news, screen, holdings
 
 data_sources/
-  yfinance_client.py   # Wraps yfinance for price history, fundamentals
-  edgar_client.py      # Wraps SEC EDGAR full-text search + filing fetch
-  finnhub_client.py    # Wraps Finnhub REST API (quotes, news)
+  yfinance_client.py   # Wraps yfinance for price quotes and fundamentals
+  # planned: edgar_client.py, finnhub_client.py
 
 storage/
   models.py       # ORM models (Base + all table classes + indexes) — no I/O
-  engine.py       # Engine, WAL hook, get_session, migrate(), helper fns
-  schema.sql      # Raw DDL for reference
+  engine.py       # Engine, WAL/FK pragmas, get_session, migrate(), helper fns
   migrations/     # Alembic migration scripts
 
-eval/
-  golden_set.py   # Loads YAML golden examples from eval/examples/
-  runner.py       # Runs the agent against golden set, scores outputs
-  examples/       # YAML files: input query + expected answer fields
-  fixtures/       # Recorded HTTP responses for offline tests
-
-dashboard/
-  app.py          # Streamlit entrypoint
-  pages/
-    today.py      # Today's run results
-    history.py    # Historical run browser
-    eval.py       # Eval harness results
+tests/
+  conftest.py     # Shared fixtures (db_engine, db_session, mock_claude)
+  test_agent_loop.py
 
 data/
   portfolio.csv   # ticker, shares, cost_basis, purchase_date
   watchlist.csv   # ticker, notes
 
+main.py           # Thin wrapper: delegates to agent.run.main
 logs/runs/        # Per-run JSONL traces (gitignored)
 ```
 
@@ -76,7 +62,6 @@ logs/runs/        # Per-run JSONL traces (gitignored)
 uv sync                        # install / sync deps
 python -m agent.run AAPL       # single ticker
 python -m agent.run            # full portfolio run
-streamlit run dashboard/app.py # launch dashboard
 ruff check .                   # lint
 ruff format .                  # format
 mypy .                         # type check
@@ -91,6 +76,5 @@ Before claiming a task complete, run and pass `ruff check .`, `mypy .`, and `pyt
 
 | Variable | Used by |
 |---|---|
-| `ANTHROPIC_API_KEY` | `agent/loop.py` — Claude API |
-| `FINNHUB_API_KEY` | `data_sources/finnhub_client.py` |
+| `ANTHROPIC_API_KEY` | `agent/run.py` — constructs the Anthropic client |
 | `WARREN_DB` | `storage/engine.py` — SQLite path override (default: `warren.db`) |

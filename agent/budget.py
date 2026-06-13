@@ -2,10 +2,12 @@ import hashlib
 import json
 from dataclasses import dataclass, field
 
-# Sonnet 4.6 pricing (USD per token)
-_SONNET_INPUT = 3.0 / 1_000_000
-_SONNET_OUTPUT = 15.0 / 1_000_000
-_SONNET_CACHE_READ = 0.30 / 1_000_000
+from agent.models import (
+    PRICE_CACHE_CREATION_PER_TOKEN,
+    PRICE_CACHE_READ_PER_TOKEN,
+    PRICE_INPUT_PER_TOKEN,
+    PRICE_OUTPUT_PER_TOKEN,
+)
 
 
 def compute_cost(
@@ -15,11 +17,10 @@ def compute_cost(
     cache_creation_tokens: int = 0,
 ) -> float:
     return (
-        input_tokens * _SONNET_INPUT
-        + output_tokens * _SONNET_OUTPUT
-        + cache_read_tokens * _SONNET_CACHE_READ
-        # cache_creation billed at 1.25x input rate (5-min TTL)
-        + cache_creation_tokens * _SONNET_INPUT * 1.25
+        input_tokens * PRICE_INPUT_PER_TOKEN
+        + output_tokens * PRICE_OUTPUT_PER_TOKEN
+        + cache_read_tokens * PRICE_CACHE_READ_PER_TOKEN
+        + cache_creation_tokens * PRICE_CACHE_CREATION_PER_TOKEN
     )
 
 

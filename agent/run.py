@@ -3,6 +3,7 @@ import sys
 from datetime import datetime, timezone
 from uuid import uuid4
 
+import anthropic
 from dotenv import load_dotenv
 
 from agent.budget import Budget, RunContext
@@ -12,7 +13,13 @@ from agent.routing import HardcodedSonnetRouting
 
 load_dotenv()  # must precede storage.engine import so WARREN_DB is applied before engine creation
 
-from storage.engine import migrate, upsert_analysis, write_run_end, write_run_start  # noqa: E402
+from storage.engine import (  # noqa: E402
+    ensure_prompt_version,
+    migrate,
+    upsert_analysis,
+    write_run_end,
+    write_run_start,
+)
 from storage.models import AnalysisData, RunStatus  # noqa: E402
 
 
@@ -24,12 +31,22 @@ def main() -> None:
     ticker = args.ticker.upper()
     migrate()
 
+    persona = DefaultPersona()
+    routing_policy = HardcodedSonnetRouting()
+
+    prompt_version_id = ensure_prompt_version(
+        version_tag="v1",
+        persona_system_prompt=persona.system_prompt,
+        routing_policy_name=type(routing_policy).__name__,
+    )
+
     run_id = str(uuid4())
     started_at = datetime.now(timezone.utc)
-    write_run_start(run_id, started_at)
+    write_run_start(run_id, started_at, prompt_version_id=prompt_version_id)
 
     budget = Budget()
     run_context = RunContext(run_id=run_id, budget=budget)
+    client = anthropic.Anthropic()
 
     status: RunStatus = "success"
     error_msg: str | None = None
@@ -37,9 +54,10 @@ def main() -> None:
     try:
         result = analyze_ticker(
             ticker=ticker,
-            persona=DefaultPersona(),
-            routing_policy=HardcodedSonnetRouting(),
+            persona=persona,
+            routing_policy=routing_policy,
             run_context=run_context,
+            client=client,
         )
         upsert_analysis(
             run_id,

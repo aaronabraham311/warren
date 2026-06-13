@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import os
 from collections.abc import Generator
 from contextlib import contextmanager
@@ -10,7 +11,9 @@ from typing import Protocol
 from sqlalchemy import Engine, create_engine, delete, event
 from sqlalchemy.orm import Session
 
-from storage.models import Analysis, AnalysisData, Run, RunStatus, ToolCall
+from storage.models import Analysis, AnalysisData, PromptVersion, Run, RunStatus, ToolCall
+
+log = logging.getLogger(__name__)
 
 
 class _DBAPICursor(Protocol):
@@ -33,12 +36,19 @@ def _set_wal_mode(dbapi_connection: _DBAPIConnection, connection_record: object)
     cursor.close()
 
 
+def _set_fk_enforcement(dbapi_connection: _DBAPIConnection, connection_record: object) -> None:
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
+
+
 def get_engine() -> Engine:
     global engine
     if engine is None:
         db_url = f"sqlite:///{os.environ.get('WARREN_DB', 'warren.db')}"
         engine = create_engine(db_url, echo=False)
         event.listen(engine, "connect", _set_wal_mode)
+        event.listen(engine, "connect", _set_fk_enforcement)
     return engine
 
 
@@ -46,7 +56,8 @@ def migrate() -> None:
     from alembic import command
     from alembic.config import Config
 
-    alembic_cfg = Config("alembic.ini")
+    alembic_ini = Path(__file__).parent.parent / "alembic.ini"
+    alembic_cfg = Config(str(alembic_ini))
     command.upgrade(alembic_cfg, "head")
 
 
@@ -68,9 +79,46 @@ def upsert_analysis(run_id: str, ticker: str, data: AnalysisData) -> None:
         session.commit()
 
 
-def write_run_start(run_id: str, started_at: datetime) -> None:
+def ensure_prompt_version(
+    version_tag: str,
+    persona_system_prompt: str,
+    routing_policy_name: str,
+) -> int:
+    """Return the id of the matching PromptVersion row, inserting one if absent."""
     with Session(get_engine()) as session:
-        session.add(Run(id=run_id, started_at=started_at, status="running"))
+        existing = (
+            session.query(PromptVersion)
+            .filter_by(
+                version_tag=version_tag,
+                persona_system_prompt=persona_system_prompt,
+                routing_policy_name=routing_policy_name,
+            )
+            .first()
+        )
+        if existing is not None:
+            return int(existing.id)
+        pv = PromptVersion(
+            version_tag=version_tag,
+            persona_system_prompt=persona_system_prompt,
+            routing_policy_name=routing_policy_name,
+        )
+        session.add(pv)
+        session.commit()
+        return int(pv.id)
+
+
+def write_run_start(
+    run_id: str, started_at: datetime, prompt_version_id: int | None = None
+) -> None:
+    with Session(get_engine()) as session:
+        session.add(
+            Run(
+                id=run_id,
+                started_at=started_at,
+                status="running",
+                prompt_version_id=prompt_version_id,
+            )
+        )
         session.commit()
 
 
