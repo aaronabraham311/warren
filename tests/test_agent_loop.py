@@ -5,6 +5,7 @@ SQLite runs in-memory via the db_engine fixture.
 """
 
 import json
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -29,8 +30,16 @@ from storage.models import Analysis, AnalysisData, Run, ToolCall
 from tests.conftest import VALID_ANALYSIS_JSON, make_end_turn, make_tool_use
 
 
-def _ctx(run_id: str = "run-test", logger: RunLogger | None = None) -> RunContext:
-    return RunContext(run_id=run_id, budget=Budget(), logger=logger)
+def _ctx(
+    run_id: str = "run-test",
+    logger: RunLogger | None = None,
+    budget: Budget | None = None,
+) -> RunContext:
+    # Every RunContext needs a logger; default to a throwaway trace in a temp dir for
+    # tests that don't assert on the JSONL/DB projection.
+    if logger is None:
+        logger = RunLogger(run_id, Path(tempfile.mkdtemp()))
+    return RunContext(run_id=run_id, budget=budget or Budget(), logger=logger)
 
 
 def _persona() -> DefaultPersona:
@@ -202,7 +211,7 @@ def test_iteration_cap(db_engine: object, mock_claude: MagicMock) -> None:
 def test_token_cap(mock_claude: MagicMock) -> None:
     budget = Budget(max_input_tokens=100)
     budget.total_input_tokens = 100  # already at limit
-    ctx = RunContext(run_id="run-tokencap", budget=budget)
+    ctx = _ctx("run-tokencap", budget=budget)
     mock_client = mock_claude([make_end_turn(VALID_ANALYSIS_JSON)])
     result = analyze_ticker("AAPL", _persona(), _routing(), ctx)
     assert isinstance(result, AnalysisOutput)
@@ -217,7 +226,7 @@ def test_token_cap(mock_claude: MagicMock) -> None:
 def test_cost_aborted(mock_claude: MagicMock) -> None:
     budget = Budget(max_cost_usd=0.001)
     budget.total_cost_usd = 0.001  # already at ceiling
-    ctx = RunContext(run_id="run-costabort", budget=budget)
+    ctx = _ctx("run-costabort", budget=budget)
     mock_claude([])
     with pytest.raises(CostAbortedError):
         analyze_ticker("AAPL", _persona(), _routing(), ctx)

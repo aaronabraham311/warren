@@ -129,10 +129,9 @@ def _call_and_record(
     response = _call_claude(client, model, system, messages, max_tokens)
     latency_ms = int((time.monotonic() - t0) * 1000)
     _record_usage(run_context, response)
-    if run_context.logger is not None:
-        run_context.logger.log_llm_call(
-            response, ticker=ticker, phase="deep", model=model, latency_ms=latency_ms
-        )
+    run_context.logger.log_llm_call(
+        response, ticker=ticker, phase="deep", model=model, latency_ms=latency_ms
+    )
     return response
 
 
@@ -249,17 +248,16 @@ def analyze_ticker(
                         error_msg = result.error
                 latency_ms = int((time.monotonic() - t0) * 1000)
 
-                if run_context.logger is not None:
-                    run_context.logger.log_tool_call(
-                        tool_name=block.name,
-                        tool_input=dict(block.input),
-                        output=result_content,
-                        cached=False,
-                        latency_ms=latency_ms,
-                        status="ok" if error_msg is None else "error",
-                        ticker=ticker,
-                        error_msg=error_msg,
-                    )
+                run_context.logger.log_tool_call(
+                    tool_name=block.name,
+                    tool_input=dict(block.input),
+                    output=result_content,
+                    cached=False,
+                    latency_ms=latency_ms,
+                    status="ok" if error_msg is None else "error",
+                    ticker=ticker,
+                    error_msg=error_msg,
+                )
 
                 tool_results.append(
                     {

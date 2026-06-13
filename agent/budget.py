@@ -65,9 +65,8 @@ class Budget:
 class RunContext:
     run_id: str
     budget: Budget
-    # Optional so existing call sites (and most tests) can omit it; the loop no-ops
-    # event logging when this is None.
-    logger: "RunLogger | None" = None
+    # The run's JSONL write-ahead log; every run has one (see storage.logger).
+    logger: "RunLogger"
     # Number of agent iterations spent on the current ticker (for ticker_completed).
     iterations: int = 0
     # key = (tool_name, input_hash_prefix) → call count; for tool-loop detection
