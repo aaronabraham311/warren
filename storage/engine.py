@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Protocol
 
-from sqlalchemy import create_engine, delete, event
+from sqlalchemy import Engine, create_engine, delete, event
 from sqlalchemy.orm import Session
 
 from storage.models import Analysis, AnalysisData, Run, RunStatus
@@ -22,15 +22,24 @@ class _DBAPIConnection(Protocol):
     def cursor(self) -> _DBAPICursor: ...
 
 
-_DB_URL = f"sqlite:///{os.environ.get('WARREN_DB', 'warren.db')}"
-engine = create_engine(_DB_URL, echo=False)
+# None until first call to get_engine(); allows monkeypatching in tests and
+# ensures WARREN_DB is read after load_dotenv() has run.
+engine: Engine | None = None
 
 
-@event.listens_for(engine, "connect")
 def _set_wal_mode(dbapi_connection: _DBAPIConnection, connection_record: object) -> None:
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA journal_mode=WAL")
     cursor.close()
+
+
+def get_engine() -> Engine:
+    global engine
+    if engine is None:
+        db_url = f"sqlite:///{os.environ.get('WARREN_DB', 'warren.db')}"
+        engine = create_engine(db_url, echo=False)
+        event.listen(engine, "connect", _set_wal_mode)
+    return engine
 
 
 def migrate() -> None:
@@ -43,7 +52,7 @@ def migrate() -> None:
 
 @contextmanager
 def get_session() -> Generator[Session, None, None]:
-    with Session(engine) as session:
+    with Session(get_engine()) as session:
         yield session
 
 
@@ -51,7 +60,7 @@ _TOOL_OUTPUT_MAX_BYTES = 8192
 
 
 def upsert_analysis(run_id: str, ticker: str, data: AnalysisData) -> None:
-    with Session(engine) as session:
+    with Session(get_engine()) as session:
         session.execute(
             delete(Analysis).where(Analysis.run_id == run_id, Analysis.ticker == ticker)
         )
@@ -60,7 +69,7 @@ def upsert_analysis(run_id: str, ticker: str, data: AnalysisData) -> None:
 
 
 def write_run_start(run_id: str, started_at: datetime) -> None:
-    with Session(engine) as session:
+    with Session(get_engine()) as session:
         session.add(Run(id=run_id, started_at=started_at, status="running"))
         session.commit()
 
@@ -75,7 +84,7 @@ def write_run_end(
     completed_at: datetime,
     error_msg: str | None = None,
 ) -> None:
-    with Session(engine) as session:
+    with Session(get_engine()) as session:
         run = session.get(Run, run_id)
         if run is None:
             raise RuntimeError(f"Run {run_id!r} not found; was write_run_start called?")

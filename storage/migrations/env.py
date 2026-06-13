@@ -2,8 +2,10 @@ from logging.config import fileConfig
 
 from alembic import context
 
-from storage.engine import engine
+from storage.engine import get_engine
 from storage.models import Base
+
+engine = get_engine()
 
 config = context.config
 
