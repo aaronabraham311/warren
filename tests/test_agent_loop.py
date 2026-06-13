@@ -181,7 +181,7 @@ def test_tool_error_recovered(mock_claude: MagicMock) -> None:
         make_tool_use("get_quote", {"ticker": "AAPL"}),
         make_end_turn(VALID_ANALYSIS_JSON),
     ])
-    with patch("agent.tools.quote.yf.Ticker", side_effect=RuntimeError("network error")):
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=RuntimeError("network error")):
         result = analyze_ticker("AAPL", _persona(), _routing(), _ctx())
     assert isinstance(result, AnalysisOutput)
 
@@ -195,7 +195,7 @@ def test_get_quote_tool() -> None:
     mock_fast_info.previous_close = 180.00
     mock_fast_info.three_month_average_volume = 55_000_000
 
-    with patch("agent.tools.quote.yf.Ticker") as mock_ticker:
+    with patch("data_sources.yfinance_client.yf.Ticker") as mock_ticker:
         mock_ticker.return_value.fast_info = mock_fast_info
         tool = GetQuoteTool()
         result = tool.run({"ticker": "AAPL"}, _ctx())
@@ -209,7 +209,7 @@ def test_get_quote_tool() -> None:
 
 
 def test_get_quote_tool_error() -> None:
-    with patch("agent.tools.quote.yf.Ticker", side_effect=Exception("timeout")):
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=Exception("timeout")):
         tool = GetQuoteTool()
         result = tool.run({"ticker": "AAPL"}, _ctx())
 
