@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Protocol
 
-from sqlalchemy import Engine, create_engine, delete, event
+from sqlalchemy import Engine, create_engine, delete, event, text
 from sqlalchemy.orm import Session
 
 from storage.models import Analysis, AnalysisData, PromptVersion, Run, RunStatus, ToolCall
@@ -55,6 +55,17 @@ def get_engine() -> Engine:
 def migrate() -> None:
     from alembic import command
     from alembic.config import Config
+
+    # Drop any _alembic_tmp_* tables left by a previously crashed batch-alter migration.
+    # SQLite DDL can't be rolled back, so alembic leaves these on failure; sweeping them
+    # here before every upgrade makes all batch-alter migrations idempotent on retry.
+    with get_engine().connect() as conn:
+        rows = conn.execute(
+            text("SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '_alembic_tmp_%'")
+        ).fetchall()
+        for (name,) in rows:
+            conn.execute(text(f'DROP TABLE IF EXISTS "{name}"'))
+        conn.commit()
 
     alembic_ini = Path(__file__).parent.parent / "alembic.ini"
     alembic_cfg = Config(str(alembic_ini))

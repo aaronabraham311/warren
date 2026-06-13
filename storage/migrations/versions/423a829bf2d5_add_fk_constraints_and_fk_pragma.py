@@ -19,6 +19,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     # SQLite can't add FK constraints via ALTER TABLE; use batch mode to recreate tables.
+    # Stale _alembic_tmp_* tables from a prior crashed run are swept generically by
+    # storage.engine.migrate() before alembic upgrade is called.
     with op.batch_alter_table("analyses", recreate="always") as batch_op:
         batch_op.create_foreign_key("fk_analyses_run_id", "runs", ["run_id"], ["id"])
 
@@ -30,6 +32,11 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    # Guard against stale tmp tables from a previously crashed downgrade (alembic CLI
+    # bypasses storage.engine.migrate(), so we sweep here for the three tables we touch).
+    for tmp in ("_alembic_tmp_eval_runs", "_alembic_tmp_tool_calls", "_alembic_tmp_analyses"):
+        op.execute(f'DROP TABLE IF EXISTS "{tmp}"')
+
     with op.batch_alter_table("eval_runs", recreate="always") as batch_op:
         batch_op.drop_constraint("fk_eval_runs_run_id", type_="foreignkey")
 
