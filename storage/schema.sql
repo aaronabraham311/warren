@@ -1,0 +1,100 @@
+-- Reference DDL — not executed at runtime; storage/db.py drives schema creation via SQLAlchemy.
+
+CREATE TABLE IF NOT EXISTS prompt_versions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  version_tag TEXT NOT NULL,
+  persona_system_prompt TEXT,
+  routing_policy_name TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  notes TEXT
+);
+
+CREATE TABLE IF NOT EXISTS runs (
+  id TEXT PRIMARY KEY,           -- UUID
+  prompt_version_id INTEGER REFERENCES prompt_versions(id),
+  started_at TIMESTAMP,
+  completed_at TIMESTAMP,
+  status TEXT,                   -- 'success'|'cost_aborted'|'partial'|'failed'
+  total_input_tokens INTEGER,
+  total_output_tokens INTEGER,
+  total_cost_usd REAL,
+  num_tool_calls INTEGER,
+  error_msg TEXT
+);
+
+CREATE TABLE IF NOT EXISTS holdings (
+  ticker TEXT PRIMARY KEY,
+  shares REAL,
+  cost_basis REAL,
+  purchase_date DATE,
+  current_price REAL,
+  updated_at TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS watchlist (
+  ticker TEXT PRIMARY KEY,
+  notes TEXT,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS analyses (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  run_id TEXT REFERENCES runs(id),
+  ticker TEXT,
+  analysis_type TEXT,            -- 'holding'|'discovery'
+  recommendation TEXT,           -- 'buy'|'sell'|'hold'
+  confidence REAL,
+  thesis TEXT,
+  lynch_signals TEXT,            -- JSON
+  buffett_signals TEXT,          -- JSON
+  key_risks TEXT,                -- JSON array
+  data_quality_notes TEXT,       -- JSON array
+  tool_calls_made INTEGER,
+  tokens_used INTEGER,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (run_id, ticker)
+);
+
+CREATE TABLE IF NOT EXISTS tool_calls (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  run_id TEXT REFERENCES runs(id),
+  tool_name TEXT,
+  input_json TEXT,
+  output_json TEXT,              -- truncated to 8KB; see truncation rule in db.py
+  output_file_path TEXT,         -- set when output_json exceeds 8KB
+  latency_ms INTEGER,
+  cached INTEGER DEFAULT 0,      -- 1 = cache hit
+  error_msg TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS eval_examples (
+  ticker TEXT PRIMARY KEY,
+  expected_recommendation TEXT,
+  expected_thesis_keywords TEXT, -- JSON
+  notes TEXT,
+  last_curated DATE
+);
+
+CREATE TABLE IF NOT EXISTS eval_runs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  run_id TEXT REFERENCES runs(id),
+  example_ticker TEXT REFERENCES eval_examples(ticker),
+  passed INTEGER,                -- 1 = pass
+  check_results TEXT,            -- JSON
+  diff_notes TEXT
+);
+
+CREATE TABLE IF NOT EXISTS discovery_cooldown (
+  ticker TEXT PRIMARY KEY,
+  flagged_at TIMESTAMP,
+  expires_at TIMESTAMP,
+  suppression_reason TEXT
+);
+
+-- Performance indexes (Tech Spec §7.5)
+CREATE INDEX IF NOT EXISTS idx_analyses_ticker_created ON analyses(ticker, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analyses_run             ON analyses(run_id);
+CREATE INDEX IF NOT EXISTS idx_tool_calls_run           ON tool_calls(run_id);
+CREATE INDEX IF NOT EXISTS idx_runs_started             ON runs(started_at DESC);
+CREATE INDEX IF NOT EXISTS idx_eval_runs_run            ON eval_runs(run_id);

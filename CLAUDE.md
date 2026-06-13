@@ -87,3 +87,4 @@ pytest                         # run tests
 |---|---|
 | `ANTHROPIC_API_KEY` | `agent/loop.py` — Claude API |
 | `FINNHUB_API_KEY` | `data_sources/finnhub_client.py` |
+| `WARREN_DB` | `storage/db.py` — SQLite path override (default: `warren.db`) |
