@@ -21,15 +21,18 @@ dev = [
     "pytest-recording",
     "ruff",
     "mypy",
+    "pre-commit>=4.6.0",
 ]
 
 [tool.ruff]
 line-length = 100
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = ["E", "F", "I", "ANN", "B"]
 
 [tool.mypy]
 python_version = "3.13"
 strict = true
 ignore_missing_imports = true
+disallow_any_explicit = true
+warn_unreachable = true

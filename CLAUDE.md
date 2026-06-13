@@ -68,6 +68,7 @@ logs/runs/        # Per-run JSONL traces (gitignored)
 - All external API calls live in `data_sources/`; `agent/tools/` calls into `data_sources/`, never directly into yfinance/finnhub.
 - Environment variables are loaded once at startup via `dotenv.load_dotenv()` in `agent/run.py`. Everywhere else, read with `os.environ["KEY"]` — no repeated `load_dotenv()` calls.
 - Do not commit `.env`, `warren.db`, or anything under `logs/`.
+- `local/` is a gitignored scratch dir for review notes, findings, and throwaway artifacts — never shipped or imported by code.
 
 ## Common commands
 
@@ -81,6 +82,10 @@ ruff format .                  # format
 mypy .                         # type check
 pytest                         # run tests
 ```
+
+## Definition of done
+
+Before claiming a task complete, run and pass `ruff check .`, `mypy .`, and `pytest` — then state the result. If the change touched conventions, structure, or commands, update this file in the same change.
 
 ## Environment variables (see .env.example)
 
