@@ -1,5 +1,6 @@
 import json
 import re
+import time
 from typing import Literal, Protocol, cast
 
 import anthropic
@@ -8,6 +9,7 @@ from pydantic import BaseModel, Field, ValidationError
 from agent.budget import RunContext
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import ToolResultOk
+from storage.engine import write_tool_call
 
 
 class _Persona(Protocol):
@@ -201,14 +203,30 @@ def analyze_ticker(
                     force_tool_loop = True
 
                 tool = TOOL_REGISTRY.get(block.name)
+                t0 = time.monotonic()
+                error_msg: str | None = None
                 if tool is None:
                     result_content = f"ERROR: unknown tool '{block.name}'"
+                    error_msg = f"unknown tool '{block.name}'"
                 else:
                     result = tool.run(dict(block.input), run_context)
                     if isinstance(result, ToolResultOk):
                         result_content = result.content
                     else:
                         result_content = f"ERROR: {result.error}"
+                        error_msg = result.error
+                latency_ms = int((time.monotonic() - t0) * 1000)
+
+                write_tool_call(
+                    run_id=run_context.run_id,
+                    tool_name=block.name,
+                    input_json=json.dumps(dict(block.input)),
+                    raw_output=result_content,
+                    latency_ms=latency_ms,
+                    cached=False,
+                    error_msg=error_msg,
+                    seq=run_context.budget.total_tool_calls,
+                )
 
                 tool_results.append(
                     {
