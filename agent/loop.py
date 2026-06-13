@@ -15,7 +15,7 @@ _FORCE_FINAL_MAX_TOKENS = 2048
 
 
 class AnalysisOutput(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}$")
+    ticker: str = Field(pattern=r"^[A-Z]{1,5}([.-][A-Z])?$")
     analysis_type: Literal["holding", "discovery"]
     recommendation: Literal["buy", "sell", "hold"]
     confidence: float = Field(ge=0.0, le=1.0)
