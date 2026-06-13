@@ -100,10 +100,12 @@ def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Sessi
 def test_tool_call_persisted(
     db_engine: object, mock_claude: MagicMock, db_session: Session
 ) -> None:
-    mock_claude([
-        make_tool_use("get_quote", {"ticker": "TSLA"}),
-        make_end_turn(VALID_ANALYSIS_JSON),
-    ])
+    mock_claude(
+        [
+            make_tool_use("get_quote", {"ticker": "TSLA"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
     ctx = _ctx("run-persist")
     mock_fast_info = MagicMock()
     mock_fast_info.last_price = 210.0
@@ -127,10 +129,12 @@ def test_tool_call_persisted(
 def test_tool_call_error_persisted(
     db_engine: object, mock_claude: MagicMock, db_session: Session
 ) -> None:
-    mock_claude([
-        make_tool_use("get_quote", {"ticker": "AAPL"}),
-        make_end_turn(VALID_ANALYSIS_JSON),
-    ])
+    mock_claude(
+        [
+            make_tool_use("get_quote", {"ticker": "AAPL"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
     with patch("data_sources.yfinance_client.yf.Ticker", side_effect=RuntimeError("network error")):
         analyze_ticker("AAPL", _persona(), _routing(), _ctx("run-err"))
 
