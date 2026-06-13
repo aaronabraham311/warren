@@ -86,12 +86,18 @@ VALID_ANALYSIS_JSON = """{
 def mock_claude(
     monkeypatch: pytest.MonkeyPatch,
 ) -> Callable[[list[anthropic.types.Message]], MagicMock]:
-    """Returns a factory: call with a list of Message responses to queue them up."""
+    """Returns a factory: call with a list of Message responses to queue them up.
+
+    The mock client is injected directly into analyze_ticker via monkeypatching
+    the module-level default so tests don't need to pass it explicitly.
+    """
 
     def _setup(responses: list[anthropic.types.Message]) -> MagicMock:
         queue = list(responses)
-        mock_client = MagicMock()
+        mock_client = MagicMock(spec=anthropic.Anthropic)
         mock_client.messages.create.side_effect = lambda **_kw: queue.pop(0)
+        # Patch the Anthropic constructor so analyze_ticker's fallback path
+        # (client=None) also receives the mock client.
         monkeypatch.setattr("agent.loop.anthropic.Anthropic", MagicMock(return_value=mock_client))
         return mock_client
 

@@ -121,8 +121,10 @@ def analyze_ticker(
     persona: _Persona,
     routing_policy: _RoutingPolicy,
     run_context: RunContext,
+    client: anthropic.Anthropic | None = None,
 ) -> AnalysisOutput:
-    client = anthropic.Anthropic()
+    if client is None:
+        client = anthropic.Anthropic()
     messages: list[anthropic.types.MessageParam] = [
         cast(anthropic.types.MessageParam, {"role": "user", "content": _initial_prompt(ticker)})
     ]
@@ -150,7 +152,10 @@ def analyze_ticker(
                 client, model, persona.system_prompt, messages, _FORCE_FINAL_MAX_TOKENS
             )
             _record_usage(run_context, response)
-            return _parse_output(_last_text(response.content))
+            try:
+                return _parse_output(_last_text(response.content))
+            except (ValidationError, ValueError, json.JSONDecodeError) as exc:
+                raise SchemaRepairError("Forced-final response was not valid JSON") from exc
 
         # ── Normal Claude call ────────────────────────────────────────────────
         model = routing_policy.select(iteration, messages, ticker)
@@ -256,7 +261,10 @@ def analyze_ticker(
                     client, model, persona.system_prompt, messages, _FORCE_FINAL_MAX_TOKENS
                 )
                 _record_usage(run_context, response)
-                return _parse_output(_last_text(response.content))
+                try:
+                    return _parse_output(_last_text(response.content))
+                except (ValidationError, ValueError, json.JSONDecodeError) as exc:
+                    raise SchemaRepairError("Forced-final response was not valid JSON") from exc
 
             continue
 

@@ -229,6 +229,26 @@ def test_tool_loop_broken(db_engine: object, mock_claude: MagicMock) -> None:
     assert "tool_loop_broken" in last_user_msg
 
 
+# ── Forced-final invalid JSON → SchemaRepairError ────────────────────────────
+
+
+def test_iteration_cap_invalid_json(db_engine: object, mock_claude: MagicMock) -> None:
+    tool_responses = [
+        make_tool_use("get_quote", {"ticker": _TICKERS[i]}, tool_id=f"toolu_{i:02d}")
+        for i in range(8)
+    ]
+    mock_claude(tool_responses + [make_end_turn("not valid json at all")])
+    with pytest.raises(SchemaRepairError):
+        analyze_ticker("AAPL", _persona(), _routing(), _ctx())
+
+
+def test_tool_loop_broken_invalid_json(db_engine: object, mock_claude: MagicMock) -> None:
+    same_tool = make_tool_use("get_quote", {"ticker": "AAPL"})
+    mock_claude([same_tool, same_tool, same_tool, make_end_turn("not valid json at all")])
+    with pytest.raises(SchemaRepairError):
+        analyze_ticker("AAPL", _persona(), _routing(), _ctx())
+
+
 # ── Tool error recovered ──────────────────────────────────────────────────────
 
 
