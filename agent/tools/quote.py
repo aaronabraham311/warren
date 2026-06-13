@@ -1,10 +1,9 @@
 import json
 from typing import Any
 
-import yfinance as yf
-
 from agent.budget import RunContext
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
+from data_sources.yfinance_client import get_quote
 
 
 class GetQuoteTool(Tool):
@@ -24,25 +23,15 @@ class GetQuoteTool(Tool):
     def run(self, input: dict[str, Any], run_context: RunContext) -> ToolResult:
         ticker = input.get("ticker", "")
         try:
-            info = yf.Ticker(ticker).fast_info
-            price = info.last_price
-            prev_close = info.previous_close
-            volume = info.three_month_average_volume
-
-            day_change_pct = (
-                round((price - prev_close) / prev_close * 100, 2)
-                if prev_close and prev_close != 0
-                else None
-            )
-
+            quote = get_quote(ticker)
             return ToolResultOk(
                 content=json.dumps(
                     {
-                        "ticker": ticker.upper(),
-                        "price": round(price, 2) if price else None,
-                        "previous_close": round(prev_close, 2) if prev_close else None,
-                        "day_change_pct": day_change_pct,
-                        "volume": int(volume) if volume else None,
+                        "ticker": quote.ticker,
+                        "price": quote.price,
+                        "previous_close": quote.previous_close,
+                        "day_change_pct": quote.day_change_pct,
+                        "volume": quote.volume,
                     }
                 )
             )
