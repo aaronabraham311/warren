@@ -9,7 +9,6 @@ from pydantic import BaseModel, Field, ValidationError
 from agent.budget import RunContext
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import ToolResultOk
-from storage.engine import write_tool_call
 
 
 class _Persona(Protocol):
@@ -116,6 +115,27 @@ def _call_claude(
     )
 
 
+def _call_and_record(
+    client: anthropic.Anthropic,
+    model: str,
+    system: str,
+    messages: list[anthropic.types.MessageParam],
+    max_tokens: int,
+    run_context: RunContext,
+    ticker: str,
+) -> anthropic.types.Message:
+    """Time the call, record token/cost usage, and emit an llm_call WAL event."""
+    t0 = time.monotonic()
+    response = _call_claude(client, model, system, messages, max_tokens)
+    latency_ms = int((time.monotonic() - t0) * 1000)
+    _record_usage(run_context, response)
+    if run_context.logger is not None:
+        run_context.logger.log_llm_call(
+            response, ticker=ticker, phase="deep", model=model, latency_ms=latency_ms
+        )
+    return response
+
+
 def analyze_ticker(
     ticker: str,
     persona: _Persona,
@@ -133,6 +153,7 @@ def analyze_ticker(
 
     while True:
         iteration += 1
+        run_context.iterations = iteration
 
         # ── Cost ceiling (hard abort — no force-final, run is over) ──────────
         if run_context.budget.cost_exceeded():
@@ -148,10 +169,15 @@ def analyze_ticker(
         if force_label:
             messages.append(_force_final_message(force_label))
             model = routing_policy.select(iteration, messages, ticker)
-            response = _call_claude(
-                client, model, persona.system_prompt, messages, _FORCE_FINAL_MAX_TOKENS
+            response = _call_and_record(
+                client,
+                model,
+                persona.system_prompt,
+                messages,
+                _FORCE_FINAL_MAX_TOKENS,
+                run_context,
+                ticker,
             )
-            _record_usage(run_context, response)
             try:
                 return _parse_output(_last_text(response.content))
             except (ValidationError, ValueError, json.JSONDecodeError) as exc:
@@ -159,8 +185,9 @@ def analyze_ticker(
 
         # ── Normal Claude call ────────────────────────────────────────────────
         model = routing_policy.select(iteration, messages, ticker)
-        response = _call_claude(client, model, persona.system_prompt, messages, 4096)
-        _record_usage(run_context, response)
+        response = _call_and_record(
+            client, model, persona.system_prompt, messages, 4096, run_context, ticker
+        )
 
         # ── end_turn → try to parse output ───────────────────────────────────
         if response.stop_reason == "end_turn":
@@ -222,16 +249,17 @@ def analyze_ticker(
                         error_msg = result.error
                 latency_ms = int((time.monotonic() - t0) * 1000)
 
-                write_tool_call(
-                    run_id=run_context.run_id,
-                    tool_name=block.name,
-                    input_json=json.dumps(dict(block.input)),
-                    raw_output=result_content,
-                    latency_ms=latency_ms,
-                    cached=False,
-                    error_msg=error_msg,
-                    seq=run_context.budget.total_tool_calls,
-                )
+                if run_context.logger is not None:
+                    run_context.logger.log_tool_call(
+                        tool_name=block.name,
+                        tool_input=dict(block.input),
+                        output=result_content,
+                        cached=False,
+                        latency_ms=latency_ms,
+                        status="ok" if error_msg is None else "error",
+                        ticker=ticker,
+                        error_msg=error_msg,
+                    )
 
                 tool_results.append(
                     {
@@ -257,10 +285,15 @@ def analyze_ticker(
             if force_tool_loop:
                 messages.append(_force_final_message("tool_loop_broken"))
                 model = routing_policy.select(iteration, messages, ticker)
-                response = _call_claude(
-                    client, model, persona.system_prompt, messages, _FORCE_FINAL_MAX_TOKENS
+                response = _call_and_record(
+                    client,
+                    model,
+                    persona.system_prompt,
+                    messages,
+                    _FORCE_FINAL_MAX_TOKENS,
+                    run_context,
+                    ticker,
                 )
-                _record_usage(run_context, response)
                 try:
                     return _parse_output(_last_text(response.content))
                 except (ValidationError, ValueError, json.JSONDecodeError) as exc:

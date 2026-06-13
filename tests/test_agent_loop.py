@@ -6,6 +6,7 @@ SQLite runs in-memory via the db_engine fixture.
 
 import json
 from datetime import datetime, timezone
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -23,12 +24,13 @@ from agent.routing import HardcodedSonnetRouting
 from agent.tools.base import ToolResultError, ToolResultOk
 from agent.tools.quote import GetQuoteTool
 from storage.engine import upsert_analysis, write_run_end, write_run_start
+from storage.logger import RunLogger
 from storage.models import Analysis, AnalysisData, Run, ToolCall
 from tests.conftest import VALID_ANALYSIS_JSON, make_end_turn, make_tool_use
 
 
-def _ctx(run_id: str = "run-test") -> RunContext:
-    return RunContext(run_id=run_id, budget=Budget())
+def _ctx(run_id: str = "run-test", logger: RunLogger | None = None) -> RunContext:
+    return RunContext(run_id=run_id, budget=Budget(), logger=logger)
 
 
 def _persona() -> DefaultPersona:
@@ -98,7 +100,7 @@ def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Sessi
 
 
 def test_tool_call_persisted(
-    db_engine: object, mock_claude: MagicMock, db_session: Session
+    db_engine: object, mock_claude: MagicMock, db_session: Session, tmp_path: Path
 ) -> None:
     mock_claude(
         [
@@ -106,7 +108,8 @@ def test_tool_call_persisted(
             make_end_turn(VALID_ANALYSIS_JSON),
         ]
     )
-    ctx = _ctx("run-persist")
+    logger = RunLogger("run-persist", tmp_path)
+    ctx = _ctx("run-persist", logger=logger)
     mock_fast_info = MagicMock()
     mock_fast_info.last_price = 210.0
     mock_fast_info.previous_close = 205.0
@@ -114,6 +117,8 @@ def test_tool_call_persisted(
     with patch("data_sources.yfinance_client.yf.Ticker") as mock_ticker:
         mock_ticker.return_value.fast_info = mock_fast_info
         analyze_ticker("TSLA", _persona(), _routing(), ctx)
+    # tool_calls are a projection of the JSONL WAL — materialised at reconcile time.
+    logger.flush_to_db(db_session)
 
     rows = db_session.query(ToolCall).filter_by(run_id="run-persist").all()
     assert len(rows) == 1
@@ -127,7 +132,7 @@ def test_tool_call_persisted(
 
 
 def test_tool_call_error_persisted(
-    db_engine: object, mock_claude: MagicMock, db_session: Session
+    db_engine: object, mock_claude: MagicMock, db_session: Session, tmp_path: Path
 ) -> None:
     mock_claude(
         [
@@ -135,8 +140,10 @@ def test_tool_call_error_persisted(
             make_end_turn(VALID_ANALYSIS_JSON),
         ]
     )
+    logger = RunLogger("run-err", tmp_path)
     with patch("data_sources.yfinance_client.yf.Ticker", side_effect=RuntimeError("network error")):
-        analyze_ticker("AAPL", _persona(), _routing(), _ctx("run-err"))
+        analyze_ticker("AAPL", _persona(), _routing(), _ctx("run-err", logger=logger))
+    logger.flush_to_db(db_session)
 
     row = db_session.query(ToolCall).filter_by(run_id="run-err").first()
     assert row is not None

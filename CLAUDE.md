@@ -20,7 +20,7 @@ agent/
   persona.py      # System prompt / persona definition
   routing.py      # Decides which model to route each call to
   budget.py       # Token / cost budget tracking
-  models.py       # Model ID and per-token pricing constants (single source of truth)
+  models.py       # Model IDs + per-model PRICING table (single source of truth)
   tools/          # One file per Claude tool; __init__.py holds the registry
     base.py       # Tool ABC, ToolResult, ToolResultOk, ToolResultError
     quote.py      # get_quote tool (current price via yfinance)
@@ -33,6 +33,9 @@ data_sources/
 storage/
   models.py       # ORM models (Base + all table classes + indexes) — no I/O
   engine.py       # Engine, WAL/FK pragmas, get_session, migrate(), helper fns
+  logger.py       # RunLogger — JSONL per-run trace (the durable WAL) + flush_to_db
+  cost.py         # compute_cost(model, …) — per-model LLM cost from models.PRICING
+  recovery.py     # reconcile_run / reconcile_orphans — rebuild DB rows from a trace
   migrations/     # Alembic migration scripts
 
 tests/
@@ -45,6 +48,31 @@ data/
 
 main.py           # Thin wrapper: delegates to agent.run.main
 logs/runs/        # Per-run JSONL traces (gitignored)
+```
+
+## Run logging — JSONL-as-WAL
+
+Each run writes a structured event trace to `logs/runs/{run_id}.jsonl` via
+`storage.logger.RunLogger` (one `flush()`+`fsync()`'d JSON line per event, so a crash
+never leaves a partial line). **The trace is the source of truth**; the `runs` and
+`tool_calls` SQLite tables are a *derived projection* of it — a queryable cache for the
+dashboard, not written incrementally during the loop.
+
+- The loop only appends events (`log_llm_call` / `log_tool_call`); it does **not** write
+  `tool_calls` rows directly. The `tool_call` event carries the tool input/output (big
+  payloads sidecar to `logs/runs/{run_id}/tool_outputs/`) so every DB column is rebuildable.
+- `RunLogger.flush_to_db(session)` reconciles the trace into the DB at run end
+  (`storage.recovery.reconcile_run`, idempotent delete-then-insert).
+- `storage.recovery.reconcile_orphans()` runs on `agent.run` startup: any run left
+  `status="running"` with a trace on disk (a crash) is reconciled — the DB self-heals.
+- Wired events (single-ticker loop): `run_started`, `ticker_started`, `llm_call`,
+  `tool_call`, `ticker_completed`, `run_completed`. `phase_started`/`phase_completed` are
+  supported by `RunLogger.log()` but unwired until the screening orchestrator exists.
+
+Debug the trace with `jq`, e.g. per-call cost breakdown:
+
+```bash
+jq -c 'select(.event=="llm_call") | {model,input_tokens,cache_read_tokens,cost_usd}' logs/runs/*.jsonl
 ```
 
 ## Code conventions

@@ -1,6 +1,7 @@
 import hashlib
 import json
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from agent.models import (
     PRICE_CACHE_CREATION_PER_TOKEN,
@@ -8,6 +9,9 @@ from agent.models import (
     PRICE_INPUT_PER_TOKEN,
     PRICE_OUTPUT_PER_TOKEN,
 )
+
+if TYPE_CHECKING:
+    from storage.logger import RunLogger
 
 
 def compute_cost(
@@ -61,6 +65,11 @@ class Budget:
 class RunContext:
     run_id: str
     budget: Budget
+    # Optional so existing call sites (and most tests) can omit it; the loop no-ops
+    # event logging when this is None.
+    logger: "RunLogger | None" = None
+    # Number of agent iterations spent on the current ticker (for ticker_completed).
+    iterations: int = 0
     # key = (tool_name, input_hash_prefix) → call count; for tool-loop detection
     tool_call_counts: dict[tuple[str, str], int] = field(default_factory=dict)
 

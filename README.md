@@ -29,7 +29,7 @@ streamlit run dashboard/app.py
 | Language model | Anthropic Claude (via `anthropic` SDK) |
 | Market data | yfinance, Finnhub |
 | SEC filings | EDGAR |
-| Storage | SQLite via SQLAlchemy 2.x |
+| Storage | JSONL run traces (source of truth) + SQLite projection via SQLAlchemy 2.x |
 | Dashboard | Streamlit |
 | Package manager | uv |
 
