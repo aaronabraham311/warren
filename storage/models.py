@@ -1,6 +1,8 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
+from typing import Literal, TypedDict
 
 from sqlalchemy import (
+    Boolean,
     Date,
     DateTime,
     Float,
@@ -10,6 +12,12 @@ from sqlalchemy import (
     UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+RunStatus = Literal["running", "success", "cost_aborted", "failed"]
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 class Base(DeclarativeBase):
@@ -23,7 +31,7 @@ class PromptVersion(Base):
     version_tag: Mapped[str] = mapped_column(Text, nullable=False)
     persona_system_prompt: Mapped[str | None] = mapped_column(Text)
     routing_policy_name: Mapped[str | None] = mapped_column(Text)
-    created_at: Mapped[datetime | None] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime | None] = mapped_column(DateTime, default=_utcnow)
     notes: Mapped[str | None] = mapped_column(Text)
 
 
@@ -34,7 +42,7 @@ class Run(Base):
     prompt_version_id: Mapped[int | None] = mapped_column(Integer)
     started_at: Mapped[datetime | None] = mapped_column(DateTime)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime)
-    status: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[RunStatus | None] = mapped_column(Text)
     total_input_tokens: Mapped[int | None] = mapped_column(Integer)
     total_output_tokens: Mapped[int | None] = mapped_column(Integer)
     total_cost_usd: Mapped[float | None] = mapped_column(Float)
@@ -58,7 +66,20 @@ class Watchlist(Base):
 
     ticker: Mapped[str] = mapped_column(Text, primary_key=True)
     notes: Mapped[str | None] = mapped_column(Text)
-    added_at: Mapped[datetime | None] = mapped_column(DateTime, default=datetime.utcnow)
+    added_at: Mapped[datetime | None] = mapped_column(DateTime, default=_utcnow)
+
+
+class AnalysisData(TypedDict):
+    analysis_type: str | None
+    recommendation: str | None
+    confidence: float | None
+    thesis: str | None
+    lynch_signals: list[str]
+    buffett_signals: list[str]
+    key_risks: list[str]
+    data_quality_notes: list[str]
+    tool_calls_made: int | None
+    tokens_used: int | None
 
 
 class Analysis(Base):
@@ -66,8 +87,8 @@ class Analysis(Base):
     __table_args__ = (UniqueConstraint("run_id", "ticker", name="uq_analyses_run_ticker"),)
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    run_id: Mapped[str | None] = mapped_column(Text)
-    ticker: Mapped[str | None] = mapped_column(Text)
+    run_id: Mapped[str] = mapped_column(Text, nullable=False)
+    ticker: Mapped[str] = mapped_column(Text, nullable=False)
     analysis_type: Mapped[str | None] = mapped_column(Text)
     recommendation: Mapped[str | None] = mapped_column(Text)
     confidence: Mapped[float | None] = mapped_column(Float)
@@ -78,7 +99,7 @@ class Analysis(Base):
     data_quality_notes: Mapped[str | None] = mapped_column(Text)
     tool_calls_made: Mapped[int | None] = mapped_column(Integer)
     tokens_used: Mapped[int | None] = mapped_column(Integer)
-    created_at: Mapped[datetime | None] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime | None] = mapped_column(DateTime, default=_utcnow)
 
 
 class ToolCall(Base):
@@ -91,9 +112,9 @@ class ToolCall(Base):
     output_json: Mapped[str | None] = mapped_column(Text)
     output_file_path: Mapped[str | None] = mapped_column(Text)
     latency_ms: Mapped[int | None] = mapped_column(Integer)
-    cached: Mapped[int] = mapped_column(Integer, default=0)
+    cached: Mapped[bool] = mapped_column(Boolean, default=False)
     error_msg: Mapped[str | None] = mapped_column(Text)
-    created_at: Mapped[datetime | None] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime | None] = mapped_column(DateTime, default=_utcnow)
 
 
 class EvalExample(Base):
@@ -112,7 +133,7 @@ class EvalRun(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     run_id: Mapped[str | None] = mapped_column(Text)
     example_ticker: Mapped[str | None] = mapped_column(Text)
-    passed: Mapped[int | None] = mapped_column(Integer)
+    passed: Mapped[bool | None] = mapped_column(Boolean)
     check_results: Mapped[str | None] = mapped_column(Text)
     diff_notes: Mapped[str | None] = mapped_column(Text)
 
