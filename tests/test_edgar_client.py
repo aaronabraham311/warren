@@ -164,3 +164,35 @@ def test_http_error_returns_network(
     result = client.get_filing_section("AAPL", "10-K", "mdna")
     assert isinstance(result, DataSourceError)
     assert result.error_code == "network"
+
+
+def test_non_json_200_returns_parse(
+    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A 200 response with a non-JSON body must be returned as parse, never raised."""
+    client = EDGARClient(edgar_conn, _sleep=lambda _s: None)
+
+    def fake_get(url: str, timeout: int | None = None) -> _FakeResponse:
+        return _FakeResponse(200, "<html>EDGAR is temporarily unavailable</html>")
+
+    monkeypatch.setattr(client._session, "get", fake_get)
+    result = client.get_filing_section("AAPL", "10-K", "mdna")
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "parse"
+
+
+def test_malformed_submissions_returns_parse(
+    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Valid JSON with a null 'filings' key must be returned as parse, never raised."""
+    client = EDGARClient(edgar_conn, _sleep=lambda _s: None)
+
+    def fake_get(url: str, timeout: int | None = None) -> _FakeResponse:
+        if "company_tickers.json" in url:
+            return _FakeResponse(200, COMPANY_TICKERS)
+        return _FakeResponse(200, json.dumps({"filings": None}))
+
+    monkeypatch.setattr(client._session, "get", fake_get)
+    result = client.get_filing_section("AAPL", "10-K", "mdna")
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "parse"

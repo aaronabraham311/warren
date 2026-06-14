@@ -109,6 +109,9 @@ class EDGARClient:
     ) -> None:
         self._cache = CacheStore(db_conn)
         self._sleep = _sleep
+        # Parsed ticker→CIK map, memoized so the ~1MB bulk file is parsed at most
+        # once per process (the CacheStore only holds the raw JSON text).
+        self._cik_map: dict[str, str] | None = None
         # Default headers on the session guarantee the User-Agent is present on
         # every request — a request without it cannot be constructed.
         self._session = requests.Session()
@@ -137,7 +140,10 @@ class EDGARClient:
             return DataSourceError(error_code="not_found", message=str(exc))
         except _NetworkError as exc:
             return DataSourceError(error_code="network", message=str(exc))
-        except _ParseError as exc:
+        # _ParseError plus the stdlib exceptions raised while interpreting EDGAR
+        # responses (a non-JSON 200 body, a malformed/missing field, a bad date).
+        # The client's contract is to return DataSourceError, never raise to callers.
+        except (_ParseError, json.JSONDecodeError, ValueError, KeyError, AttributeError) as exc:
             return DataSourceError(error_code="parse", message=str(exc))
 
         text = raw_text[:MAX_CHARS]
@@ -172,21 +178,34 @@ class EDGARClient:
     # ── Step 1: ticker → CIK via the authoritative bulk map ────────────────
 
     def _resolve_cik(self, ticker: str) -> str:
-        key = make_key("edgar_cik_map")
-        raw = self._cache.get(key)
-        if raw is None:
-            raw = self._get("https://www.sec.gov/files/company_tickers.json").text
-            self._cache.set(key, raw, CIK_TTL_HOURS)
+        cik = self._cik_map_lookup(ticker.upper())
+        if cik is None:
+            raise _NotFoundError(f"ticker {ticker.upper()} not found in EDGAR")
+        return cik
 
-        want = ticker.upper()
+    def _cik_map_lookup(self, want: str) -> str | None:
+        if self._cik_map is None:
+            key = make_key("edgar_cik_map")
+            raw = self._cache.get(key)
+            if raw is None:
+                raw = self._get("https://www.sec.gov/files/company_tickers.json").text
+                self._cache.set(key, raw, CIK_TTL_HOURS)
+            self._cik_map = self._parse_cik_map(raw)
+        return self._cik_map.get(want)
+
+    @staticmethod
+    def _parse_cik_map(raw: str) -> dict[str, str]:
         data = json.loads(raw)
+        out: dict[str, str] = {}
         if isinstance(data, dict):
             for entry in data.values():
-                if isinstance(entry, dict) and str(entry.get("ticker", "")).upper() == want:
-                    cik = entry.get("cik_str")
-                    if isinstance(cik, int):
-                        return f"{cik:010d}"
-        raise _NotFoundError(f"ticker {want} not found in EDGAR")
+                if not isinstance(entry, dict):
+                    continue
+                ticker = entry.get("ticker")
+                cik = entry.get("cik_str")
+                if isinstance(ticker, str) and isinstance(cik, int):
+                    out[ticker.upper()] = f"{cik:010d}"
+        return out
 
     # ── Steps 2-3: submissions history → pick the filing ───────────────────
 
