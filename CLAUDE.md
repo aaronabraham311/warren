@@ -41,9 +41,17 @@ storage/
   recovery.py     # reconcile_run / reconcile_orphans — rebuild DB rows from a trace
   migrations/     # Alembic migration scripts
 
+eval/
+  fixtures/
+    __init__.py   # load_fixture(ticker, client, method, name=) + record_fixtures()
+    __main__.py   # CLI: python -m eval.fixtures --record AAPL MSFT GOOG
+    {TICKER}/{client}/{method}/{hash}.json   # committed recorded payloads
+
 tests/
-  conftest.py     # Shared fixtures (db_engine, db_session, mock_claude)
+  conftest.py     # Shared fixtures (db_engine, db_session, mock_claude,
+                  #   edgar_fixture, finnhub_fixture, autouse _no_live_network guard)
   test_agent_loop.py
+  test_{yfinance,edgar,finnhub}_client.py
 
 data/
   portfolio.csv   # ticker, shares, cost_basis, purchase_date
@@ -77,6 +85,22 @@ Debug the trace with `jq`, e.g. per-call cost breakdown:
 ```bash
 jq -c 'select(.event=="llm_call") | {model,input_tokens,cache_read_tokens,cost_usd}' logs/runs/*.jsonl
 ```
+
+## Test fixtures — recorded, never live
+
+Data-fetcher tests never hit the network. Each client (`yfinance` / `edgar` / `finnhub`)
+is mocked at its upstream boundary and fed a **recorded payload** committed under
+`eval/fixtures/{TICKER}/{client}/{method}/{hash}.json`, where `hash` is
+`sha256(json.dumps(input, sort_keys=True))[:8]` (error cases use names like
+`error_not_found.json`). Fixtures store the *raw upstream payload* the client parses,
+not the model output — tests exercise the real parsing path. Load them with
+`eval.fixtures.load_fixture(...)`; the same paths feed the Week-6 eval harness.
+
+- An autouse `_no_live_network` guard in `conftest.py` blocks `socket.connect`, so any
+  unmocked live call fails loudly. Keep the suite offline.
+- Fixtures are committed and **never regenerated in CI**. To refresh them from live APIs
+  (requires network; Finnhub also needs `FINNHUB_API_KEY`, else it's skipped):
+  `python -m eval.fixtures --record AAPL`.
 
 ## Code conventions
 

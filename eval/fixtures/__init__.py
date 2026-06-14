@@ -1,16 +1,32 @@
-"""Fixture loading and recording utilities for yfinance integration tests.
+"""Fixture loading and recording utilities for the data-fetcher tests.
 
 Fixture layout:
     eval/fixtures/{TICKER}/{client}/{method}/{input_hash}.json
 
 The input_hash is the first 8 hex chars of sha256(json.dumps(input_dict, sort_keys=True)).
-Error fixtures use descriptive names like ``error_not_found.json`` instead.
+Every method of a given ticker shares the ticker's hash, since the only input is the
+ticker. Error fixtures use descriptive names like ``error_not_found.json`` instead.
+
+Each fixture stores the *raw upstream payload* a client consumes (not the parsed model
+output), so tests mock at the network boundary and exercise the real parsing path:
+
+    yfinance  get_price / get_fundamentals / get_growth_metrics → the ``.info`` /
+              ``fast_info`` / ``financials`` fields we read
+    edgar     get_filing_section → {company_tickers, submissions, filing_html}
+    finnhub   get_news → {"items": [...]} ; get_basic_financials → the basics dict
+
+This same layout powers the Week-6 eval harness, which loads from these paths.
 
 Recording (requires live network + valid API keys):
     python -m eval.fixtures --record AAPL MSFT GOOG
+
+yfinance and EDGAR need only network; Finnhub additionally needs ``FINNHUB_API_KEY``
+and is skipped (with a warning) when it is unset, so recording never hard-fails.
 """
 
 import json
+import os
+import sqlite3
 from hashlib import sha256
 from pathlib import Path
 
@@ -35,21 +51,32 @@ def load_fixture(
     return data
 
 
-def record_fixtures(ticker: str, output_dir: Path) -> None:
-    """Fetch live data from yfinance and write fixture files under *output_dir*.
+def _write_fixture(output_dir: Path, ticker: str, client: str, method: str, data: object) -> None:
+    key = _input_hash(ticker)
+    path = output_dir / ticker / client / method / f"{key}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, default=str))
+    print(f"recorded {path}")
 
-    Overwrites any existing fixture files for *ticker*.
-    Requires network access; no API key needed for yfinance.
+
+def record_fixtures(ticker: str, output_dir: Path) -> None:
+    """Fetch live data from all three clients and write fixture files under *output_dir*.
+
+    Overwrites any existing fixture files for *ticker*. Requires network access.
+    yfinance and EDGAR need no key; Finnhub is skipped with a warning when
+    ``FINNHUB_API_KEY`` is unset, so recording never hard-fails.
     """
+    record_yfinance(ticker, output_dir)
+    record_edgar(ticker, output_dir)
+    record_finnhub(ticker, output_dir)
+
+
+def record_yfinance(ticker: str, output_dir: Path) -> None:
+    """Record the yfinance fixtures (no API key required)."""
     import yfinance as yf
 
-    key = _input_hash(ticker)
-
     def _write(subdir: str, data: dict[str, object]) -> None:
-        path = output_dir / ticker / "yfinance" / subdir / f"{key}.json"
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(data, indent=2, default=str))
-        print(f"recorded {path}")
+        _write_fixture(output_dir, ticker, "yfinance", subdir, data)
 
     t = yf.Ticker(ticker)
 
@@ -96,3 +123,50 @@ def record_fixtures(ticker: str, output_dir: Path) -> None:
     except Exception:
         pass
     _write("get_growth_metrics", fin_data)
+
+
+def record_edgar(ticker: str, output_dir: Path) -> None:
+    """Record the EDGAR get_filing_section fixture (no API key required).
+
+    Captures the three raw HTTP bodies the client fetches — the ticker→CIK map,
+    the submissions history, and the most recent 10-K's HTML — in one file.
+    """
+    from data_sources.edgar_client import EDGARClient
+
+    client = EDGARClient(sqlite3_memory())
+    company_tickers = client._get("https://www.sec.gov/files/company_tickers.json").text
+    cik = client._resolve_cik(ticker)
+    submissions = client._get(f"{client.BASE_URL}/submissions/CIK{cik}.json").text
+    filing = client._select_filing(cik, "10-K", None)
+    filing_html = client._get(filing.url).text
+    _write_fixture(
+        output_dir,
+        ticker,
+        "edgar",
+        "get_filing_section",
+        {
+            "company_tickers": json.loads(company_tickers),
+            "submissions": json.loads(submissions),
+            "filing_html": filing_html,
+        },
+    )
+
+
+def record_finnhub(ticker: str, output_dir: Path) -> None:
+    """Record the Finnhub fixtures. Requires ``FINNHUB_API_KEY``; skipped if unset."""
+    api_key = os.environ.get("FINNHUB_API_KEY")
+    if not api_key:
+        print("skipping finnhub: FINNHUB_API_KEY not set")
+        return
+
+    from data_sources.finnhub_client import FinnhubClient
+
+    client = FinnhubClient(sqlite3_memory(), api_key=api_key)
+    news = client.client.company_news(ticker, _from="2023-01-01", to="2023-12-31")
+    _write_fixture(output_dir, ticker, "finnhub", "get_news", {"items": news})
+    basics = client.client.company_basic_financials(ticker, "all")
+    _write_fixture(output_dir, ticker, "finnhub", "get_basic_financials", basics)
+
+
+def sqlite3_memory() -> sqlite3.Connection:
+    return sqlite3.connect(":memory:")

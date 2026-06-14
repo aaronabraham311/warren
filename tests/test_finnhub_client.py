@@ -1,10 +1,11 @@
 """Unit tests for FinnhubClient.
 
-All Finnhub network calls are mocked — no live network, no API key needed.
-``data_sources.finnhub_client.finnhub.Client`` is patched so the constructed
-``self.client`` is a MagicMock with stubbed ``company_news`` /
-``company_basic_financials``. The SQLite cache uses the in-memory ``finnhub_conn``
-fixture.
+All Finnhub network calls are mocked — no live network, no API key needed (the
+autouse socket guard enforces this). ``data_sources.finnhub_client.finnhub.Client``
+is patched so the constructed ``self.client`` is a MagicMock with stubbed
+``company_news`` / ``company_basic_financials``. Their return payloads come from the
+recorded fixtures under ``eval/fixtures/AAPL/finnhub/`` via the ``finnhub_fixture``
+conftest fixture. The SQLite cache uses the in-memory ``finnhub_conn`` fixture.
 """
 
 import sqlite3
@@ -21,32 +22,6 @@ from data_sources.finnhub_client import (
     NewsItem,
     RateLimiter,
 )
-
-# ── Inline fixture data ───────────────────────────────────────────────────────
-
-NEWS_RAW: list[dict[str, object]] = [
-    {
-        "headline": "Older headline",
-        "summary": "older summary",
-        "source": "Reuters",
-        "datetime": 1_700_000_000,
-        "url": "https://example.com/older",
-    },
-    {
-        "headline": "Newer headline",
-        "summary": "newer summary",
-        "source": "Bloomberg",
-        "datetime": 1_700_100_000,
-        "url": "https://example.com/newer",
-    },
-]
-
-FIN_RAW: dict[str, object] = {
-    "metric": {"peTTM": 28.5, "pbQuarterly": 45.2, "roeTTM": 150.0},
-    "metricType": "all",
-    "symbol": "AAPL",
-}
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -85,9 +60,11 @@ def test_empty_api_key_raises_environment_error(finnhub_conn: sqlite3.Connection
 # ── get_news ──────────────────────────────────────────────────────────────────
 
 
-def test_get_news_returns_sorted_items(finnhub_conn: sqlite3.Connection) -> None:
+def test_get_news_returns_sorted_items(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
     mock = MagicMock()
-    mock.company_news.return_value = NEWS_RAW
+    mock.company_news.return_value = finnhub_fixture["news"]
     client = _make_client(finnhub_conn, mock)
 
     result = client.get_news("AAPL", days=7)
@@ -103,9 +80,11 @@ def test_get_news_returns_sorted_items(finnhub_conn: sqlite3.Connection) -> None
     assert result[0].sentiment is None
 
 
-def test_get_news_caches_result(finnhub_conn: sqlite3.Connection) -> None:
+def test_get_news_caches_result(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
     mock = MagicMock()
-    mock.company_news.return_value = NEWS_RAW
+    mock.company_news.return_value = finnhub_fixture["news"]
     client = _make_client(finnhub_conn, mock)
 
     client.get_news("AAPL", days=7)
@@ -114,9 +93,11 @@ def test_get_news_caches_result(finnhub_conn: sqlite3.Connection) -> None:
     assert mock.company_news.call_count == 1, "second call must be a cache hit"
 
 
-def test_get_news_expired_cache_refetches(finnhub_conn: sqlite3.Connection) -> None:
+def test_get_news_expired_cache_refetches(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
     mock = MagicMock()
-    mock.company_news.return_value = NEWS_RAW
+    mock.company_news.return_value = finnhub_fixture["news"]
     client = _make_client(finnhub_conn, mock)
 
     client.get_news("AAPL", days=7)
@@ -148,9 +129,11 @@ def test_get_news_network_error(finnhub_conn: sqlite3.Connection) -> None:
 # ── get_basic_financials ──────────────────────────────────────────────────────
 
 
-def test_get_basic_financials_maps_fields(finnhub_conn: sqlite3.Connection) -> None:
+def test_get_basic_financials_maps_fields(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
     mock = MagicMock()
-    mock.company_basic_financials.return_value = FIN_RAW
+    mock.company_basic_financials.return_value = finnhub_fixture["financials"]
     client = _make_client(finnhub_conn, mock)
 
     result = client.get_basic_financials("AAPL")
@@ -163,9 +146,11 @@ def test_get_basic_financials_maps_fields(finnhub_conn: sqlite3.Connection) -> N
     assert result.source == "finnhub"
 
 
-def test_get_basic_financials_caches_result(finnhub_conn: sqlite3.Connection) -> None:
+def test_get_basic_financials_caches_result(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
     mock = MagicMock()
-    mock.company_basic_financials.return_value = FIN_RAW
+    mock.company_basic_financials.return_value = finnhub_fixture["financials"]
     client = _make_client(finnhub_conn, mock)
 
     client.get_basic_financials("AAPL")
@@ -174,9 +159,11 @@ def test_get_basic_financials_caches_result(finnhub_conn: sqlite3.Connection) ->
     assert mock.company_basic_financials.call_count == 1
 
 
-def test_get_basic_financials_expired_cache_refetches(finnhub_conn: sqlite3.Connection) -> None:
+def test_get_basic_financials_expired_cache_refetches(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
     mock = MagicMock()
-    mock.company_basic_financials.return_value = FIN_RAW
+    mock.company_basic_financials.return_value = finnhub_fixture["financials"]
     client = _make_client(finnhub_conn, mock)
 
     client.get_basic_financials("AAPL")
@@ -211,16 +198,19 @@ def test_get_basic_financials_falls_back_to_pb_annual(finnhub_conn: sqlite3.Conn
 # ── 429 retry / backoff ───────────────────────────────────────────────────────
 
 
-def test_429_retries_then_succeeds(finnhub_conn: sqlite3.Connection) -> None:
+def test_429_retries_then_succeeds(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
     sleep_calls: list[float] = []
     mock = MagicMock()
     call_count = [0]
+    financials = finnhub_fixture["financials"]
 
-    def side_effect(symbol: str, metric: str) -> dict[str, object]:
+    def side_effect(symbol: str, metric: str) -> object:
         call_count[0] += 1
         if call_count[0] == 1:
             raise _api_exc(429, "rate limited")
-        return FIN_RAW
+        return financials
 
     mock.company_basic_financials.side_effect = side_effect
     client = _make_client(finnhub_conn, mock, _sleep=lambda s: sleep_calls.append(s))

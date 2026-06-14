@@ -267,10 +267,13 @@ def test_get_fundamentals_returns_error_on_network_failure(yf_conn: sqlite3.Conn
 def test_get_fundamentals_returns_not_found_for_invalid_ticker(yf_conn: sqlite3.Connection) -> None:
     client = _make_client(yf_conn)
 
+    # yfinance returns a near-empty dict for unknown tickers — recorded as an
+    # error fixture under eval/fixtures/INVALID/.
+    invalid_info = load_fixture("INVALID", "yfinance", "get_fundamentals", name="error_not_found")
+
     def side_effect(ticker: str) -> MagicMock:
         t = MagicMock()
-        # yfinance returns a near-empty dict for unknown tickers
-        t.info = {"regularMarketPrice": None, "currentPrice": None, "quoteType": "NONE"}
+        t.info = invalid_info
         return t
 
     with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):

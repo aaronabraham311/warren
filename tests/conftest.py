@@ -1,5 +1,7 @@
+import socket
 import sqlite3
 from collections.abc import Callable, Generator
+from typing import NoReturn
 from unittest.mock import MagicMock
 
 import anthropic
@@ -9,7 +11,40 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 
 import storage.engine as eng
+from eval.fixtures import load_fixture
 from storage.models import Base
+
+
+@pytest.fixture(autouse=True)
+def _no_live_network(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Fail any test that attempts a real network connection.
+
+    Blocks at the socket layer so the guarantee holds regardless of which HTTP
+    library a client uses. Mocked calls never reach the socket, so they are
+    unaffected — only an unmocked live call (requests.get, yfinance.Ticker, the
+    finnhub SDK, …) trips this and turns into a loud failure.
+    """
+
+    def _blocked(*_args: object, **_kwargs: object) -> NoReturn:
+        raise RuntimeError("Live network access is disabled in tests; mock the call.")
+
+    monkeypatch.setattr(socket.socket, "connect", _blocked)
+    monkeypatch.setattr(socket.socket, "connect_ex", _blocked)
+
+
+@pytest.fixture()
+def edgar_fixture() -> dict[str, object]:
+    """Recorded EDGAR payloads: {company_tickers, submissions, filing_html}."""
+    return load_fixture("AAPL", "edgar", "get_filing_section")
+
+
+@pytest.fixture()
+def finnhub_fixture() -> dict[str, object]:
+    """Recorded Finnhub payloads: {"news": [...], "financials": {...}}."""
+    return {
+        "news": load_fixture("AAPL", "finnhub", "get_news")["items"],
+        "financials": load_fixture("AAPL", "finnhub", "get_basic_financials"),
+    }
 
 
 @pytest.fixture()

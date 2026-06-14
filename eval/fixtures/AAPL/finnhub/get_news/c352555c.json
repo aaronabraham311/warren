@@ -1,0 +1,18 @@
+{
+  "items": [
+    {
+      "headline": "Older headline",
+      "summary": "older summary",
+      "source": "Reuters",
+      "datetime": 1700000000,
+      "url": "https://example.com/older"
+    },
+    {
+      "headline": "Newer headline",
+      "summary": "newer summary",
+      "source": "Bloomberg",
+      "datetime": 1700100000,
+      "url": "https://example.com/newer"
+    }
+  ]
+}
