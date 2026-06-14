@@ -6,6 +6,7 @@ from agent.tools.holdings import GetHoldingContextTool
 from agent.tools.news import GetNewsTool
 from agent.tools.quote import GetQuoteTool
 from agent.tools.screen import ScreenUniverseTool
+from agent.tools.valuation import GetValuationMultiplesTool
 
 TOOL_REGISTRY: dict[str, Tool] = {
     "get_quote": GetQuoteTool(),
@@ -15,6 +16,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "get_news": GetNewsTool(),
     "screen_universe": ScreenUniverseTool(),
     "get_holding_context": GetHoldingContextTool(),
+    "get_valuation_multiples": GetValuationMultiplesTool(),
 }
 
 TOOL_DEFINITIONS: list[dict[str, object]] = [t.to_api_dict() for t in TOOL_REGISTRY.values()]

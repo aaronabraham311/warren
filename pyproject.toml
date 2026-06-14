@@ -55,6 +55,7 @@ module = [
     "agent.tools.news",
     "agent.tools.screen",
     "agent.tools.holdings",
+    "agent.tools.valuation",
     "data_sources.yfinance_client",
     "data_sources.edgar_client",
     "data_sources.finnhub_client",

@@ -24,10 +24,11 @@ from agent.tools.holdings import GetHoldingContextInput, GetHoldingContextTool, 
 from agent.tools.news import GetNewsInput, GetNewsTool, NewsResult
 from agent.tools.quote import GetQuoteInput, GetQuoteTool
 from agent.tools.screen import ScreenResult, ScreenUniverseInput, ScreenUniverseTool
+from agent.tools.valuation import GetValuationMultiplesInput, GetValuationMultiplesTool
 from data_sources.edgar_client import FilingSection
 from data_sources.errors import DataSourceError
 from data_sources.finnhub_client import FinnhubFinancials, NewsItem
-from data_sources.yfinance_client import FundamentalsData, PriceData
+from data_sources.yfinance_client import FundamentalsData, PriceData, ValuationData
 from storage.logger import RunLogger
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -74,9 +75,11 @@ class _FakeYF:
         *,
         price: PriceData | DataSourceError | Exception | None = None,
         fundamentals: Callable[[str], FundamentalsData | DataSourceError] | None = None,
+        valuation: ValuationData | DataSourceError | None = None,
     ) -> None:
         self._price = price
         self._fundamentals = fundamentals
+        self._valuation = valuation
         self.fundamentals_calls = 0
 
     def get_price(self, ticker: str) -> PriceData | DataSourceError:
@@ -89,6 +92,10 @@ class _FakeYF:
         self.fundamentals_calls += 1
         assert self._fundamentals is not None
         return self._fundamentals(ticker)
+
+    def get_valuation_multiples(self, ticker: str) -> ValuationData | DataSourceError:
+        assert self._valuation is not None
+        return self._valuation
 
 
 class _FakeFinnhub:
@@ -115,7 +122,7 @@ class _FakeFinnhub:
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_seven_tools() -> None:
+def test_registry_has_all_eight_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -124,6 +131,7 @@ def test_registry_has_all_seven_tools() -> None:
         "get_news",
         "screen_universe",
         "get_holding_context",
+        "get_valuation_multiples",
     }
     assert all(isinstance(t, Tool) for t in TOOL_REGISTRY.values())
 
@@ -336,3 +344,104 @@ def test_get_holding_context_not_in_portfolio() -> None:
     result = GetHoldingContextTool().run(GetHoldingContextInput(ticker="ZZZZ"), _ctx())
     assert isinstance(result, ToolResultError)
     assert result.error_code == "not_found"
+
+
+# ── get_valuation_multiples ───────────────────────────────────────────────────
+
+
+def _valuation(
+    ticker: str = "AAPL",
+    *,
+    ev: int | None = 3_000_000_000_000,
+    op_income: float | None = 120_000_000_000.0,
+    ebitda: float | None = 150_000_000_000.0,
+    fcf: float | None = 110_000_000_000.0,
+    mkt_cap: int | None = 2_800_000_000_000,
+    curr_assets: int | None = 150_000_000_000,
+    total_liab: int | None = 300_000_000_000,
+    tangible_bv: float | None = 60_000_000_000.0,
+    div_yield: float | None = 0.5,
+) -> ValuationData:
+    ev_f = float(ev) if ev is not None else None
+    ev_to_ebit = round(ev_f / op_income, 2) if ev_f and op_income and op_income > 0 else None
+    ev_to_ebitda = round(ev_f / ebitda, 2) if ev_f and ebitda and ebitda > 0 else None
+    fcf_yield = round(float(fcf) / ev_f * 100, 4) if fcf and ev_f and ev_f > 0 else None
+    earnings_yield = round(op_income / ev_f * 100, 4) if op_income and ev_f and ev_f > 0 else None
+    ncav: int | None = None
+    if curr_assets is not None and total_liab is not None:
+        ncav = curr_assets - total_liab
+    ncav_to_mkt_cap: float | None = None
+    is_net_net = False
+    if ncav is not None and mkt_cap and mkt_cap > 0:
+        ncav_to_mkt_cap = round(ncav / mkt_cap, 4)
+        is_net_net = ncav > mkt_cap
+    p_tangible_book: float | None = None
+    if mkt_cap and tangible_bv and tangible_bv > 0:
+        p_tangible_book = round(mkt_cap / tangible_bv, 2)
+    return ValuationData(
+        ticker=ticker,
+        as_of=date.today(),
+        enterprise_value=ev,
+        ev_to_ebit=ev_to_ebit,
+        ev_to_ebitda=ev_to_ebitda,
+        acquirers_multiple=ev_to_ebit,
+        fcf_yield=fcf_yield,
+        earnings_yield=earnings_yield,
+        ncav=ncav,
+        ncav_to_market_cap=ncav_to_mkt_cap,
+        is_net_net=is_net_net,
+        p_tangible_book=p_tangible_book,
+        dividend_yield_pct=div_yield,
+        data_age_hours=0,
+    )
+
+
+def test_get_valuation_multiples_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    v = _valuation()
+    monkeypatch.setattr("agent.tools.valuation.yfinance_client", lambda: _FakeYF(valuation=v))
+    result = GetValuationMultiplesTool().run(GetValuationMultiplesInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ValuationData)
+    assert result.data.ev_to_ebit == pytest.approx(25.0)
+    assert result.data.ev_to_ebitda == pytest.approx(20.0)
+    assert result.data.acquirers_multiple == result.data.ev_to_ebit
+    assert result.data.earnings_yield == pytest.approx(4.0)
+    assert result.data.is_net_net is False
+
+
+def test_get_valuation_multiples_net_net_flag(monkeypatch: pytest.MonkeyPatch) -> None:
+    # NCAV = 500B - 100B = 400B > market cap 300B → net-net
+    v = _valuation(
+        mkt_cap=300_000_000_000,
+        curr_assets=500_000_000_000,
+        total_liab=100_000_000_000,
+    )
+    monkeypatch.setattr("agent.tools.valuation.yfinance_client", lambda: _FakeYF(valuation=v))
+    result = GetValuationMultiplesTool().run(GetValuationMultiplesInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ValuationData)
+    assert result.data.ncav == 400_000_000_000
+    assert result.data.is_net_net is True
+    assert result.data.ncav_to_market_cap == pytest.approx(400 / 300, rel=1e-4)
+
+
+def test_get_valuation_multiples_none_when_ev_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+    v = _valuation(ev=None)
+    monkeypatch.setattr("agent.tools.valuation.yfinance_client", lambda: _FakeYF(valuation=v))
+    result = GetValuationMultiplesTool().run(GetValuationMultiplesInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ValuationData)
+    assert result.data.ev_to_ebit is None
+    assert result.data.ev_to_ebitda is None
+    assert result.data.acquirers_multiple is None
+    assert result.data.fcf_yield is None
+    assert result.data.earnings_yield is None
+
+
+def test_get_valuation_multiples_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
+    err = DataSourceError(error_code="not_found", message="no data")
+    monkeypatch.setattr("agent.tools.valuation.yfinance_client", lambda: _FakeYF(valuation=err))
+    result = GetValuationMultiplesTool().run(GetValuationMultiplesInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+    assert result.retryable is False

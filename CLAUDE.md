@@ -32,6 +32,7 @@ agent/
     news.py       # get_news           → FinnhubClient.get_news → NewsResult
     screen.py     # screen_universe    → portfolio∪watchlist filtered on fundamentals → ScreenResult
     holdings.py   # get_holding_context→ portfolio.csv + get_price → HoldingContext
+    valuation.py  # get_valuation_multiples → YFinanceClient.get_valuation_multiples → ValuationData
 
 data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
