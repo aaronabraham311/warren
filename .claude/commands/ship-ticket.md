@@ -21,7 +21,7 @@ Read these first — they are the mistakes that cost human round-trips on past r
    (or otherwise request sign-off) until the HTML plan is written to `local/` **and
    opened in the browser**. A plan the human can't see is not a plan they can approve.
 
-2. **Always branch from a freshly-fetched `origin/main`, never from the branch you
+2. **Always branch from a freshly-fetched `origin/main`, never from whatever HEAD you
    happen to be on.** Branching off a feature branch bundles its unmerged commits into
    your PR, which then **conflicts with `main`**. GitHub silently refuses to schedule
    the `pull_request` workflow while the merge commit is unresolvable — so CI shows
@@ -29,18 +29,24 @@ Read these first — they are the mistakes that cost human round-trips on past r
 
 ---
 
-## Phase 0 — Branch hygiene (do this FIRST, always)
+## Phase 0 — Worktree setup (do this FIRST, always)
+
+Each ticket gets its own **git worktree** so parallel tickets never share a working
+tree. All Phase 1–6 shell commands run inside `<worktree>` unless noted.
 
 ```bash
 git fetch origin main -q
-git checkout -b <type>/<slug> origin/main   # branch FROM origin/main explicitly
+git worktree add ../warren-<slug> -b <type>/<slug> origin/main
+# From here, all work happens inside ../warren-<slug>/
 ```
 
 - `<type>`: `feat` / `fix` / `chore` / `docs` matching the ticket.
 - `<slug>`: kebab-case from the ticket title, ≤40 chars (e.g. `finnhub-client`).
-- **Explicitly pass `origin/main` as the start point.** Do not rely on the current
-  `HEAD` — you may be sitting on an unmerged feature branch.
-- If the working tree is dirty, stop and surface it rather than branching over changes.
+- `<worktree>` = `../warren-<slug>` — note this path; substitute it in every command below.
+- **Pass `origin/main` as the start point explicitly** — do not rely on the current HEAD.
+- If `../warren-<slug>` already exists, inspect it before overwriting — it may be an
+  in-progress run for the same ticket.
+- The HTML plan goes in `<worktree>/local/<slug>-plan.html` (gitignored inside the worktree).
 
 ---
 
@@ -108,7 +114,8 @@ Fix anything red and re-run until clean. Do not proceed to Phase 5 with a failin
 
 ## Phase 5 — Commit, push, open PR
 
-1. **Verify the diff is scoped to this ticket** (catches a wrong-base branch early):
+1. **Verify the diff is scoped to this ticket** (catches a wrong-base branch early; run
+   from `<worktree>`):
    ```bash
    git diff --name-only origin/main...HEAD
    ```
@@ -160,7 +167,15 @@ Each tick:
      on `pull_request`; otherwise nudge with an empty commit.
 3. **If a check fails:** `gh run view --log-failed`, fix the code, re-run the full DoD
    locally, `git push`. Let the next tick re-verify.
-4. **When all checks pass:** `CronDelete` the job, post a one-line ✅ summary, and stop.
+4. **When all checks pass:** `CronDelete` the job, clean up the worktree, and post a
+   one-line ✅ summary:
+   ```bash
+   # Run from the main repo (../warren), not the worktree
+   git worktree remove ../warren-<slug>
+   git branch -d <type>/<slug>   # safe: branch is merged / on remote
+   ```
+   If `git branch -d` refuses (unmerged locally), use `-D` only after confirming the PR
+   is merged on GitHub.
 
 Only involve the human if you hit something you genuinely cannot resolve (e.g. a
 required secret is missing, or the fix needs a product decision) — otherwise drive it
