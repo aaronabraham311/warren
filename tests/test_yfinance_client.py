@@ -17,6 +17,7 @@ from data_sources.yfinance_client import (
     FundamentalsData,
     GrowthData,
     PriceData,
+    QualityData,
     YFinanceClient,
 )
 from eval.fixtures import load_fixture
@@ -424,6 +425,154 @@ def test_get_growth_metrics_missing_financials_returns_none_cagr(
     assert result.revenue_cagr_3y is None
     assert result.earnings_cagr_3y is None
     assert result.peg_ratio == pytest.approx(2.1)
+
+
+# ── get_quality_metrics helpers ──────────────────────────────────────────────
+
+
+def _make_df_mock(data: dict[str, list[float]]) -> MagicMock:
+    """Build a DataFrame-like mock from metric → values list."""
+    df = MagicMock()
+    df.index = list(data.keys())
+
+    def _getitem(self: object, metric: str) -> MagicMock:
+        s = MagicMock()
+        s.dropna.return_value = s
+        s.values = data.get(metric, [])
+        return s
+
+    df.loc.__getitem__ = _getitem
+    return df
+
+
+def _mock_ticker_for_quality(fixture: dict[str, object]) -> MagicMock:
+    t = MagicMock()
+    inc = fixture.get("income_statement", {})
+    bs = fixture.get("balance_sheet", {})
+    cf = fixture.get("cashflow", {})
+    t.info = {
+        "lastFiscalYearEnd": fixture.get("lastFiscalYearEnd"),
+        "regularMarketPrice": fixture.get("regularMarketPrice"),
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
+        "e": 5,
+        "f": 6,
+    }
+    t.financials = _make_df_mock(inc if isinstance(inc, dict) else {})
+    t.balance_sheet = _make_df_mock(bs if isinstance(bs, dict) else {})
+    t.cashflow = _make_df_mock(cf if isinstance(cf, dict) else {})
+    return t
+
+
+# ── get_quality_metrics: normal response ──────────────────────────────────────
+
+
+def test_get_quality_metrics_returns_valid_data(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_quality_metrics")
+    client = _make_client(yf_conn)
+
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        return_value=_mock_ticker_for_quality(fixture),
+    ):
+        result = client.get_quality_metrics("AAPL")
+
+    assert isinstance(result, QualityData)
+    assert result.ticker == "AAPL"
+    assert result.source == "yfinance"
+    assert result.roic_pct is not None and result.roic_pct > 0
+    assert len(result.roic_series) == 4
+    assert result.roic_mean is not None
+    assert result.roa_pct is not None and result.roa_pct > 0
+    assert result.gross_margin_pct is not None
+    assert result.gross_margin_pct == pytest.approx(44.13, rel=0.01)
+    assert len(result.gross_margin_series) == 4
+    assert result.gross_margin_stdev is not None
+    assert result.cash_conversion_ttm is not None and result.cash_conversion_ttm > 0
+    assert len(result.cash_conversion_series) == 4
+
+
+def test_get_quality_metrics_caches_result(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_quality_metrics")
+    client = _make_client(yf_conn)
+    call_count = [0]
+
+    def side_effect(ticker: str) -> MagicMock:
+        call_count[0] += 1
+        return _mock_ticker_for_quality(fixture)
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        client.get_quality_metrics("AAPL")
+        client.get_quality_metrics("AAPL")
+
+    assert call_count[0] == 1
+
+
+def test_get_quality_metrics_returns_error_on_network_failure(
+    yf_conn: sqlite3.Connection,
+) -> None:
+    client = _make_client(yf_conn)
+
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        side_effect=OSError("timeout"),
+    ):
+        result = client.get_quality_metrics("AAPL")
+
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "network"
+
+
+def test_get_quality_metrics_missing_statements_returns_empty_series(
+    yf_conn: sqlite3.Connection,
+) -> None:
+    client = _make_client(yf_conn)
+
+    def side_effect(ticker: str) -> MagicMock:
+        t = MagicMock()
+        t.info = {
+            "regularMarketPrice": 182.5,
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "d": 4,
+            "e": 5,
+            "f": 6,
+        }
+        empty = _make_df_mock({})
+        t.financials = empty
+        t.balance_sheet = empty
+        t.cashflow = empty
+        return t
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        result = client.get_quality_metrics("AAPL")
+
+    assert isinstance(result, QualityData)
+    assert result.roic_pct is None
+    assert result.roic_series == []
+    assert result.roic_mean is None
+    assert result.roa_pct is None
+    assert result.gross_margin_pct is None
+    assert result.gross_margin_stdev is None
+    assert result.cash_conversion_ttm is None
+
+
+def test_get_quality_metrics_not_found(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+
+    def side_effect(ticker: str) -> MagicMock:
+        t = MagicMock()
+        t.info = {}
+        return t
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        result = client.get_quality_metrics("ZZZZZ")
+
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "not_found"
 
 
 # ── CacheStore unit tests ─────────────────────────────────────────────────────

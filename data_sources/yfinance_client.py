@@ -1,4 +1,5 @@
 import sqlite3
+import statistics
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -69,8 +70,10 @@ class FundamentalsData(BaseModel):
     roe_pct: float | None
     debt_to_equity: float | None
     fcf_ttm_usd: int | None
+    gross_margin_pct: float | None = None
     operating_margin_pct: float | None
     net_margin_pct: float | None
+    sector: str | None = None
     data_age_hours: int
     source: Literal["yfinance", "finnhub"]
 
@@ -100,6 +103,22 @@ class ValuationData(BaseModel):
     is_net_net: bool
     p_tangible_book: float | None
     dividend_yield_pct: float | None
+    data_age_hours: int
+    source: Literal["yfinance"] = "yfinance"
+
+
+class QualityData(BaseModel):
+    ticker: str
+    as_of: date
+    roic_pct: float | None
+    roic_series: list[float | None]
+    roic_mean: float | None
+    roa_pct: float | None
+    gross_margin_pct: float | None
+    gross_margin_series: list[float | None]
+    gross_margin_stdev: float | None
+    cash_conversion_ttm: float | None
+    cash_conversion_series: list[float | None]
     data_age_hours: int
     source: Literal["yfinance"] = "yfinance"
 
@@ -247,6 +266,8 @@ class YFinanceClient:
             raise _NotFoundError(ticker)
         if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
             raise _NotFoundError(ticker)
+        sector_raw = info.get("sector")
+        sector = str(sector_raw) if isinstance(sector_raw, str) else None
         return FundamentalsData(
             ticker=ticker.upper(),
             as_of=date.today(),
@@ -255,8 +276,10 @@ class YFinanceClient:
             roe_pct=_as_pct(info.get("returnOnEquity")),
             debt_to_equity=_as_float(info.get("debtToEquity")),
             fcf_ttm_usd=_as_int(info.get("freeCashflow")),
+            gross_margin_pct=_as_pct(info.get("grossMargins")),
             operating_margin_pct=_as_pct(info.get("operatingMargins")),
             net_margin_pct=_as_pct(info.get("profitMargins")),
+            sector=sector,
             data_age_hours=_fiscal_age_hours(info),
             source="yfinance",
         )
@@ -388,3 +411,134 @@ class YFinanceClient:
             dividend_yield_pct=_as_pct(info.get("dividendYield")),
             data_age_hours=_fiscal_age_hours(info),
         )
+
+    # ── get_quality_metrics ───────────────────────────────────────────────────
+
+    def get_quality_metrics(self, ticker: str) -> QualityData | DataSourceError:
+        key = make_key("yf_quality", ticker)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return QualityData.model_validate_json(cached)
+        try:
+            result = self._fetch_with_retry(
+                lambda: self._fetch_quality_metrics(ticker),
+                no_retry=(_NotFoundError,),
+            )
+        except _NotFoundError:
+            return DataSourceError(error_code="not_found", message=f"No data for {ticker}")
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, result.model_dump_json(), self._ttl_fundamentals)
+        return result
+
+    def _fetch_quality_metrics(self, ticker: str) -> QualityData:
+        t = yf.Ticker(ticker)
+        info: dict[str, object] = t.info
+        if not isinstance(info, dict) or len(info) <= 5:
+            raise _NotFoundError(ticker)
+        if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
+            raise _NotFoundError(ticker)
+
+        roic_series = self._compute_roic_series(t)
+        roic_vals = [v for v in roic_series if v is not None]
+        roic_mean = round(sum(roic_vals) / len(roic_vals), 4) if roic_vals else None
+
+        gm_series = self._compute_gross_margin_series(t)
+        gm_vals = [v for v in gm_series if v is not None]
+        gm_stdev = round(statistics.stdev(gm_vals), 4) if len(gm_vals) >= 2 else None
+
+        cc_series = self._compute_cash_conversion_series(t)
+        roa_pct = self._compute_roa(t)
+
+        return QualityData(
+            ticker=ticker.upper(),
+            as_of=date.today(),
+            roic_pct=roic_series[0] if roic_series else None,
+            roic_series=roic_series,
+            roic_mean=roic_mean,
+            roa_pct=roa_pct,
+            gross_margin_pct=gm_series[0] if gm_series else None,
+            gross_margin_series=gm_series,
+            gross_margin_stdev=gm_stdev,
+            cash_conversion_ttm=cc_series[0] if cc_series else None,
+            cash_conversion_series=cc_series,
+            data_age_hours=_fiscal_age_hours(info),
+        )
+
+    def _get_fin_series(self, ticker_obj: object, attr: str, metric: str) -> list[float]:
+        try:
+            df = getattr(ticker_obj, attr)
+            if metric not in df.index:
+                return []
+            series = df.loc[metric].dropna()
+            return [float(v) for v in series.values]
+        except Exception:
+            return []
+
+    def _compute_roic_series(self, ticker_obj: object) -> list[float | None]:
+        op_incomes = self._get_fin_series(ticker_obj, "financials", "Operating Income")
+        tax_provisions = self._get_fin_series(ticker_obj, "financials", "Tax Provision")
+        pretax_incomes = self._get_fin_series(ticker_obj, "financials", "Pretax Income")
+        total_assets = self._get_fin_series(ticker_obj, "balance_sheet", "Total Assets")
+        current_liabs = self._get_fin_series(ticker_obj, "balance_sheet", "Current Liabilities")
+
+        n = min(len(op_incomes), len(total_assets), len(current_liabs))
+        if n == 0:
+            return []
+
+        result: list[float | None] = []
+        for i in range(n):
+            op_inc = op_incomes[i]
+            ta = total_assets[i]
+            cl = current_liabs[i]
+            invested_capital = ta - cl
+            if invested_capital <= 0:
+                result.append(None)
+                continue
+            if i < len(tax_provisions) and i < len(pretax_incomes) and pretax_incomes[i] != 0:
+                tax_rate = max(0.0, min(0.5, tax_provisions[i] / pretax_incomes[i]))
+            else:
+                tax_rate = 0.21
+            nopat = op_inc * (1.0 - tax_rate)
+            result.append(round(nopat / invested_capital * 100.0, 4))
+        return result
+
+    def _compute_gross_margin_series(self, ticker_obj: object) -> list[float | None]:
+        gross_profits = self._get_fin_series(ticker_obj, "financials", "Gross Profit")
+        revenues = self._get_fin_series(ticker_obj, "financials", "Total Revenue")
+        n = min(len(gross_profits), len(revenues))
+        if n == 0:
+            return []
+        result: list[float | None] = []
+        for i in range(n):
+            if revenues[i] == 0:
+                result.append(None)
+            else:
+                result.append(round(gross_profits[i] / revenues[i] * 100.0, 4))
+        return result
+
+    def _compute_cash_conversion_series(self, ticker_obj: object) -> list[float | None]:
+        fcf_series = self._get_fin_series(ticker_obj, "cashflow", "Free Cash Flow")
+        if not fcf_series:
+            op_cfs = self._get_fin_series(ticker_obj, "cashflow", "Operating Cash Flow")
+            capex = self._get_fin_series(ticker_obj, "cashflow", "Capital Expenditure")
+            n_cf = min(len(op_cfs), len(capex))
+            fcf_series = [op_cfs[i] + capex[i] for i in range(n_cf)]
+        net_incomes = self._get_fin_series(ticker_obj, "financials", "Net Income")
+        n = min(len(fcf_series), len(net_incomes))
+        if n == 0:
+            return []
+        result: list[float | None] = []
+        for i in range(n):
+            if net_incomes[i] == 0:
+                result.append(None)
+            else:
+                result.append(round(fcf_series[i] / net_incomes[i], 4))
+        return result
+
+    def _compute_roa(self, ticker_obj: object) -> float | None:
+        net_incomes = self._get_fin_series(ticker_obj, "financials", "Net Income")
+        total_assets = self._get_fin_series(ticker_obj, "balance_sheet", "Total Assets")
+        if not net_incomes or not total_assets or total_assets[0] == 0:
+            return None
+        return round(net_incomes[0] / total_assets[0] * 100.0, 4)

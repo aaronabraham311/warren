@@ -99,12 +99,14 @@ def record_yfinance(ticker: str, output_dir: Path) -> None:
         "returnOnEquity",
         "debtToEquity",
         "freeCashflow",
+        "grossMargins",
         "operatingMargins",
         "profitMargins",
         "lastFiscalYearEnd",
         "regularMarketPrice",
         "currentPrice",
         "pegRatio",
+        "sector",
     ]
     _write("get_fundamentals", {k: info.get(k) for k in relevant})
 
@@ -123,6 +125,56 @@ def record_yfinance(ticker: str, output_dir: Path) -> None:
     except Exception:
         pass
     _write("get_growth_metrics", fin_data)
+
+    # get_quality_metrics: income statement, balance sheet, cash flow rows
+    quality_data: dict[str, object] = {
+        "lastFiscalYearEnd": info.get("lastFiscalYearEnd"),
+        "regularMarketPrice": info.get("regularMarketPrice"),
+        "income_statement": {},
+        "balance_sheet": {},
+        "cashflow": {},
+    }
+    try:
+        fin = t.financials
+        inc: dict[str, object] = {}
+        for metric in (
+            "Gross Profit",
+            "Total Revenue",
+            "Operating Income",
+            "Net Income",
+            "Pretax Income",
+            "Tax Provision",
+        ):
+            if metric in fin.index:
+                inc[metric] = [float(v) for v in fin.loc[metric].dropna().values]
+        quality_data["income_statement"] = inc
+    except Exception:
+        pass
+    try:
+        bs = t.balance_sheet
+        bsd: dict[str, object] = {}
+        for metric in (
+            "Total Assets",
+            "Current Liabilities",
+            "Stockholders Equity",
+            "Total Debt",
+            "Cash And Cash Equivalents",
+        ):
+            if metric in bs.index:
+                bsd[metric] = [float(v) for v in bs.loc[metric].dropna().values]
+        quality_data["balance_sheet"] = bsd
+    except Exception:
+        pass
+    try:
+        cf = t.cashflow
+        cfd: dict[str, object] = {}
+        for metric in ("Operating Cash Flow", "Capital Expenditure", "Free Cash Flow"):
+            if metric in cf.index:
+                cfd[metric] = [float(v) for v in cf.loc[metric].dropna().values]
+        quality_data["cashflow"] = cfd
+    except Exception:
+        pass
+    _write("get_quality_metrics", quality_data)
 
 
 def record_edgar(ticker: str, output_dir: Path) -> None:
