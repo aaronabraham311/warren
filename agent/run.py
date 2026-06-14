@@ -11,7 +11,15 @@ from agent.budget import Budget, RunContext
 from agent.loop import CostAbortedError, analyze_ticker
 from agent.models import DEFAULT_MODEL_ID
 from agent.persona import DefaultPersona
+from agent.portfolio import (
+    load_portfolio,
+    load_watchlist,
+    sync_holdings_to_db,
+    sync_watchlist_to_db,
+)
 from agent.routing import HardcodedSonnetRouting
+from agent.tools._clients import yfinance_client
+from data_sources.yfinance_client import PriceData
 
 load_dotenv()  # must precede storage.engine import so WARREN_DB is applied before engine creation
 
@@ -27,16 +35,43 @@ from storage.models import AnalysisData, RunStatus  # noqa: E402
 from storage.recovery import reconcile_orphans  # noqa: E402
 
 _LOG_DIR = Path("logs/runs")
+_PORTFOLIO_FILE = Path("data/portfolio.csv")
+_WATCHLIST_FILE = Path("data/watchlist.csv")
+
+
+def _sync_input_data(skip_ticker_validation: bool) -> None:
+    """Load, validate, and snapshot the portfolio + watchlist into SQLite.
+
+    Fails loudly on malformed input (the whole point of W2) before any analysis runs.
+    """
+    holdings = load_portfolio(_PORTFOLIO_FILE, validate_tickers=not skip_ticker_validation)
+    entries = load_watchlist(_WATCHLIST_FILE) if _WATCHLIST_FILE.exists() else []
+
+    current_prices: dict[str, float] = {}
+    for h in holdings:
+        price = yfinance_client().get_price(h.ticker)
+        if isinstance(price, PriceData) and price.current_price is not None:
+            current_prices[h.ticker] = price.current_price
+
+    with get_session() as session:
+        sync_holdings_to_db(holdings, session, current_prices)
+        sync_watchlist_to_db(entries, session)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Warren stock analysis agent")
     parser.add_argument("ticker", nargs="?", default="AAPL", help="Ticker symbol to analyse")
+    parser.add_argument(
+        "--skip-ticker-validation",
+        action="store_true",
+        help="Skip yfinance ticker validation when loading the portfolio (faster startup)",
+    )
     args = parser.parse_args()
 
     ticker = args.ticker.upper()
     migrate()
     reconcile_orphans(_LOG_DIR)  # self-heal any run left "running" by a previous crash
+    _sync_input_data(args.skip_ticker_validation)
 
     persona = DefaultPersona()
     routing_policy = HardcodedSonnetRouting()

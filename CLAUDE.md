@@ -15,7 +15,8 @@ Warren is an AI stock-analysis agent. The user asks a natural-language question;
 
 ```
 agent/
-  run.py          # CLI entrypoint: python -m agent.run [TICKER]
+  run.py          # CLI entrypoint: python -m agent.run [TICKER] [--skip-ticker-validation]
+  portfolio.py    # load_portfolio/load_watchlist (validated) + sync_*_to_db snapshots
   loop.py         # Main agentic loop — sends messages, handles tool calls
   persona.py      # System prompt / persona definition
   routing.py      # Decides which model to route each call to
