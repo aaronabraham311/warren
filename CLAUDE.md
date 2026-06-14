@@ -31,7 +31,7 @@ data_sources/
   errors.py            # DataSourceError(error_code, message) — shared by all clients
   yfinance_client.py   # Wraps yfinance for price quotes and fundamentals
   edgar_client.py      # EDGARClient — SEC 10-K/10-Q/8-K filing sections (cached, polite)
-  # planned: finnhub_client.py
+  finnhub_client.py    # FinnhubClient — news + fundamentals fallback (cached, rate-limited)
 
 storage/
   models.py       # ORM models (Base + all table classes + indexes) — no I/O
