@@ -13,6 +13,8 @@ dependencies = [
     "python-dotenv",
     "sqlalchemy>=2.0.49",
     "alembic>=1.18.4",
+    "beautifulsoup4>=4.15.0",
+    "lxml>=6.1.1",
 ]
 
 [dependency-groups]
@@ -41,5 +43,5 @@ plugins = ["pydantic.mypy"]
 [[tool.mypy.overrides]]
 # pydantic v2 BaseModel subclasses inherit internal Any annotations (e.g. __pydantic_extra__)
 # which mypy reports as explicit-any — this is a known false positive, not our code.
-module = ["agent.loop", "data_sources.yfinance_client"]
+module = ["agent.loop", "data_sources.yfinance_client", "data_sources.edgar_client"]
 disallow_any_explicit = false

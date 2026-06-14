@@ -31,6 +31,14 @@ def yf_conn() -> Generator[sqlite3.Connection, None, None]:
 
 
 @pytest.fixture()
+def edgar_conn() -> Generator[sqlite3.Connection, None, None]:
+    """In-memory SQLite connection for EDGARClient cache tests."""
+    conn = sqlite3.connect(":memory:")
+    yield conn
+    conn.close()
+
+
+@pytest.fixture()
 def db_session(db_engine: Engine) -> Generator[Session, None, None]:
     with Session(db_engine) as session:
         yield session

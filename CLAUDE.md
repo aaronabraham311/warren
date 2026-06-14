@@ -27,8 +27,11 @@ agent/
     # planned: fundamentals, growth, filings, news, screen, holdings
 
 data_sources/
+  cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
+  errors.py            # DataSourceError(error_code, message) — shared by all clients
   yfinance_client.py   # Wraps yfinance for price quotes and fundamentals
-  # planned: edgar_client.py, finnhub_client.py
+  edgar_client.py      # EDGARClient — SEC 10-K/10-Q/8-K filing sections (cached, polite)
+  # planned: finnhub_client.py
 
 storage/
   models.py       # ORM models (Base + all table classes + indexes) — no I/O

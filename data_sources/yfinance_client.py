@@ -9,6 +9,7 @@ import yfinance as yf
 from pydantic import BaseModel
 
 from data_sources.cache import CacheStore, make_key
+from data_sources.errors import DataSourceError
 
 _T = TypeVar("_T")
 
@@ -82,12 +83,6 @@ class GrowthData(BaseModel):
     peg_ratio: float | None
     data_age_hours: int
     source: Literal["yfinance"] = "yfinance"
-
-
-@dataclass
-class DataSourceError:
-    error_code: str
-    message: str
 
 
 # ── Internal sentinels ────────────────────────────────────────────────────────
