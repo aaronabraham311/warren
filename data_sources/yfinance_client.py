@@ -86,6 +86,24 @@ class GrowthData(BaseModel):
     source: Literal["yfinance"] = "yfinance"
 
 
+class ValuationData(BaseModel):
+    ticker: str
+    as_of: date
+    enterprise_value: int | None
+    ev_to_ebit: float | None
+    ev_to_ebitda: float | None
+    acquirers_multiple: float | None
+    fcf_yield: float | None
+    earnings_yield: float | None
+    ncav: int | None
+    ncav_to_market_cap: float | None
+    is_net_net: bool
+    p_tangible_book: float | None
+    dividend_yield_pct: float | None
+    data_age_hours: int
+    source: Literal["yfinance"] = "yfinance"
+
+
 # ── Internal sentinels ────────────────────────────────────────────────────────
 
 
@@ -295,3 +313,78 @@ class YFinanceClient:
             return round(float((values[0] / values[-1]) ** (1.0 / n_years) - 1.0), 4)
         except Exception:
             return None
+
+    # ── get_valuation_multiples ───────────────────────────────────────────────
+
+    def get_valuation_multiples(self, ticker: str) -> ValuationData | DataSourceError:
+        key = make_key("yf_valuation", ticker)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return ValuationData.model_validate_json(cached)
+        try:
+            result = self._fetch_with_retry(
+                lambda: self._fetch_valuation_multiples(ticker),
+                no_retry=(_NotFoundError,),
+            )
+        except _NotFoundError:
+            return DataSourceError(error_code="not_found", message=f"No data for {ticker}")
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, result.model_dump_json(), self._ttl_fundamentals)
+        return result
+
+    def _fetch_valuation_multiples(self, ticker: str) -> ValuationData:
+        info: dict[str, object] = yf.Ticker(ticker).info
+        if not isinstance(info, dict) or len(info) <= 5:
+            raise _NotFoundError(ticker)
+        if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
+            raise _NotFoundError(ticker)
+
+        ev = _as_int(info.get("enterpriseValue"))
+        ebitda = _as_float(info.get("ebitda"))
+        op_income = _as_float(info.get("operatingIncome"))
+        fcf = _as_float(info.get("freeCashflow"))
+        mkt_cap = _as_int(info.get("marketCap"))
+        curr_assets_raw = info.get("currentAssets") or info.get("totalCurrentAssets")
+        curr_assets = _as_int(curr_assets_raw)
+        total_liab = _as_int(info.get("totalLiab"))
+        tangible_bv = _as_float(info.get("tangibleBookValue"))
+
+        ev_f = float(ev) if ev is not None else None
+        ev_to_ebit = round(ev_f / op_income, 2) if ev_f and op_income and op_income > 0 else None
+        ev_to_ebitda = round(ev_f / ebitda, 2) if ev_f and ebitda and ebitda > 0 else None
+        fcf_yield = round(float(fcf) / ev_f * 100, 4) if fcf and ev_f and ev_f > 0 else None
+        earnings_yield = (
+            round(op_income / ev_f * 100, 4) if op_income and ev_f and ev_f > 0 else None
+        )
+
+        ncav: int | None = None
+        if curr_assets is not None and total_liab is not None:
+            ncav = curr_assets - total_liab
+
+        ncav_to_mkt_cap: float | None = None
+        is_net_net = False
+        if ncav is not None and mkt_cap and mkt_cap > 0:
+            ncav_to_mkt_cap = round(ncav / mkt_cap, 4)
+            is_net_net = ncav > mkt_cap
+
+        p_tangible_book: float | None = None
+        if mkt_cap and tangible_bv and tangible_bv > 0:
+            p_tangible_book = round(mkt_cap / tangible_bv, 2)
+
+        return ValuationData(
+            ticker=ticker.upper(),
+            as_of=date.today(),
+            enterprise_value=ev,
+            ev_to_ebit=ev_to_ebit,
+            ev_to_ebitda=ev_to_ebitda,
+            acquirers_multiple=ev_to_ebit,
+            fcf_yield=fcf_yield,
+            earnings_yield=earnings_yield,
+            ncav=ncav,
+            ncav_to_market_cap=ncav_to_mkt_cap,
+            is_net_net=is_net_net,
+            p_tangible_book=p_tangible_book,
+            dividend_yield_pct=_as_pct(info.get("dividendYield")),
+            data_age_hours=_fiscal_age_hours(info),
+        )
