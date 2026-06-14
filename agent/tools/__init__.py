@@ -5,6 +5,7 @@ from agent.tools.growth import GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextTool
 from agent.tools.insider import GetInsiderActivityTool
 from agent.tools.news import GetNewsTool
+from agent.tools.peers import GetPeerComparisonTool
 from agent.tools.quality import GetQualityMetricsTool
 from agent.tools.quote import GetQuoteTool
 from agent.tools.screen import ScreenUniverseTool
@@ -21,6 +22,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "get_valuation_multiples": GetValuationMultiplesTool(),
     "get_quality_metrics": GetQualityMetricsTool(),
     "get_insider_activity": GetInsiderActivityTool(),
+    "get_peer_comparison": GetPeerComparisonTool(),
 }
 
 TOOL_DEFINITIONS: list[dict[str, object]] = [t.to_api_dict() for t in TOOL_REGISTRY.values()]

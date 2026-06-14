@@ -32,8 +32,10 @@ def _finnhub_to_fundamentals(f: FinnhubFinancials) -> FundamentalsData:
         roe_pct=f.roe_pct,
         debt_to_equity=None,
         fcf_ttm_usd=None,
+        gross_margin_pct=None,
         operating_margin_pct=None,
         net_margin_pct=None,
+        sector=None,
         data_age_hours=0,
         source="finnhub",
     )

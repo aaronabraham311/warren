@@ -23,6 +23,7 @@ from agent.tools.growth import GetGrowthMetricsInput, GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextInput, GetHoldingContextTool, HoldingContext
 from agent.tools.insider import GetInsiderActivityInput, GetInsiderActivityTool, InsiderActivity
 from agent.tools.news import GetNewsInput, GetNewsTool, NewsResult
+from agent.tools.peers import GetPeerComparisonInput, GetPeerComparisonTool, PeerComparison
 from agent.tools.quality import GetQualityMetricsInput, GetQualityMetricsTool
 from agent.tools.quote import GetQuoteInput, GetQuoteTool
 from agent.tools.screen import ScreenResult, ScreenUniverseInput, ScreenUniverseTool
@@ -64,7 +65,7 @@ def _fundamentals(
     *,
     pe: float | None = 28.5,
     age: int = 1,
-    gross_margin: float | None = 30.0,
+    gross_margin: float | None = 40.0,
     sector: str | None = None,
 ) -> FundamentalsData:
     return FundamentalsData(
@@ -90,7 +91,12 @@ class _FakeYF:
         *,
         price: PriceData | DataSourceError | Exception | None = None,
         fundamentals: Callable[[str], FundamentalsData | DataSourceError] | None = None,
-        valuation: ValuationData | DataSourceError | None = None,
+        valuation: (
+            Callable[[str], ValuationData | DataSourceError]
+            | ValuationData
+            | DataSourceError
+            | None
+        ) = None,
         quality: QualityData | DataSourceError | None = None,
         ownership: OwnershipData | DataSourceError | None = None,
     ) -> None:
@@ -114,6 +120,8 @@ class _FakeYF:
 
     def get_valuation_multiples(self, ticker: str) -> ValuationData | DataSourceError:
         assert self._valuation is not None
+        if callable(self._valuation):
+            return self._valuation(ticker)
         return self._valuation
 
     def get_quality_metrics(self, ticker: str) -> QualityData | DataSourceError:
@@ -160,7 +168,7 @@ class _FakeFinnhub:
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_ten_tools() -> None:
+def test_registry_has_all_eleven_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -172,6 +180,7 @@ def test_registry_has_all_ten_tools() -> None:
         "get_valuation_multiples",
         "get_quality_metrics",
         "get_insider_activity",
+        "get_peer_comparison",
     }
     assert all(isinstance(t, Tool) for t in TOOL_REGISTRY.values())
 
@@ -643,3 +652,157 @@ def test_get_insider_activity_ownership_none_when_yf_fails(monkeypatch: pytest.M
     assert result.data.insider_ownership_pct is None
     assert result.data.institutional_ownership_pct is None
     assert result.data.insider_sentiment == "bullish"
+
+
+# ── get_peer_comparison ───────────────────────────────────────────────────────
+
+
+def _peer_valuation(
+    ticker: str, *, ev_to_ebit: float | None = 20.0, fcf_yield: float | None = 5.0
+) -> ValuationData:
+    return ValuationData(
+        ticker=ticker,
+        as_of=date.today(),
+        enterprise_value=1_000_000_000,
+        ev_to_ebit=ev_to_ebit,
+        ev_to_ebitda=None,
+        acquirers_multiple=ev_to_ebit,
+        fcf_yield=fcf_yield,
+        earnings_yield=None,
+        ncav=None,
+        ncav_to_market_cap=None,
+        is_net_net=False,
+        p_tangible_book=None,
+        dividend_yield_pct=None,
+        data_age_hours=0,
+    )
+
+
+def test_get_peer_comparison_happy_path(monkeypatch: pytest.MonkeyPatch) -> None:
+    # AAPL: pe=10, ev_to_ebit=15, gross_margin=50
+    # MSFT: pe=20, ev_to_ebit=25, gross_margin=60
+    # GOOG: pe=15, ev_to_ebit=20, gross_margin=40
+    fund_map = {
+        "AAPL": _fundamentals("AAPL", pe=10.0, gross_margin=50.0),
+        "MSFT": _fundamentals("MSFT", pe=20.0, gross_margin=60.0),
+        "GOOG": _fundamentals("GOOG", pe=15.0, gross_margin=40.0),
+    }
+    val_map = {
+        "AAPL": _peer_valuation("AAPL", ev_to_ebit=15.0, fcf_yield=6.0),
+        "MSFT": _peer_valuation("MSFT", ev_to_ebit=25.0, fcf_yield=4.0),
+        "GOOG": _peer_valuation("GOOG", ev_to_ebit=20.0, fcf_yield=5.0),
+    }
+    yf = _FakeYF(
+        fundamentals=lambda t: fund_map[t],
+        valuation=lambda t: val_map[t],
+    )
+    monkeypatch.setattr("agent.tools.peers.yfinance_client", lambda: yf)
+    result = GetPeerComparisonTool().run(
+        GetPeerComparisonInput(ticker="AAPL", peers=["MSFT", "GOOG"]), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    pc = result.data
+    assert isinstance(pc, PeerComparison)
+    assert pc.ticker == "AAPL"
+    assert set(pc.peers) == {"MSFT", "GOOG"}
+    assert len(pc.all_metrics) == 3
+    assert pc.all_metrics[0].ticker == "AAPL"
+
+    # P/E: lower is better; sorted [AAPL=10, GOOG=15, MSFT=20] → AAPL rank=1
+    pe_summary = pc.summary["pe_ratio"]
+    assert pe_summary.ticker_rank == 1
+    assert pe_summary.ticker_percentile == pytest.approx(100.0)
+    assert pe_summary.peer_median == pytest.approx(17.5)  # median of [20, 15]
+
+    # EV/EBIT: lower is better; sorted [AAPL=15, GOOG=20, MSFT=25] → AAPL rank=1
+    ev_summary = pc.summary["ev_to_ebit"]
+    assert ev_summary.ticker_rank == 1
+    assert ev_summary.ticker_percentile == pytest.approx(100.0)
+
+    # gross_margin: higher better; AAPL=50, MSFT=60, GOOG=40 → AAPL rank=2
+    gm_summary = pc.summary["gross_margin_pct"]
+    assert gm_summary.ticker_rank == 2
+    assert gm_summary.peer_median == pytest.approx(50.0)  # median of [60, 40]
+
+
+def test_get_peer_comparison_explicit_peers_respected(monkeypatch: pytest.MonkeyPatch) -> None:
+    fund_map = {
+        "AAPL": _fundamentals("AAPL", pe=10.0),
+        "IBM": _fundamentals("IBM", pe=12.0),
+        "DELL": _fundamentals("DELL", pe=8.0),
+    }
+    yf = _FakeYF(
+        fundamentals=lambda t: fund_map[t],
+        valuation=lambda t: _peer_valuation(t),
+    )
+    monkeypatch.setattr("agent.tools.peers.yfinance_client", lambda: yf)
+    result = GetPeerComparisonTool().run(
+        GetPeerComparisonInput(ticker="AAPL", peers=["IBM", "DELL"]), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    pc = result.data
+    assert isinstance(pc, PeerComparison)
+    assert set(pc.peers) == {"IBM", "DELL"}
+
+
+def test_get_peer_comparison_failed_peer_excluded(monkeypatch: pytest.MonkeyPatch) -> None:
+    not_found = DataSourceError(error_code="not_found", message="no data")
+    fund_map: dict[str, FundamentalsData | DataSourceError] = {
+        "AAPL": _fundamentals("AAPL", pe=10.0),
+        "MSFT": _fundamentals("MSFT", pe=20.0),
+        "GOOG": not_found,
+        "META": _fundamentals("META", pe=15.0),
+    }
+
+    def _val(t: str) -> ValuationData | DataSourceError:
+        return not_found if t == "GOOG" else _peer_valuation(t)
+
+    yf = _FakeYF(
+        fundamentals=lambda t: fund_map[t],
+        valuation=_val,
+    )
+    monkeypatch.setattr("agent.tools.peers.yfinance_client", lambda: yf)
+    result = GetPeerComparisonTool().run(
+        GetPeerComparisonInput(ticker="AAPL", peers=["MSFT", "GOOG", "META"]), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    pc = result.data
+    assert isinstance(pc, PeerComparison)
+    assert "GOOG" not in pc.peers
+    assert "MSFT" in pc.peers
+    assert "META" in pc.peers
+
+
+def test_get_peer_comparison_insufficient_peers_returns_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    not_found = DataSourceError(error_code="not_found", message="no data")
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t) if t == "AAPL" else not_found,
+        valuation=lambda t: not_found,
+    )
+    monkeypatch.setattr("agent.tools.peers.yfinance_client", lambda: yf)
+    result = GetPeerComparisonTool().run(
+        GetPeerComparisonInput(ticker="AAPL", peers=["MSFT", "GOOG"]), _ctx()
+    )
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+
+
+def test_get_peer_comparison_sector_fallback_to_universe(monkeypatch: pytest.MonkeyPatch) -> None:
+    fund_map = {
+        "AAPL": _fundamentals("AAPL", pe=10.0, sector=None),
+        "MSFT": _fundamentals("MSFT", pe=20.0),
+        "GOOG": _fundamentals("GOOG", pe=15.0),
+    }
+    yf = _FakeYF(
+        fundamentals=lambda t: fund_map.get(t, _fundamentals(t)),
+        valuation=lambda t: _peer_valuation(t),
+    )
+    monkeypatch.setattr("agent.tools.peers.yfinance_client", lambda: yf)
+    monkeypatch.setattr("agent.tools.peers._universe", lambda: ["MSFT", "GOOG"])
+    result = GetPeerComparisonTool().run(GetPeerComparisonInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    pc = result.data
+    assert isinstance(pc, PeerComparison)
+    assert set(pc.peers) == {"MSFT", "GOOG"}
