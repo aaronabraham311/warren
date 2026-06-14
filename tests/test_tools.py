@@ -22,13 +22,14 @@ from agent.tools.fundamentals import GetFundamentalsInput, GetFundamentalsTool
 from agent.tools.growth import GetGrowthMetricsInput, GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextInput, GetHoldingContextTool, HoldingContext
 from agent.tools.news import GetNewsInput, GetNewsTool, NewsResult
+from agent.tools.quality import GetQualityMetricsInput, GetQualityMetricsTool
 from agent.tools.quote import GetQuoteInput, GetQuoteTool
 from agent.tools.screen import ScreenResult, ScreenUniverseInput, ScreenUniverseTool
 from agent.tools.valuation import GetValuationMultiplesInput, GetValuationMultiplesTool
 from data_sources.edgar_client import FilingSection
 from data_sources.errors import DataSourceError
 from data_sources.finnhub_client import FinnhubFinancials, NewsItem
-from data_sources.yfinance_client import FundamentalsData, PriceData, ValuationData
+from data_sources.yfinance_client import FundamentalsData, PriceData, QualityData, ValuationData
 from storage.logger import RunLogger
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -52,7 +53,12 @@ def _price(ticker: str = "AAPL") -> PriceData:
 
 
 def _fundamentals(
-    ticker: str = "AAPL", *, pe: float | None = 28.5, age: int = 1
+    ticker: str = "AAPL",
+    *,
+    pe: float | None = 28.5,
+    age: int = 1,
+    gross_margin: float | None = 30.0,
+    sector: str | None = None,
 ) -> FundamentalsData:
     return FundamentalsData(
         ticker=ticker,
@@ -62,8 +68,10 @@ def _fundamentals(
         roe_pct=147.0,
         debt_to_equity=150.5,
         fcf_ttm_usd=90_000_000_000,
+        gross_margin_pct=gross_margin,
         operating_margin_pct=30.0,
         net_margin_pct=25.0,
+        sector=sector,
         data_age_hours=age,
         source="yfinance",
     )
@@ -76,10 +84,12 @@ class _FakeYF:
         price: PriceData | DataSourceError | Exception | None = None,
         fundamentals: Callable[[str], FundamentalsData | DataSourceError] | None = None,
         valuation: ValuationData | DataSourceError | None = None,
+        quality: QualityData | DataSourceError | None = None,
     ) -> None:
         self._price = price
         self._fundamentals = fundamentals
         self._valuation = valuation
+        self._quality = quality
         self.fundamentals_calls = 0
 
     def get_price(self, ticker: str) -> PriceData | DataSourceError:
@@ -96,6 +106,10 @@ class _FakeYF:
     def get_valuation_multiples(self, ticker: str) -> ValuationData | DataSourceError:
         assert self._valuation is not None
         return self._valuation
+
+    def get_quality_metrics(self, ticker: str) -> QualityData | DataSourceError:
+        assert self._quality is not None
+        return self._quality
 
 
 class _FakeFinnhub:
@@ -122,7 +136,7 @@ class _FakeFinnhub:
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_eight_tools() -> None:
+def test_registry_has_all_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -132,6 +146,7 @@ def test_registry_has_all_eight_tools() -> None:
         "screen_universe",
         "get_holding_context",
         "get_valuation_multiples",
+        "get_quality_metrics",
     }
     assert all(isinstance(t, Tool) for t in TOOL_REGISTRY.values())
 
@@ -445,3 +460,53 @@ def test_get_valuation_multiples_maps_not_found(monkeypatch: pytest.MonkeyPatch)
     assert isinstance(result, ToolResultError)
     assert result.error_code == "not_found"
     assert result.retryable is False
+
+
+# ── get_quality_metrics ───────────────────────────────────────────────────────
+
+
+def _quality(ticker: str = "AAPL") -> QualityData:
+    return QualityData(
+        ticker=ticker,
+        as_of=date.today(),
+        roic_pct=41.2,
+        roic_series=[41.2, 39.8, 38.5, 30.1],
+        roic_mean=37.4,
+        roa_pct=27.5,
+        gross_margin_pct=44.1,
+        gross_margin_series=[44.1, 43.3, 41.8, 38.2],
+        gross_margin_stdev=2.4,
+        cash_conversion_ttm=1.03,
+        cash_conversion_series=[1.03, 1.12, 0.98, 1.28],
+        data_age_hours=2000,
+    )
+
+
+def test_get_quality_metrics_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    q = _quality()
+    monkeypatch.setattr("agent.tools.quality.yfinance_client", lambda: _FakeYF(quality=q))
+    result = GetQualityMetricsTool().run(GetQualityMetricsInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, QualityData)
+    assert result.data.roic_pct == pytest.approx(41.2)
+    assert result.data.gross_margin_stdev == pytest.approx(2.4)
+    assert result.data.cash_conversion_ttm == pytest.approx(1.03)
+
+
+def test_get_quality_metrics_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
+    err = DataSourceError(error_code="not_found", message="No data for ZZZZZ")
+    monkeypatch.setattr("agent.tools.quality.yfinance_client", lambda: _FakeYF(quality=err))
+    result = GetQualityMetricsTool().run(GetQualityMetricsInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+
+
+def test_get_quality_metrics_catches_unexpected_exception(monkeypatch: pytest.MonkeyPatch) -> None:
+    class _Boom:
+        def get_quality_metrics(self, ticker: str) -> QualityData:
+            raise RuntimeError("unexpected boom")
+
+    monkeypatch.setattr("agent.tools.quality.yfinance_client", lambda: _Boom())
+    result = GetQualityMetricsTool().run(GetQualityMetricsInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "unknown"
