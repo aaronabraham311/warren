@@ -46,6 +46,14 @@ plugins = ["pydantic.mypy"]
 # which mypy reports as explicit-any — this is a known false positive, not our code.
 module = [
     "agent.loop",
+    "agent.tools.base",
+    "agent.tools.quote",
+    "agent.tools.fundamentals",
+    "agent.tools.growth",
+    "agent.tools.filings",
+    "agent.tools.news",
+    "agent.tools.screen",
+    "agent.tools.holdings",
     "data_sources.yfinance_client",
     "data_sources.edgar_client",
     "data_sources.finnhub_client",

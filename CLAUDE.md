@@ -22,9 +22,15 @@ agent/
   budget.py       # Token / cost budget tracking
   models.py       # Model IDs + per-model PRICING table (single source of truth)
   tools/          # One file per Claude tool; __init__.py holds the registry
-    base.py       # Tool ABC, ToolResult, ToolResultOk, ToolResultError
-    quote.py      # get_quote tool (current price via yfinance)
-    # planned: fundamentals, growth, filings, news, screen, holdings
+    base.py       # Tool ABC, ToolResult (ToolResultOk/ToolResultError), error_from_data_source()
+    _clients.py   # Lazy data-source client singletons (yfinance/edgar/finnhub) + reset_clients()
+    quote.py      # get_quote          → YFinanceClient.get_price → PriceData
+    fundamentals.py  # get_fundamentals → yfinance, Finnhub fallback when stale → FundamentalsData
+    growth.py     # get_growth_metrics → YFinanceClient.get_growth_metrics → GrowthData
+    filings.py    # read_filing        → EDGARClient.get_filing_section → FilingSection
+    news.py       # get_news           → FinnhubClient.get_news → NewsResult
+    screen.py     # screen_universe    → portfolio∪watchlist filtered on fundamentals → ScreenResult
+    holdings.py   # get_holding_context→ portfolio.csv + get_price → HoldingContext
 
 data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
@@ -104,7 +110,9 @@ not the model output — tests exercise the real parsing path. Load them with
 
 ## Code conventions
 
-- `__init__.py` files are empty. Import directly from the submodule, e.g. `from storage.engine import get_session` or `from storage.models import Run`. Do not re-export through `__init__.py`.
+- `__init__.py` files are empty, with one deliberate exception: `agent/tools/__init__.py` holds the `TOOL_REGISTRY` / `TOOL_DEFINITIONS`. Everywhere else import directly from the submodule, e.g. `from storage.engine import get_session`. Do not re-export through `__init__.py`.
+- **Tools return errors as data, never raise** (Tech Spec §5). A `Tool.run(tool_input, ctx)` returns `ToolResultOk(data=<BaseModel>)` or `ToolResultError(error_code, message, retryable)`; `error_code ∈ {rate_limit, not_found, stale_data, network, unknown}`. Map a `DataSourceError` with `error_from_data_source()` (in `agent/tools/base.py`); wrap the body in `try/except` so any stray exception becomes `ToolResultError(error_code="unknown")`. The loop validates `block.input` against the tool's `input_schema` and serializes the result back to the agent (ok → `data.model_dump_json()`; error → `{error_code,message,retryable}` with `is_error=True`).
+- Tools reach data-source clients only via the lazy singletons in `agent/tools/_clients.py` (bound to the `$WARREN_DB` cache); tests reset them with the autouse `_reset_tool_clients` fixture (which also points `WARREN_DB` at `:memory:`). The §5.4 loop-level retry/backoff is intentionally **not** in the loop yet — it's a separate W3 ticket.
 - Use SQLAlchemy 2.x style (`with Session(engine) as s:`, not legacy `Session()` context).
 - All external API calls live in `data_sources/`; `agent/tools/` calls into `data_sources/`, never directly into yfinance/finnhub.
 - Environment variables are loaded once at startup via `dotenv.load_dotenv()` in `agent/run.py`. Everywhere else, read with `os.environ["KEY"]` — no repeated `load_dotenv()` calls.

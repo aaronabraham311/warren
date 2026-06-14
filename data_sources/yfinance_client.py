@@ -79,6 +79,7 @@ class GrowthData(BaseModel):
     ticker: str
     as_of: date
     revenue_cagr_3y: float | None
+    revenue_cagr_5y: float | None = None
     earnings_cagr_3y: float | None
     peg_ratio: float | None
     data_age_hours: int
@@ -269,13 +270,16 @@ class YFinanceClient:
         return GrowthData(
             ticker=ticker.upper(),
             as_of=date.today(),
-            revenue_cagr_3y=self._compute_cagr(t, "Total Revenue"),
-            earnings_cagr_3y=self._compute_cagr(t, "Net Income"),
+            revenue_cagr_3y=self._compute_cagr(t, "Total Revenue", max_years=3),
+            revenue_cagr_5y=self._compute_cagr(t, "Total Revenue", max_years=5),
+            earnings_cagr_3y=self._compute_cagr(t, "Net Income", max_years=3),
             peg_ratio=_as_float(info.get("pegRatio")),
             data_age_hours=_fiscal_age_hours(info),
         )
 
-    def _compute_cagr(self, ticker_obj: object, metric: str) -> float | None:
+    def _compute_cagr(
+        self, ticker_obj: object, metric: str, max_years: int | None = None
+    ) -> float | None:
         try:
             fin = ticker_obj.financials  # type: ignore[attr-defined]
             if metric not in fin.index:
@@ -284,6 +288,9 @@ class YFinanceClient:
             values: list[float] = [float(v) for v in series.values if float(v) > 0]
             if len(values) < 2:
                 return None
+            # Values are newest-first; cap the window to (max_years + 1) data points.
+            if max_years is not None:
+                values = values[: max_years + 1]
             n_years = len(values) - 1
             return round(float((values[0] / values[-1]) ** (1.0 / n_years) - 1.0), 4)
         except Exception:

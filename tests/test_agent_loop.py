@@ -4,7 +4,6 @@ All Anthropic API calls are monkeypatched; yfinance is patched where relevant.
 SQLite runs in-memory via the db_engine fixture.
 """
 
-import json
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -23,7 +22,8 @@ from agent.loop import (
 from agent.persona import DefaultPersona
 from agent.routing import HardcodedSonnetRouting
 from agent.tools.base import ToolResultError, ToolResultOk
-from agent.tools.quote import GetQuoteTool
+from agent.tools.quote import GetQuoteInput, GetQuoteTool
+from data_sources.yfinance_client import PriceData
 from storage.engine import upsert_analysis, write_run_end, write_run_start
 from storage.logger import RunLogger
 from storage.models import Analysis, AnalysisData, Run, ToolCall
@@ -292,23 +292,25 @@ def test_get_quote_tool() -> None:
     with patch("data_sources.yfinance_client.yf.Ticker") as mock_ticker:
         mock_ticker.return_value.fast_info = mock_fast_info
         tool = GetQuoteTool()
-        result = tool.run({"ticker": "AAPL"}, _ctx())
+        result = tool.run(GetQuoteInput(ticker="AAPL"), _ctx())
 
     assert isinstance(result, ToolResultOk)
-    data = json.loads(result.content)
-    assert data["ticker"] == "AAPL"
-    assert data["price"] == 182.50
-    assert data["day_change_pct"] == pytest.approx(1.39)
-    assert data["volume"] == 55_000_000
+    assert isinstance(result.data, PriceData)
+    assert result.data.ticker == "AAPL"
+    assert result.data.current_price == 182.50
+    assert result.data.day_change_pct == pytest.approx(1.39)
+    assert result.data.volume == 55_000_000
 
 
 def test_get_quote_tool_error() -> None:
+    # yfinance raising surfaces as a DataSourceError(network) from the client, which the
+    # tool maps to a structured ToolResultError — never a raised exception.
     with patch("data_sources.yfinance_client.yf.Ticker", side_effect=Exception("timeout")):
         tool = GetQuoteTool()
-        result = tool.run({"ticker": "AAPL"}, _ctx())
+        result = tool.run(GetQuoteInput(ticker="AAPL"), _ctx())
 
     assert isinstance(result, ToolResultError)
-    assert "AAPL" in result.error
+    assert result.error_code == "network"
 
 
 # ── Budget cost calculation ───────────────────────────────────────────────────

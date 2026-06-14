@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from agent.budget import RunContext
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
-from agent.tools.base import ToolResultOk
+from agent.tools.base import ToolResult, ToolResultError, ToolResultOk
 
 
 class _Persona(Protocol):
@@ -236,23 +236,47 @@ def analyze_ticker(
                 tool = TOOL_REGISTRY.get(block.name)
                 t0 = time.monotonic()
                 error_msg: str | None = None
+                cached = False
                 if tool is None:
-                    result_content = f"ERROR: unknown tool '{block.name}'"
+                    result_content = json.dumps(
+                        {
+                            "error_code": "not_found",
+                            "message": f"unknown tool '{block.name}'",
+                            "retryable": False,
+                        }
+                    )
                     error_msg = f"unknown tool '{block.name}'"
                 else:
-                    result = tool.run(dict(block.input), run_context)
-                    if isinstance(result, ToolResultOk):
-                        result_content = result.content
+                    try:
+                        parsed = tool.input_schema.model_validate(dict(block.input))
+                    except ValidationError as exc:
+                        result: ToolResult = ToolResultError(
+                            error_code="not_found",
+                            message=f"invalid input for {block.name}: {exc}",
+                            retryable=False,
+                        )
                     else:
-                        result_content = f"ERROR: {result.error}"
-                        error_msg = result.error
+                        result = tool.run(parsed, run_context)
+                    # Serialize the result so the agent sees structured errors as data.
+                    if isinstance(result, ToolResultOk):
+                        result_content = result.data.model_dump_json()
+                        cached = result.cached
+                    else:
+                        result_content = json.dumps(
+                            {
+                                "error_code": result.error_code,
+                                "message": result.message,
+                                "retryable": result.retryable,
+                            }
+                        )
+                        error_msg = result.message
                 latency_ms = int((time.monotonic() - t0) * 1000)
 
                 run_context.logger.log_tool_call(
                     tool_name=block.name,
                     tool_input=dict(block.input),
                     output=result_content,
-                    cached=False,
+                    cached=cached,
                     latency_ms=latency_ms,
                     status="ok" if error_msg is None else "error",
                     ticker=ticker,
@@ -264,6 +288,7 @@ def analyze_ticker(
                         "type": "tool_result",
                         "tool_use_id": block.id,
                         "content": result_content,
+                        "is_error": error_msg is not None,
                     }
                 )
 
