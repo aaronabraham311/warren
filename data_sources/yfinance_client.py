@@ -134,6 +134,32 @@ class OwnershipData(BaseModel):
 # ── Internal sentinels ────────────────────────────────────────────────────────
 
 
+class PiotroskySignals(BaseModel):
+    roa_positive: bool | None
+    op_cf_positive: bool | None
+    roa_improved: bool | None
+    accruals_negative: bool | None
+    leverage_decreased: bool | None
+    current_ratio_improved: bool | None
+    no_dilution: bool | None
+    gross_margin_improved: bool | None
+    asset_turnover_improved: bool | None
+
+
+class FinancialStrengthData(BaseModel):
+    ticker: str
+    as_of: date
+    f_score: int | None
+    f_signals: PiotroskySignals
+    z_score: float | None
+    z_zone: Literal["distress", "grey", "safe"] | None
+    interest_coverage: float | None
+    current_ratio: float | None
+    net_debt_to_ebitda: float | None
+    data_age_hours: int
+    source: Literal["yfinance"] = "yfinance"
+
+
 class _NotFoundError(Exception):
     pass
 
@@ -439,6 +465,25 @@ class YFinanceClient:
         self._cache.set(key, result.model_dump_json(), self._ttl_fundamentals)
         return result
 
+    # ── get_financial_strength ────────────────────────────────────────────────
+
+    def get_financial_strength(self, ticker: str) -> FinancialStrengthData | DataSourceError:
+        key = make_key("yf_financial_strength", ticker)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return FinancialStrengthData.model_validate_json(cached)
+        try:
+            result = self._fetch_with_retry(
+                lambda: self._fetch_financial_strength(ticker),
+                no_retry=(_NotFoundError,),
+            )
+        except _NotFoundError:
+            return DataSourceError(error_code="not_found", message=f"No data for {ticker}")
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, result.model_dump_json(), self._ttl_fundamentals)
+        return result
+
     def _fetch_quality_metrics(self, ticker: str) -> QualityData:
         t = yf.Ticker(ticker)
         info: dict[str, object] = t.info
@@ -471,6 +516,176 @@ class YFinanceClient:
             cash_conversion_ttm=cc_series[0] if cc_series else None,
             cash_conversion_series=cc_series,
             data_age_hours=_fiscal_age_hours(info),
+        )
+
+    def _fetch_financial_strength(self, ticker: str) -> FinancialStrengthData:
+        t = yf.Ticker(ticker)
+        info: dict[str, object] = t.info
+        if not isinstance(info, dict) or len(info) <= 5:
+            raise _NotFoundError(ticker)
+        if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
+            raise _NotFoundError(ticker)
+
+        net_incomes = self._get_fin_series(t, "financials", "Net Income")
+        op_cfs = self._get_fin_series(t, "cashflow", "Operating Cash Flow")
+        total_assets = self._get_fin_series(t, "balance_sheet", "Total Assets")
+        current_assets = self._get_fin_series(t, "balance_sheet", "Current Assets")
+        current_liabs = self._get_fin_series(t, "balance_sheet", "Current Liabilities")
+        lt_debt = self._get_fin_series(t, "balance_sheet", "Long Term Debt")
+        gross_profits = self._get_fin_series(t, "financials", "Gross Profit")
+        revenues = self._get_fin_series(t, "financials", "Total Revenue")
+        retained_earnings = self._get_fin_series(t, "balance_sheet", "Retained Earnings")
+        total_liabs = self._get_fin_series(
+            t, "balance_sheet", "Total Liabilities Net Minority Interest"
+        )
+        ebit_series = self._get_fin_series(t, "financials", "EBIT")
+        interest_exp_series = self._get_fin_series(t, "financials", "Interest Expense")
+        total_debt = self._get_fin_series(t, "balance_sheet", "Total Debt")
+        cash_series = self._get_fin_series(t, "balance_sheet", "Cash And Cash Equivalents")
+        ebitda_series = self._get_fin_series(t, "financials", "EBITDA")
+        shares_series = self._get_fin_series(t, "balance_sheet", "Common Stock")
+
+        signals = self._compute_piotroski(
+            net_incomes,
+            op_cfs,
+            total_assets,
+            current_assets,
+            current_liabs,
+            lt_debt,
+            gross_profits,
+            revenues,
+            shares_series,
+        )
+        f_score: int | None = None
+        if any(v is not None for v in signals.model_dump().values()):
+            f_score = sum(1 for v in signals.model_dump().values() if v is True)
+
+        z_score: float | None = None
+        z_zone: Literal["distress", "grey", "safe"] | None = None
+        mkt_cap = _as_float(info.get("marketCap"))
+        if (
+            len(current_assets) >= 1
+            and len(current_liabs) >= 1
+            and len(total_assets) >= 1
+            and len(retained_earnings) >= 1
+            and len(ebit_series) >= 1
+            and len(total_liabs) >= 1
+            and len(revenues) >= 1
+            and mkt_cap is not None
+        ):
+            ta = total_assets[0]
+            if ta > 0:
+                x1 = (current_assets[0] - current_liabs[0]) / ta
+                x2 = retained_earnings[0] / ta
+                x3 = ebit_series[0] / ta
+                x4 = mkt_cap / total_liabs[0] if total_liabs[0] != 0 else 0.0
+                x5 = revenues[0] / ta
+                z = round(1.2 * x1 + 1.4 * x2 + 3.3 * x3 + 0.6 * x4 + 1.0 * x5, 4)
+                z_score = z
+                z_zone = "distress" if z < 1.81 else ("grey" if z <= 2.99 else "safe")
+
+        interest_coverage: float | None = None
+        if ebit_series and interest_exp_series and interest_exp_series[0] != 0:
+            # yfinance reports interest expense as negative
+            ie = abs(interest_exp_series[0])
+            if ie > 0:
+                interest_coverage = round(ebit_series[0] / ie, 2)
+
+        current_ratio: float | None = None
+        if current_assets and current_liabs and current_liabs[0] != 0:
+            current_ratio = round(current_assets[0] / current_liabs[0], 4)
+
+        net_debt_to_ebitda: float | None = None
+        if total_debt and cash_series and ebitda_series and ebitda_series[0] != 0:
+            net_debt = total_debt[0] - cash_series[0]
+            net_debt_to_ebitda = round(net_debt / abs(ebitda_series[0]), 4)
+
+        return FinancialStrengthData(
+            ticker=ticker.upper(),
+            as_of=date.today(),
+            f_score=f_score,
+            f_signals=signals,
+            z_score=z_score,
+            z_zone=z_zone,
+            interest_coverage=interest_coverage,
+            current_ratio=current_ratio,
+            net_debt_to_ebitda=net_debt_to_ebitda,
+            data_age_hours=_fiscal_age_hours(info),
+        )
+
+    def _compute_piotroski(
+        self,
+        net_incomes: list[float],
+        op_cfs: list[float],
+        total_assets: list[float],
+        current_assets: list[float],
+        current_liabs: list[float],
+        lt_debt: list[float],
+        gross_profits: list[float],
+        revenues: list[float],
+        shares: list[float],
+    ) -> PiotroskySignals:
+        def _roa(idx: int) -> float | None:
+            if idx < len(net_incomes) and idx < len(total_assets) and total_assets[idx] != 0:
+                return net_incomes[idx] / total_assets[idx]
+            return None
+
+        roa0 = _roa(0)
+        roa1 = _roa(1)
+        ta0 = total_assets[0] if total_assets else None
+
+        f1: bool | None = (roa0 > 0) if roa0 is not None else None
+        f2: bool | None = (op_cfs[0] > 0) if op_cfs else None
+        f3: bool | None = (roa0 > roa1) if (roa0 is not None and roa1 is not None) else None
+        f4: bool | None = None
+        if roa0 is not None and op_cfs and ta0 is not None and ta0 != 0:
+            f4 = (op_cfs[0] / ta0) > roa0
+
+        f5: bool | None = None
+        if (
+            len(lt_debt) >= 2
+            and len(total_assets) >= 2
+            and total_assets[0] != 0
+            and total_assets[1] != 0
+        ):
+            f5 = (lt_debt[0] / total_assets[0]) < (lt_debt[1] / total_assets[1])
+
+        f6: bool | None = None
+        if (
+            len(current_assets) >= 2
+            and len(current_liabs) >= 2
+            and current_liabs[0] != 0
+            and current_liabs[1] != 0
+        ):
+            cr0 = current_assets[0] / current_liabs[0]
+            cr1 = current_assets[1] / current_liabs[1]
+            f6 = cr0 > cr1
+
+        f7: bool | None = (shares[0] <= shares[1]) if len(shares) >= 2 else None
+
+        f8: bool | None = None
+        if len(gross_profits) >= 2 and len(revenues) >= 2 and revenues[0] != 0 and revenues[1] != 0:  # noqa: E501
+            f8 = (gross_profits[0] / revenues[0]) > (gross_profits[1] / revenues[1])
+
+        f9: bool | None = None
+        if (
+            len(revenues) >= 2
+            and len(total_assets) >= 2
+            and total_assets[0] != 0
+            and total_assets[1] != 0
+        ):
+            f9 = (revenues[0] / total_assets[0]) > (revenues[1] / total_assets[1])
+
+        return PiotroskySignals(
+            roa_positive=f1,
+            op_cf_positive=f2,
+            roa_improved=f3,
+            accruals_negative=f4,
+            leverage_decreased=f5,
+            current_ratio_improved=f6,
+            no_dilution=f7,
+            gross_margin_improved=f8,
+            asset_turnover_improved=f9,
         )
 
     def _get_fin_series(self, ticker_obj: object, attr: str, metric: str) -> list[float]:

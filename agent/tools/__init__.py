@@ -1,5 +1,6 @@
 from agent.tools.base import Tool
 from agent.tools.filings import ReadFilingTool
+from agent.tools.financial_strength import GetFinancialStrengthTool
 from agent.tools.fundamentals import GetFundamentalsTool
 from agent.tools.growth import GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextTool
@@ -23,6 +24,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "get_quality_metrics": GetQualityMetricsTool(),
     "get_insider_activity": GetInsiderActivityTool(),
     "get_peer_comparison": GetPeerComparisonTool(),
+    "get_financial_strength": GetFinancialStrengthTool(),
 }
 
 TOOL_DEFINITIONS: list[dict[str, object]] = [t.to_api_dict() for t in TOOL_REGISTRY.values()]

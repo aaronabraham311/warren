@@ -59,6 +59,7 @@ module = [
     "agent.tools.peers",
     "agent.tools.quality",
     "agent.tools.insider",
+    "agent.tools.financial_strength",
     "data_sources.yfinance_client",
     "data_sources.edgar_client",
     "data_sources.finnhub_client",
