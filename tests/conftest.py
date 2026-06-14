@@ -11,8 +11,23 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 
 import storage.engine as eng
+from agent.tools._clients import reset_clients
 from eval.fixtures import load_fixture
 from storage.models import Base
+
+
+@pytest.fixture(autouse=True)
+def _reset_tool_clients(monkeypatch: pytest.MonkeyPatch) -> Generator[None, None, None]:
+    """Isolate the tools-layer client singletons per test.
+
+    Points WARREN_DB at an in-memory cache so tools never touch the real warren.db,
+    and clears the lazy singletons before and after each test so connections and
+    monkeypatched clients never leak across cases.
+    """
+    monkeypatch.setenv("WARREN_DB", ":memory:")
+    reset_clients()
+    yield
+    reset_clients()
 
 
 @pytest.fixture(autouse=True)

@@ -10,30 +10,30 @@ from agent.tools.base import (
     error_from_data_source,
 )
 from data_sources.errors import DataSourceError
-from data_sources.yfinance_client import PriceData
+from data_sources.yfinance_client import GrowthData
 
 
-class GetQuoteInput(BaseModel):
+class GetGrowthMetricsInput(BaseModel):
     ticker: str = Field(pattern=r"^[A-Z]{1,5}$", description="Stock ticker, e.g. AAPL")
 
 
-class GetQuoteTool(Tool):
-    name = "get_quote"
+class GetGrowthMetricsTool(Tool):
+    name = "get_growth_metrics"
     description = (
-        "Get the current price, previous close, day change percent, and average "
-        "volume for a stock ticker."
+        "Get multi-year growth metrics for a ticker: 3- and 5-year revenue CAGR, "
+        "3-year earnings CAGR, and the PEG ratio."
     )
-    input_schema = GetQuoteInput
-    output_schema = PriceData
+    input_schema = GetGrowthMetricsInput
+    output_schema = GrowthData
 
     def run(self, tool_input: BaseModel, ctx: RunContext) -> ToolResult:
-        assert isinstance(tool_input, GetQuoteInput)
+        assert isinstance(tool_input, GetGrowthMetricsInput)
         try:
-            result = yfinance_client().get_price(tool_input.ticker)
+            result = yfinance_client().get_growth_metrics(tool_input.ticker)
         except Exception as exc:
             return ToolResultError(
                 error_code="unknown",
-                message=f"get_quote failed for {tool_input.ticker}: {exc}",
+                message=f"get_growth_metrics failed for {tool_input.ticker}: {exc}",
                 retryable=False,
             )
         if isinstance(result, DataSourceError):
