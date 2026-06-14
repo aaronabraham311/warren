@@ -1,0 +1,21 @@
+{
+  "company_tickers": {
+    "0": { "cik_str": 320193, "ticker": "AAPL", "title": "Apple Inc." }
+  },
+  "submissions": {
+    "filings": {
+      "recent": {
+        "form": ["8-K", "10-K", "10-K"],
+        "filingDate": ["2023-12-01", "2023-11-03", "2022-10-28"],
+        "reportDate": ["2023-12-01", "2023-09-30", "2022-09-24"],
+        "accessionNumber": [
+          "0000320193-23-000110",
+          "0000320193-23-000106",
+          "0000320193-22-000108"
+        ],
+        "primaryDocument": ["aapl-8k.htm", "aapl-20230930.htm", "aapl-20220924.htm"]
+      }
+    }
+  },
+  "filing_html": "<html><body>\n    <p>Table of Contents</p>\n    <p>Item 1. Business .... Item 1A. Risk Factors .... Item 7. MD&amp;A .... Item 8.</p>\n    <p>Item 1. Business</p><p>Apple designs phones.</p>\n    <p>Item 1A. Risk Factors</p><p>Supply chain risk and competition.</p>\n    <p>Item 7. Management's Discussion and Analysis</p>\n    <p>Revenue grew strongly this year.</p>\n    <p>Item 7A. Quantitative and Qualitative Disclosures</p><p>rates</p>\n    <p>Item 8. Financial Statements and Supplementary Data</p><p>tables</p>\n    </body></html>"
+}

@@ -1,3 +1,11 @@
+"""Unit tests for EDGARClient.
+
+The three raw HTTP bodies the client fetches — the ticker→CIK map, the submissions
+history, and the filing HTML — are served from the recorded fixture at
+``eval/fixtures/AAPL/edgar/get_filing_section/`` via the ``edgar_fixture`` conftest
+fixture. No live network is hit (the autouse socket guard enforces that).
+"""
+
 import json
 import sqlite3
 from datetime import date
@@ -7,30 +15,10 @@ import pytest
 from data_sources.edgar_client import MAX_CHARS, EDGARClient, FilingSection
 from data_sources.errors import DataSourceError
 
-# ── Fixture payloads ──────────────────────────────────────────────────────────
-
-COMPANY_TICKERS = json.dumps({"0": {"cik_str": 320193, "ticker": "AAPL", "title": "Apple Inc."}})
-
-SUBMISSIONS = json.dumps(
-    {
-        "filings": {
-            "recent": {
-                "form": ["8-K", "10-K", "10-K"],
-                "filingDate": ["2023-12-01", "2023-11-03", "2022-10-28"],
-                "reportDate": ["2023-12-01", "2023-09-30", "2022-09-24"],
-                "accessionNumber": [
-                    "0000320193-23-000110",
-                    "0000320193-23-000106",
-                    "0000320193-22-000108",
-                ],
-                "primaryDocument": ["aapl-8k.htm", "aapl-20230930.htm", "aapl-20220924.htm"],
-            }
-        }
-    }
-)
-
 
 def _filing_html(mdna_body: str) -> str:
+    """Synthesize a filing whose MD&A body is *mdna_body* — used by the truncation
+    test, which needs a body far larger than anything worth committing as a fixture."""
     return f"""<html><body>
     <p>Table of Contents</p>
     <p>Item 1. Business .... Item 1A. Risk Factors .... Item 7. MD&amp;A .... Item 8.</p>
@@ -49,28 +37,31 @@ class _FakeResponse:
         self.text = text
 
 
-def _route(url: str, mdna_body: str) -> _FakeResponse:
+def _route(url: str, fixture: dict[str, object], filing_html: str) -> _FakeResponse:
     if "company_tickers.json" in url:
-        return _FakeResponse(200, COMPANY_TICKERS)
+        return _FakeResponse(200, json.dumps(fixture["company_tickers"]))
     if "/submissions/CIK" in url:
-        return _FakeResponse(200, SUBMISSIONS)
+        return _FakeResponse(200, json.dumps(fixture["submissions"]))
     if "/Archives/" in url:
-        return _FakeResponse(200, _filing_html(mdna_body))
+        return _FakeResponse(200, filing_html)
     return _FakeResponse(404, "")
 
 
 def _build_client(
     conn: sqlite3.Connection,
     monkeypatch: pytest.MonkeyPatch,
-    mdna_body: str = "Revenue grew strongly this year.",
+    fixture: dict[str, object],
+    filing_html: str | None = None,
 ) -> tuple[EDGARClient, list[str]]:
-    """Build an EDGARClient whose session.get is faked. Returns (client, urls_seen)."""
+    """Build an EDGARClient whose session.get is faked from *fixture*. Returns
+    (client, urls_seen). Pass *filing_html* to override the recorded document body."""
     client = EDGARClient(conn, _sleep=lambda _s: None)
+    html = filing_html if filing_html is not None else str(fixture["filing_html"])
     urls: list[str] = []
 
     def fake_get(url: str, timeout: int | None = None) -> _FakeResponse:
         urls.append(url)
-        return _route(url, mdna_body)
+        return _route(url, fixture, html)
 
     monkeypatch.setattr(client._session, "get", fake_get)
     return client, urls
@@ -80,9 +71,11 @@ def _build_client(
 
 
 def test_mdna_returns_content(
-    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
 ) -> None:
-    client, _urls = _build_client(edgar_conn, monkeypatch)
+    client, _urls = _build_client(edgar_conn, monkeypatch, edgar_fixture)
     result = client.get_filing_section("AAPL", "10-K", "mdna")
     assert isinstance(result, FilingSection)
     assert "Revenue grew strongly" in result.text
@@ -95,9 +88,16 @@ def test_mdna_returns_content(
 
 
 def test_truncation_caps_at_max_chars(
-    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
 ) -> None:
-    client, _urls = _build_client(edgar_conn, monkeypatch, mdna_body="x " * (MAX_CHARS // 2 + 5000))
+    client, _urls = _build_client(
+        edgar_conn,
+        monkeypatch,
+        edgar_fixture,
+        filing_html=_filing_html("x " * (MAX_CHARS // 2 + 5000)),
+    )
     result = client.get_filing_section("AAPL", "10-K", "mdna")
     assert isinstance(result, FilingSection)
     assert len(result.text) == MAX_CHARS
@@ -105,9 +105,11 @@ def test_truncation_caps_at_max_chars(
 
 
 def test_second_call_uses_cache_zero_network(
-    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
 ) -> None:
-    client, urls = _build_client(edgar_conn, monkeypatch)
+    client, urls = _build_client(edgar_conn, monkeypatch, edgar_fixture)
     first = client.get_filing_section("AAPL", "10-K", "mdna")
     assert isinstance(first, FilingSection)
     calls_after_first = len(urls)
@@ -120,9 +122,11 @@ def test_second_call_uses_cache_zero_network(
 
 
 def test_invalid_ticker_returns_not_found(
-    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
 ) -> None:
-    client, _urls = _build_client(edgar_conn, monkeypatch)
+    client, _urls = _build_client(edgar_conn, monkeypatch, edgar_fixture)
     result = client.get_filing_section("ZZZZ", "10-K", "mdna")
     assert isinstance(result, DataSourceError)
     assert result.error_code == "not_found"
@@ -134,18 +138,22 @@ def test_user_agent_header_always_present(edgar_conn: sqlite3.Connection) -> Non
 
 
 def test_risk_factors_section_extracted(
-    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
 ) -> None:
-    client, _urls = _build_client(edgar_conn, monkeypatch)
+    client, _urls = _build_client(edgar_conn, monkeypatch, edgar_fixture)
     result = client.get_filing_section("AAPL", "10-K", "risk_factors")
     assert isinstance(result, FilingSection)
     assert "Supply chain risk" in result.text
 
 
 def test_fiscal_year_selects_older_filing(
-    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
 ) -> None:
-    client, _urls = _build_client(edgar_conn, monkeypatch)
+    client, _urls = _build_client(edgar_conn, monkeypatch, edgar_fixture)
     result = client.get_filing_section("AAPL", "10-K", "mdna", fiscal_year=2022)
     assert isinstance(result, FilingSection)
     assert result.fiscal_year == 2022
@@ -182,14 +190,16 @@ def test_non_json_200_returns_parse(
 
 
 def test_malformed_submissions_returns_parse(
-    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
 ) -> None:
     """Valid JSON with a null 'filings' key must be returned as parse, never raised."""
     client = EDGARClient(edgar_conn, _sleep=lambda _s: None)
 
     def fake_get(url: str, timeout: int | None = None) -> _FakeResponse:
         if "company_tickers.json" in url:
-            return _FakeResponse(200, COMPANY_TICKERS)
+            return _FakeResponse(200, json.dumps(edgar_fixture["company_tickers"]))
         return _FakeResponse(200, json.dumps({"filings": None}))
 
     monkeypatch.setattr(client._session, "get", fake_get)
