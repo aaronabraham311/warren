@@ -21,6 +21,7 @@ from agent.tools.filings import ReadFilingInput, ReadFilingTool
 from agent.tools.fundamentals import GetFundamentalsInput, GetFundamentalsTool
 from agent.tools.growth import GetGrowthMetricsInput, GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextInput, GetHoldingContextTool, HoldingContext
+from agent.tools.insider import GetInsiderActivityInput, GetInsiderActivityTool, InsiderActivity
 from agent.tools.news import GetNewsInput, GetNewsTool, NewsResult
 from agent.tools.quality import GetQualityMetricsInput, GetQualityMetricsTool
 from agent.tools.quote import GetQuoteInput, GetQuoteTool
@@ -28,8 +29,14 @@ from agent.tools.screen import ScreenResult, ScreenUniverseInput, ScreenUniverse
 from agent.tools.valuation import GetValuationMultiplesInput, GetValuationMultiplesTool
 from data_sources.edgar_client import FilingSection
 from data_sources.errors import DataSourceError
-from data_sources.finnhub_client import FinnhubFinancials, NewsItem
-from data_sources.yfinance_client import FundamentalsData, PriceData, QualityData, ValuationData
+from data_sources.finnhub_client import FinnhubFinancials, FinnhubInsiderTransaction, NewsItem
+from data_sources.yfinance_client import (
+    FundamentalsData,
+    OwnershipData,
+    PriceData,
+    QualityData,
+    ValuationData,
+)
 from storage.logger import RunLogger
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -85,11 +92,13 @@ class _FakeYF:
         fundamentals: Callable[[str], FundamentalsData | DataSourceError] | None = None,
         valuation: ValuationData | DataSourceError | None = None,
         quality: QualityData | DataSourceError | None = None,
+        ownership: OwnershipData | DataSourceError | None = None,
     ) -> None:
         self._price = price
         self._fundamentals = fundamentals
         self._valuation = valuation
         self._quality = quality
+        self._ownership = ownership
         self.fundamentals_calls = 0
 
     def get_price(self, ticker: str) -> PriceData | DataSourceError:
@@ -111,6 +120,13 @@ class _FakeYF:
         assert self._quality is not None
         return self._quality
 
+    def get_ownership(self, ticker: str) -> OwnershipData | DataSourceError:
+        if self._ownership is None:
+            return OwnershipData(
+                ticker=ticker, as_of=date.today(), insider_pct=None, institutional_pct=None
+            )
+        return self._ownership
+
 
 class _FakeFinnhub:
     def __init__(
@@ -118,9 +134,11 @@ class _FakeFinnhub:
         *,
         financials: FinnhubFinancials | None = None,
         news: list[NewsItem] | DataSourceError | None = None,
+        insider_txns: list[FinnhubInsiderTransaction] | DataSourceError | None = None,
     ) -> None:
         self._financials = financials
         self._news = news
+        self._insider_txns = insider_txns
         self.financials_calls = 0
 
     def get_basic_financials(self, ticker: str) -> FinnhubFinancials | DataSourceError:
@@ -132,11 +150,17 @@ class _FakeFinnhub:
         assert self._news is not None
         return self._news
 
+    def get_insider_transactions(
+        self, ticker: str, days: int = 90
+    ) -> list[FinnhubInsiderTransaction] | DataSourceError:
+        assert self._insider_txns is not None
+        return self._insider_txns
+
 
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_tools() -> None:
+def test_registry_has_all_ten_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -147,6 +171,7 @@ def test_registry_has_all_tools() -> None:
         "get_holding_context",
         "get_valuation_multiples",
         "get_quality_metrics",
+        "get_insider_activity",
     }
     assert all(isinstance(t, Tool) for t in TOOL_REGISTRY.values())
 
@@ -510,3 +535,111 @@ def test_get_quality_metrics_catches_unexpected_exception(monkeypatch: pytest.Mo
     result = GetQualityMetricsTool().run(GetQualityMetricsInput(ticker="AAPL"), _ctx())
     assert isinstance(result, ToolResultError)
     assert result.error_code == "unknown"
+
+
+# ── get_insider_activity ──────────────────────────────────────────────────────
+
+
+def _txn(
+    name: str = "Tim Cook",
+    txn_type: str = "buy",
+    shares: int = 1000,
+    value: float | None = 150_000.0,
+    txn_date: date | None = None,
+) -> FinnhubInsiderTransaction:
+    from typing import Literal
+
+    t: Literal["buy", "sell", "other"] = txn_type  # type: ignore[assignment]
+    return FinnhubInsiderTransaction(
+        name=name,
+        transaction_type=t,
+        shares=shares,
+        value=value,
+        transaction_date=txn_date or date.today(),
+    )
+
+
+def _ownership(ticker: str = "AAPL", insider: float = 0.07, inst: float = 59.5) -> OwnershipData:
+    return OwnershipData(
+        ticker=ticker, as_of=date.today(), insider_pct=insider, institutional_pct=inst
+    )
+
+
+def test_get_insider_activity_net_buy_bullish(monkeypatch: pytest.MonkeyPatch) -> None:
+    txns = [_txn(shares=2000, txn_type="buy"), _txn(shares=500, txn_type="sell")]
+    fh = _FakeFinnhub(insider_txns=txns)
+    yf = _FakeYF(ownership=_ownership())
+    monkeypatch.setattr("agent.tools.insider.finnhub_client", lambda: fh)
+    monkeypatch.setattr("agent.tools.insider.yfinance_client", lambda: yf)
+    result = GetInsiderActivityTool().run(GetInsiderActivityInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, InsiderActivity)
+    assert result.data.insider_sentiment == "bullish"
+    assert result.data.net_shares_bought == 1500
+    assert result.data.insider_ownership_pct == pytest.approx(0.07)
+    assert result.data.institutional_ownership_pct == pytest.approx(59.5)
+    assert len(result.data.transactions) == 2
+
+
+def test_get_insider_activity_net_sell_bearish(monkeypatch: pytest.MonkeyPatch) -> None:
+    txns = [_txn(shares=100, txn_type="buy"), _txn(shares=5000, txn_type="sell")]
+    monkeypatch.setattr(
+        "agent.tools.insider.finnhub_client", lambda: _FakeFinnhub(insider_txns=txns)
+    )
+    monkeypatch.setattr("agent.tools.insider.yfinance_client", lambda: _FakeYF())
+    result = GetInsiderActivityTool().run(GetInsiderActivityInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, InsiderActivity)
+    assert result.data.insider_sentiment == "bearish"
+    assert result.data.net_shares_bought == -4900
+
+
+def test_get_insider_activity_only_other_txns_insufficient(monkeypatch: pytest.MonkeyPatch) -> None:
+    txns = [_txn(txn_type="other", shares=500)]
+    monkeypatch.setattr(
+        "agent.tools.insider.finnhub_client", lambda: _FakeFinnhub(insider_txns=txns)
+    )
+    monkeypatch.setattr("agent.tools.insider.yfinance_client", lambda: _FakeYF())
+    result = GetInsiderActivityTool().run(GetInsiderActivityInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, InsiderActivity)
+    assert result.data.insider_sentiment == "insufficient_data"
+    assert result.data.net_shares_bought == 0
+
+
+def test_get_insider_activity_no_finnhub_key(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("agent.tools.insider.finnhub_client", lambda: None)
+    result = GetInsiderActivityTool().run(GetInsiderActivityInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+    assert result.retryable is False
+
+
+def test_get_insider_activity_maps_network_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    err = DataSourceError(error_code="network", message="connection refused")
+    monkeypatch.setattr(
+        "agent.tools.insider.finnhub_client",
+        lambda: _FakeFinnhub(insider_txns=err),
+    )
+    monkeypatch.setattr("agent.tools.insider.yfinance_client", lambda: _FakeYF())
+    result = GetInsiderActivityTool().run(GetInsiderActivityInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "network"
+    assert result.retryable is True
+
+
+def test_get_insider_activity_ownership_none_when_yf_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+    txns = [_txn(shares=1000, txn_type="buy")]
+    monkeypatch.setattr(
+        "agent.tools.insider.finnhub_client", lambda: _FakeFinnhub(insider_txns=txns)
+    )
+    monkeypatch.setattr(
+        "agent.tools.insider.yfinance_client",
+        lambda: _FakeYF(ownership=DataSourceError(error_code="not_found", message="gone")),
+    )
+    result = GetInsiderActivityTool().run(GetInsiderActivityInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, InsiderActivity)
+    assert result.data.insider_ownership_pct is None
+    assert result.data.institutional_ownership_pct is None
+    assert result.data.insider_sentiment == "bullish"
