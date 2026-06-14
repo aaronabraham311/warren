@@ -12,8 +12,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from data_sources.cache import CacheStore, make_key
+from data_sources.errors import DataSourceError
 from data_sources.yfinance_client import (
-    DataSourceError,
     FundamentalsData,
     GrowthData,
     PriceData,

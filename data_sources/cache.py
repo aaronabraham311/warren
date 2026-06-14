@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, timezone
 from hashlib import sha256
 
 
-def make_key(tool_name: str, ticker: str) -> str:
-    return sha256(f"{tool_name}:{ticker}".encode()).hexdigest()
+def make_key(tool_name: str, *parts: str) -> str:
+    return sha256(":".join((tool_name, *parts)).encode()).hexdigest()
 
 
 class CacheStore:
