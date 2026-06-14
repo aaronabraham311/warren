@@ -11,6 +11,7 @@ from agent.budget import Budget, RunContext
 from agent.loop import CostAbortedError, analyze_ticker
 from agent.models import DEFAULT_MODEL_ID
 from agent.persona import DefaultPersona
+from agent.portfolio import load_portfolio, load_watchlist, sync_holdings_to_db
 from agent.routing import HardcodedSonnetRouting
 
 load_dotenv()  # must precede storage.engine import so WARREN_DB is applied before engine creation
@@ -32,11 +33,21 @@ _LOG_DIR = Path("logs/runs")
 def main() -> None:
     parser = argparse.ArgumentParser(description="Warren stock analysis agent")
     parser.add_argument("ticker", nargs="?", default="AAPL", help="Ticker symbol to analyse")
+    parser.add_argument(
+        "--skip-ticker-validation",
+        action="store_true",
+        help="Skip yfinance ticker validation when loading portfolio (faster for large portfolios)",
+    )
     args = parser.parse_args()
 
     ticker = args.ticker.upper()
     migrate()
     reconcile_orphans(_LOG_DIR)  # self-heal any run left "running" by a previous crash
+
+    portfolio = load_portfolio(validate_tickers=not args.skip_ticker_validation)
+    load_watchlist()
+    with get_session() as session:
+        sync_holdings_to_db(portfolio, session, {})
 
     persona = DefaultPersona()
     routing_policy = HardcodedSonnetRouting()
