@@ -196,9 +196,7 @@ class YFinanceClient:
             raise _NotFoundError(ticker)
         p = float(price)
         pc = float(prev_close) if prev_close is not None else None
-        day_change_pct = (
-            round((p - pc) / pc * 100, 2) if pc and pc != 0.0 else None
-        )
+        day_change_pct = round((p - pc) / pc * 100, 2) if pc and pc != 0.0 else None
         return PriceData(
             ticker=ticker.upper(),
             current_price=round(p, 2),

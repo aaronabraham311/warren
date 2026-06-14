@@ -67,9 +67,17 @@ def record_fixtures(ticker: str, output_dir: Path) -> None:
     # get_fundamentals: .info fields we consume
     info: dict[str, object] = t.info
     relevant = [
-        "trailingPE", "priceToBook", "returnOnEquity", "debtToEquity",
-        "freeCashflow", "operatingMargins", "profitMargins",
-        "lastFiscalYearEnd", "regularMarketPrice", "currentPrice", "pegRatio",
+        "trailingPE",
+        "priceToBook",
+        "returnOnEquity",
+        "debtToEquity",
+        "freeCashflow",
+        "operatingMargins",
+        "profitMargins",
+        "lastFiscalYearEnd",
+        "regularMarketPrice",
+        "currentPrice",
+        "pegRatio",
     ]
     _write("get_fundamentals", {k: info.get(k) for k in relevant})
 

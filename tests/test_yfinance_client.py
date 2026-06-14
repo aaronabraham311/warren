@@ -61,7 +61,10 @@ def _mock_ticker_for_growth(fixture: dict[str, object]) -> MagicMock:
         "lastFiscalYearEnd": fixture.get("lastFiscalYearEnd"),
         "regularMarketPrice": fixture.get("regularMarketPrice"),
         # pad with dummy keys so len(info) > 5
-        "a": 1, "b": 2, "c": 3, "d": 4,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
     }
     # Simulate financials DataFrame .index / .loc / .dropna / .values
     revenue = fixture.get("Total Revenue", [])
@@ -78,6 +81,7 @@ def _mock_ticker_for_growth(fixture: dict[str, object]) -> MagicMock:
     fin.index = list(
         (["Total Revenue"] if revenue else []) + (["Net Income"] if net_income else [])
     )
+
     def _getitem(self: object, k: str) -> MagicMock:
         return make_series(revenue if k == "Total Revenue" else net_income)
 
@@ -87,9 +91,7 @@ def _mock_ticker_for_growth(fixture: dict[str, object]) -> MagicMock:
 
 
 def _expire_cache(conn: sqlite3.Connection, key: str) -> None:
-    conn.execute(
-        "UPDATE cache SET expires_at = '2000-01-01T00:00:00+00:00' WHERE key = ?", (key,)
-    )
+    conn.execute("UPDATE cache SET expires_at = '2000-01-01T00:00:00+00:00' WHERE key = ?", (key,))
     conn.commit()
 
 
@@ -401,7 +403,10 @@ def test_get_growth_metrics_missing_financials_returns_none_cagr(
             "pegRatio": 2.1,
             "lastFiscalYearEnd": 1696032000,
             "regularMarketPrice": 182.5,
-            "a": 1, "b": 2, "c": 3, "d": 4,
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "d": 4,
         }
         # financials with empty index — no revenue/earnings rows
         fin = MagicMock()

@@ -33,9 +33,7 @@ class CacheStore:
             return str(row[0])
         # Cache miss: evict any expired entry and commit so the lock is released
         # before the caller fetches fresh data and calls set().
-        self._conn.execute(
-            "DELETE FROM cache WHERE key = ? AND expires_at <= ?", (key, now)
-        )
+        self._conn.execute("DELETE FROM cache WHERE key = ? AND expires_at <= ?", (key, now))
         self._conn.commit()
         return None
 
