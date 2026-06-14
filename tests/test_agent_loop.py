@@ -5,10 +5,12 @@ SQLite runs in-memory via the db_engine fixture.
 """
 
 import tempfile
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import anthropic
 import pytest
 from sqlalchemy.orm import Session
 
@@ -21,7 +23,7 @@ from agent.loop import (
 )
 from agent.persona import DefaultPersona
 from agent.routing import HardcodedSonnetRouting
-from agent.tools.base import ToolResultError, ToolResultOk
+from agent.tools.base import ErrorCode, ToolResult, ToolResultError, ToolResultOk
 from agent.tools.quote import GetQuoteInput, GetQuoteTool
 from data_sources.yfinance_client import PriceData
 from storage.engine import upsert_analysis, write_run_end, write_run_start
@@ -377,3 +379,138 @@ def test_analysis_list_columns_roundtrip(db_engine: object, db_session: Session)
     assert row.buffett_signals == ["high ROE"]
     assert row.key_risks == ["valuation stretched"]
     assert row.data_quality_notes == []
+
+
+# ── Retry / backoff ───────────────────────────────────────────────────────────
+
+
+def _ok_result() -> ToolResultOk:
+    return ToolResultOk(
+        data=PriceData(
+            ticker="AAPL",
+            current_price=180.0,
+            previous_close=178.0,
+            day_change_pct=1.12,
+            volume=50_000_000,
+            as_of=datetime.now(timezone.utc),
+            data_age_hours=0,
+        )
+    )
+
+
+def _err(code: ErrorCode, retryable: bool = True) -> ToolResultError:
+    return ToolResultError(error_code=code, message=f"{code} error", retryable=retryable)
+
+
+def _stub_registry(results: list[ToolResult]) -> dict[str, MagicMock]:
+    """Return a patched TOOL_REGISTRY dict with a stub get_quote tool."""
+    mock_tool = MagicMock()
+    mock_tool.input_schema = GetQuoteInput
+    mock_tool.run.side_effect = results
+    return {"get_quote": mock_tool}
+
+
+def _run_with_mock_sleep(
+    mock_claude: Callable[[list[anthropic.types.Message]], MagicMock],
+    registry: dict[str, MagicMock],
+    *,
+    responses: list[anthropic.types.Message] | None = None,
+) -> tuple[AnalysisOutput, MagicMock]:
+    """Wire up mock_claude + stub registry, run analyze_ticker with a mock sleep.
+
+    Returns (result, sleep_mock) so callers can assert on sleep_mock.call_count /
+    sleep_mock.call_args_list.
+    """
+    if responses is None:
+        responses = [
+            make_tool_use("get_quote", {"ticker": "AAPL"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    mock_claude(responses)
+    sleep_mock = MagicMock()
+    with patch("agent.loop.TOOL_REGISTRY", registry):
+        result = analyze_ticker(
+            "AAPL", DefaultPersona(), HardcodedSonnetRouting(), _ctx(), _sleep=sleep_mock
+        )
+    return result, sleep_mock
+
+
+def test_retry_rate_limit_success(mock_claude: MagicMock) -> None:
+    """rate_limit x2 then ok — two sleeps, tool called 3 times."""
+    registry = _stub_registry([_err("rate_limit"), _err("rate_limit"), _ok_result()])
+    result, sleep_mock = _run_with_mock_sleep(mock_claude, registry)
+    assert isinstance(result, AnalysisOutput)
+    assert registry["get_quote"].run.call_count == 3
+    assert sleep_mock.call_count == 2
+    assert sleep_mock.call_args_list[0][0][0] == pytest.approx(1.0)
+    assert sleep_mock.call_args_list[1][0][0] == pytest.approx(2.0)
+
+
+def test_retry_rate_limit_exhausted(mock_claude: MagicMock) -> None:
+    """rate_limit returned 4 times (> max 3 retries) — final error reaches agent."""
+    registry = _stub_registry(
+        [_err("rate_limit"), _err("rate_limit"), _err("rate_limit"), _err("rate_limit")]
+    )
+    result, sleep_mock = _run_with_mock_sleep(mock_claude, registry)
+    assert isinstance(result, AnalysisOutput)
+    assert registry["get_quote"].run.call_count == 4  # 1 initial + 3 retries
+    assert sleep_mock.call_count == 3
+
+
+def test_retry_network_success(mock_claude: MagicMock) -> None:
+    """network x1 then ok — one sleep, tool called 2 times."""
+    registry = _stub_registry([_err("network"), _ok_result()])
+    result, sleep_mock = _run_with_mock_sleep(mock_claude, registry)
+    assert isinstance(result, AnalysisOutput)
+    assert registry["get_quote"].run.call_count == 2
+    assert sleep_mock.call_count == 1
+    assert sleep_mock.call_args_list[0][0][0] == pytest.approx(1.0)
+
+
+def test_retry_network_exhausted(mock_claude: MagicMock) -> None:
+    """network returned 3 times (> max 2 retries) — final error reaches agent."""
+    registry = _stub_registry([_err("network"), _err("network"), _err("network")])
+    result, sleep_mock = _run_with_mock_sleep(mock_claude, registry)
+    assert isinstance(result, AnalysisOutput)
+    assert registry["get_quote"].run.call_count == 3  # 1 initial + 2 retries
+    assert sleep_mock.call_count == 2
+
+
+def test_no_retry_not_found(mock_claude: MagicMock) -> None:
+    """not_found is never retried regardless of retryable flag."""
+    registry = _stub_registry([_err("not_found", retryable=False)])
+    result, sleep_mock = _run_with_mock_sleep(mock_claude, registry)
+    assert isinstance(result, AnalysisOutput)
+    assert registry["get_quote"].run.call_count == 1
+    assert sleep_mock.call_count == 0
+
+
+def test_no_retry_stale_data(mock_claude: MagicMock) -> None:
+    """stale_data is never retried."""
+    registry = _stub_registry([_err("stale_data", retryable=False)])
+    result, sleep_mock = _run_with_mock_sleep(mock_claude, registry)
+    assert isinstance(result, AnalysisOutput)
+    assert registry["get_quote"].run.call_count == 1
+    assert sleep_mock.call_count == 0
+
+
+def test_no_retry_when_retryable_false(mock_claude: MagicMock) -> None:
+    """retryable=False on a normally-retryable code skips retry."""
+    registry = _stub_registry([_err("rate_limit", retryable=False)])
+    result, sleep_mock = _run_with_mock_sleep(mock_claude, registry)
+    assert isinstance(result, AnalysisOutput)
+    assert registry["get_quote"].run.call_count == 1
+    assert sleep_mock.call_count == 0
+
+
+def test_unknown_error_logged_to_stderr(
+    mock_claude: MagicMock, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """unknown errors are logged to stderr once and not retried."""
+    registry = _stub_registry([_err("unknown", retryable=False)])
+    result, sleep_mock = _run_with_mock_sleep(mock_claude, registry)
+    assert isinstance(result, AnalysisOutput)
+    assert registry["get_quote"].run.call_count == 1
+    assert sleep_mock.call_count == 0
+    captured = capsys.readouterr()
+    assert "[warren] unknown tool error" in captured.err

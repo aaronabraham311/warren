@@ -1,6 +1,8 @@
 import json
 import re
+import sys
 import time
+from collections.abc import Callable
 from typing import Literal, Protocol, cast
 
 import anthropic
@@ -8,7 +10,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from agent.budget import RunContext
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
-from agent.tools.base import ToolResult, ToolResultError, ToolResultOk
+from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
 
 
 class _Persona(Protocol):
@@ -25,6 +27,32 @@ class _RoutingPolicy(Protocol):
 _MAX_ITERATIONS = 8
 _MAX_TOOL_REPEATS = 3
 _FORCE_FINAL_MAX_TOKENS = 2048
+
+# Max *retries* (not total attempts) per transient error code.
+_RETRY_POLICY: dict[str, int] = {"rate_limit": 3, "network": 2}
+
+
+def _run_with_retry(
+    tool: Tool,
+    parsed: BaseModel,
+    run_context: RunContext,
+    _sleep: Callable[[float], None],
+) -> ToolResult:
+    """Run tool.run(), retrying transient errors with exponential backoff."""
+    retries = 0
+    while True:
+        result = tool.run(parsed, run_context)
+        if isinstance(result, ToolResultOk):
+            return result
+        if not result.retryable:
+            if result.error_code == "unknown":
+                print(f"[warren] unknown tool error: {result.message}", file=sys.stderr)
+            return result
+        max_retries = _RETRY_POLICY.get(result.error_code, 0)
+        if retries >= max_retries:
+            return result
+        _sleep(2.0**retries)
+        retries += 1
 
 
 class AnalysisOutput(BaseModel):
@@ -141,6 +169,7 @@ def analyze_ticker(
     routing_policy: _RoutingPolicy,
     run_context: RunContext,
     client: anthropic.Anthropic | None = None,
+    _sleep: Callable[[float], None] = time.sleep,
 ) -> AnalysisOutput:
     if client is None:
         client = anthropic.Anthropic()
@@ -256,7 +285,7 @@ def analyze_ticker(
                             retryable=False,
                         )
                     else:
-                        result = tool.run(parsed, run_context)
+                        result = _run_with_retry(tool, parsed, run_context, _sleep)
                     # Serialize the result so the agent sees structured errors as data.
                     if isinstance(result, ToolResultOk):
                         result_content = result.data.model_dump_json()
