@@ -129,6 +129,7 @@ not the model output — tests exercise the real parsing path. Load them with
 - Environment variables are loaded once at startup via `dotenv.load_dotenv()` in `agent/run.py`. Everywhere else, read with `os.environ["KEY"]` — no repeated `load_dotenv()` calls.
 - Do not commit `.env`, `warren.db`, or anything under `logs/`.
 - `local/` is a gitignored scratch dir for review notes, findings, and throwaway artifacts — never shipped or imported by code.
+- **Prefer `@dataclass` over plain tuples for multi-value returns** (named fields, no positional unpacking drift). Use `NamedTuple` only for genuinely tuple-like data (e.g. a coordinate pair). Raw tuples are fine for single-purpose, immediately-unpacked returns.
 
 ## Common commands
 
