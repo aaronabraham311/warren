@@ -3,6 +3,7 @@ import re
 import sys
 import time
 from collections.abc import Callable
+from dataclasses import dataclass
 from typing import Literal, Protocol, cast
 
 import anthropic
@@ -32,25 +33,34 @@ _FORCE_FINAL_MAX_TOKENS = 2048
 _RETRY_POLICY: dict[str, int] = {"rate_limit": 3, "network": 2}
 
 
+@dataclass
+class _RetryOutcome:
+    result: ToolResult
+    retry_count: int
+    last_retry_error: str | None
+
+
 def _run_with_retry(
     tool: Tool,
     parsed: BaseModel,
     run_context: RunContext,
     _sleep: Callable[[float], None],
-) -> ToolResult:
+) -> _RetryOutcome:
     """Run tool.run(), retrying transient errors with exponential backoff."""
     retries = 0
+    last_error_code: str | None = None
     while True:
         result = tool.run(parsed, run_context)
         if isinstance(result, ToolResultOk):
-            return result
+            return _RetryOutcome(result, retries, last_error_code)
         if not result.retryable:
             if result.error_code == "unknown":
                 print(f"[warren] unknown tool error: {result.message}", file=sys.stderr)
-            return result
+            return _RetryOutcome(result, retries, last_error_code)
         max_retries = _RETRY_POLICY.get(result.error_code, 0)
         if retries >= max_retries:
-            return result
+            return _RetryOutcome(result, retries, last_error_code)
+        last_error_code = result.error_code
         _sleep(2.0**retries)
         retries += 1
 
@@ -266,6 +276,8 @@ def analyze_ticker(
                 t0 = time.monotonic()
                 error_msg: str | None = None
                 cached = False
+                retry_count = 0
+                last_retry_error: str | None = None
                 if tool is None:
                     result_content = json.dumps(
                         {
@@ -285,7 +297,10 @@ def analyze_ticker(
                             retryable=False,
                         )
                     else:
-                        result = _run_with_retry(tool, parsed, run_context, _sleep)
+                        outcome = _run_with_retry(tool, parsed, run_context, _sleep)
+                        result = outcome.result
+                        retry_count = outcome.retry_count
+                        last_retry_error = outcome.last_retry_error
                     # Serialize the result so the agent sees structured errors as data.
                     if isinstance(result, ToolResultOk):
                         result_content = result.data.model_dump_json()
@@ -310,6 +325,8 @@ def analyze_ticker(
                     status="ok" if error_msg is None else "error",
                     ticker=ticker,
                     error_msg=error_msg,
+                    retry_count=retry_count,
+                    last_retry_error=last_retry_error,
                 )
 
                 tool_results.append(
