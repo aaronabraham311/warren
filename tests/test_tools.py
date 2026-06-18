@@ -11,6 +11,7 @@ import tempfile
 from collections.abc import Callable
 from datetime import date, datetime, timezone
 from pathlib import Path
+from typing import Literal
 
 import pytest
 
@@ -18,6 +19,7 @@ from agent.budget import Budget, RunContext
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResultError, ToolResultOk
 from agent.tools.filings import ReadFilingInput, ReadFilingTool
+from agent.tools.financial_strength import GetFinancialStrengthInput, GetFinancialStrengthTool
 from agent.tools.fundamentals import GetFundamentalsInput, GetFundamentalsTool
 from agent.tools.growth import GetGrowthMetricsInput, GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextInput, GetHoldingContextTool, HoldingContext
@@ -32,8 +34,10 @@ from data_sources.edgar_client import FilingSection
 from data_sources.errors import DataSourceError
 from data_sources.finnhub_client import FinnhubFinancials, FinnhubInsiderTransaction, NewsItem
 from data_sources.yfinance_client import (
+    FinancialStrengthData,
     FundamentalsData,
     OwnershipData,
+    PiotroskySignals,
     PriceData,
     QualityData,
     ValuationData,
@@ -99,12 +103,14 @@ class _FakeYF:
         ) = None,
         quality: QualityData | DataSourceError | None = None,
         ownership: OwnershipData | DataSourceError | None = None,
+        financial_strength: FinancialStrengthData | DataSourceError | None = None,
     ) -> None:
         self._price = price
         self._fundamentals = fundamentals
         self._valuation = valuation
         self._quality = quality
         self._ownership = ownership
+        self._financial_strength = financial_strength
         self.fundamentals_calls = 0
 
     def get_price(self, ticker: str) -> PriceData | DataSourceError:
@@ -134,6 +140,10 @@ class _FakeYF:
                 ticker=ticker, as_of=date.today(), insider_pct=None, institutional_pct=None
             )
         return self._ownership
+
+    def get_financial_strength(self, ticker: str) -> FinancialStrengthData | DataSourceError:
+        assert self._financial_strength is not None
+        return self._financial_strength
 
 
 class _FakeFinnhub:
@@ -168,7 +178,7 @@ class _FakeFinnhub:
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_eleven_tools() -> None:
+def test_registry_has_all_twelve_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -181,6 +191,7 @@ def test_registry_has_all_eleven_tools() -> None:
         "get_quality_metrics",
         "get_insider_activity",
         "get_peer_comparison",
+        "get_financial_strength",
     }
     assert all(isinstance(t, Tool) for t in TOOL_REGISTRY.values())
 
@@ -678,6 +689,44 @@ def _peer_valuation(
     )
 
 
+# ── get_financial_strength ────────────────────────────────────────────────────
+
+
+def _financial_strength(
+    ticker: str = "AAPL",
+    *,
+    f_score: int | None = 7,
+    z_score: float | None = 3.5,
+    z_zone: Literal["distress", "grey", "safe"] | None = "safe",
+    interest_coverage: float | None = 12.0,
+    current_ratio: float | None = 1.5,
+    net_debt_to_ebitda: float | None = 0.8,
+) -> FinancialStrengthData:
+    signals = PiotroskySignals(
+        roa_positive=True,
+        op_cf_positive=True,
+        roa_improved=True,
+        accruals_negative=True,
+        leverage_decreased=True,
+        current_ratio_improved=True,
+        no_dilution=True,
+        gross_margin_improved=False,
+        asset_turnover_improved=False,
+    )
+    return FinancialStrengthData(
+        ticker=ticker,
+        as_of=date.today(),
+        f_score=f_score,
+        f_signals=signals,
+        z_score=z_score,
+        z_zone=z_zone,
+        interest_coverage=interest_coverage,
+        current_ratio=current_ratio,
+        net_debt_to_ebitda=net_debt_to_ebitda,
+        data_age_hours=0,
+    )
+
+
 def test_get_peer_comparison_happy_path(monkeypatch: pytest.MonkeyPatch) -> None:
     # AAPL: pe=10, ev_to_ebit=15, gross_margin=50
     # MSFT: pe=20, ev_to_ebit=25, gross_margin=60
@@ -806,3 +855,46 @@ def test_get_peer_comparison_sector_fallback_to_universe(monkeypatch: pytest.Mon
     pc = result.data
     assert isinstance(pc, PeerComparison)
     assert set(pc.peers) == {"MSFT", "GOOG"}
+
+
+def test_get_financial_strength_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    fs = _financial_strength()
+    monkeypatch.setattr(
+        "agent.tools.financial_strength.yfinance_client",
+        lambda: _FakeYF(financial_strength=fs),
+    )
+    result = GetFinancialStrengthTool().run(GetFinancialStrengthInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, FinancialStrengthData)
+    assert result.data.f_score == 7
+    assert result.data.z_zone == "safe"
+    assert result.data.interest_coverage == pytest.approx(12.0)
+    assert result.data.f_signals.roa_positive is True
+    assert result.data.f_signals.gross_margin_improved is False
+
+
+def test_get_financial_strength_none_when_data_missing(monkeypatch: pytest.MonkeyPatch) -> None:
+    fs = _financial_strength(f_score=None, z_score=None, z_zone=None, interest_coverage=None)
+    monkeypatch.setattr(
+        "agent.tools.financial_strength.yfinance_client",
+        lambda: _FakeYF(financial_strength=fs),
+    )
+    result = GetFinancialStrengthTool().run(GetFinancialStrengthInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, FinancialStrengthData)
+    assert result.data.f_score is None
+    assert result.data.z_score is None
+    assert result.data.z_zone is None
+    assert result.data.interest_coverage is None
+
+
+def test_get_financial_strength_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
+    err = DataSourceError(error_code="not_found", message="no data")
+    monkeypatch.setattr(
+        "agent.tools.financial_strength.yfinance_client",
+        lambda: _FakeYF(financial_strength=err),
+    )
+    result = GetFinancialStrengthTool().run(GetFinancialStrengthInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+    assert result.retryable is False
