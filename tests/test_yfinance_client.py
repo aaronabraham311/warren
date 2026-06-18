@@ -14,6 +14,7 @@ import pytest
 from data_sources.cache import CacheStore, make_key
 from data_sources.errors import DataSourceError
 from data_sources.yfinance_client import (
+    CapitalAllocation,
     FinancialsHistory,
     FinancialStrengthData,
     FundamentalsData,
@@ -748,6 +749,68 @@ def test_get_financial_strength_computes_from_financials(yf_conn: sqlite3.Connec
     assert result.f_signals.no_dilution is False
     assert result.current_ratio is not None
     assert result.interest_coverage is not None and result.interest_coverage > 0
+
+
+# ── get_capital_allocation: client-level, computed off the shared history ──────
+
+
+def test_get_capital_allocation_computes_from_financials(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_financials")
+    client = _make_client(yf_conn)
+
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        return_value=_mock_ticker_for_financials(fixture),
+    ):
+        result = client.get_capital_allocation("AAPL")
+
+    assert isinstance(result, CapitalAllocation)
+    assert result.ticker == "AAPL"
+    assert result.years_covered == 4
+    # Share-count fell 16.98B → 15.55B over 4 years → net buybacks (negative CAGR). (AC #1)
+    assert result.share_count_series == [15550061000, 15943425000, 16426786000, 16976763000]
+    assert result.share_count_cagr_pct is not None and result.share_count_cagr_pct < 0
+    # Yields off the most recent year against a 2.85T market cap. (AC #1)
+    assert result.buyback_yield_pct == pytest.approx(2.7211, abs=1e-3)
+    assert result.dividend_yield_pct == pytest.approx(0.5272, abs=1e-3)
+    assert result.shareholder_yield_pct == pytest.approx(3.2483, abs=1e-3)
+    # Dividend rose every available year, payout off FY2023 net income. (AC #2)
+    assert result.dividend_growth_streak == 3
+    assert result.payout_ratio_pct == pytest.approx(15.4905, abs=1e-3)
+    # Net debt = total_debt - cash, newest-first.
+    assert result.net_debt_series == [81123000000, 96423000000, 89779000000, 74420000000]
+    assert result.net_debt_trajectory in {"delevering", "levering", "stable"}
+
+
+def test_get_capital_allocation_caches_result(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_financials")
+    client = _make_client(yf_conn)
+    call_count = [0]
+
+    def side_effect(ticker: str) -> MagicMock:
+        call_count[0] += 1
+        return _mock_ticker_for_financials(fixture)
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        client.get_capital_allocation("AAPL")
+        client.get_capital_allocation("AAPL")
+
+    assert call_count[0] == 1, "second call must be a cache hit"
+
+
+def test_get_capital_allocation_not_found_for_empty_info(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+
+    def side_effect(ticker: str) -> MagicMock:
+        t = MagicMock()
+        t.info = {}
+        return t
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        result = client.get_capital_allocation("ZZZZZ")
+
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "not_found"
 
 
 # ── CacheStore unit tests ─────────────────────────────────────────────────────

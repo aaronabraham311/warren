@@ -1,4 +1,5 @@
 from agent.tools.base import Tool
+from agent.tools.capital_allocation import GetCapitalAllocationTool
 from agent.tools.filings import ReadFilingTool
 from agent.tools.financial_strength import GetFinancialStrengthTool
 from agent.tools.fundamentals import GetFundamentalsTool
@@ -27,6 +28,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "get_peer_comparison": GetPeerComparisonTool(),
     "get_financial_strength": GetFinancialStrengthTool(),
     "estimate_intrinsic_value": EstimateIntrinsicValueTool(),
+    "get_capital_allocation": GetCapitalAllocationTool(),
 }
 
 TOOL_DEFINITIONS: list[dict[str, object]] = [t.to_api_dict() for t in TOOL_REGISTRY.values()]

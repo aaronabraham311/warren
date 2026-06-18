@@ -38,6 +38,7 @@ agent/
     peers.py      # get_peer_comparison → fundamentals+valuation per peer → PeerComparison (rank/percentile)
     financial_strength.py  # get_financial_strength → YFinanceClient.get_financial_strength → FinancialStrengthData
     intrinsic_value.py  # estimate_intrinsic_value → owner-earnings DCF off get_financials + get_price → IntrinsicValue (intrinsic value/share, margin of safety, reverse-DCF implied growth)
+    capital_allocation.py  # get_capital_allocation → YFinanceClient.get_capital_allocation → CapitalAllocation (share-count CAGR, buyback/dividend/shareholder yield, dividend growth streak, payout ratio, net-debt trajectory — Buffett/Munger management-quality lens)
 
 data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
