@@ -3,6 +3,7 @@ from agent.tools.filings import ReadFilingTool
 from agent.tools.fundamentals import GetFundamentalsTool
 from agent.tools.growth import GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextTool
+from agent.tools.insider import GetInsiderActivityTool
 from agent.tools.news import GetNewsTool
 from agent.tools.quality import GetQualityMetricsTool
 from agent.tools.quote import GetQuoteTool
@@ -19,6 +20,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "get_holding_context": GetHoldingContextTool(),
     "get_valuation_multiples": GetValuationMultiplesTool(),
     "get_quality_metrics": GetQualityMetricsTool(),
+    "get_insider_activity": GetInsiderActivityTool(),
 }
 
 TOOL_DEFINITIONS: list[dict[str, object]] = [t.to_api_dict() for t in TOOL_REGISTRY.values()]

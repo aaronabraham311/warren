@@ -53,7 +53,16 @@ class FinnhubFinancials(BaseModel):
     source: Literal["finnhub"] = "finnhub"
 
 
+class FinnhubInsiderTransaction(BaseModel):
+    name: str
+    transaction_type: Literal["buy", "sell", "other"]
+    shares: int
+    value: float | None
+    transaction_date: date
+
+
 _NEWS_ADAPTER = TypeAdapter(list[NewsItem])
+_INSIDER_ADAPTER = TypeAdapter(list[FinnhubInsiderTransaction])
 
 
 # ── Internal sentinels (mapped to DataSourceError before returning) ───────────
@@ -254,3 +263,74 @@ class FinnhubClient:
             roe_pct=_as_float(metric.get("roeTTM")),
             source="finnhub",
         )
+
+    # ── get_insider_transactions ───────────────────────────────────────────
+
+    def get_insider_transactions(
+        self, ticker: str, days: int = 90
+    ) -> list[FinnhubInsiderTransaction] | DataSourceError:
+        key = make_key("finnhub_insider", ticker.upper(), str(days))
+        cached = self._cache.get(key)
+        if cached is not None:
+            return list(_INSIDER_ADAPTER.validate_json(cached))
+
+        to_date = date.today()
+        from_date = to_date - timedelta(days=days)
+        try:
+            raw = self._with_retry(
+                lambda: self.client.stock_insider_transactions(
+                    ticker.upper(),
+                    from_date.isoformat(),
+                    to_date.isoformat(),
+                )
+            )
+            items = self._parse_insider_transactions(raw)
+        except finnhub.FinnhubRequestException as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        except finnhub.FinnhubAPIException as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        except (KeyError, ValueError, TypeError) as exc:
+            return DataSourceError(error_code="parse", message=str(exc))
+
+        self._cache.set(key, _INSIDER_ADAPTER.dump_json(items).decode(), self._ttl_financials)
+        return items
+
+    _TRANSACTION_CODE_MAP: dict[str, Literal["buy", "sell", "other"]] = {
+        "P": "buy",
+        "S": "sell",
+    }
+
+    @classmethod
+    def _parse_insider_transactions(cls, raw: object) -> list[FinnhubInsiderTransaction]:
+        if not isinstance(raw, dict):
+            raise ValueError("unexpected stock_insider_transactions shape (expected a dict)")
+        data = raw.get("data")
+        if data is None:
+            return []
+        if not isinstance(data, list):
+            raise ValueError("unexpected 'data' field (expected a list)")
+        items: list[FinnhubInsiderTransaction] = []
+        for entry in data:
+            if not isinstance(entry, dict):
+                continue
+            code = entry.get("transactionCode")
+            txn_type: Literal["buy", "sell", "other"] = cls._TRANSACTION_CODE_MAP.get(
+                code if isinstance(code, str) else "", "other"
+            )
+            raw_date = entry.get("transactionDate")
+            try:
+                txn_date = date.fromisoformat(_as_str(raw_date)) if raw_date else date.today()
+            except ValueError:
+                txn_date = date.today()
+            shares_raw = entry.get("share")
+            shares = abs(int(float(shares_raw))) if isinstance(shares_raw, (int, float)) else 0
+            items.append(
+                FinnhubInsiderTransaction(
+                    name=_as_str(entry.get("name")),
+                    transaction_type=txn_type,
+                    shares=shares,
+                    value=_as_float(entry.get("value")),
+                    transaction_date=txn_date,
+                )
+            )
+        return items

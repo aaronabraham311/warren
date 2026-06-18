@@ -123,6 +123,14 @@ class QualityData(BaseModel):
     source: Literal["yfinance"] = "yfinance"
 
 
+class OwnershipData(BaseModel):
+    ticker: str
+    as_of: date
+    insider_pct: float | None
+    institutional_pct: float | None
+    source: Literal["yfinance"] = "yfinance"
+
+
 # ── Internal sentinels ────────────────────────────────────────────────────────
 
 
@@ -542,3 +550,33 @@ class YFinanceClient:
         if not net_incomes or not total_assets or total_assets[0] == 0:
             return None
         return round(net_incomes[0] / total_assets[0] * 100.0, 4)
+
+    # ── get_ownership ─────────────────────────────────────────────────────
+
+    def get_ownership(self, ticker: str) -> OwnershipData | DataSourceError:
+        key = make_key("yf_ownership", ticker)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return OwnershipData.model_validate_json(cached)
+        try:
+            result = self._fetch_with_retry(
+                lambda: self._fetch_ownership(ticker),
+                no_retry=(_NotFoundError,),
+            )
+        except _NotFoundError:
+            return DataSourceError(error_code="not_found", message=f"No data for {ticker}")
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, result.model_dump_json(), self._ttl_fundamentals)
+        return result
+
+    def _fetch_ownership(self, ticker: str) -> OwnershipData:
+        info: dict[str, object] = yf.Ticker(ticker).info
+        if not isinstance(info, dict) or len(info) <= 5:
+            raise _NotFoundError(ticker)
+        return OwnershipData(
+            ticker=ticker.upper(),
+            as_of=date.today(),
+            insider_pct=_as_pct(info.get("heldPercentInsiders")),
+            institutional_pct=_as_pct(info.get("heldPercentInstitutions")),
+        )
