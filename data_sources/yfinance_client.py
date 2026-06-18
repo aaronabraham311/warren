@@ -1,7 +1,8 @@
+import math
 import sqlite3
 import statistics
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from typing import Literal, TypeVar
@@ -131,6 +132,96 @@ class OwnershipData(BaseModel):
     source: Literal["yfinance"] = "yfinance"
 
 
+# ── Multi-year financial-statement history (the data foundation the value tools share) ──
+#
+# Rows are newest-first and year-aligned: index 0 is the most recent fiscal year. A
+# null line item (NaN in the upstream frame, or a metric absent for that year) is None
+# in the row, so the year positions stay aligned across statements. Consumers that want
+# the legacy null-compacted series call ``YFinanceClient._series(rows, field)``.
+
+
+class IncomeStatementRow(BaseModel):
+    fiscal_year: int
+    revenue: int | None
+    gross_profit: int | None
+    operating_income: int | None
+    net_income: int | None
+    ebit: int | None
+    ebitda: int | None
+    interest_expense: int | None
+    pretax_income: int | None
+    tax_provision: int | None
+
+
+class BalanceSheetRow(BaseModel):
+    fiscal_year: int
+    total_assets: int | None
+    total_liabilities: int | None
+    current_assets: int | None
+    current_liabilities: int | None
+    long_term_debt: int | None
+    total_debt: int | None
+    cash_and_equivalents: int | None
+    retained_earnings: int | None
+    common_stock: int | None
+    shares_outstanding: int | None
+
+
+class CashFlowRow(BaseModel):
+    fiscal_year: int
+    cfo: int | None
+    capex: int | None
+    free_cash_flow: int | None
+    dividends_paid: int | None
+    buybacks: int | None
+
+
+class FinancialsHistory(BaseModel):
+    ticker: str
+    as_of: date
+    fiscal_years: list[int]
+    income_statement: list[IncomeStatementRow]
+    balance_sheet: list[BalanceSheetRow]
+    cash_flow: list[CashFlowRow]
+    data_age_hours: int
+    source: Literal["yfinance"] = "yfinance"
+
+
+# yfinance line-item name → row field. The first matching name in a tuple wins (fallbacks).
+_INCOME_METRICS: dict[str, tuple[str, ...]] = {
+    "revenue": ("Total Revenue",),
+    "gross_profit": ("Gross Profit",),
+    "operating_income": ("Operating Income",),
+    "net_income": ("Net Income",),
+    "ebit": ("EBIT",),
+    "ebitda": ("EBITDA",),
+    "interest_expense": ("Interest Expense",),
+    "pretax_income": ("Pretax Income",),
+    "tax_provision": ("Tax Provision",),
+}
+_BALANCE_METRICS: dict[str, tuple[str, ...]] = {
+    "total_assets": ("Total Assets",),
+    "total_liabilities": ("Total Liabilities Net Minority Interest",),
+    "current_assets": ("Current Assets",),
+    "current_liabilities": ("Current Liabilities",),
+    "long_term_debt": ("Long Term Debt",),
+    "total_debt": ("Total Debt",),
+    "cash_and_equivalents": ("Cash And Cash Equivalents",),
+    "retained_earnings": ("Retained Earnings",),
+    "common_stock": ("Common Stock",),
+    "shares_outstanding": ("Share Issued", "Ordinary Shares Number"),
+}
+_CASHFLOW_METRICS: dict[str, tuple[str, ...]] = {
+    "cfo": ("Operating Cash Flow",),
+    "capex": ("Capital Expenditure",),
+    "free_cash_flow": ("Free Cash Flow",),
+    "dividends_paid": ("Cash Dividends Paid",),
+    "buybacks": ("Repurchase Of Capital Stock",),
+}
+
+_MAX_FIN_YEARS = 5
+
+
 # ── Internal sentinels ────────────────────────────────────────────────────────
 
 
@@ -182,6 +273,18 @@ def _as_pct(v: object) -> float | None:
 def _as_int(v: object) -> int | None:
     if isinstance(v, (int, float)):
         return int(float(v))
+    return None
+
+
+def _as_int_safe(v: object) -> int | None:
+    """Like ``_as_int`` but rejects bools and NaN (statement frames carry NaN gaps)."""
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, (int, float)):
+        f = float(v)
+        if math.isnan(f):
+            return None
+        return int(f)
     return None
 
 
@@ -342,34 +445,29 @@ class YFinanceClient:
         info: dict[str, object] = t.info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
+        hist = self._build_financials(t, ticker)
+        revenue = self._series(hist.income_statement, "revenue")
+        net_income = self._series(hist.income_statement, "net_income")
         return GrowthData(
             ticker=ticker.upper(),
             as_of=date.today(),
-            revenue_cagr_3y=self._compute_cagr(t, "Total Revenue", max_years=3),
-            revenue_cagr_5y=self._compute_cagr(t, "Total Revenue", max_years=5),
-            earnings_cagr_3y=self._compute_cagr(t, "Net Income", max_years=3),
+            revenue_cagr_3y=self._cagr(revenue, max_years=3),
+            revenue_cagr_5y=self._cagr(revenue, max_years=5),
+            earnings_cagr_3y=self._cagr(net_income, max_years=3),
             peg_ratio=_as_float(info.get("pegRatio")),
             data_age_hours=_fiscal_age_hours(info),
         )
 
-    def _compute_cagr(
-        self, ticker_obj: object, metric: str, max_years: int | None = None
-    ) -> float | None:
-        try:
-            fin = ticker_obj.financials  # type: ignore[attr-defined]
-            if metric not in fin.index:
-                return None
-            series = fin.loc[metric].dropna()
-            values: list[float] = [float(v) for v in series.values if float(v) > 0]
-            if len(values) < 2:
-                return None
-            # Values are newest-first; cap the window to (max_years + 1) data points.
-            if max_years is not None:
-                values = values[: max_years + 1]
-            n_years = len(values) - 1
-            return round(float((values[0] / values[-1]) ** (1.0 / n_years) - 1.0), 4)
-        except Exception:
+    @staticmethod
+    def _cagr(series: list[float], max_years: int | None = None) -> float | None:
+        # Newest-first positive values only, capped to (max_years + 1) data points.
+        values = [v for v in series if v > 0]
+        if len(values) < 2:
             return None
+        if max_years is not None:
+            values = values[: max_years + 1]
+        n_years = len(values) - 1
+        return round(float((values[0] / values[-1]) ** (1.0 / n_years) - 1.0), 4)
 
     # ── get_valuation_multiples ───────────────────────────────────────────────
 
@@ -484,6 +582,36 @@ class YFinanceClient:
         self._cache.set(key, result.model_dump_json(), self._ttl_fundamentals)
         return result
 
+    # ── get_financials (multi-year statement history) ─────────────────────────
+
+    def get_financials(self, ticker: str) -> FinancialsHistory | DataSourceError:
+        key = make_key("yf_financials", ticker)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return FinancialsHistory.model_validate_json(cached)
+        try:
+            result = self._fetch_with_retry(
+                lambda: self._fetch_financials(ticker),
+                no_retry=(_NotFoundError,),
+            )
+        except _NotFoundError:
+            return DataSourceError(error_code="not_found", message=f"No data for {ticker}")
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, result.model_dump_json(), self._ttl_fundamentals)
+        return result
+
+    def _fetch_financials(self, ticker: str) -> FinancialsHistory:
+        t = yf.Ticker(ticker)
+        info: dict[str, object] = t.info
+        if not isinstance(info, dict) or len(info) <= 5:
+            raise _NotFoundError(ticker)
+        if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
+            raise _NotFoundError(ticker)
+        # Missing statements yield empty row lists rather than an error (mirrors
+        # get_quality_metrics); only an unknown ticker (empty info) is not_found.
+        return self._build_financials(t, ticker)
+
     def _fetch_quality_metrics(self, ticker: str) -> QualityData:
         t = yf.Ticker(ticker)
         info: dict[str, object] = t.info
@@ -492,16 +620,17 @@ class YFinanceClient:
         if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
             raise _NotFoundError(ticker)
 
-        roic_series = self._compute_roic_series(t)
+        hist = self._build_financials(t, ticker)
+        roic_series = self._compute_roic_series(hist)
         roic_vals = [v for v in roic_series if v is not None]
         roic_mean = round(sum(roic_vals) / len(roic_vals), 4) if roic_vals else None
 
-        gm_series = self._compute_gross_margin_series(t)
+        gm_series = self._compute_gross_margin_series(hist)
         gm_vals = [v for v in gm_series if v is not None]
         gm_stdev = round(statistics.stdev(gm_vals), 4) if len(gm_vals) >= 2 else None
 
-        cc_series = self._compute_cash_conversion_series(t)
-        roa_pct = self._compute_roa(t)
+        cc_series = self._compute_cash_conversion_series(hist)
+        roa_pct = self._compute_roa(hist)
 
         return QualityData(
             ticker=ticker.upper(),
@@ -526,24 +655,24 @@ class YFinanceClient:
         if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
             raise _NotFoundError(ticker)
 
-        net_incomes = self._get_fin_series(t, "financials", "Net Income")
-        op_cfs = self._get_fin_series(t, "cashflow", "Operating Cash Flow")
-        total_assets = self._get_fin_series(t, "balance_sheet", "Total Assets")
-        current_assets = self._get_fin_series(t, "balance_sheet", "Current Assets")
-        current_liabs = self._get_fin_series(t, "balance_sheet", "Current Liabilities")
-        lt_debt = self._get_fin_series(t, "balance_sheet", "Long Term Debt")
-        gross_profits = self._get_fin_series(t, "financials", "Gross Profit")
-        revenues = self._get_fin_series(t, "financials", "Total Revenue")
-        retained_earnings = self._get_fin_series(t, "balance_sheet", "Retained Earnings")
-        total_liabs = self._get_fin_series(
-            t, "balance_sheet", "Total Liabilities Net Minority Interest"
-        )
-        ebit_series = self._get_fin_series(t, "financials", "EBIT")
-        interest_exp_series = self._get_fin_series(t, "financials", "Interest Expense")
-        total_debt = self._get_fin_series(t, "balance_sheet", "Total Debt")
-        cash_series = self._get_fin_series(t, "balance_sheet", "Cash And Cash Equivalents")
-        ebitda_series = self._get_fin_series(t, "financials", "EBITDA")
-        shares_series = self._get_fin_series(t, "balance_sheet", "Common Stock")
+        hist = self._build_financials(t, ticker)
+        inc, bs, cf = hist.income_statement, hist.balance_sheet, hist.cash_flow
+        net_incomes = self._series(inc, "net_income")
+        op_cfs = self._series(cf, "cfo")
+        total_assets = self._series(bs, "total_assets")
+        current_assets = self._series(bs, "current_assets")
+        current_liabs = self._series(bs, "current_liabilities")
+        lt_debt = self._series(bs, "long_term_debt")
+        gross_profits = self._series(inc, "gross_profit")
+        revenues = self._series(inc, "revenue")
+        retained_earnings = self._series(bs, "retained_earnings")
+        total_liabs = self._series(bs, "total_liabilities")
+        ebit_series = self._series(inc, "ebit")
+        interest_exp_series = self._series(inc, "interest_expense")
+        total_debt = self._series(bs, "total_debt")
+        cash_series = self._series(bs, "cash_and_equivalents")
+        ebitda_series = self._series(inc, "ebitda")
+        shares_series = self._series(bs, "common_stock")
 
         signals = self._compute_piotroski(
             net_incomes,
@@ -688,22 +817,119 @@ class YFinanceClient:
             asset_turnover_improved=f9,
         )
 
-    def _get_fin_series(self, ticker_obj: object, attr: str, metric: str) -> list[float]:
+    # ── Financial-statement history (shared foundation) ───────────────────────
+
+    def _build_financials(self, ticker_obj: object, ticker: str) -> FinancialsHistory:
+        """Read the three statement frames once and build a typed, year-aligned history."""
+        inc_df = self._safe_attr(ticker_obj, "financials")
+        bs_df = self._safe_attr(ticker_obj, "balance_sheet")
+        cf_df = self._safe_attr(ticker_obj, "cashflow")
+
+        inc_cells = self._statement_cells(inc_df, _INCOME_METRICS)
+        bs_cells = self._statement_cells(bs_df, _BALANCE_METRICS)
+        cf_cells = self._statement_cells(cf_df, _CASHFLOW_METRICS)
+
+        income = [
+            IncomeStatementRow(fiscal_year=y, **cells)
+            for y, cells in self._rows_from_cells(inc_df, _INCOME_METRICS, inc_cells)
+        ]
+        balance = [
+            BalanceSheetRow(fiscal_year=y, **cells)
+            for y, cells in self._rows_from_cells(bs_df, _BALANCE_METRICS, bs_cells)
+        ]
+        cash = [
+            CashFlowRow(fiscal_year=y, **cells)
+            for y, cells in self._rows_from_cells(cf_df, _CASHFLOW_METRICS, cf_cells)
+        ]
+        info = self._safe_info(ticker_obj)
+        return FinancialsHistory(
+            ticker=ticker.upper(),
+            as_of=date.today(),
+            fiscal_years=[r.fiscal_year for r in income],
+            income_statement=income,
+            balance_sheet=balance,
+            cash_flow=cash,
+            data_age_hours=_fiscal_age_hours(info),
+        )
+
+    @staticmethod
+    def _safe_attr(ticker_obj: object, attr: str) -> object:
         try:
-            df = getattr(ticker_obj, attr)
-            if metric not in df.index:
-                return []
-            series = df.loc[metric].dropna()
-            return [float(v) for v in series.values]
+            return getattr(ticker_obj, attr)
+        except Exception:
+            return None
+
+    @staticmethod
+    def _safe_info(ticker_obj: object) -> dict[str, object]:
+        info = getattr(ticker_obj, "info", None)
+        return info if isinstance(info, dict) else {}
+
+    def _statement_cells(
+        self, df: object, metrics: dict[str, tuple[str, ...]]
+    ) -> dict[str, list[int | None]]:
+        """For each row field, the positional (newest-first) values, NaN/missing → None."""
+        return {field: self._raw_series(df, names) for field, names in metrics.items()}
+
+    @staticmethod
+    def _raw_series(df: object, names: tuple[str, ...]) -> list[int | None]:
+        try:
+            index = df.index  # type: ignore[attr-defined]
+            for name in names:
+                if name in index:
+                    return [_as_int_safe(v) for v in df.loc[name].values]  # type: ignore[attr-defined]
         except Exception:
             return []
+        return []
 
-    def _compute_roic_series(self, ticker_obj: object) -> list[float | None]:
-        op_incomes = self._get_fin_series(ticker_obj, "financials", "Operating Income")
-        tax_provisions = self._get_fin_series(ticker_obj, "financials", "Tax Provision")
-        pretax_incomes = self._get_fin_series(ticker_obj, "financials", "Pretax Income")
-        total_assets = self._get_fin_series(ticker_obj, "balance_sheet", "Total Assets")
-        current_liabs = self._get_fin_series(ticker_obj, "balance_sheet", "Current Liabilities")
+    def _rows_from_cells(
+        self,
+        df: object,
+        metrics: dict[str, tuple[str, ...]],
+        cells: dict[str, list[int | None]],
+    ) -> list[tuple[int, dict[str, int | None]]]:
+        years = self._fiscal_years_of(df)
+        n = max([len(v) for v in cells.values()] + [len(years)], default=0)
+        n = min(n, _MAX_FIN_YEARS)
+        rows: list[tuple[int, dict[str, int | None]]] = []
+        for i in range(n):
+            cell = {
+                field: (cells[field][i] if i < len(cells[field]) else None) for field in metrics
+            }
+            rows.append((years[i] if i < len(years) else 0, cell))
+        return rows
+
+    @staticmethod
+    def _fiscal_years_of(df: object) -> list[int]:
+        try:
+            cols = list(df.columns)  # type: ignore[attr-defined]
+        except Exception:
+            return []
+        years: list[int] = []
+        for c in cols:
+            y = getattr(c, "year", None)
+            years.append(int(y) if isinstance(y, int) else 0)
+        return years
+
+    @staticmethod
+    def _series(rows: Sequence[BaseModel], field: str) -> list[float]:
+        """Null-compacted, newest-first float series for one row field.
+
+        Equivalent to the legacy ``df.loc[metric].dropna()`` extraction: dropping the
+        None cells reproduces ``dropna`` because the rows are positionally aligned.
+        """
+        out: list[float] = []
+        for row in rows:
+            v = getattr(row, field)
+            if v is not None:
+                out.append(float(v))
+        return out
+
+    def _compute_roic_series(self, hist: FinancialsHistory) -> list[float | None]:
+        op_incomes = self._series(hist.income_statement, "operating_income")
+        tax_provisions = self._series(hist.income_statement, "tax_provision")
+        pretax_incomes = self._series(hist.income_statement, "pretax_income")
+        total_assets = self._series(hist.balance_sheet, "total_assets")
+        current_liabs = self._series(hist.balance_sheet, "current_liabilities")
 
         n = min(len(op_incomes), len(total_assets), len(current_liabs))
         if n == 0:
@@ -726,9 +952,9 @@ class YFinanceClient:
             result.append(round(nopat / invested_capital * 100.0, 4))
         return result
 
-    def _compute_gross_margin_series(self, ticker_obj: object) -> list[float | None]:
-        gross_profits = self._get_fin_series(ticker_obj, "financials", "Gross Profit")
-        revenues = self._get_fin_series(ticker_obj, "financials", "Total Revenue")
+    def _compute_gross_margin_series(self, hist: FinancialsHistory) -> list[float | None]:
+        gross_profits = self._series(hist.income_statement, "gross_profit")
+        revenues = self._series(hist.income_statement, "revenue")
         n = min(len(gross_profits), len(revenues))
         if n == 0:
             return []
@@ -740,14 +966,14 @@ class YFinanceClient:
                 result.append(round(gross_profits[i] / revenues[i] * 100.0, 4))
         return result
 
-    def _compute_cash_conversion_series(self, ticker_obj: object) -> list[float | None]:
-        fcf_series = self._get_fin_series(ticker_obj, "cashflow", "Free Cash Flow")
+    def _compute_cash_conversion_series(self, hist: FinancialsHistory) -> list[float | None]:
+        fcf_series = self._series(hist.cash_flow, "free_cash_flow")
         if not fcf_series:
-            op_cfs = self._get_fin_series(ticker_obj, "cashflow", "Operating Cash Flow")
-            capex = self._get_fin_series(ticker_obj, "cashflow", "Capital Expenditure")
+            op_cfs = self._series(hist.cash_flow, "cfo")
+            capex = self._series(hist.cash_flow, "capex")
             n_cf = min(len(op_cfs), len(capex))
             fcf_series = [op_cfs[i] + capex[i] for i in range(n_cf)]
-        net_incomes = self._get_fin_series(ticker_obj, "financials", "Net Income")
+        net_incomes = self._series(hist.income_statement, "net_income")
         n = min(len(fcf_series), len(net_incomes))
         if n == 0:
             return []
@@ -759,9 +985,9 @@ class YFinanceClient:
                 result.append(round(fcf_series[i] / net_incomes[i], 4))
         return result
 
-    def _compute_roa(self, ticker_obj: object) -> float | None:
-        net_incomes = self._get_fin_series(ticker_obj, "financials", "Net Income")
-        total_assets = self._get_fin_series(ticker_obj, "balance_sheet", "Total Assets")
+    def _compute_roa(self, hist: FinancialsHistory) -> float | None:
+        net_incomes = self._series(hist.income_statement, "net_income")
+        total_assets = self._series(hist.balance_sheet, "total_assets")
         if not net_incomes or not total_assets or total_assets[0] == 0:
             return None
         return round(net_incomes[0] / total_assets[0] * 100.0, 4)

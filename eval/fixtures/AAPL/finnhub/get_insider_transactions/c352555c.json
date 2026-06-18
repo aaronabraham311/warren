@@ -1,0 +1,45 @@
+{
+  "symbol": "AAPL",
+  "data": [
+    {
+      "name": "COOK TIMOTHY D",
+      "share": 511000,
+      "change": -511000,
+      "filingDate": "2023-10-03",
+      "transactionDate": "2023-10-01",
+      "transactionCode": "S",
+      "transactionPrice": 171.28,
+      "value": 87524080.0
+    },
+    {
+      "name": "MAESTRI LUCA",
+      "share": 176299,
+      "change": -176299,
+      "filingDate": "2023-08-15",
+      "transactionDate": "2023-08-13",
+      "transactionCode": "S",
+      "transactionPrice": 178.61,
+      "value": 31494569.0
+    },
+    {
+      "name": "LEVINSON ARTHUR D",
+      "share": 4000,
+      "change": 4000,
+      "filingDate": "2023-05-12",
+      "transactionDate": "2023-05-10",
+      "transactionCode": "P",
+      "transactionPrice": 173.56,
+      "value": 694240.0
+    },
+    {
+      "name": "WAGNER SUSAN",
+      "share": 1240,
+      "change": 1240,
+      "filingDate": "2023-02-03",
+      "transactionDate": "2023-02-01",
+      "transactionCode": "A",
+      "transactionPrice": 0.0,
+      "value": null
+    }
+  ]
+}

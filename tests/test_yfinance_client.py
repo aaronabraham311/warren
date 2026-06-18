@@ -14,6 +14,8 @@ import pytest
 from data_sources.cache import CacheStore, make_key
 from data_sources.errors import DataSourceError
 from data_sources.yfinance_client import (
+    FinancialsHistory,
+    FinancialStrengthData,
     FundamentalsData,
     GrowthData,
     PriceData,
@@ -573,6 +575,179 @@ def test_get_quality_metrics_not_found(yf_conn: sqlite3.Connection) -> None:
 
     assert isinstance(result, DataSourceError)
     assert result.error_code == "not_found"
+
+
+# ── get_financials / get_financial_strength helpers ──────────────────────────
+
+
+def _make_stmt_df_mock(statement: dict[str, object]) -> MagicMock:
+    """DataFrame-like mock with year columns, metric index, and positional values."""
+    from datetime import date as _date
+
+    years_raw = statement.get("fiscal_years", [])
+    years = years_raw if isinstance(years_raw, list) else []
+    metrics = {k: v for k, v in statement.items() if k != "fiscal_years"}
+    df = MagicMock()
+    df.columns = [_date(int(y), 12, 31) for y in years if isinstance(y, int)]
+    df.index = list(metrics.keys())
+
+    def _getitem(self: object, metric: str) -> MagicMock:
+        s = MagicMock()
+        s.values = metrics.get(metric, [])
+        return s
+
+    df.loc.__getitem__ = _getitem
+    return df
+
+
+def _mock_ticker_for_financials(fixture: dict[str, object]) -> MagicMock:
+    t = MagicMock()
+    t.info = {
+        "lastFiscalYearEnd": fixture.get("lastFiscalYearEnd"),
+        "regularMarketPrice": fixture.get("regularMarketPrice"),
+        "marketCap": fixture.get("marketCap"),
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
+    }
+    inc = fixture.get("income_statement", {})
+    bs = fixture.get("balance_sheet", {})
+    cf = fixture.get("cashflow", {})
+    t.financials = _make_stmt_df_mock(inc if isinstance(inc, dict) else {})
+    t.balance_sheet = _make_stmt_df_mock(bs if isinstance(bs, dict) else {})
+    t.cashflow = _make_stmt_df_mock(cf if isinstance(cf, dict) else {})
+    return t
+
+
+# ── get_financials: normal response ───────────────────────────────────────────
+
+
+def test_get_financials_returns_valid_data(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_financials")
+    client = _make_client(yf_conn)
+
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        return_value=_mock_ticker_for_financials(fixture),
+    ):
+        result = client.get_financials("AAPL")
+
+    assert isinstance(result, FinancialsHistory)
+    assert result.ticker == "AAPL"
+    assert result.source == "yfinance"
+    # ≥3 years across all three statements (AC #1).
+    assert result.fiscal_years == [2023, 2022, 2021, 2020]
+    assert len(result.income_statement) == 4
+    assert len(result.balance_sheet) == 4
+    assert len(result.cash_flow) == 4
+    # Year-aligned, newest-first; key line items the consumer tools need.
+    inc0 = result.income_statement[0]
+    assert inc0.fiscal_year == 2023
+    assert inc0.revenue == 383285000000
+    assert inc0.gross_profit == 169148000000
+    assert inc0.operating_income == 114301000000
+    assert inc0.net_income == 96995000000
+    bs0 = result.balance_sheet[0]
+    assert bs0.total_assets == 352583000000
+    assert bs0.current_assets is not None and bs0.current_liabilities is not None
+    assert bs0.long_term_debt == 95281000000
+    assert bs0.shares_outstanding == 15550061000  # from "Share Issued"
+    cf0 = result.cash_flow[0]
+    assert cf0.cfo == 110543000000
+    assert cf0.capex == -10959000000
+    assert cf0.dividends_paid == -15025000000
+    assert cf0.buybacks == -77550000000
+
+
+def test_get_financials_caches_result(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_financials")
+    client = _make_client(yf_conn)
+    call_count = [0]
+
+    def side_effect(ticker: str) -> MagicMock:
+        call_count[0] += 1
+        return _mock_ticker_for_financials(fixture)
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        client.get_financials("AAPL")
+        client.get_financials("AAPL")
+
+    assert call_count[0] == 1, "second call must be a cache hit"
+
+
+def test_get_financials_network_error(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=OSError("timeout")):
+        result = client.get_financials("AAPL")
+
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "network"
+
+
+def test_get_financials_not_found_for_empty_info(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+
+    def side_effect(ticker: str) -> MagicMock:
+        t = MagicMock()
+        t.info = {}
+        return t
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        result = client.get_financials("ZZZZZ")
+
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "not_found"
+
+
+def test_get_financials_missing_statements_returns_empty_rows(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+
+    def side_effect(ticker: str) -> MagicMock:
+        t = MagicMock()
+        t.info = {"regularMarketPrice": 182.5, "a": 1, "b": 2, "c": 3, "d": 4, "e": 5}
+        empty = _make_stmt_df_mock({})
+        t.financials = empty
+        t.balance_sheet = empty
+        t.cashflow = empty
+        return t
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        result = client.get_financials("AAPL")
+
+    assert isinstance(result, FinancialsHistory)
+    assert result.income_statement == []
+    assert result.balance_sheet == []
+    assert result.cash_flow == []
+
+
+# ── get_financial_strength: client-level, computed off the shared history ──────
+
+
+def test_get_financial_strength_computes_from_financials(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_financials")
+    client = _make_client(yf_conn)
+
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        return_value=_mock_ticker_for_financials(fixture),
+    ):
+        result = client.get_financial_strength("AAPL")
+
+    assert isinstance(result, FinancialStrengthData)
+    assert result.ticker == "AAPL"
+    # AAPL: profitable, low leverage → high F-score, safe Z-zone.
+    assert result.f_score is not None and result.f_score >= 5
+    assert result.z_score is not None and result.z_zone == "safe"
+    # Profitability signals fire (positive ROA and operating cash flow).
+    assert result.f_signals.roa_positive is True
+    assert result.f_signals.op_cf_positive is True
+    # no_dilution keys off the balance-sheet "Common Stock" line, which rose
+    # (64.8B → 73.8B), so the signal is False — preserved legacy behaviour.
+    assert result.f_signals.no_dilution is False
+    assert result.current_ratio is not None
+    assert result.interest_coverage is not None and result.interest_coverage > 0
 
 
 # ── CacheStore unit tests ─────────────────────────────────────────────────────

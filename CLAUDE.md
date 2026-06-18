@@ -41,7 +41,7 @@ agent/
 data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
   errors.py            # DataSourceError(error_code, message) — shared by all clients
-  yfinance_client.py   # Wraps yfinance for price quotes and fundamentals
+  yfinance_client.py   # Wraps yfinance for price quotes and fundamentals; get_financials → FinancialsHistory (multi-year income/balance/cash-flow rows) is the shared foundation that get_growth_metrics / get_quality_metrics / get_financial_strength all compute off via _build_financials + _series
   edgar_client.py      # EDGARClient — SEC 10-K/10-Q/8-K filing sections (cached, polite)
   finnhub_client.py    # FinnhubClient — news + fundamentals fallback (cached, rate-limited)
 

@@ -19,6 +19,7 @@ from data_sources.errors import DataSourceError
 from data_sources.finnhub_client import (
     FinnhubClient,
     FinnhubFinancials,
+    FinnhubInsiderTransaction,
     NewsItem,
     RateLimiter,
 )
@@ -193,6 +194,63 @@ def test_get_basic_financials_falls_back_to_pb_annual(finnhub_conn: sqlite3.Conn
     result = client.get_basic_financials("AAPL")
     assert isinstance(result, FinnhubFinancials)
     assert result.pb_ratio == pytest.approx(3.3)
+
+
+# ── get_insider_transactions ──────────────────────────────────────────────────
+
+
+def test_get_insider_transactions_parses_buy_sell_rows(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
+    mock = MagicMock()
+    mock.stock_insider_transactions.return_value = finnhub_fixture["insider"]
+    client = _make_client(finnhub_conn, mock)
+
+    result = client.get_insider_transactions("AAPL", days=90)
+
+    assert isinstance(result, list)
+    assert all(isinstance(t, FinnhubInsiderTransaction) for t in result)
+    by_type = {t.transaction_type for t in result}
+    assert "buy" in by_type and "sell" in by_type  # codes P and S mapped
+    # Code "A" (award) is neither a buy nor a sell.
+    assert any(t.transaction_type == "other" for t in result)
+    sells = [t for t in result if t.transaction_type == "sell"]
+    assert sells[0].shares > 0  # stored as absolute share count
+    assert sells[0].value is not None
+
+
+def test_get_insider_transactions_caches_result(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
+    mock = MagicMock()
+    mock.stock_insider_transactions.return_value = finnhub_fixture["insider"]
+    client = _make_client(finnhub_conn, mock)
+
+    client.get_insider_transactions("AAPL", days=90)
+    client.get_insider_transactions("AAPL", days=90)
+
+    assert mock.stock_insider_transactions.call_count == 1, "second call must be a cache hit"
+
+
+def test_get_insider_transactions_empty_data_returns_empty_list(
+    finnhub_conn: sqlite3.Connection,
+) -> None:
+    mock = MagicMock()
+    mock.stock_insider_transactions.return_value = {"symbol": "AAPL", "data": []}
+    client = _make_client(finnhub_conn, mock)
+
+    result = client.get_insider_transactions("AAPL")
+    assert result == []
+
+
+def test_get_insider_transactions_network_error(finnhub_conn: sqlite3.Connection) -> None:
+    mock = MagicMock()
+    mock.stock_insider_transactions.side_effect = _api_exc(500, "server error")
+    client = _make_client(finnhub_conn, mock)
+
+    result = client.get_insider_transactions("AAPL")
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "network"
 
 
 # ── 429 retry / backoff ───────────────────────────────────────────────────────
