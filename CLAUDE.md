@@ -97,6 +97,12 @@ Debug the trace with `jq`, e.g. per-call cost breakdown:
 jq -c 'select(.event=="llm_call") | {model,input_tokens,cache_read_tokens,cost_usd}' logs/runs/*.jsonl
 ```
 
+Surface retry pressure (tool calls that required at least one retry):
+
+```bash
+jq -c 'select(.event=="tool_call" and .retry_count > 0) | {ticker,tool,retry_count,last_retry_error,latency_ms}' logs/runs/*.jsonl
+```
+
 ## Test fixtures — recorded, never live
 
 Data-fetcher tests never hit the network. Each client (`yfinance` / `edgar` / `finnhub`)

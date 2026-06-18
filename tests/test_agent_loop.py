@@ -514,3 +514,68 @@ def test_unknown_error_logged_to_stderr(
     assert sleep_mock.call_count == 0
     captured = capsys.readouterr()
     assert "[warren] unknown tool error" in captured.err
+
+
+# ── WAL retry fields ───────────────────────────────────────────────────────────
+
+
+def _wal_tool_events(logger: RunLogger) -> list[dict[str, object]]:
+    import json
+
+    return [
+        json.loads(line)
+        for line in logger.path.read_text().splitlines()
+        if json.loads(line).get("event") == "tool_call"
+    ]
+
+
+def test_wal_retry_count_recorded(mock_claude: MagicMock, tmp_path: Path) -> None:
+    """rate_limit x2 then ok — WAL records retry_count=2, last_retry_error='rate_limit'."""
+    registry = _stub_registry([_err("rate_limit"), _err("rate_limit"), _ok_result()])
+    logger = RunLogger("run-wal-retry", tmp_path)
+    mock_claude(
+        [
+            make_tool_use("get_quote", {"ticker": "AAPL"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
+    sleep_mock = MagicMock()
+    with patch("agent.loop.TOOL_REGISTRY", registry):
+        analyze_ticker(
+            "AAPL",
+            DefaultPersona(),
+            HardcodedSonnetRouting(),
+            _ctx("run-wal-retry", logger=logger),
+            _sleep=sleep_mock,
+        )
+
+    events = _wal_tool_events(logger)
+    assert len(events) == 1
+    assert events[0]["retry_count"] == 2
+    assert events[0]["last_retry_error"] == "rate_limit"
+
+
+def test_wal_no_retry_fields_zero(mock_claude: MagicMock, tmp_path: Path) -> None:
+    """Clean success — WAL records retry_count=0, last_retry_error=None."""
+    registry = _stub_registry([_ok_result()])
+    logger = RunLogger("run-wal-noretry", tmp_path)
+    mock_claude(
+        [
+            make_tool_use("get_quote", {"ticker": "AAPL"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
+    sleep_mock = MagicMock()
+    with patch("agent.loop.TOOL_REGISTRY", registry):
+        analyze_ticker(
+            "AAPL",
+            DefaultPersona(),
+            HardcodedSonnetRouting(),
+            _ctx("run-wal-noretry", logger=logger),
+            _sleep=sleep_mock,
+        )
+
+    events = _wal_tool_events(logger)
+    assert len(events) == 1
+    assert events[0]["retry_count"] == 0
+    assert events[0]["last_retry_error"] is None

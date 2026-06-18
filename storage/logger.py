@@ -95,6 +95,8 @@ class RunLogger:
         status: str,
         ticker: str | None,
         error_msg: str | None,
+        retry_count: int = 0,
+        last_retry_error: str | None = None,
     ) -> None:
         # Reuse the engine's >8 KB sidecar truncation so the JSONL line stays small
         # while the full payload remains recoverable from logs/runs/{run_id}/tool_outputs/.
@@ -110,6 +112,8 @@ class RunLogger:
             latency_ms=latency_ms,
             status=status,
             error_msg=error_msg,
+            retry_count=retry_count,
+            last_retry_error=last_retry_error,
         )
 
     def flush_to_db(self, session: Session) -> None:
