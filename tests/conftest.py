@@ -55,10 +55,11 @@ def edgar_fixture() -> dict[str, object]:
 
 @pytest.fixture()
 def finnhub_fixture() -> dict[str, object]:
-    """Recorded Finnhub payloads: {"news": [...], "financials": {...}}."""
+    """Recorded Finnhub payloads: {"news": [...], "financials": {...}, "insider": {...}}."""
     return {
         "news": load_fixture("AAPL", "finnhub", "get_news")["items"],
         "financials": load_fixture("AAPL", "finnhub", "get_basic_financials"),
+        "insider": load_fixture("AAPL", "finnhub", "get_insider_transactions"),
     }
 
 

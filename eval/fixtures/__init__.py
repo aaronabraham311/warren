@@ -176,6 +176,68 @@ def record_yfinance(ticker: str, output_dir: Path) -> None:
         pass
     _write("get_quality_metrics", quality_data)
 
+    # get_financials: full multi-year income / balance / cash-flow history. Captures
+    # fiscal-year columns + every line item the value-investing tools consume.
+    def _statement(attr: str, metrics: tuple[str, ...]) -> dict[str, object]:
+        out: dict[str, object] = {}
+        try:
+            df = getattr(t, attr)
+            out["fiscal_years"] = [int(c.year) for c in df.columns]
+            for metric in metrics:
+                if metric in df.index:
+                    out[metric] = [None if v != v else int(v) for v in df.loc[metric].values]
+        except Exception:
+            pass
+        return out
+
+    _write(
+        "get_financials",
+        {
+            "lastFiscalYearEnd": info.get("lastFiscalYearEnd"),
+            "regularMarketPrice": info.get("regularMarketPrice"),
+            "marketCap": info.get("marketCap"),
+            "income_statement": _statement(
+                "financials",
+                (
+                    "Total Revenue",
+                    "Gross Profit",
+                    "Operating Income",
+                    "Net Income",
+                    "EBIT",
+                    "EBITDA",
+                    "Interest Expense",
+                    "Pretax Income",
+                    "Tax Provision",
+                ),
+            ),
+            "balance_sheet": _statement(
+                "balance_sheet",
+                (
+                    "Total Assets",
+                    "Total Liabilities Net Minority Interest",
+                    "Current Assets",
+                    "Current Liabilities",
+                    "Long Term Debt",
+                    "Total Debt",
+                    "Cash And Cash Equivalents",
+                    "Retained Earnings",
+                    "Common Stock",
+                    "Share Issued",
+                ),
+            ),
+            "cashflow": _statement(
+                "cashflow",
+                (
+                    "Operating Cash Flow",
+                    "Capital Expenditure",
+                    "Free Cash Flow",
+                    "Cash Dividends Paid",
+                    "Repurchase Of Capital Stock",
+                ),
+            ),
+        },
+    )
+
 
 def record_edgar(ticker: str, output_dir: Path) -> None:
     """Record the EDGAR get_filing_section fixture (no API key required).
@@ -218,6 +280,8 @@ def record_finnhub(ticker: str, output_dir: Path) -> None:
     _write_fixture(output_dir, ticker, "finnhub", "get_news", {"items": news})
     basics = client.client.company_basic_financials(ticker, "all")
     _write_fixture(output_dir, ticker, "finnhub", "get_basic_financials", basics)
+    insider = client.client.stock_insider_transactions(ticker, "2023-01-01", "2023-12-31")
+    _write_fixture(output_dir, ticker, "finnhub", "get_insider_transactions", insider)
 
 
 def sqlite3_memory() -> sqlite3.Connection:
