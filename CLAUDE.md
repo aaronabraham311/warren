@@ -37,6 +37,7 @@ agent/
     insider.py    # get_insider_activity → FinnhubClient.get_insider_transactions + YFinanceClient.get_ownership → InsiderActivity
     peers.py      # get_peer_comparison → fundamentals+valuation per peer → PeerComparison (rank/percentile)
     financial_strength.py  # get_financial_strength → YFinanceClient.get_financial_strength → FinancialStrengthData
+    intrinsic_value.py  # estimate_intrinsic_value → owner-earnings DCF off get_financials + get_price → IntrinsicValue (intrinsic value/share, margin of safety, reverse-DCF implied growth)
 
 data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
