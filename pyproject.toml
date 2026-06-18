@@ -61,6 +61,7 @@ module = [
     "agent.tools.insider",
     "agent.tools.financial_strength",
     "agent.tools.intrinsic_value",
+    "agent.tools.capital_allocation",
     "data_sources.yfinance_client",
     "data_sources.edgar_client",
     "data_sources.finnhub_client",

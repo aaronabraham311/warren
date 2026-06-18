@@ -18,6 +18,10 @@ import pytest
 from agent.budget import Budget, RunContext
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResultError, ToolResultOk
+from agent.tools.capital_allocation import (
+    GetCapitalAllocationInput,
+    GetCapitalAllocationTool,
+)
 from agent.tools.filings import ReadFilingInput, ReadFilingTool
 from agent.tools.financial_strength import GetFinancialStrengthInput, GetFinancialStrengthTool
 from agent.tools.fundamentals import GetFundamentalsInput, GetFundamentalsTool
@@ -43,6 +47,7 @@ from data_sources.errors import DataSourceError
 from data_sources.finnhub_client import FinnhubFinancials, FinnhubInsiderTransaction, NewsItem
 from data_sources.yfinance_client import (
     BalanceSheetRow,
+    CapitalAllocation,
     CashFlowRow,
     FinancialsHistory,
     FinancialStrengthData,
@@ -117,6 +122,7 @@ class _FakeYF:
         ownership: OwnershipData | DataSourceError | None = None,
         financial_strength: FinancialStrengthData | DataSourceError | None = None,
         financials: FinancialsHistory | DataSourceError | None = None,
+        capital_allocation: CapitalAllocation | DataSourceError | None = None,
     ) -> None:
         self._price = price
         self._fundamentals = fundamentals
@@ -125,6 +131,7 @@ class _FakeYF:
         self._ownership = ownership
         self._financial_strength = financial_strength
         self._financials = financials
+        self._capital_allocation = capital_allocation
         self.fundamentals_calls = 0
 
     def get_price(self, ticker: str) -> PriceData | DataSourceError:
@@ -163,6 +170,10 @@ class _FakeYF:
         assert self._financials is not None
         return self._financials
 
+    def get_capital_allocation(self, ticker: str) -> CapitalAllocation | DataSourceError:
+        assert self._capital_allocation is not None
+        return self._capital_allocation
+
 
 class _FakeFinnhub:
     def __init__(
@@ -196,7 +207,7 @@ class _FakeFinnhub:
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_thirteen_tools() -> None:
+def test_registry_has_all_fourteen_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -211,6 +222,7 @@ def test_registry_has_all_thirteen_tools() -> None:
         "get_peer_comparison",
         "get_financial_strength",
         "estimate_intrinsic_value",
+        "get_capital_allocation",
     }
     assert all(isinstance(t, Tool) for t in TOOL_REGISTRY.values())
 
@@ -1117,3 +1129,51 @@ def test_estimate_intrinsic_value_catches_unexpected_exception(
     result = EstimateIntrinsicValueTool().run(EstimateIntrinsicValueInput(ticker="AAPL"), _ctx())
     assert isinstance(result, ToolResultError)
     assert result.error_code == "unknown"
+
+
+# ── get_capital_allocation ────────────────────────────────────────────────────
+
+
+def _capital_allocation(ticker: str = "AAPL") -> CapitalAllocation:
+    return CapitalAllocation(
+        ticker=ticker,
+        as_of=date.today(),
+        years_covered=4,
+        share_count_cagr_pct=-2.89,
+        share_count_series=[15550061000, 15943425000, 16426786000, 16976763000],
+        buyback_yield_pct=2.7211,
+        dividend_yield_pct=0.5272,
+        shareholder_yield_pct=3.2483,
+        dividend_growth_streak=3,
+        payout_ratio_pct=15.4905,
+        net_debt_series=[81123000000, 96423000000, 89779000000, 74420000000],
+        net_debt_trajectory="levering",
+        data_age_hours=0,
+    )
+
+
+def test_get_capital_allocation_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    ca = _capital_allocation()
+    monkeypatch.setattr(
+        "agent.tools.capital_allocation.yfinance_client",
+        lambda: _FakeYF(capital_allocation=ca),
+    )
+    result = GetCapitalAllocationTool().run(GetCapitalAllocationInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, CapitalAllocation)
+    assert result.data.share_count_cagr_pct == pytest.approx(-2.89)
+    assert result.data.shareholder_yield_pct == pytest.approx(3.2483)
+    assert result.data.dividend_growth_streak == 3
+    assert result.data.net_debt_trajectory == "levering"
+
+
+def test_get_capital_allocation_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
+    err = DataSourceError(error_code="not_found", message="no data")
+    monkeypatch.setattr(
+        "agent.tools.capital_allocation.yfinance_client",
+        lambda: _FakeYF(capital_allocation=err),
+    )
+    result = GetCapitalAllocationTool().run(GetCapitalAllocationInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+    assert result.retryable is False

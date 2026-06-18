@@ -251,6 +251,23 @@ class FinancialStrengthData(BaseModel):
     source: Literal["yfinance"] = "yfinance"
 
 
+class CapitalAllocation(BaseModel):
+    ticker: str
+    as_of: date
+    years_covered: int
+    share_count_cagr_pct: float | None  # negative = net buybacks, positive = dilution
+    share_count_series: list[int | None]  # shares outstanding, newest-first
+    buyback_yield_pct: float | None  # |buybacks| / market cap
+    dividend_yield_pct: float | None  # |dividends paid| / market cap
+    shareholder_yield_pct: float | None  # buyback + dividend yield
+    dividend_growth_streak: int | None  # consecutive years the dividend grew
+    payout_ratio_pct: float | None  # |dividends paid| / net income
+    net_debt_series: list[int | None]  # total_debt - cash, newest-first
+    net_debt_trajectory: Literal["delevering", "levering", "stable"] | None
+    data_age_hours: int
+    source: Literal["yfinance"] = "yfinance"
+
+
 class _NotFoundError(Exception):
     pass
 
@@ -739,6 +756,110 @@ class YFinanceClient:
             interest_coverage=interest_coverage,
             current_ratio=current_ratio,
             net_debt_to_ebitda=net_debt_to_ebitda,
+            data_age_hours=_fiscal_age_hours(info),
+        )
+
+    # ── get_capital_allocation (management quality) ───────────────────────────
+
+    def get_capital_allocation(self, ticker: str) -> CapitalAllocation | DataSourceError:
+        key = make_key("yf_capital_allocation", ticker)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return CapitalAllocation.model_validate_json(cached)
+        try:
+            result = self._fetch_with_retry(
+                lambda: self._fetch_capital_allocation(ticker),
+                no_retry=(_NotFoundError,),
+            )
+        except _NotFoundError:
+            return DataSourceError(error_code="not_found", message=f"No data for {ticker}")
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, result.model_dump_json(), self._ttl_fundamentals)
+        return result
+
+    def _fetch_capital_allocation(self, ticker: str) -> CapitalAllocation:
+        t = yf.Ticker(ticker)
+        info: dict[str, object] = t.info
+        if not isinstance(info, dict) or len(info) <= 5:
+            raise _NotFoundError(ticker)
+        if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
+            raise _NotFoundError(ticker)
+
+        hist = self._build_financials(t, ticker)
+        bs, cf, inc = hist.balance_sheet, hist.cash_flow, hist.income_statement
+        mkt_cap = _as_float(info.get("marketCap"))
+
+        # Share-count trend (newest-first). Negative CAGR = net buybacks.
+        share_count_series = [r.shares_outstanding for r in bs]
+        shares = [float(s) for s in share_count_series if s is not None]
+        share_count_cagr_pct: float | None = None
+        if len(shares) >= 2 and shares[0] > 0 and shares[-1] > 0:
+            n = len(shares) - 1
+            share_count_cagr_pct = round(((shares[0] / shares[-1]) ** (1 / n) - 1) * 100, 4)
+
+        # Yields off the most recent year (cash-flow magnitudes / market cap).
+        buybacks = self._series(cf, "buybacks")
+        dividends = self._series(cf, "dividends_paid")
+        buyback_yield_pct: float | None = None
+        dividend_yield_pct: float | None = None
+        if mkt_cap is not None and mkt_cap > 0:
+            if buybacks:
+                buyback_yield_pct = round(abs(buybacks[0]) / mkt_cap * 100, 4)
+            if dividends:
+                dividend_yield_pct = round(abs(dividends[0]) / mkt_cap * 100, 4)
+        shareholder_yield_pct: float | None = None
+        if buyback_yield_pct is not None or dividend_yield_pct is not None:
+            shareholder_yield_pct = round(
+                (buyback_yield_pct or 0.0) + (dividend_yield_pct or 0.0), 4
+            )
+
+        # Dividend growth streak: consecutive newest-first years the payout grew.
+        dividend_growth_streak: int | None = None
+        if dividends:
+            mags = [abs(d) for d in dividends]
+            streak = 0
+            for i in range(len(mags) - 1):
+                if mags[i] > mags[i + 1]:
+                    streak += 1
+                else:
+                    break
+            dividend_growth_streak = streak
+
+        # Payout ratio off the most recent year.
+        net_incomes = self._series(inc, "net_income")
+        payout_ratio_pct: float | None = None
+        if dividends and net_incomes and net_incomes[0] > 0:
+            payout_ratio_pct = round(abs(dividends[0]) / net_incomes[0] * 100, 4)
+
+        # Net-debt trajectory: per-year (total_debt - cash), window change vs oldest.
+        net_debt_series = [
+            (r.total_debt - r.cash_and_equivalents)
+            if r.total_debt is not None and r.cash_and_equivalents is not None
+            else None
+            for r in bs
+        ]
+        nd = [v for v in net_debt_series if v is not None]
+        net_debt_trajectory: Literal["delevering", "levering", "stable"] | None = None
+        if len(nd) >= 2 and nd[-1] != 0:
+            change = (nd[0] - nd[-1]) / abs(nd[-1])
+            net_debt_trajectory = (
+                "delevering" if change < -0.05 else ("levering" if change > 0.05 else "stable")
+            )
+
+        return CapitalAllocation(
+            ticker=ticker.upper(),
+            as_of=date.today(),
+            years_covered=len(bs),
+            share_count_cagr_pct=share_count_cagr_pct,
+            share_count_series=share_count_series,
+            buyback_yield_pct=buyback_yield_pct,
+            dividend_yield_pct=dividend_yield_pct,
+            shareholder_yield_pct=shareholder_yield_pct,
+            dividend_growth_streak=dividend_growth_streak,
+            payout_ratio_pct=payout_ratio_pct,
+            net_debt_series=net_debt_series,
+            net_debt_trajectory=net_debt_trajectory,
             data_age_hours=_fiscal_age_hours(info),
         )
 
