@@ -24,6 +24,14 @@ from agent.tools.fundamentals import GetFundamentalsInput, GetFundamentalsTool
 from agent.tools.growth import GetGrowthMetricsInput, GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextInput, GetHoldingContextTool, HoldingContext
 from agent.tools.insider import GetInsiderActivityInput, GetInsiderActivityTool, InsiderActivity
+from agent.tools.intrinsic_value import (
+    DCFAssumptions,
+    EstimateIntrinsicValueInput,
+    EstimateIntrinsicValueTool,
+    IntrinsicValue,
+    _intrinsic_equity_value,
+    _reverse_dcf_growth,
+)
 from agent.tools.news import GetNewsInput, GetNewsTool, NewsResult
 from agent.tools.peers import GetPeerComparisonInput, GetPeerComparisonTool, PeerComparison
 from agent.tools.quality import GetQualityMetricsInput, GetQualityMetricsTool
@@ -34,8 +42,12 @@ from data_sources.edgar_client import FilingSection
 from data_sources.errors import DataSourceError
 from data_sources.finnhub_client import FinnhubFinancials, FinnhubInsiderTransaction, NewsItem
 from data_sources.yfinance_client import (
+    BalanceSheetRow,
+    CashFlowRow,
+    FinancialsHistory,
     FinancialStrengthData,
     FundamentalsData,
+    IncomeStatementRow,
     OwnershipData,
     PiotroskySignals,
     PriceData,
@@ -104,6 +116,7 @@ class _FakeYF:
         quality: QualityData | DataSourceError | None = None,
         ownership: OwnershipData | DataSourceError | None = None,
         financial_strength: FinancialStrengthData | DataSourceError | None = None,
+        financials: FinancialsHistory | DataSourceError | None = None,
     ) -> None:
         self._price = price
         self._fundamentals = fundamentals
@@ -111,6 +124,7 @@ class _FakeYF:
         self._quality = quality
         self._ownership = ownership
         self._financial_strength = financial_strength
+        self._financials = financials
         self.fundamentals_calls = 0
 
     def get_price(self, ticker: str) -> PriceData | DataSourceError:
@@ -145,6 +159,10 @@ class _FakeYF:
         assert self._financial_strength is not None
         return self._financial_strength
 
+    def get_financials(self, ticker: str) -> FinancialsHistory | DataSourceError:
+        assert self._financials is not None
+        return self._financials
+
 
 class _FakeFinnhub:
     def __init__(
@@ -178,7 +196,7 @@ class _FakeFinnhub:
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_twelve_tools() -> None:
+def test_registry_has_all_thirteen_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -192,6 +210,7 @@ def test_registry_has_all_twelve_tools() -> None:
         "get_insider_activity",
         "get_peer_comparison",
         "get_financial_strength",
+        "estimate_intrinsic_value",
     }
     assert all(isinstance(t, Tool) for t in TOOL_REGISTRY.values())
 
@@ -898,3 +917,203 @@ def test_get_financial_strength_maps_not_found(monkeypatch: pytest.MonkeyPatch) 
     assert isinstance(result, ToolResultError)
     assert result.error_code == "not_found"
     assert result.retryable is False
+
+
+# ── estimate_intrinsic_value ──────────────────────────────────────────────────
+
+
+def _financials(
+    ticker: str = "AAPL",
+    *,
+    free_cash_flow: int | None = 1000,
+    cfo: int | None = None,
+    capex: int | None = None,
+    shares_outstanding: int | None = 100,
+    data_age_hours: int = 0,
+) -> FinancialsHistory:
+    return FinancialsHistory(
+        ticker=ticker,
+        as_of=date.today(),
+        fiscal_years=[2023],
+        income_statement=[
+            IncomeStatementRow(
+                fiscal_year=2023,
+                revenue=10_000,
+                gross_profit=None,
+                operating_income=None,
+                net_income=None,
+                ebit=None,
+                ebitda=None,
+                interest_expense=None,
+                pretax_income=None,
+                tax_provision=None,
+            )
+        ],
+        balance_sheet=[
+            BalanceSheetRow(
+                fiscal_year=2023,
+                total_assets=None,
+                total_liabilities=None,
+                current_assets=None,
+                current_liabilities=None,
+                long_term_debt=None,
+                total_debt=None,
+                cash_and_equivalents=None,
+                retained_earnings=None,
+                common_stock=None,
+                shares_outstanding=shares_outstanding,
+            )
+        ],
+        cash_flow=[
+            CashFlowRow(
+                fiscal_year=2023,
+                cfo=cfo,
+                capex=capex,
+                free_cash_flow=free_cash_flow,
+                dividends_paid=None,
+                buybacks=None,
+            )
+        ],
+        data_age_hours=data_age_hours,
+    )
+
+
+def test_intrinsic_equity_value_deterministic() -> None:
+    # base=1000, g==d==0.10, tg=0, N=10. Each discounted projection term = 1000 → 10*1000;
+    # discounted terminal value = base*(1.1)^10 / 0.10 / (1.1)^10 = 10000. Total = 20000.
+    a = DCFAssumptions(
+        growth_rate=0.10, discount_rate=0.10, terminal_growth_rate=0.0, projection_years=10
+    )
+    assert _intrinsic_equity_value(1000.0, a) == pytest.approx(20_000.0)
+
+
+def test_intrinsic_equity_value_none_when_discount_le_terminal() -> None:
+    a = DCFAssumptions(
+        growth_rate=0.05, discount_rate=0.02, terminal_growth_rate=0.025, projection_years=10
+    )
+    assert _intrinsic_equity_value(1000.0, a) is None
+
+
+def test_reverse_dcf_recovers_growth() -> None:
+    a = DCFAssumptions(
+        growth_rate=0.10, discount_rate=0.10, terminal_growth_rate=0.0, projection_years=10
+    )
+    # Target equity value 20000 with base 1000 implies the growth that produced it: 0.10.
+    assert _reverse_dcf_growth(20_000.0, 1000.0, a) == pytest.approx(0.10, abs=1e-3)
+
+
+def test_reverse_dcf_none_for_nonpositive_base() -> None:
+    a = DCFAssumptions(
+        growth_rate=0.08, discount_rate=0.10, terminal_growth_rate=0.025, projection_years=10
+    )
+    assert _reverse_dcf_growth(20_000.0, -5.0, a) is None
+
+
+def test_estimate_intrinsic_value_deterministic_end_to_end(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    yf = _FakeYF(financials=_financials(), price=_price())  # price 182.5
+    monkeypatch.setattr("agent.tools.intrinsic_value.yfinance_client", lambda: yf)
+    # Override assumptions so the hand-computed value is exact: per-share = 20000/100 = 200.
+    result = EstimateIntrinsicValueTool().run(
+        EstimateIntrinsicValueInput(
+            ticker="AAPL",
+            growth_rate=0.10,
+            discount_rate=0.10,
+            terminal_growth_rate=0.0,
+            projection_years=10,
+        ),
+        _ctx(),
+    )
+    assert isinstance(result, ToolResultOk)
+    iv = result.data
+    assert isinstance(iv, IntrinsicValue)
+    assert iv.owner_earnings_base == 1000
+    assert iv.owner_earnings_source == "free_cash_flow"
+    assert iv.shares_outstanding == 100
+    assert iv.intrinsic_value_per_share == pytest.approx(200.0)
+    assert iv.intrinsic_equity_value == 20_000
+    # margin of safety = (200 - 182.5) / 200 = 0.0875
+    assert iv.margin_of_safety == pytest.approx(0.0875)
+    # assumptions echoed
+    assert iv.assumptions.growth_rate == pytest.approx(0.10)
+    assert iv.assumptions.projection_years == 10
+    # reverse DCF: implied growth that makes value == price*shares (182.5*100 = 18250) < 0.10
+    assert iv.reverse_dcf_implied_growth is not None
+    assert iv.reverse_dcf_implied_growth < 0.10
+
+
+def test_estimate_intrinsic_value_uses_conservative_defaults(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    yf = _FakeYF(financials=_financials(), price=_price())
+    monkeypatch.setattr("agent.tools.intrinsic_value.yfinance_client", lambda: yf)
+    result = EstimateIntrinsicValueTool().run(EstimateIntrinsicValueInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    iv = result.data
+    assert isinstance(iv, IntrinsicValue)
+    assert iv.assumptions.growth_rate == pytest.approx(0.08)
+    assert iv.assumptions.discount_rate == pytest.approx(0.10)
+    assert iv.assumptions.terminal_growth_rate == pytest.approx(0.025)
+    assert iv.assumptions.projection_years == 10
+    assert iv.intrinsic_value_per_share is not None
+
+
+def test_estimate_intrinsic_value_cfo_minus_capex_fallback(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # No reported FCF → fall back to CFO + capex (capex is negative in yfinance).
+    fin = _financials(free_cash_flow=None, cfo=1500, capex=-500)
+    monkeypatch.setattr(
+        "agent.tools.intrinsic_value.yfinance_client",
+        lambda: _FakeYF(financials=fin, price=_price()),
+    )
+    result = EstimateIntrinsicValueTool().run(EstimateIntrinsicValueInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    iv = result.data
+    assert isinstance(iv, IntrinsicValue)
+    assert iv.owner_earnings_base == 1000
+    assert iv.owner_earnings_source == "cfo_minus_capex"
+
+
+def test_estimate_intrinsic_value_none_when_base_missing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fin = _financials(free_cash_flow=None, cfo=None, capex=None)
+    monkeypatch.setattr(
+        "agent.tools.intrinsic_value.yfinance_client",
+        lambda: _FakeYF(financials=fin, price=_price()),
+    )
+    result = EstimateIntrinsicValueTool().run(EstimateIntrinsicValueInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    iv = result.data
+    assert isinstance(iv, IntrinsicValue)
+    assert iv.owner_earnings_base is None
+    assert iv.intrinsic_value_per_share is None
+    assert iv.margin_of_safety is None
+    assert iv.reverse_dcf_implied_growth is None
+
+
+def test_estimate_intrinsic_value_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
+    err = DataSourceError(error_code="not_found", message="no data")
+    monkeypatch.setattr(
+        "agent.tools.intrinsic_value.yfinance_client",
+        lambda: _FakeYF(financials=err),
+    )
+    result = EstimateIntrinsicValueTool().run(EstimateIntrinsicValueInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+    assert result.retryable is False
+
+
+def test_estimate_intrinsic_value_catches_unexpected_exception(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class _Boom:
+        def get_financials(self, ticker: str) -> FinancialsHistory:
+            raise RuntimeError("kaboom")
+
+    monkeypatch.setattr("agent.tools.intrinsic_value.yfinance_client", lambda: _Boom())
+    result = EstimateIntrinsicValueTool().run(EstimateIntrinsicValueInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "unknown"
