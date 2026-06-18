@@ -70,10 +70,10 @@ class FundamentalsData(BaseModel):
     roe_pct: float | None
     debt_to_equity: float | None
     fcf_ttm_usd: int | None
-    gross_margin_pct: float | None = None
+    gross_margin_pct: float | None
     operating_margin_pct: float | None
     net_margin_pct: float | None
-    sector: str | None = None
+    sector: str | None
     data_age_hours: int
     source: Literal["yfinance", "finnhub"]
 

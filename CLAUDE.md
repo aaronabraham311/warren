@@ -35,6 +35,7 @@ agent/
     valuation.py  # get_valuation_multiples → YFinanceClient.get_valuation_multiples → ValuationData
     quality.py    # get_quality_metrics → YFinanceClient.get_quality_metrics → QualityData (ROIC, ROA, gross-margin stability, cash conversion)
     insider.py    # get_insider_activity → FinnhubClient.get_insider_transactions + YFinanceClient.get_ownership → InsiderActivity
+    peers.py      # get_peer_comparison → fundamentals+valuation per peer → PeerComparison (rank/percentile)
 
 data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
