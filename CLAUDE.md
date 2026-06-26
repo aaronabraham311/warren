@@ -35,10 +35,12 @@ agent/
     valuation.py  # get_valuation_multiples → YFinanceClient.get_valuation_multiples → ValuationData
     quality.py    # get_quality_metrics → YFinanceClient.get_quality_metrics → QualityData (ROIC, ROA, gross-margin stability, cash conversion)
     insider.py    # get_insider_activity → FinnhubClient.get_insider_transactions + YFinanceClient.get_ownership → InsiderActivity
+    persons.py    # get_key_persons → YFinanceClient.get_key_persons + EDGARClient.get_sc13_holders → KeyPersonsData (officers, institutional/beneficial holders, controlling_holder_identified)
     peers.py      # get_peer_comparison → fundamentals+valuation per peer → PeerComparison (rank/percentile)
     financial_strength.py  # get_financial_strength → YFinanceClient.get_financial_strength → FinancialStrengthData
     intrinsic_value.py  # estimate_intrinsic_value → owner-earnings DCF off get_financials + get_price → IntrinsicValue (intrinsic value/share, margin of safety, reverse-DCF implied growth)
     capital_allocation.py  # get_capital_allocation → YFinanceClient.get_capital_allocation → CapitalAllocation (share-count CAGR, buyback/dividend/shareholder yield, dividend growth streak, payout ratio, net-debt trajectory — Buffett/Munger management-quality lens)
+    persons.py    # get_key_persons → YFinanceClient.get_key_persons (companyOfficers + institutional_holders) + EDGARClient.get_sc13_holders (EFTS SC 13G/D) → KeyPersonsData (persons list with name/role/ownership_pct/source, controlling_holder_identified flag, source_notes)
 
 data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)

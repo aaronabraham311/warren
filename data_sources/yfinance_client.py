@@ -137,6 +137,29 @@ class OwnershipData(BaseModel):
     source: Literal["yfinance"] = "yfinance"
 
 
+class OfficerRecord(BaseModel):
+    name: str
+    title: str
+    year_born: int | None
+    total_pay_usd: int | None
+
+
+class InstitutionalHolderRecord(BaseModel):
+    name: str
+    shares: int | None
+    pct_held: float | None  # decimal fraction of float outstanding (e.g. 0.0796 = 7.96%)
+    value: int | None
+
+
+class KeyPersonsRaw(BaseModel):
+    ticker: str
+    as_of: date
+    officers: list[OfficerRecord]
+    institutional_holders: list[InstitutionalHolderRecord]
+    data_age_hours: int
+    source: Literal["yfinance"] = "yfinance"
+
+
 # ── Multi-year financial-statement history (the data foundation the value tools share) ──
 #
 # Rows are newest-first and year-aligned: index 0 is the most recent fiscal year. A
@@ -296,6 +319,9 @@ def _as_int(v: object) -> int | None:
     if isinstance(v, (int, float)):
         return int(float(v))
     return None
+
+
+_TTL_KEY_PERSONS_H = 720.0  # 30 days — persons change rarely
 
 
 def _as_int_safe(v: object) -> int | None:
@@ -1193,4 +1219,84 @@ class YFinanceClient:
             as_of=date.today(),
             insider_pct=_as_pct(info.get("heldPercentInsiders")),
             institutional_pct=_as_pct(info.get("heldPercentInstitutions")),
+        )
+
+    # ── get_key_persons ───────────────────────────────────────────────────────
+
+    def get_key_persons(self, ticker: str) -> KeyPersonsRaw | DataSourceError:
+        key = make_key("yf_key_persons", ticker)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return KeyPersonsRaw.model_validate_json(cached)
+        try:
+            result = self._fetch_with_retry(
+                lambda: self._fetch_key_persons(ticker),
+                no_retry=(_NotFoundError,),
+            )
+        except _NotFoundError:
+            return DataSourceError(error_code="not_found", message=f"No data for {ticker}")
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, result.model_dump_json(), _TTL_KEY_PERSONS_H)
+        return result
+
+    def _fetch_key_persons(self, ticker: str) -> KeyPersonsRaw:
+        t = yf.Ticker(ticker)
+        info: dict[str, object] = t.info
+        if not isinstance(info, dict) or len(info) <= 5:
+            raise _NotFoundError(ticker)
+        if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
+            raise _NotFoundError(ticker)
+
+        officers: list[OfficerRecord] = []
+        officers_raw = info.get("companyOfficers")
+        if isinstance(officers_raw, list):
+            for off in officers_raw:
+                if not isinstance(off, dict):
+                    continue
+                name = off.get("name")
+                title = off.get("title")
+                if not isinstance(name, str) or not isinstance(title, str):
+                    continue
+                total_pay_raw = off.get("totalPay")
+                total_pay: int | None = None
+                if isinstance(total_pay_raw, dict):
+                    total_pay = _as_int(total_pay_raw.get("raw"))
+                elif isinstance(total_pay_raw, (int, float)):
+                    total_pay = _as_int(total_pay_raw)
+                officers.append(
+                    OfficerRecord(
+                        name=name,
+                        title=title,
+                        year_born=_as_int(off.get("yearBorn")),
+                        total_pay_usd=total_pay,
+                    )
+                )
+
+        institutional: list[InstitutionalHolderRecord] = []
+        try:
+            ih_df = self._safe_attr(t, "institutional_holders")
+            if ih_df is not None:
+                for _, row in ih_df.iterrows():  # type: ignore[attr-defined]
+                    name_val = row.get("Holder")
+                    if not isinstance(name_val, str):
+                        continue
+                    pct_raw = row.get("% Out")
+                    institutional.append(
+                        InstitutionalHolderRecord(
+                            name=name_val,
+                            shares=_as_int(row.get("Shares")),
+                            pct_held=_as_float(pct_raw),
+                            value=_as_int(row.get("Value")),
+                        )
+                    )
+        except Exception:
+            pass
+
+        return KeyPersonsRaw(
+            ticker=ticker.upper(),
+            as_of=date.today(),
+            officers=officers,
+            institutional_holders=institutional,
+            data_age_hours=_fiscal_age_hours(info),
         )

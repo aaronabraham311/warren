@@ -9,6 +9,7 @@ from agent.tools.insider import GetInsiderActivityTool
 from agent.tools.intrinsic_value import EstimateIntrinsicValueTool
 from agent.tools.news import GetNewsTool
 from agent.tools.peers import GetPeerComparisonTool
+from agent.tools.persons import GetKeyPersonsTool
 from agent.tools.quality import GetQualityMetricsTool
 from agent.tools.quote import GetQuoteTool
 from agent.tools.screen import ScreenUniverseTool
@@ -29,6 +30,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "get_financial_strength": GetFinancialStrengthTool(),
     "estimate_intrinsic_value": EstimateIntrinsicValueTool(),
     "get_capital_allocation": GetCapitalAllocationTool(),
+    "get_key_persons": GetKeyPersonsTool(),
 }
 
 TOOL_DEFINITIONS: list[dict[str, object]] = [t.to_api_dict() for t in TOOL_REGISTRY.values()]
