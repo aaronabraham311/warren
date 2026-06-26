@@ -9,20 +9,31 @@ from typing import Literal
 
 import requests
 from bs4 import BeautifulSoup
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from data_sources.cache import CacheStore, make_key
 from data_sources.errors import DataSourceError
 
-FilingType = Literal["10-K", "10-Q", "8-K"]
+FilingType = Literal["10-K", "10-Q", "8-K", "DEF 14A"]
 SectionName = Literal[
-    "business", "risk_factors", "mdna", "financial_statements", "executive_summary"
+    "business",
+    "risk_factors",
+    "mdna",
+    "financial_statements",
+    "executive_summary",
+    "compensation",
+    "related_party",
 ]
 
 MAX_CHARS = 200_000  # approx 50K tokens at 4 chars/token
 
 # Cache TTLs, in hours. Filings change at most quarterly; CIK map is stable.
-TTL_HOURS: dict[str, float] = {"10-K": 2160.0, "10-Q": 2160.0, "8-K": 24.0}  # 90d / 90d / 24h
+TTL_HOURS: dict[str, float] = {
+    "10-K": 2160.0,
+    "10-Q": 2160.0,
+    "8-K": 24.0,
+    "DEF 14A": 2160.0,
+}  # 90d / 90d / 24h / 90d
 CIK_TTL_HOURS = 168.0  # 7 days
 
 # Section → (start Item, end-boundary Items). The first matching end Item after the
@@ -32,8 +43,32 @@ SECTION_BOUNDARIES: dict[str, tuple[str, tuple[str, ...]]] = {
     "risk_factors": ("Item 1A", ("Item 1B", "Item 2")),
     "mdna": ("Item 7", ("Item 7A", "Item 8")),
     "financial_statements": ("Item 8", ("Item 9",)),
+    # Part III items — often "incorporated by reference" in 10-K; full detail in DEF 14A.
+    "compensation": ("Item 11", ("Item 12",)),
+    "related_party": ("Item 13", ("Item 14", "Item 15")),
 }
 EXEC_SUMMARY_LINES = 400
+
+# DEF 14A proxy statements use prose headings rather than Item numbers.
+_DEF14A_SECTION_ANCHORS: dict[str, re.Pattern[str]] = {
+    "compensation": re.compile(r"executive\s+compensation", re.IGNORECASE),
+    "related_party": re.compile(
+        r"certain\s+relationships|related\s+(?:party|person)\s+transactions",
+        re.IGNORECASE,
+    ),
+}
+# Candidate next-section headings used to bound a DEF 14A slice.
+_DEF14A_END_RE = re.compile(
+    r"certain\s+relationships|audit\s+committee|director\s+independence"
+    r"|stockholder\s+(?:proposals|information)|security\s+ownership",
+    re.IGNORECASE,
+)
+
+# Extracts dollar-magnitude amounts ("$10 million", "$2.3B") and bare percentages ("43.8%").
+_FIGURE_RE = re.compile(
+    r"\$\s*[\d,]+(?:\.\d+)?\s*(?:billion|million|trillion|B|M|T)\b|[\d]+(?:\.\d+)?\s*%",
+    re.IGNORECASE,
+)
 
 
 class FilingSection(BaseModel):
@@ -46,6 +81,10 @@ class FilingSection(BaseModel):
     word_count: int  # of the returned text (after truncation)
     truncated: bool  # True when original exceeded MAX_CHARS
     edgar_url: str  # direct URL to the source document
+    translate: bool = False
+    source_language: str | None = None
+    key_figures_extracted: list[str] = Field(default_factory=list)
+    aggregator_discrepancy_note: str | None = None
 
 
 # ── Internal sentinels (mapped to DataSourceError before returning) ───────────
@@ -135,7 +174,7 @@ class EDGARClient:
             cik = self._resolve_cik(ticker)
             filing = self._select_filing(cik, filing_type, fiscal_year)
             html = self._get(filing.url).text
-            raw_text = self._extract_section(html, section)
+            raw_text = self._extract_section(html, section, filing_type)
         except _NotFoundError as exc:
             return DataSourceError(error_code="not_found", message=str(exc))
         except _NetworkError as exc:
@@ -157,6 +196,7 @@ class EDGARClient:
             word_count=len(text.split()),
             truncated=len(raw_text) > MAX_CHARS,
             edgar_url=filing.url,
+            key_figures_extracted=_FIGURE_RE.findall(raw_text)[:20],
         )
         self._cache.set(key, result.model_dump_json(), TTL_HOURS[filing_type])
         return result
@@ -255,7 +295,7 @@ class EDGARClient:
 
     # ── Steps 4-5: parse HTML, extract the requested section ───────────────
 
-    def _extract_section(self, html: str, section: str) -> str:
+    def _extract_section(self, html: str, section: str, filing_type: str = "") -> str:
         try:
             text = BeautifulSoup(html, "lxml").get_text("\n")
         except Exception as exc:  # noqa: BLE001 — bs4 may raise varied parser errors
@@ -264,6 +304,20 @@ class EDGARClient:
         if section == "executive_summary":
             lines = [ln for ln in text.splitlines() if ln.strip()]
             return "\n".join(lines[:EXEC_SUMMARY_LINES])
+
+        # DEF 14A proxy statements use prose headings rather than Item numbers.
+        if filing_type == "DEF 14A" and section in _DEF14A_SECTION_ANCHORS:
+            anchor = _DEF14A_SECTION_ANCHORS[section]
+            m_start = anchor.search(text)
+            if not m_start:
+                return text.strip()
+            start_pos = m_start.start()
+            end_pos = len(text)
+            for m_end in _DEF14A_END_RE.finditer(text, m_start.end()):
+                if m_end.start() > start_pos:
+                    end_pos = m_end.start()
+                    break
+            return text[start_pos:end_pos].strip()
 
         start_label, end_labels = SECTION_BOUNDARIES[section]
         starts = list(_item_regex(start_label).finditer(text))

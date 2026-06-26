@@ -333,24 +333,34 @@ def test_get_growth_metrics_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> N
 # ── read_filing ───────────────────────────────────────────────────────────────
 
 
-def test_read_filing_ok(monkeypatch: pytest.MonkeyPatch) -> None:
-    section = FilingSection(
+def _filing_section(text: str = "We make phones.", section: str = "business") -> FilingSection:
+    return FilingSection(
         ticker="AAPL",
         filing_type="10-K",
-        section="business",
+        section=section,
         fiscal_year=2023,
         filing_date=date.today(),
-        text="We make phones.",
-        word_count=3,
+        text=text,
+        word_count=len(text.split()),
         truncated=False,
         edgar_url="https://sec.gov/x",
     )
 
-    class _Edgar:
-        def get_filing_section(self, *a: object, **k: object) -> FilingSection:
-            return section
 
-    monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _Edgar())
+class _FakeEdgar:
+    def __init__(self, result: FilingSection | DataSourceError) -> None:
+        self._result = result
+
+    def get_filing_section(self, *a: object, **k: object) -> FilingSection | DataSourceError:
+        return self._result
+
+
+def test_read_filing_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _FakeEdgar(_filing_section()))
+    monkeypatch.setattr(
+        "agent.tools.filings.yfinance_client",
+        lambda: _FakeYF(fundamentals=lambda t: DataSourceError("not_found", "no data")),
+    )
     result = ReadFilingTool().run(
         ReadFilingInput(ticker="AAPL", filing_type="10-K", section="business"), _ctx()
     )
@@ -359,16 +369,86 @@ def test_read_filing_ok(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 def test_read_filing_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
-    class _Edgar:
-        def get_filing_section(self, *a: object, **k: object) -> DataSourceError:
-            return DataSourceError(error_code="not_found", message="no filing")
-
-    monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _Edgar())
+    monkeypatch.setattr(
+        "agent.tools.filings.edgar_client",
+        lambda: _FakeEdgar(DataSourceError(error_code="not_found", message="no filing")),
+    )
+    monkeypatch.setattr(
+        "agent.tools.filings.yfinance_client",
+        lambda: _FakeYF(fundamentals=lambda t: DataSourceError("not_found", "no data")),
+    )
     result = ReadFilingTool().run(
         ReadFilingInput(ticker="AAPL", filing_type="10-K", section="business"), _ctx()
     )
     assert isinstance(result, ToolResultError)
     assert result.error_code == "not_found"
+
+
+def test_read_filing_translate_plumbed_through(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _FakeEdgar(_filing_section()))
+    monkeypatch.setattr(
+        "agent.tools.filings.yfinance_client",
+        lambda: _FakeYF(fundamentals=lambda t: DataSourceError("not_found", "no data")),
+    )
+    result = ReadFilingTool().run(
+        ReadFilingInput(
+            ticker="AAPL",
+            filing_type="10-K",
+            section="business",
+            translate=True,
+            source_language="ja",
+        ),
+        _ctx(),
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, FilingSection)
+    assert result.data.translate is True
+    assert result.data.source_language == "ja"
+
+
+def test_read_filing_aggregator_discrepancy_note_populated(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Filing says gross margin 20%, yfinance says 43.8% — diff > 5pp → note set
+    section = _filing_section(
+        text="Our gross margin was 20.0% for the fiscal year ended September 2023.",
+        section="mdna",
+    )
+    monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _FakeEdgar(section))
+    monkeypatch.setattr(
+        "agent.tools.filings.yfinance_client",
+        lambda: _FakeYF(fundamentals=lambda t: _fundamentals(t, gross_margin=43.8)),
+    )
+    result = ReadFilingTool().run(
+        ReadFilingInput(ticker="AAPL", filing_type="10-K", section="mdna"), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, FilingSection)
+    assert result.data.aggregator_discrepancy_note is not None
+    assert "gross margin" in result.data.aggregator_discrepancy_note.lower()
+    assert "20.0" in result.data.aggregator_discrepancy_note
+    assert "43.8" in result.data.aggregator_discrepancy_note
+
+
+def test_read_filing_no_discrepancy_when_margins_match(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Filing says 43.5%, yfinance says 43.8% — diff < 5pp → note is None
+    section = _filing_section(
+        text="Gross margin of 43.5% was achieved in fiscal 2023.",
+        section="mdna",
+    )
+    monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _FakeEdgar(section))
+    monkeypatch.setattr(
+        "agent.tools.filings.yfinance_client",
+        lambda: _FakeYF(fundamentals=lambda t: _fundamentals(t, gross_margin=43.8)),
+    )
+    result = ReadFilingTool().run(
+        ReadFilingInput(ticker="AAPL", filing_type="10-K", section="mdna"), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, FilingSection)
+    assert result.data.aggregator_discrepancy_note is None
 
 
 # ── get_news ──────────────────────────────────────────────────────────────────
