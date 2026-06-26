@@ -1,0 +1,54 @@
+{
+  "articles": [
+    {
+      "url": "https://www.mondaq.com/unitedstates/class-actions/1792068/new-frontiers-in-pfas-litigation-cavalier-v-apple",
+      "url_mobile": "",
+      "title": "New Frontiers In PFAS Litigation: Standing, Disclosure and the Lessons of Cavalier v. Apple",
+      "seendate": "20260527T174500Z",
+      "socialimage": "http://www.mondaq.com/images/profile/companythumb/22824.webp",
+      "domain": "mondaq.com",
+      "language": "English",
+      "sourcecountry": "United States"
+    },
+    {
+      "url": "https://www.law360.com/articles/2493985/apple-sued-for-price-fixing-amid-chipmaker-scandal",
+      "url_mobile": "https://www.law360.com/amp/articles/2493985",
+      "title": "Apple Sued For Price-Fixing Amid Chipmaker Scandal",
+      "seendate": "20260626T044500Z",
+      "socialimage": "https://www.law360.com/images/law360-stacked.png",
+      "domain": "law360.com",
+      "language": "English",
+      "sourcecountry": "United States"
+    },
+    {
+      "url": "https://reuters.com/article/apple-fraud-investigation-2026",
+      "url_mobile": "",
+      "title": "Apple executives under investigation for accounting fraud at overseas subsidiary",
+      "seendate": "20260620T120000Z",
+      "socialimage": "",
+      "domain": "reuters.com",
+      "language": "English",
+      "sourcecountry": "United States"
+    },
+    {
+      "url": "https://www.lemonde.fr/economie/article/2026/06/15/apple-condamne-amende-france",
+      "url_mobile": "",
+      "title": "Apple condamné à une amende record pour abus de position dominante en France",
+      "seendate": "20260615T090000Z",
+      "socialimage": "",
+      "domain": "lemonde.fr",
+      "language": "French",
+      "sourcecountry": "France"
+    },
+    {
+      "url": "https://www.ft.com/content/apple-supplier-sanction-ofac",
+      "url_mobile": "",
+      "title": "Apple supplier sanctioned by OFAC over alleged export control violations",
+      "seendate": "20260610T080000Z",
+      "socialimage": "",
+      "domain": "ft.com",
+      "language": "English",
+      "sourcecountry": "United Kingdom"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+from agent.tools.adverse_media import GetAdverseMediaTool
 from agent.tools.base import Tool
 from agent.tools.capital_allocation import GetCapitalAllocationTool
 from agent.tools.filings import ReadFilingTool
@@ -16,6 +17,7 @@ from agent.tools.screen import ScreenUniverseTool
 from agent.tools.valuation import GetValuationMultiplesTool
 
 TOOL_REGISTRY: dict[str, Tool] = {
+    "get_adverse_media": GetAdverseMediaTool(),
     "get_quote": GetQuoteTool(),
     "get_fundamentals": GetFundamentalsTool(),
     "get_growth_metrics": GetGrowthMetricsTool(),

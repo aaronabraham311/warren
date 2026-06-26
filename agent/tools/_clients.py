@@ -15,6 +15,7 @@ import sqlite3
 
 from data_sources.edgar_client import EDGARClient
 from data_sources.finnhub_client import FinnhubClient
+from data_sources.gdelt_client import GDELTClient
 from data_sources.yfinance_client import YFinanceClient
 
 _conn: sqlite3.Connection | None = None
@@ -22,6 +23,7 @@ _yf: YFinanceClient | None = None
 _edgar: EDGARClient | None = None
 _finnhub: FinnhubClient | None = None
 _finnhub_resolved = False
+_gdelt: GDELTClient | None = None
 
 
 def _connection() -> sqlite3.Connection:
@@ -55,8 +57,15 @@ def finnhub_client() -> FinnhubClient | None:
     return _finnhub
 
 
+def gdelt_client() -> GDELTClient:
+    global _gdelt
+    if _gdelt is None:
+        _gdelt = GDELTClient(_connection())
+    return _gdelt
+
+
 def reset_clients() -> None:
-    global _conn, _yf, _edgar, _finnhub, _finnhub_resolved
+    global _conn, _yf, _edgar, _finnhub, _finnhub_resolved, _gdelt
     if _conn is not None:
         _conn.close()
     _conn = None
@@ -64,3 +73,4 @@ def reset_clients() -> None:
     _edgar = None
     _finnhub = None
     _finnhub_resolved = False
+    _gdelt = None

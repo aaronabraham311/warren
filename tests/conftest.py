@@ -48,6 +48,20 @@ def _no_live_network(monkeypatch: pytest.MonkeyPatch) -> None:
 
 
 @pytest.fixture()
+def gdelt_conn() -> Generator[sqlite3.Connection, None, None]:
+    """In-memory SQLite connection for GDELTClient cache tests."""
+    conn = sqlite3.connect(":memory:")
+    yield conn
+    conn.close()
+
+
+@pytest.fixture()
+def gdelt_fixture() -> dict[str, object]:
+    """Recorded GDELT ArtList payload for Apple adverse-media tests."""
+    return load_fixture("AAPL", "gdelt", "get_adverse_articles", name="apple_30d")
+
+
+@pytest.fixture()
 def edgar_fixture() -> dict[str, object]:
     """Recorded EDGAR payloads: {company_tickers, submissions, filing_html}."""
     return load_fixture("AAPL", "edgar", "get_filing_section")
