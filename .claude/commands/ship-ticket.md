@@ -13,7 +13,7 @@ exactly **one** approval gate (the HTML plan). Everything after it runs unattend
 
 ---
 
-## The two failure modes this skill exists to prevent
+## The three failure modes this skill exists to prevent
 
 Read these first — they are the mistakes that cost human round-trips on past runs.
 
@@ -27,26 +27,36 @@ Read these first — they are the mistakes that cost human round-trips on past r
    the `pull_request` workflow while the merge commit is unresolvable — so CI shows
    *"no checks reported"* and looks stuck forever. See Phase 0 and Phase 6's diagnosis.
 
+3. **Use `EnterWorktree`, not `git checkout -b`.** Using `git checkout` switches the
+   *shared* main checkout to your branch, stomping any other agent working there.
+   `EnterWorktree` creates an isolated copy and moves the session's CWD into it, so
+   all tool calls (Read, Edit, Write, Bash) target your private tree. **Never skip this
+   even for a "quick" ticket** — the main checkout is always someone else's floor.
+
 ---
 
 ## Phase 0 — Worktree setup (do this FIRST, always)
 
 Each ticket gets its own **git worktree** so parallel tickets never share a working
-tree. All Phase 1–6 shell commands run inside `<worktree>` unless noted.
+tree. Use the **`EnterWorktree` Claude tool** — it creates the worktree *and* switches
+the session's working directory so that all subsequent Read/Edit/Write/Bash operations
+land in the isolated copy, not the shared main checkout.
 
-```bash
-git fetch origin main -q
-git worktree add ../warren-<slug> -b <type>/<slug> origin/main
-# From here, all work happens inside ../warren-<slug>/
+```
+EnterWorktree(name="<slug>")   # creates .claude/worktrees/<slug>/ on a new branch
 ```
 
-- `<type>`: `feat` / `fix` / `chore` / `docs` matching the ticket.
-- `<slug>`: kebab-case from the ticket title, ≤40 chars (e.g. `finnhub-client`).
-- `<worktree>` = `../warren-<slug>` — note this path; substitute it in every command below.
-- **Pass `origin/main` as the start point explicitly** — do not rely on the current HEAD.
-- If `../warren-<slug>` already exists, inspect it before overwriting — it may be an
-  in-progress run for the same ticket.
-- The HTML plan goes in `<worktree>/local/<slug>-plan.html` (gitignored inside the worktree).
+**Do NOT use `git checkout -b` or `git worktree add` alone** — those create the branch
+but leave the session's CWD pointing at the main checkout, where another agent may be
+working. Any file edits will clobber their in-progress changes.
+
+- `<slug>`: kebab-case from the ticket title, ≤40 chars (e.g. `peer-comparison`).
+- After entering the worktree, the branch is `worktree-<slug>`; rename to your
+  convention when pushing: `git branch -m feat/<slug>` (optional — the auto name is fine for PRs).
+- **`EnterWorktree` bases from `origin/<default-branch>` by default** (the `fresh` setting).
+  This is equivalent to explicitly passing `origin/main` — no extra fetch needed.
+- The HTML plan goes in `local/<slug>-plan.html` inside the worktree (gitignored).
+- On CI green: `ExitWorktree(action="keep")` — the branch is still needed for the merge.
 
 ---
 
@@ -167,8 +177,39 @@ Each tick:
      on `pull_request`; otherwise nudge with an empty commit.
 3. **If a check fails:** `gh run view --log-failed`, fix the code, re-run the full DoD
    locally, `git push`. Let the next tick re-verify.
-4. **When all checks pass:** `CronDelete` the job, clean up the worktree, and post a
-   one-line ✅ summary:
+4. **When all checks pass — verify mergeability before declaring done:**
+   ```bash
+   gh pr view <N> --json mergeable,mergeStateStatus
+   ```
+   - `"mergeable":"MERGEABLE"` → proceed to step 5.
+   - `"mergeable":"CONFLICTING"` → CI passed but the branch can't merge cleanly. This
+     means something merged into main after your branch was cut. Diagnose with:
+     ```bash
+     git log --oneline origin/main...HEAD
+     ```
+     Commits that aren't yours were bundled — your branch was based on a stale
+     `origin/main`. Fix with a rebase:
+     ```bash
+     git fetch origin main -q
+     git rebase origin/main
+     ```
+     **Resolving conflicts when both sides are additive** (the common case — two
+     independent tickets each added to the same file, e.g. `CLAUDE.md`, `pyproject.toml`,
+     a test registry set): keep *both* sides. Accept all changes from `HEAD` (theirs,
+     which is `origin/main`) and then re-add your additions below them. Do **not** discard
+     either side. After resolving:
+     ```bash
+     git add <conflicted-files>
+     git rebase --continue
+     ```
+     Re-run the full DoD (`ruff check . && ruff format . && mypy . && pytest`), then:
+     ```bash
+     git push --force-with-lease
+     ```
+     Wait one minute and re-check `gh pr view <N> --json mergeable,mergeStateStatus`
+     before proceeding.
+5. **Confirmed MERGEABLE — wrap up:** `CronDelete` the job, clean up the worktree, and
+   post a one-line ✅ summary:
    ```bash
    # Run from the main repo (../warren), not the worktree
    git worktree remove ../warren-<slug>
