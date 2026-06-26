@@ -217,7 +217,7 @@ class _FakeFinnhub:
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_fifteen_tools() -> None:
+def test_registry_has_all_sixteen_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -234,6 +234,7 @@ def test_registry_has_all_fifteen_tools() -> None:
         "estimate_intrinsic_value",
         "get_capital_allocation",
         "get_key_persons",
+        "get_adverse_media",
     }
     assert all(isinstance(t, Tool) for t in TOOL_REGISTRY.values())
 
