@@ -22,8 +22,9 @@ class GetValuationMultiplesTool(Tool):
     description = (
         "Compute deep-value valuation multiples for a ticker: EV/EBIT, EV/EBITDA, "
         "Acquirer's Multiple (Carlisle / EV per operating earnings), FCF yield, "
-        "earnings yield (Greenblatt), NCAV / net-net ratio (Graham), P/tangible book, "
-        "and dividend yield. All ratios are None when the required inputs are unavailable."
+        "earnings yield (Greenblatt), NCAV / net-net ratio (Graham), price-to-NCAV, "
+        "net-cash position (cash minus total debt), P/tangible book, and dividend yield. "
+        "All ratios are None when the required inputs are unavailable."
     )
     input_schema = GetValuationMultiplesInput
     output_schema = ValuationData

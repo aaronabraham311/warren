@@ -21,6 +21,7 @@ from data_sources.yfinance_client import (
     GrowthData,
     PriceData,
     QualityData,
+    ValuationData,
     YFinanceClient,
 )
 from eval.fixtures import load_fixture
@@ -861,3 +862,132 @@ def test_load_fixture_growth_metrics() -> None:
     fixture = load_fixture("AAPL", "yfinance", "get_growth_metrics")
     assert "pegRatio" in fixture
     assert "Total Revenue" in fixture
+
+
+# ── get_valuation_multiples helpers ──────────────────────────────────────────
+
+
+def _mock_ticker_for_valuation(fixture: dict[str, object]) -> MagicMock:
+    t = MagicMock()
+    t.info = fixture
+    return t
+
+
+# ── get_valuation_multiples: net-cash-positive (AAPL) ────────────────────────
+
+
+def test_get_valuation_multiples_net_cash_positive(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_valuation_multiples")
+    client = _make_client(yf_conn)
+
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        return_value=_mock_ticker_for_valuation(fixture),
+    ):
+        result = client.get_valuation_multiples("AAPL")
+
+    assert isinstance(result, ValuationData)
+    assert result.ticker == "AAPL"
+    assert result.source == "yfinance"
+    # net cash: totalCash=162B - totalDebt=111B = +51B
+    assert result.net_cash_usd == 51_000_000_000
+    assert result.net_cash_positive is True
+    # AAPL ncav = currentAssets - totalLiab = 143.6B - 290.4B < 0 → price_to_ncav is None
+    assert result.ncav is not None and result.ncav < 0
+    assert result.price_to_ncav is None
+    # existing fields still present
+    assert result.ev_to_ebit is not None
+    assert result.ncav_to_market_cap is not None
+
+
+# ── get_valuation_multiples: net-debt (GM) ────────────────────────────────────
+
+
+def test_get_valuation_multiples_net_debt(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("GM", "yfinance", "get_valuation_multiples")
+    client = _make_client(yf_conn)
+
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        return_value=_mock_ticker_for_valuation(fixture),
+    ):
+        result = client.get_valuation_multiples("GM")
+
+    assert isinstance(result, ValuationData)
+    assert result.ticker == "GM"
+    # net cash: totalCash=27B - totalDebt=130B = -103B
+    assert result.net_cash_usd == -103_000_000_000
+    assert result.net_cash_positive is False
+
+
+# ── get_valuation_multiples: price_to_ncav consistency ───────────────────────
+
+
+def test_get_valuation_multiples_price_to_ncav_consistency(yf_conn: sqlite3.Connection) -> None:
+    # Synthetic small-cap with positive NCAV: currentAssets=100M, totalLiab=40M, mktCap=45M
+    client = _make_client(yf_conn)
+    info: dict[str, object] = {
+        "regularMarketPrice": 9.0,
+        "enterpriseValue": 50_000_000,
+        "ebitda": 8_000_000,
+        "operatingIncome": 6_000_000,
+        "freeCashflow": 4_000_000,
+        "marketCap": 45_000_000,
+        "currentAssets": 100_000_000,
+        "totalLiab": 40_000_000,
+        "tangibleBookValue": 60_000_000,
+        "dividendYield": None,
+        "lastFiscalYearEnd": 1696032000,
+        "totalCash": 30_000_000,
+        "totalDebt": 10_000_000,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
+    }
+
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        return_value=_mock_ticker_for_valuation(info),
+    ):
+        result = client.get_valuation_multiples("XSMALL")
+
+    assert isinstance(result, ValuationData)
+    ncav = 100_000_000 - 40_000_000  # 60M
+    mkt_cap = 45_000_000
+    assert result.ncav == ncav
+    assert result.ncav_to_market_cap == pytest.approx(ncav / mkt_cap, rel=1e-4)
+    assert result.price_to_ncav == pytest.approx(mkt_cap / ncav, rel=1e-4)
+    # price_to_ncav * ncav_to_market_cap ≈ 1.0
+    assert result.price_to_ncav is not None and result.ncav_to_market_cap is not None
+    assert result.price_to_ncav * result.ncav_to_market_cap == pytest.approx(1.0, rel=1e-4)
+    # net cash: 30M - 10M = +20M
+    assert result.net_cash_usd == 20_000_000
+    assert result.net_cash_positive is True
+
+
+# ── get_valuation_multiples: missing cash fields → graceful None ──────────────
+
+
+def test_get_valuation_multiples_missing_cash_fields(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    info: dict[str, object] = {
+        "regularMarketPrice": 50.0,
+        "marketCap": 1_000_000_000,
+        "currentAssets": 500_000_000,
+        "totalLiab": 300_000_000,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
+    }
+
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        return_value=_mock_ticker_for_valuation(info),
+    ):
+        result = client.get_valuation_multiples("NOCASH")
+
+    assert isinstance(result, ValuationData)
+    assert result.net_cash_usd is None
+    assert result.net_cash_positive is False
