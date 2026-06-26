@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Literal, Protocol, cast
 
 import anthropic
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from agent.budget import RunContext
 from agent.caching import call_claude_with_caching
@@ -66,6 +66,16 @@ def _run_with_retry(
         retries += 1
 
 
+class IntegrityFindings(BaseModel):
+    persons_screened: list[str] = Field(default_factory=list)
+    adverse_media_hits: int = 0
+    top_categories: list[str] = Field(default_factory=list)
+    watchlist_matches: int = 0
+    highest_match_score: float | None = None
+    coverage_volume: Literal["none", "thin", "moderate", "heavy"] = "none"
+    scan_completeness_caveat: bool = True
+
+
 class DirtSignals(BaseModel):
     ev_ebit: float | None = None
     price_to_ncav: float | None = None
@@ -76,6 +86,7 @@ class DirtSignals(BaseModel):
     insider_sentiment: Literal["positive", "negative", "neutral"] | None = None
     analyst_coverage_count: int | None = None
     aggregator_discrepancies_found: bool = False
+    integrity: IntegrityFindings | None = None
 
 
 class AnalysisOutput(BaseModel):
@@ -89,6 +100,19 @@ class AnalysisOutput(BaseModel):
     key_risks: list[str]
     data_quality_notes: list[str] = Field(default_factory=list)
     dirt_signals: DirtSignals | None = None
+
+    @model_validator(mode="after")
+    def _propagate_zero_coverage_to_quality_notes(self) -> "AnalysisOutput":
+        if (
+            self.dirt_signals is not None
+            and self.dirt_signals.integrity is not None
+            and self.dirt_signals.integrity.coverage_volume == "none"
+        ):
+            for name in self.dirt_signals.integrity.persons_screened:
+                note = f"no adverse-media coverage found for '{name}' (scan returned no results)"
+                if note not in self.data_quality_notes:
+                    self.data_quality_notes.append(note)
+        return self
 
 
 class CostAbortedError(Exception):

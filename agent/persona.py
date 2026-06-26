@@ -24,7 +24,16 @@ _ANALYSIS_OUTPUT_SCHEMA = """\
     "buyback_active": <bool | null>,
     "insider_sentiment": "positive" | "negative" | "neutral" | null,
     "analyst_coverage_count": <int | null>,
-    "aggregator_discrepancies_found": <bool — default false>
+    "aggregator_discrepancies_found": <bool — default false>,
+    "integrity": null | {
+      "persons_screened": [<string — full name searched>, ...],
+      "adverse_media_hits": <int — number of adverse-media articles found>,
+      "top_categories": [<string — e.g. "fraud", "sanctions", "litigation">, ...],
+      "watchlist_matches": <int — number of watchlist / PEP matches>,
+      "highest_match_score": <float 0.0–1.0 | null — confidence of best watchlist match>,
+      "coverage_volume": "none" | "thin" | "moderate" | "heavy",
+      "scan_completeness_caveat": <bool — true when name is short, common, or foreign-language>
+    }
   }
 }"""
 
