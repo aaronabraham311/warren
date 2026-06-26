@@ -206,3 +206,70 @@ def test_malformed_submissions_returns_parse(
     result = client.get_filing_section("AAPL", "10-K", "mdna")
     assert isinstance(result, DataSourceError)
     assert result.error_code == "parse"
+
+
+def _compensation_html() -> str:
+    return """<html><body>
+    <p>Table of Contents</p>
+    <p>Item 1. Business .... Item 11. Executive Compensation .... Item 12.</p>
+    <p>Item 1. Business</p><p>Apple designs phones.</p>
+    <p>Item 11. Executive Compensation</p>
+    <p>CEO total compensation was $10 million in fiscal 2023. Gross margin of 43.8%.</p>
+    <p>Item 12. Security Ownership of Certain Beneficial Owners</p>
+    <p>Officers own 5% of shares outstanding.</p>
+    </body></html>"""
+
+
+def _related_party_html() -> str:
+    return """<html><body>
+    <p>Table of Contents</p>
+    <p>Item 13. Certain Relationships .... Item 14.</p>
+    <p>Item 1. Business</p><p>Apple designs phones.</p>
+    <p>Item 13. Certain Relationships and Related Party Transactions</p>
+    <p>We paid $1.5 million to Related Corp, an entity controlled by a board member.</p>
+    <p>Item 14. Principal Accountant Fees and Services</p>
+    <p>Audit fees were $50 million.</p>
+    </body></html>"""
+
+
+def test_compensation_section_extracted(
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
+) -> None:
+    client, _urls = _build_client(
+        edgar_conn, monkeypatch, edgar_fixture, filing_html=_compensation_html()
+    )
+    result = client.get_filing_section("AAPL", "10-K", "compensation")
+    assert isinstance(result, FilingSection)
+    assert "CEO total compensation" in result.text
+    assert "Security Ownership" not in result.text  # sliced before Item 12
+
+
+def test_related_party_section_extracted(
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
+) -> None:
+    client, _urls = _build_client(
+        edgar_conn, monkeypatch, edgar_fixture, filing_html=_related_party_html()
+    )
+    result = client.get_filing_section("AAPL", "10-K", "related_party")
+    assert isinstance(result, FilingSection)
+    assert "Related Corp" in result.text
+    assert "Audit fees" not in result.text  # sliced before Item 14
+
+
+def test_key_figures_extracted_populated(
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
+) -> None:
+    client, _urls = _build_client(
+        edgar_conn, monkeypatch, edgar_fixture, filing_html=_compensation_html()
+    )
+    result = client.get_filing_section("AAPL", "10-K", "compensation")
+    assert isinstance(result, FilingSection)
+    figures = result.key_figures_extracted
+    assert any("10" in f and ("million" in f.lower() or "M" in f) for f in figures)
+    assert any("43.8" in f and "%" in f for f in figures)
