@@ -102,6 +102,9 @@ class ValuationData(BaseModel):
     ncav: int | None
     ncav_to_market_cap: float | None
     is_net_net: bool
+    price_to_ncav: float | None
+    net_cash_usd: int | None
+    net_cash_positive: bool
     p_tangible_book: float | None
     dividend_yield_pct: float | None
     data_age_hours: int
@@ -523,6 +526,17 @@ class YFinanceClient:
             ncav_to_mkt_cap = round(ncav / mkt_cap, 4)
             is_net_net = ncav > mkt_cap
 
+        price_to_ncav: float | None = None
+        if ncav is not None and ncav > 0 and mkt_cap and mkt_cap > 0:
+            price_to_ncav = round(float(mkt_cap) / ncav, 4)
+
+        total_cash = _as_int(info.get("totalCash"))
+        total_debt_info = _as_int(info.get("totalDebt"))
+        net_cash_usd: int | None = None
+        if total_cash is not None and total_debt_info is not None:
+            net_cash_usd = total_cash - total_debt_info
+        net_cash_positive = net_cash_usd is not None and net_cash_usd > 0
+
         p_tangible_book: float | None = None
         if mkt_cap and tangible_bv and tangible_bv > 0:
             p_tangible_book = round(mkt_cap / tangible_bv, 2)
@@ -539,6 +553,9 @@ class YFinanceClient:
             ncav=ncav,
             ncav_to_market_cap=ncav_to_mkt_cap,
             is_net_net=is_net_net,
+            price_to_ncav=price_to_ncav,
+            net_cash_usd=net_cash_usd,
+            net_cash_positive=net_cash_positive,
             p_tangible_book=p_tangible_book,
             dividend_yield_pct=_as_pct(info.get("dividendYield")),
             data_age_hours=_fiscal_age_hours(info),
