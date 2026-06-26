@@ -14,7 +14,18 @@ _ANALYSIS_OUTPUT_SCHEMA = """\
   "buffett_signals": ["<string — a Buffett heuristic observed, with supporting data>", ...],
   "key_risks": ["<string — specific, concrete risk with a number or catalyst>", ...],
   "data_quality_notes": ["<string — any stale, missing, or conflicting data>", ...],
-  "tool_calls_made": <int — number of tools you called during this analysis>
+  "tool_calls_made": <int — number of tools you called during this analysis>,
+  "dirt_signals": null | {
+    "ev_ebit": <float | null>,
+    "price_to_ncav": <float | null>,
+    "ncav_discount_pct": <float | null>,
+    "net_cash_positive": <bool | null>,
+    "consecutive_profit_years": <int | null>,
+    "buyback_active": <bool | null>,
+    "insider_sentiment": "positive" | "negative" | "neutral" | null,
+    "analyst_coverage_count": <int | null>,
+    "aggregator_discrepancies_found": <bool — default false>
+  }
 }"""
 
 SYSTEM_PROMPT = f"""\
