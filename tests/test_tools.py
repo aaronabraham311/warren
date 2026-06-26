@@ -542,6 +542,8 @@ def _quality(ticker: str = "AAPL") -> QualityData:
         gross_margin_stdev=2.4,
         cash_conversion_ttm=1.03,
         cash_conversion_series=[1.03, 1.12, 0.98, 1.28],
+        consecutive_profit_years=5,
+        ncav_trend="growing",
         data_age_hours=2000,
     )
 

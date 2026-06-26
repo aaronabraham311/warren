@@ -494,6 +494,10 @@ def test_get_quality_metrics_returns_valid_data(yf_conn: sqlite3.Connection) -> 
     assert result.gross_margin_stdev is not None
     assert result.cash_conversion_ttm is not None and result.cash_conversion_ttm > 0
     assert len(result.cash_conversion_series) == 4
+    # All 4 fixture years have positive operating income → streak = 4
+    assert result.consecutive_profit_years == 4
+    # AAPL NCAV is negative and worsening over most years → declining
+    assert result.ncav_trend == "declining"
 
 
 def test_get_quality_metrics_caches_result(yf_conn: sqlite3.Connection) -> None:
@@ -560,6 +564,111 @@ def test_get_quality_metrics_missing_statements_returns_empty_series(
     assert result.gross_margin_pct is None
     assert result.gross_margin_stdev is None
     assert result.cash_conversion_ttm is None
+    assert result.consecutive_profit_years is None
+    assert result.ncav_trend is None
+
+
+def test_get_quality_metrics_consecutive_profit_years_with_loss(
+    yf_conn: sqlite3.Connection,
+) -> None:
+    client = _make_client(yf_conn)
+
+    def side_effect(ticker: str) -> MagicMock:
+        t = MagicMock()
+        t.info = {
+            "regularMarketPrice": 100.0,
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "d": 4,
+            "e": 5,
+            "f": 6,
+        }
+        # newest-first: 2 profitable years, then a loss, then profitable again
+        inc = _make_df_mock({"Operating Income": [500e6, 400e6, -100e6, 300e6]})
+        empty = _make_df_mock({})
+        t.financials = inc
+        t.balance_sheet = empty
+        t.cashflow = empty
+        return t
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        result = client.get_quality_metrics("AAPL")
+
+    assert isinstance(result, QualityData)
+    assert result.consecutive_profit_years == 2
+
+
+def test_get_quality_metrics_ncav_trend_insufficient_history(
+    yf_conn: sqlite3.Connection,
+) -> None:
+    client = _make_client(yf_conn)
+
+    def side_effect(ticker: str) -> MagicMock:
+        t = MagicMock()
+        t.info = {
+            "regularMarketPrice": 100.0,
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "d": 4,
+            "e": 5,
+            "f": 6,
+        }
+        # only 2 years of current_assets + total_liabilities → ncav_trend must be None
+        bs = _make_df_mock(
+            {
+                "Current Assets": [100e9, 90e9],
+                "Total Liabilities Net Minority Interest": [80e9, 75e9],
+            }
+        )
+        empty = _make_df_mock({})
+        t.financials = empty
+        t.balance_sheet = bs
+        t.cashflow = empty
+        return t
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        result = client.get_quality_metrics("AAPL")
+
+    assert isinstance(result, QualityData)
+    assert result.ncav_trend is None
+
+
+def test_get_quality_metrics_ncav_trend_growing(
+    yf_conn: sqlite3.Connection,
+) -> None:
+    client = _make_client(yf_conn)
+
+    def side_effect(ticker: str) -> MagicMock:
+        t = MagicMock()
+        t.info = {
+            "regularMarketPrice": 100.0,
+            "a": 1,
+            "b": 2,
+            "c": 3,
+            "d": 4,
+            "e": 5,
+            "f": 6,
+        }
+        # newest-first NCAV: 30, 20, 10 → all YoY deltas positive → growing
+        bs = _make_df_mock(
+            {
+                "Current Assets": [130e9, 120e9, 110e9],
+                "Total Liabilities Net Minority Interest": [100e9, 100e9, 100e9],
+            }
+        )
+        empty = _make_df_mock({})
+        t.financials = empty
+        t.balance_sheet = bs
+        t.cashflow = empty
+        return t
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        result = client.get_quality_metrics("AAPL")
+
+    assert isinstance(result, QualityData)
+    assert result.ncav_trend == "growing"
 
 
 def test_get_quality_metrics_not_found(yf_conn: sqlite3.Connection) -> None:

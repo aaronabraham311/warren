@@ -22,8 +22,11 @@ class GetQualityMetricsTool(Tool):
     description = (
         "Compute Munger-style quality metrics for a ticker: ROIC (current + 3–4 yr series + mean), "
         "ROA, gross-margin level and multi-year stability (stdev — low stdev signals a moat), "
-        "and cash-conversion ratio (FCF / net income, TTM and multi-year). High, stable ROIC and "
-        "clean cash conversion distinguish quality compounders from mediocre businesses."
+        "cash-conversion ratio (FCF / net income, TTM and multi-year), consecutive years of "
+        "positive operating income (consecutive_profit_years), and NCAV trend "
+        "(ncav_trend: growing/stable/declining — declining NCAV means the liquidation margin "
+        "is eroding). High, stable ROIC and clean cash conversion distinguish quality "
+        "compounders from mediocre businesses."
     )
     input_schema = GetQualityMetricsInput
     output_schema = QualityData

@@ -120,6 +120,8 @@ class QualityData(BaseModel):
     gross_margin_stdev: float | None
     cash_conversion_ttm: float | None
     cash_conversion_series: list[float | None]
+    consecutive_profit_years: int | None
+    ncav_trend: Literal["growing", "stable", "declining"] | None
     data_age_hours: int
     source: Literal["yfinance"] = "yfinance"
 
@@ -644,6 +646,8 @@ class YFinanceClient:
             gross_margin_stdev=gm_stdev,
             cash_conversion_ttm=cc_series[0] if cc_series else None,
             cash_conversion_series=cc_series,
+            consecutive_profit_years=self._compute_consecutive_profit_years(hist),
+            ncav_trend=self._compute_ncav_trend(hist),
             data_age_hours=_fiscal_age_hours(info),
         )
 
@@ -991,6 +995,37 @@ class YFinanceClient:
         if not net_incomes or not total_assets or total_assets[0] == 0:
             return None
         return round(net_incomes[0] / total_assets[0] * 100.0, 4)
+
+    def _compute_consecutive_profit_years(self, hist: FinancialsHistory) -> int | None:
+        """Count consecutive years (newest-first) with positive operating income."""
+        if not hist.income_statement:
+            return None
+        count = 0
+        for row in hist.income_statement:
+            if row.operating_income is not None and row.operating_income > 0:
+                count += 1
+            else:
+                break
+        return count
+
+    def _compute_ncav_trend(
+        self, hist: FinancialsHistory
+    ) -> Literal["growing", "stable", "declining"] | None:
+        """Classify YoY NCAV direction from ≥3 years; None when history too short."""
+        ncavs: list[float] = []
+        for row in hist.balance_sheet:
+            if row.current_assets is not None and row.total_liabilities is not None:
+                ncavs.append(float(row.current_assets) - float(row.total_liabilities))
+        if len(ncavs) < 3:
+            return None
+        deltas = [ncavs[i] - ncavs[i + 1] for i in range(len(ncavs) - 1)]
+        positives = sum(1 for d in deltas if d > 0)
+        negatives = sum(1 for d in deltas if d < 0)
+        if positives > negatives:
+            return "growing"
+        if negatives > positives:
+            return "declining"
+        return "stable"
 
     # ── get_ownership ─────────────────────────────────────────────────────
 
