@@ -18,6 +18,7 @@ from agent.budget import Budget, RunContext
 from agent.loop import (
     AnalysisOutput,
     CostAbortedError,
+    DirtSignals,
     SchemaRepairError,
     analyze_ticker,
 )
@@ -586,3 +587,52 @@ def test_wal_no_retry_fields_zero(mock_claude: MagicMock, tmp_path: Path) -> Non
     assert len(events) == 1
     assert events[0]["retry_count"] == 0
     assert events[0]["last_retry_error"] is None
+
+
+# ── DirtSignals ───────────────────────────────────────────────────────────────
+
+
+def test_dirt_signals_defaults_to_none() -> None:
+    result = AnalysisOutput.model_validate_json(VALID_ANALYSIS_JSON)
+    assert result.dirt_signals is None
+
+
+def test_dirt_signals_round_trips() -> None:
+    signals = DirtSignals(
+        ev_ebit=4.2,
+        price_to_ncav=0.85,
+        ncav_discount_pct=15.3,
+        net_cash_positive=True,
+        consecutive_profit_years=7,
+        buyback_active=True,
+        insider_sentiment="positive",
+        analyst_coverage_count=2,
+        aggregator_discrepancies_found=False,
+    )
+    output = AnalysisOutput(
+        ticker="BARC",
+        analysis_type="discovery",
+        recommendation="buy",
+        confidence=0.8,
+        thesis="Deep-value play with NCAV discount and net-cash balance sheet.",
+        lynch_signals=[],
+        buffett_signals=[],
+        key_risks=["cyclical earnings", "macro headwinds"],
+        dirt_signals=signals,
+    )
+    reparsed = AnalysisOutput.model_validate_json(output.model_dump_json())
+    assert reparsed.dirt_signals is not None
+    assert reparsed.dirt_signals.ev_ebit == 4.2
+    assert reparsed.dirt_signals.price_to_ncav == 0.85
+    assert reparsed.dirt_signals.ncav_discount_pct == 15.3
+    assert reparsed.dirt_signals.net_cash_positive is True
+    assert reparsed.dirt_signals.consecutive_profit_years == 7
+    assert reparsed.dirt_signals.buyback_active is True
+    assert reparsed.dirt_signals.insider_sentiment == "positive"
+    assert reparsed.dirt_signals.analyst_coverage_count == 2
+    assert reparsed.dirt_signals.aggregator_discrepancies_found is False
+
+
+def test_dirt_signals_aggregator_discrepancies_defaults_false() -> None:
+    partial = DirtSignals(ev_ebit=5.0)
+    assert partial.aggregator_discrepancies_found is False

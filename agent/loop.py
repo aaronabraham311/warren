@@ -66,6 +66,18 @@ def _run_with_retry(
         retries += 1
 
 
+class DirtSignals(BaseModel):
+    ev_ebit: float | None = None
+    price_to_ncav: float | None = None
+    ncav_discount_pct: float | None = None
+    net_cash_positive: bool | None = None
+    consecutive_profit_years: int | None = None
+    buyback_active: bool | None = None
+    insider_sentiment: Literal["positive", "negative", "neutral"] | None = None
+    analyst_coverage_count: int | None = None
+    aggregator_discrepancies_found: bool = False
+
+
 class AnalysisOutput(BaseModel):
     ticker: str = Field(pattern=r"^[A-Z]{1,5}([.-][A-Z])?$")
     analysis_type: Literal["holding", "discovery"]
@@ -76,6 +88,7 @@ class AnalysisOutput(BaseModel):
     buffett_signals: list[str]
     key_risks: list[str]
     data_quality_notes: list[str] = Field(default_factory=list)
+    dirt_signals: DirtSignals | None = None
 
 
 class CostAbortedError(Exception):
