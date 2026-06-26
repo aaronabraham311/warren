@@ -19,6 +19,7 @@ from data_sources.yfinance_client import (
     FinancialStrengthData,
     FundamentalsData,
     GrowthData,
+    KeyPersonsRaw,
     PriceData,
     QualityData,
     ValuationData,
@@ -1100,3 +1101,87 @@ def test_get_valuation_multiples_missing_cash_fields(yf_conn: sqlite3.Connection
     assert isinstance(result, ValuationData)
     assert result.net_cash_usd is None
     assert result.net_cash_positive is False
+
+
+# ── get_key_persons ───────────────────────────────────────────────────────────
+
+
+def _mock_ticker_for_key_persons(fixture: dict[str, object]) -> MagicMock:
+    t = MagicMock()
+    t.info = {
+        "regularMarketPrice": fixture.get("regularMarketPrice"),
+        "currentPrice": fixture.get("currentPrice"),
+        "lastFiscalYearEnd": fixture.get("lastFiscalYearEnd"),
+        "companyOfficers": fixture.get("companyOfficers", []),
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
+    }
+    # Build a DataFrame-like for institutional_holders
+    raw_holders: object = fixture.get("institutional_holders") or []
+    holders_raw: list[dict[str, object]] = [h for h in raw_holders if isinstance(h, dict)]  # type: ignore[attr-defined]
+    if holders_raw:
+        rows = MagicMock()
+
+        def _row(h: dict[str, object]) -> dict[str, object]:
+            return {
+                "Holder": h["Holder"],
+                "Shares": h["Shares"],
+                "% Out": h["pct_held"],
+                "Value": h["Value"],
+            }
+
+        rows.iterrows.return_value = iter((i, _row(h)) for i, h in enumerate(holders_raw))
+        t.institutional_holders = rows
+    else:
+        t.institutional_holders = None
+    return t
+
+
+def test_get_key_persons_from_fixture(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_key_persons")
+    client = _make_client(yf_conn)
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        return_value=_mock_ticker_for_key_persons(fixture),
+    ):
+        result = client.get_key_persons("AAPL")
+
+    assert isinstance(result, KeyPersonsRaw)
+    assert result.ticker == "AAPL"
+    # Officers parsed
+    officer_names = [o.name for o in result.officers]
+    assert "Timothy D. Cook" in officer_names
+    assert "Luca Maestri" in officer_names
+    # Institutional holders parsed
+    holder_names = [h.name for h in result.institutional_holders]
+    assert "Vanguard Group Inc" in holder_names
+    assert result.institutional_holders[0].pct_held == pytest.approx(0.0796)
+
+
+def test_get_key_persons_cache_hit(yf_conn: sqlite3.Connection) -> None:
+    fixture = load_fixture("AAPL", "yfinance", "get_key_persons")
+    client = _make_client(yf_conn)
+    call_count = 0
+
+    def counting_ticker(ticker: str) -> MagicMock:
+        nonlocal call_count
+        call_count += 1
+        return _mock_ticker_for_key_persons(fixture)
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=counting_ticker):
+        client.get_key_persons("AAPL")
+        client.get_key_persons("AAPL")
+
+    assert call_count == 1  # second call served from cache
+
+
+def test_get_key_persons_not_found(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    empty = MagicMock()
+    empty.info = {}
+    with patch("data_sources.yfinance_client.yf.Ticker", return_value=empty):
+        result = client.get_key_persons("ZZZZ")
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "not_found"

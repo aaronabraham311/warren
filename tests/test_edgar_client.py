@@ -12,8 +12,9 @@ from datetime import date
 
 import pytest
 
-from data_sources.edgar_client import MAX_CHARS, EDGARClient, FilingSection
+from data_sources.edgar_client import MAX_CHARS, EDGARClient, FilingSection, SC13Holder
 from data_sources.errors import DataSourceError
+from eval.fixtures import load_fixture
 
 
 def _filing_html(mdna_body: str) -> str:
@@ -273,3 +274,74 @@ def test_key_figures_extracted_populated(
     figures = result.key_figures_extracted
     assert any("10" in f and ("million" in f.lower() or "M" in f) for f in figures)
     assert any("43.8" in f and "%" in f for f in figures)
+
+
+# ── get_sc13_holders ──────────────────────────────────────────────────────────
+
+
+def _build_sc13_client(
+    conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    fixture: dict[str, object],
+) -> tuple[EDGARClient, list[str]]:
+    client = EDGARClient(conn, _sleep=lambda _s: None)
+    urls: list[str] = []
+
+    def fake_get(url: str, timeout: int | None = None) -> _FakeResponse:
+        urls.append(url)
+        if "company_tickers.json" in url:
+            return _FakeResponse(200, json.dumps(fixture["company_tickers"]))
+        if "/submissions/CIK" in url:
+            return _FakeResponse(200, json.dumps(fixture["submissions"]))
+        if "efts.sec.gov" in url or "search-index" in url:
+            return _FakeResponse(200, json.dumps(fixture["efts_response"]))
+        return _FakeResponse(404, "")
+
+    monkeypatch.setattr(client._session, "get", fake_get)
+    return client, urls
+
+
+def test_get_sc13_holders_from_fixture(
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fixture = load_fixture("AAPL", "edgar", "get_sc13_holders")
+    client, _urls = _build_sc13_client(edgar_conn, monkeypatch, fixture)
+    result = client.get_sc13_holders("AAPL")
+
+    assert isinstance(result, list)
+    assert len(result) >= 1
+    names = [h.name for h in result]
+    assert "VANGUARD GROUP INC" in names
+    assert "BLACKROCK INC." in names
+    # All returned holders have valid form_type and filing_date
+    for h in result:
+        assert isinstance(h, SC13Holder)
+        assert h.form_type.startswith("SC 13")
+        assert isinstance(h.filing_date, date)
+
+
+def test_get_sc13_holders_deduplicates_keeping_latest(
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fixture = load_fixture("AAPL", "edgar", "get_sc13_holders")
+    client, _urls = _build_sc13_client(edgar_conn, monkeypatch, fixture)
+    result = client.get_sc13_holders("AAPL")
+    # No duplicate names — latest filing per entity is kept
+    assert isinstance(result, list)
+    names = [h.name for h in result]
+    assert len(names) == len(set(names))
+
+
+def test_get_sc13_holders_cache_hit(
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fixture = load_fixture("AAPL", "edgar", "get_sc13_holders")
+    client, urls = _build_sc13_client(edgar_conn, monkeypatch, fixture)
+    client.get_sc13_holders("AAPL")
+    efts_hits_first = sum(1 for u in urls if "efts.sec.gov" in u or "search-index" in u)
+    client.get_sc13_holders("AAPL")
+    efts_hits_second = sum(1 for u in urls if "efts.sec.gov" in u or "search-index" in u)
+    assert efts_hits_first == efts_hits_second  # no second EFTS call
