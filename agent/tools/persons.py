@@ -10,6 +10,7 @@ from data_sources.edgar_client import SC13Holder
 from data_sources.yfinance_client import KeyPersonsRaw
 
 _CONTROLLING_THRESHOLD = 0.20  # 20% ownership → controlling interest
+_MAJOR_HOLDER_THRESHOLD = 0.05  # 5% minimum to appear in persons list
 
 
 class GetKeyPersonsInput(BaseModel):
@@ -45,7 +46,9 @@ def _persons_from_yf(raw: KeyPersonsRaw) -> list[KeyPerson]:
             )
         )
     for ih in raw.institutional_holders:
-        pct = round(ih.pct_held * 100, 4) if ih.pct_held is not None else None
+        if ih.pct_held is None or ih.pct_held < _MAJOR_HOLDER_THRESHOLD:
+            continue
+        pct = round(ih.pct_held * 100, 4)
         persons.append(
             KeyPerson(
                 name=ih.name,
