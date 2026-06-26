@@ -1,0 +1,55 @@
+{
+  "company_tickers": {
+    "0": {"cik_str": 320193, "ticker": "AAPL", "title": "Apple Inc."}
+  },
+  "submissions": {
+    "cik": "0000320193",
+    "entityType": "operating",
+    "name": "Apple Inc.",
+    "sic": "3571",
+    "sicDescription": "Electronic Computers"
+  },
+  "efts_response": {
+    "hits": {
+      "total": {"value": 4, "relation": "eq"},
+      "hits": [
+        {
+          "_id": "0001193125-24-036312",
+          "_source": {
+            "entity_name": "VANGUARD GROUP INC",
+            "form_type": "SC 13G/A",
+            "file_date": "2024-02-13",
+            "period_of_report": "2023-12-31"
+          }
+        },
+        {
+          "_id": "0001193125-24-019147",
+          "_source": {
+            "entity_name": "BLACKROCK INC.",
+            "form_type": "SC 13G/A",
+            "file_date": "2024-01-26",
+            "period_of_report": "2023-12-31"
+          }
+        },
+        {
+          "_id": "0000950170-24-019498",
+          "_source": {
+            "entity_name": "STATE STREET CORP",
+            "form_type": "SC 13G/A",
+            "file_date": "2024-02-14",
+            "period_of_report": "2023-12-31"
+          }
+        },
+        {
+          "_id": "0000899915-24-000053",
+          "_source": {
+            "entity_name": "GEODE CAPITAL MANAGEMENT, LLC",
+            "form_type": "SC 13G",
+            "file_date": "2024-02-14",
+            "period_of_report": "2023-12-31"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "regularMarketPrice": 189.3,
+  "currentPrice": 189.3,
+  "lastFiscalYearEnd": 1727654400,
+  "companyOfficers": [
+    {
+      "name": "Timothy D. Cook",
+      "title": "CEO & Director",
+      "yearBorn": 1961,
+      "totalPay": {"raw": 63151817}
+    },
+    {
+      "name": "Luca Maestri",
+      "title": "CFO",
+      "yearBorn": 1964,
+      "totalPay": {"raw": 27230396}
+    },
+    {
+      "name": "Katherine L. Adams",
+      "title": "Senior VP, General Counsel & Secretary",
+      "yearBorn": 1964,
+      "totalPay": {"raw": 26212534}
+    },
+    {
+      "name": "Deirdre O'Brien",
+      "title": "Senior VP, Retail",
+      "yearBorn": 1967,
+      "totalPay": {"raw": 26212534}
+    }
+  ],
+  "institutional_holders": [
+    {"Holder": "Vanguard Group Inc", "Shares": 1273985728, "pct_held": 0.0796, "Value": 241148000000},
+    {"Holder": "BlackRock Inc.", "Shares": 1020413756, "pct_held": 0.0637, "Value": 193013000000},
+    {"Holder": "Berkshire Hathaway Inc", "Shares": 905560000, "pct_held": 0.0566, "Value": 171281000000},
+    {"Holder": "State Street Corporation", "Shares": 594031369, "pct_held": 0.0371, "Value": 112369000000}
+  ]
+}

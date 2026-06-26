@@ -38,11 +38,12 @@ from agent.tools.intrinsic_value import (
 )
 from agent.tools.news import GetNewsInput, GetNewsTool, NewsResult
 from agent.tools.peers import GetPeerComparisonInput, GetPeerComparisonTool, PeerComparison
+from agent.tools.persons import GetKeyPersonsInput, GetKeyPersonsTool, KeyPersonsData
 from agent.tools.quality import GetQualityMetricsInput, GetQualityMetricsTool
 from agent.tools.quote import GetQuoteInput, GetQuoteTool
 from agent.tools.screen import ScreenResult, ScreenUniverseInput, ScreenUniverseTool
 from agent.tools.valuation import GetValuationMultiplesInput, GetValuationMultiplesTool
-from data_sources.edgar_client import FilingSection
+from data_sources.edgar_client import FilingSection, SC13Holder
 from data_sources.errors import DataSourceError
 from data_sources.finnhub_client import FinnhubFinancials, FinnhubInsiderTransaction, NewsItem
 from data_sources.yfinance_client import (
@@ -53,6 +54,9 @@ from data_sources.yfinance_client import (
     FinancialStrengthData,
     FundamentalsData,
     IncomeStatementRow,
+    InstitutionalHolderRecord,
+    KeyPersonsRaw,
+    OfficerRecord,
     OwnershipData,
     PiotroskySignals,
     PriceData,
@@ -123,6 +127,7 @@ class _FakeYF:
         financial_strength: FinancialStrengthData | DataSourceError | None = None,
         financials: FinancialsHistory | DataSourceError | None = None,
         capital_allocation: CapitalAllocation | DataSourceError | None = None,
+        key_persons: KeyPersonsRaw | DataSourceError | None = None,
     ) -> None:
         self._price = price
         self._fundamentals = fundamentals
@@ -132,6 +137,7 @@ class _FakeYF:
         self._financial_strength = financial_strength
         self._financials = financials
         self._capital_allocation = capital_allocation
+        self._key_persons = key_persons
         self.fundamentals_calls = 0
 
     def get_price(self, ticker: str) -> PriceData | DataSourceError:
@@ -174,6 +180,10 @@ class _FakeYF:
         assert self._capital_allocation is not None
         return self._capital_allocation
 
+    def get_key_persons(self, ticker: str) -> KeyPersonsRaw | DataSourceError:
+        assert self._key_persons is not None
+        return self._key_persons
+
 
 class _FakeFinnhub:
     def __init__(
@@ -207,7 +217,7 @@ class _FakeFinnhub:
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_fourteen_tools() -> None:
+def test_registry_has_all_fifteen_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -223,6 +233,7 @@ def test_registry_has_all_fourteen_tools() -> None:
         "get_financial_strength",
         "estimate_intrinsic_value",
         "get_capital_allocation",
+        "get_key_persons",
     }
     assert all(isinstance(t, Tool) for t in TOOL_REGISTRY.values())
 
@@ -348,11 +359,22 @@ def _filing_section(text: str = "We make phones.", section: str = "business") ->
 
 
 class _FakeEdgar:
-    def __init__(self, result: FilingSection | DataSourceError) -> None:
+    def __init__(
+        self,
+        result: FilingSection | DataSourceError | None = None,
+        sc13: list[SC13Holder] | DataSourceError | None = None,
+    ) -> None:
         self._result = result
+        self._sc13 = sc13
 
     def get_filing_section(self, *a: object, **k: object) -> FilingSection | DataSourceError:
+        assert self._result is not None
         return self._result
+
+    def get_sc13_holders(self, ticker: str) -> list[SC13Holder] | DataSourceError:
+        if self._sc13 is None:
+            return []
+        return self._sc13
 
 
 def test_read_filing_ok(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -1265,3 +1287,121 @@ def test_get_capital_allocation_maps_not_found(monkeypatch: pytest.MonkeyPatch) 
     assert isinstance(result, ToolResultError)
     assert result.error_code == "not_found"
     assert result.retryable is False
+
+
+# ── get_key_persons ───────────────────────────────────────────────────────────
+
+
+def _key_persons_raw(*, controlling: bool = False) -> KeyPersonsRaw:
+    return KeyPersonsRaw(
+        ticker="AAPL",
+        as_of=date.today(),
+        officers=[
+            OfficerRecord(
+                name="Timothy D. Cook",
+                title="CEO & Director",
+                year_born=1961,
+                total_pay_usd=63151817,
+            ),
+            OfficerRecord(
+                name="Luca Maestri",
+                title="CFO",
+                year_born=1964,
+                total_pay_usd=27230396,
+            ),
+        ],
+        institutional_holders=[
+            InstitutionalHolderRecord(
+                name="Vanguard Group Inc",
+                shares=1273985728,
+                pct_held=0.35 if controlling else 0.0796,
+                value=241148000000,
+            ),
+            InstitutionalHolderRecord(
+                name="BlackRock Inc.",
+                shares=1020413756,
+                pct_held=0.0637,
+                value=193013000000,
+            ),
+            InstitutionalHolderRecord(
+                name="State Street Corporation",
+                shares=594031369,
+                pct_held=0.0371,
+                value=112369000000,
+            ),
+        ],
+        data_age_hours=0,
+    )
+
+
+def test_get_key_persons_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    raw = _key_persons_raw()
+    monkeypatch.setattr("agent.tools.persons.yfinance_client", lambda: _FakeYF(key_persons=raw))
+    monkeypatch.setattr(
+        "agent.tools.persons.edgar_client",
+        lambda: _FakeEdgar(sc13=[]),
+    )
+    result = GetKeyPersonsTool().run(GetKeyPersonsInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, KeyPersonsData)
+    data = result.data
+    assert data.ticker == "AAPL"
+    # Officers appear
+    names = [p.name for p in data.persons]
+    assert "Timothy D. Cook" in names
+    assert "Luca Maestri" in names
+    # Officers have no ownership_pct
+    officers = [p for p in data.persons if p.source == "yfinance_officers"]
+    assert all(p.ownership_pct is None for p in officers)
+    # Institutional holders appear (yfinance returns all top holders, not filtered by %)
+    holders = [p for p in data.persons if p.source == "yfinance_holders"]
+    holder_names = [p.name for p in holders]
+    assert "Vanguard Group Inc" in holder_names
+    assert "BlackRock Inc." in holder_names
+    # Holders have ownership_pct set
+    assert all(p.ownership_pct is not None for p in holders)
+    # No single holder ≥ 30%
+    assert data.controlling_holder_identified is False
+
+
+def test_get_key_persons_controlling_identified(monkeypatch: pytest.MonkeyPatch) -> None:
+    raw = _key_persons_raw(controlling=True)
+    monkeypatch.setattr("agent.tools.persons.yfinance_client", lambda: _FakeYF(key_persons=raw))
+    monkeypatch.setattr(
+        "agent.tools.persons.edgar_client",
+        lambda: _FakeEdgar(sc13=[]),
+    )
+    result = GetKeyPersonsTool().run(GetKeyPersonsInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, KeyPersonsData)
+    assert result.data.controlling_holder_identified is True
+
+
+def test_get_key_persons_edgar_13d_flags_controlling(monkeypatch: pytest.MonkeyPatch) -> None:
+    raw = _key_persons_raw()
+    sc13 = [SC13Holder(name="ACTIVIST FUND LLC", form_type="SC 13D", filing_date=date.today())]
+    monkeypatch.setattr("agent.tools.persons.yfinance_client", lambda: _FakeYF(key_persons=raw))
+    monkeypatch.setattr(
+        "agent.tools.persons.edgar_client",
+        lambda: _FakeEdgar(sc13=sc13),
+    )
+    result = GetKeyPersonsTool().run(GetKeyPersonsInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, KeyPersonsData)
+    # SC 13D filer (active control intent) → controlling_holder_identified
+    assert result.data.controlling_holder_identified is True
+    # The 13D filer is added to persons list
+    names = [p.name for p in result.data.persons]
+    assert "ACTIVIST FUND LLC" in names
+
+
+def test_get_key_persons_yf_error_returns_tool_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    err = DataSourceError(error_code="not_found", message="no data")
+    monkeypatch.setattr("agent.tools.persons.yfinance_client", lambda: _FakeYF(key_persons=err))
+    monkeypatch.setattr(
+        "agent.tools.persons.edgar_client",
+        lambda: _FakeEdgar(sc13=[]),
+    )
+    result = GetKeyPersonsTool().run(GetKeyPersonsInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"

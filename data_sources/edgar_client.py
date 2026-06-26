@@ -2,9 +2,10 @@ import json
 import re
 import sqlite3
 import time
+import urllib.parse
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime, timedelta
 from typing import Literal
 
 import requests
@@ -15,6 +16,8 @@ from data_sources.cache import CacheStore, make_key
 from data_sources.errors import DataSourceError
 
 FilingType = Literal["10-K", "10-Q", "8-K", "DEF 14A"]
+
+_EFTS_BASE = "https://efts.sec.gov"
 SectionName = Literal[
     "business",
     "risk_factors",
@@ -33,7 +36,8 @@ TTL_HOURS: dict[str, float] = {
     "10-Q": 2160.0,
     "8-K": 24.0,
     "DEF 14A": 2160.0,
-}  # 90d / 90d / 24h / 90d
+    "SC 13G": 720.0,  # 30 days; 13G/D holders change infrequently
+}  # 90d / 90d / 24h / 90d / 30d
 CIK_TTL_HOURS = 168.0  # 7 days
 
 # Section → (start Item, end-boundary Items). The first matching end Item after the
@@ -69,6 +73,12 @@ _FIGURE_RE = re.compile(
     r"\$\s*[\d,]+(?:\.\d+)?\s*(?:billion|million|trillion|B|M|T)\b|[\d]+(?:\.\d+)?\s*%",
     re.IGNORECASE,
 )
+
+
+class SC13Holder(BaseModel):
+    name: str
+    form_type: str  # "SC 13G", "SC 13G/A", "SC 13D", "SC 13D/A"
+    filing_date: date
 
 
 class FilingSection(BaseModel):
@@ -200,6 +210,90 @@ class EDGARClient:
         )
         self._cache.set(key, result.model_dump_json(), TTL_HOURS[filing_type])
         return result
+
+    def get_sc13_holders(self, ticker: str) -> list[SC13Holder] | DataSourceError:
+        """Return 5%+ beneficial owners from recent SC 13G/D filings via EDGAR EFTS."""
+        key = make_key("edgar_sc13", ticker.upper())
+        cached = self._cache.get(key)
+        if cached is not None:
+            raw = json.loads(cached)
+            if isinstance(raw, list):
+                return [SC13Holder.model_validate(h) for h in raw]
+
+        try:
+            cik = self._resolve_cik(ticker)
+            holders = self._fetch_sc13_holders(cik)
+        except _NotFoundError as exc:
+            return DataSourceError(error_code="not_found", message=str(exc))
+        except _NetworkError as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        except (_ParseError, json.JSONDecodeError, ValueError, KeyError, AttributeError) as exc:
+            return DataSourceError(error_code="parse", message=str(exc))
+
+        self._cache.set(
+            key,
+            json.dumps([h.model_dump() for h in holders], default=str),
+            TTL_HOURS["SC 13G"],
+        )
+        return holders
+
+    def _fetch_sc13_holders(self, cik: str) -> list[SC13Holder]:
+        """Search EDGAR EFTS for SC 13G/D filings naming this company."""
+        submissions_text = self._get(f"{self.BASE_URL}/submissions/CIK{cik}.json").text
+        submissions = json.loads(submissions_text)
+        if not isinstance(submissions, dict):
+            raise _ParseError(f"unexpected submissions shape for CIK{cik}")
+        company_name = submissions.get("name")
+        if not isinstance(company_name, str) or not company_name:
+            raise _ParseError(f"no company name in submissions for CIK{cik}")
+
+        cutoff = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
+        q = urllib.parse.quote(f'"{company_name}"')
+        url = (
+            f"{_EFTS_BASE}/LATEST/search-index"
+            f"?q={q}"
+            f"&forms=SC+13G%2CSC+13G%2FA%2CSC+13D%2CSC+13D%2FA"
+            f"&dateRange=custom&startdt={cutoff}"
+        )
+        resp_text = self._get(url).text
+        data = json.loads(resp_text)
+
+        if not isinstance(data, dict):
+            raise _ParseError("unexpected EFTS response shape")
+        hits_obj = data.get("hits", {})
+        if not isinstance(hits_obj, dict):
+            return []
+        hit_list = hits_obj.get("hits", [])
+        if not isinstance(hit_list, list):
+            return []
+
+        seen: dict[str, SC13Holder] = {}
+        for hit in hit_list:
+            if not isinstance(hit, dict):
+                continue
+            source = hit.get("_source", {})
+            if not isinstance(source, dict):
+                continue
+            entity_name = source.get("entity_name")
+            form_type = source.get("form_type")
+            file_date_str = source.get("file_date")
+            if (
+                not isinstance(entity_name, str)
+                or not entity_name
+                or not isinstance(form_type, str)
+                or not isinstance(file_date_str, str)
+            ):
+                continue
+            try:
+                file_date = date.fromisoformat(file_date_str)
+            except ValueError:
+                continue
+            holder = SC13Holder(name=entity_name, form_type=form_type, filing_date=file_date)
+            existing = seen.get(entity_name)
+            if existing is None or file_date > existing.filing_date:
+                seen[entity_name] = holder
+
+        return list(seen.values())
 
     # ── HTTP (single choke point; always carries the User-Agent) ───────────
 
