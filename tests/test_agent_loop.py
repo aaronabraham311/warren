@@ -19,6 +19,7 @@ from agent.loop import (
     AnalysisOutput,
     CostAbortedError,
     DirtSignals,
+    IntegrityFindings,
     SchemaRepairError,
     analyze_ticker,
 )
@@ -636,3 +637,96 @@ def test_dirt_signals_round_trips() -> None:
 def test_dirt_signals_aggregator_discrepancies_defaults_false() -> None:
     partial = DirtSignals(ev_ebit=5.0)
     assert partial.aggregator_discrepancies_found is False
+
+
+# ── IntegrityFindings ──────────────────────────────────────────────────────────
+
+
+def test_integrity_findings_defaults() -> None:
+    findings = IntegrityFindings()
+    assert findings.persons_screened == []
+    assert findings.adverse_media_hits == 0
+    assert findings.top_categories == []
+    assert findings.watchlist_matches == 0
+    assert findings.highest_match_score is None
+    assert findings.coverage_volume == "none"
+    assert findings.scan_completeness_caveat is True
+
+
+def test_integrity_findings_round_trips() -> None:
+    findings = IntegrityFindings(
+        persons_screened=["Klaus Müller", "Hans Schmidt"],
+        adverse_media_hits=3,
+        top_categories=["fraud", "sanctions"],
+        watchlist_matches=1,
+        highest_match_score=0.87,
+        coverage_volume="moderate",
+        scan_completeness_caveat=False,
+    )
+    signals = DirtSignals(ev_ebit=4.2, integrity=findings)
+    output = AnalysisOutput(
+        ticker="BASF",
+        analysis_type="discovery",
+        recommendation="hold",
+        confidence=0.5,
+        thesis="Test thesis.",
+        lynch_signals=[],
+        buffett_signals=[],
+        key_risks=["test risk"],
+        dirt_signals=signals,
+    )
+    reparsed = AnalysisOutput.model_validate_json(output.model_dump_json())
+    assert reparsed.dirt_signals is not None
+    assert reparsed.dirt_signals.integrity is not None
+    ig = reparsed.dirt_signals.integrity
+    assert ig.persons_screened == ["Klaus Müller", "Hans Schmidt"]
+    assert ig.adverse_media_hits == 3
+    assert ig.top_categories == ["fraud", "sanctions"]
+    assert ig.watchlist_matches == 1
+    assert ig.highest_match_score == pytest.approx(0.87)
+    assert ig.coverage_volume == "moderate"
+    assert ig.scan_completeness_caveat is False
+
+
+def test_integrity_findings_zero_coverage_populates_quality_notes() -> None:
+    findings = IntegrityFindings(
+        persons_screened=["Li Wei", "Zhang Fang"],
+        coverage_volume="none",
+    )
+    output = AnalysisOutput(
+        ticker="TEST",
+        analysis_type="discovery",
+        recommendation="hold",
+        confidence=0.4,
+        thesis="Test.",
+        lynch_signals=[],
+        buffett_signals=[],
+        key_risks=["test risk"],
+        dirt_signals=DirtSignals(integrity=findings),
+    )
+    assert any("Li Wei" in note for note in output.data_quality_notes)
+    assert any("Zhang Fang" in note for note in output.data_quality_notes)
+
+
+def test_integrity_findings_non_zero_coverage_does_not_populate_quality_notes() -> None:
+    findings = IntegrityFindings(
+        persons_screened=["Anna Kovač"],
+        coverage_volume="thin",
+    )
+    output = AnalysisOutput(
+        ticker="TEST",
+        analysis_type="discovery",
+        recommendation="hold",
+        confidence=0.4,
+        thesis="Test.",
+        lynch_signals=[],
+        buffett_signals=[],
+        key_risks=["test risk"],
+        dirt_signals=DirtSignals(integrity=findings),
+    )
+    assert output.data_quality_notes == []
+
+
+def test_dirt_signals_integrity_defaults_none() -> None:
+    signals = DirtSignals(ev_ebit=3.5)
+    assert signals.integrity is None
