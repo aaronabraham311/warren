@@ -32,6 +32,13 @@ from storage.models import Analysis, AnalysisData, Run, ToolCall
 from tests.conftest import VALID_ANALYSIS_JSON, make_end_turn, make_tool_use
 
 
+def _last_user_text(content: list[dict[str, object]] | str) -> str:
+    """Extract text from user message content (str or cached block list)."""
+    if isinstance(content, str):
+        return content
+    return str(content[0].get("text", ""))
+
+
 def _ctx(
     run_id: str = "run-test",
     logger: RunLogger | None = None,
@@ -204,7 +211,7 @@ def test_iteration_cap(db_engine: object, mock_claude: MagicMock) -> None:
     assert isinstance(result, AnalysisOutput)
     last_call_kwargs = mock_client.messages.create.call_args_list[-1][1]
     last_user_msg = last_call_kwargs["messages"][-1]["content"]
-    assert "iteration_capped" in last_user_msg
+    assert "iteration_capped" in _last_user_text(last_user_msg)
 
 
 # ── Token cap ─────────────────────────────────────────────────────────────────
@@ -219,7 +226,7 @@ def test_token_cap(mock_claude: MagicMock) -> None:
     assert isinstance(result, AnalysisOutput)
     last_call_kwargs = mock_client.messages.create.call_args_list[-1][1]
     last_user_msg = last_call_kwargs["messages"][-1]["content"]
-    assert "token_capped" in last_user_msg
+    assert "token_capped" in _last_user_text(last_user_msg)
 
 
 # ── Cost aborted ──────────────────────────────────────────────────────────────
@@ -244,7 +251,7 @@ def test_tool_loop_broken(db_engine: object, mock_claude: MagicMock) -> None:
     assert isinstance(result, AnalysisOutput)
     last_call_kwargs = mock_client.messages.create.call_args_list[-1][1]
     last_user_msg = last_call_kwargs["messages"][-1]["content"]
-    assert "tool_loop_broken" in last_user_msg
+    assert "tool_loop_broken" in _last_user_text(last_user_msg)
 
 
 # ── Forced-final invalid JSON → SchemaRepairError ────────────────────────────
