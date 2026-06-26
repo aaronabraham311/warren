@@ -39,6 +39,21 @@ _PORTFOLIO_FILE = Path("data/portfolio.csv")
 _WATCHLIST_FILE = Path("data/watchlist.csv")
 
 
+def _build_portfolio_context(portfolio_file: Path) -> str:
+    if not portfolio_file.exists():
+        return ""
+    holdings = load_portfolio(portfolio_file, validate_tickers=False)
+    if not holdings:
+        return ""
+    lines = ["User's current portfolio holdings:"]
+    for h in holdings:
+        lines.append(
+            f"  {h.ticker}: {h.shares:.2f} shares, cost basis ${h.cost_basis:.2f}"
+            f" (purchased {h.purchase_date})"
+        )
+    return "\n".join(lines)
+
+
 def _sync_input_data(skip_ticker_validation: bool) -> None:
     """Load, validate, and snapshot the portfolio + watchlist into SQLite.
 
@@ -96,6 +111,8 @@ def main() -> None:
     status: RunStatus = "success"
     error_msg: str | None = None
 
+    portfolio_context = _build_portfolio_context(_PORTFOLIO_FILE)
+
     try:
         result = analyze_ticker(
             ticker=ticker,
@@ -103,6 +120,7 @@ def main() -> None:
             routing_policy=routing_policy,
             run_context=run_context,
             client=client,
+            portfolio_context=portfolio_context,
         )
         logger.log(
             "ticker_completed",

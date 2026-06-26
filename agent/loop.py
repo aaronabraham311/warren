@@ -10,6 +10,7 @@ import anthropic
 from pydantic import BaseModel, Field, ValidationError
 
 from agent.budget import RunContext
+from agent.caching import call_claude_with_caching
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
 
@@ -140,14 +141,17 @@ def _force_final_message(label: str) -> anthropic.types.MessageParam:
 def _call_claude(
     client: anthropic.Anthropic,
     model: str,
-    system: str,
+    persona_prompt: str,
+    portfolio_context: str,
     messages: list[anthropic.types.MessageParam],
     max_tokens: int,
 ) -> anthropic.types.Message:
-    return client.messages.create(
+    return call_claude_with_caching(
+        client,
         model=model,
-        system=system,
-        tools=cast(list[anthropic.types.ToolParam], TOOL_DEFINITIONS),
+        persona_prompt=persona_prompt,
+        tool_defs=TOOL_DEFINITIONS,
+        portfolio_context=portfolio_context,
         messages=messages,
         max_tokens=max_tokens,
     )
@@ -156,7 +160,8 @@ def _call_claude(
 def _call_and_record(
     client: anthropic.Anthropic,
     model: str,
-    system: str,
+    persona_prompt: str,
+    portfolio_context: str,
     messages: list[anthropic.types.MessageParam],
     max_tokens: int,
     run_context: RunContext,
@@ -164,7 +169,7 @@ def _call_and_record(
 ) -> anthropic.types.Message:
     """Time the call, record token/cost usage, and emit an llm_call WAL event."""
     t0 = time.monotonic()
-    response = _call_claude(client, model, system, messages, max_tokens)
+    response = _call_claude(client, model, persona_prompt, portfolio_context, messages, max_tokens)
     latency_ms = int((time.monotonic() - t0) * 1000)
     _record_usage(run_context, response)
     run_context.logger.log_llm_call(
@@ -179,6 +184,7 @@ def analyze_ticker(
     routing_policy: _RoutingPolicy,
     run_context: RunContext,
     client: anthropic.Anthropic | None = None,
+    portfolio_context: str = "",
     _sleep: Callable[[float], None] = time.sleep,
 ) -> AnalysisOutput:
     if client is None:
@@ -211,6 +217,7 @@ def analyze_ticker(
                 client,
                 model,
                 persona.system_prompt,
+                portfolio_context,
                 messages,
                 _FORCE_FINAL_MAX_TOKENS,
                 run_context,
@@ -224,7 +231,14 @@ def analyze_ticker(
         # ── Normal Claude call ────────────────────────────────────────────────
         model = routing_policy.select(iteration, messages, ticker)
         response = _call_and_record(
-            client, model, persona.system_prompt, messages, 4096, run_context, ticker
+            client,
+            model,
+            persona.system_prompt,
+            portfolio_context,
+            messages,
+            4096,
+            run_context,
+            ticker,
         )
 
         # ── end_turn → try to parse output ───────────────────────────────────
@@ -358,6 +372,7 @@ def analyze_ticker(
                     client,
                     model,
                     persona.system_prompt,
+                    portfolio_context,
                     messages,
                     _FORCE_FINAL_MAX_TOKENS,
                     run_context,
