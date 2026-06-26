@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 from agent.budget import Budget, RunContext
 from agent.loop import CostAbortedError, analyze_ticker
 from agent.models import DEFAULT_MODEL_ID
-from agent.persona import DefaultPersona
+from agent.persona import DefaultPersona, DirtPersona
 from agent.portfolio import (
     load_portfolio,
     load_watchlist,
@@ -81,6 +81,12 @@ def main() -> None:
         action="store_true",
         help="Skip yfinance ticker validation when loading the portfolio (faster startup)",
     )
+    parser.add_argument(
+        "--persona",
+        choices=["default", "dirt"],
+        default="default",
+        help="Analysis persona: 'default' (Lynch/Buffett) or 'dirt' (deep-value DIRT methodology)",
+    )
     args = parser.parse_args()
 
     ticker = args.ticker.upper()
@@ -88,7 +94,9 @@ def main() -> None:
     reconcile_orphans(_LOG_DIR)  # self-heal any run left "running" by a previous crash
     _sync_input_data(args.skip_ticker_validation)
 
-    persona = DefaultPersona()
+    persona: DefaultPersona | DirtPersona = (
+        DirtPersona() if args.persona == "dirt" else DefaultPersona()
+    )
     routing_policy = HardcodedSonnetRouting()
 
     prompt_version_id = ensure_prompt_version(

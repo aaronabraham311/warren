@@ -1,6 +1,6 @@
-"""Tests for the Lynch/Buffett blended persona system prompt.
+"""Tests for the Lynch/Buffett blended persona and the DIRT deep-value persona.
 
-All assertions operate on the SYSTEM_PROMPT string — no live API calls.
+All assertions operate on prompt strings — no live API calls.
 validate_prompt_length() is tested with a monkeypatched Anthropic client.
 """
 
@@ -8,7 +8,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from agent.persona import SYSTEM_PROMPT, DefaultPersona, validate_prompt_length  # noqa: E402
+from agent.persona import (  # noqa: E402
+    DIRT_SYSTEM_PROMPT,
+    SYSTEM_PROMPT,
+    DefaultPersona,
+    DirtPersona,
+    validate_prompt_length,
+)
 
 # ── Structural section presence ───────────────────────────────────────────────
 
@@ -154,3 +160,56 @@ def test_prompt_has_json_output_schema() -> None:
     assert '"recommendation"' in SYSTEM_PROMPT
     assert '"confidence"' in SYSTEM_PROMPT
     assert '"thesis"' in SYSTEM_PROMPT
+
+
+# ── DirtPersona ───────────────────────────────────────────────────────────────
+
+
+def test_dirt_persona_returns_dirt_system_prompt() -> None:
+    assert DirtPersona().system_prompt is DIRT_SYSTEM_PROMPT
+
+
+def test_dirt_prompt_has_five_steps() -> None:
+    for step in [
+        "Step 1",
+        "Step 2",
+        "Step 3",
+        "Step 4",
+        "Step 5",
+    ]:
+        assert step in DIRT_SYSTEM_PROMPT, f"'{step}' not found in DIRT_SYSTEM_PROMPT"
+
+
+@pytest.mark.parametrize(
+    "keyword",
+    [
+        "Cheapness",
+        "Operational Quality",
+        "Capital Allocation",
+        "Coverage-Gap",
+        "Source Verification",
+    ],
+)
+def test_dirt_prompt_step_names(keyword: str) -> None:
+    assert keyword in DIRT_SYSTEM_PROMPT, (
+        f"Step keyword '{keyword}' not found in DIRT_SYSTEM_PROMPT"
+    )  # noqa: E501
+
+
+def test_dirt_prompt_cash_burn_guardrail() -> None:
+    prompt_lower = DIRT_SYSTEM_PROMPT.lower()
+    assert "burns cash" in prompt_lower or "negative free cash flow" in prompt_lower
+
+
+def test_dirt_prompt_dirt_signals_required() -> None:
+    assert "dirt_signals" in DIRT_SYSTEM_PROMPT
+    assert "non-null" in DIRT_SYSTEM_PROMPT or "MUST be non-null" in DIRT_SYSTEM_PROMPT
+
+
+def test_dirt_prompt_universe_limitation_note() -> None:
+    assert "universe-limitation note" in DIRT_SYSTEM_PROMPT or "DIRT universe" in DIRT_SYSTEM_PROMPT
+
+
+def test_dirt_prompt_has_json_output_schema() -> None:
+    assert '"recommendation"' in DIRT_SYSTEM_PROMPT
+    assert '"dirt_signals"' in DIRT_SYSTEM_PROMPT
