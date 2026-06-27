@@ -19,7 +19,7 @@ agent/
   portfolio.py    # load_portfolio/load_watchlist (validated) + sync_*_to_db snapshots
   loop.py         # Main agentic loop — sends messages, handles tool calls
   persona.py      # System prompt / persona definition
-  routing.py      # Decides which model to route each call to
+  routing.py      # RoutingPolicy Protocol + strategy objects: PhaseBasedRouting (screen→Haiku, deep→Sonnet, synthesize→Opus via DefaultOpusTrigger's 3 independent §4.2 conditions) and HardcodedSonnetRouting (eval baseline). Swappable into analyze_ticker() with zero loop changes.
   budget.py       # Token / cost budget tracking
   models.py       # Model IDs + per-model PRICING table (single source of truth)
   tools/          # One file per Claude tool; __init__.py holds the registry
