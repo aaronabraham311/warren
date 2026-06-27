@@ -99,6 +99,7 @@ class ValuationData(BaseModel):
     acquirers_multiple: float | None
     fcf_yield: float | None
     earnings_yield: float | None
+    market_cap_usd: int | None
     ncav: int | None
     ncav_to_market_cap: float | None
     is_net_net: bool
@@ -595,6 +596,7 @@ class YFinanceClient:
             acquirers_multiple=ev_to_ebit,
             fcf_yield=fcf_yield,
             earnings_yield=earnings_yield,
+            market_cap_usd=mkt_cap,
             ncav=ncav,
             ncav_to_market_cap=ncav_to_mkt_cap,
             is_net_net=is_net_net,
