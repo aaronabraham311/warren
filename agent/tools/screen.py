@@ -8,13 +8,8 @@ from agent.tools._clients import yfinance_client
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
 from data_sources.yfinance_client import FundamentalsData, QualityData, ValuationData
 
-# Offline universe: union of portfolio, watchlist, and Russell 2000 CSVs.
-# The Russell 2000 list is a committed static snapshot — no live constituent fetch.
-_UNIVERSE_FILES = (
-    Path("data/portfolio.csv"),
-    Path("data/watchlist.csv"),
-    Path("data/russell2000.csv"),
-)
+# Static CSV files that are always included in the universe.
+_STATIC_UNIVERSE_FILES = (Path("data/portfolio.csv"), Path("data/watchlist.csv"))
 
 _UNIVERSE_LIMITATION_NOTE = (
     "DIRT universe: US-only (Russell 2000 + portfolio/watchlist); "
@@ -81,7 +76,7 @@ class ScreenResult(BaseModel):
 
 def _universe() -> list[str]:
     tickers: list[str] = []
-    for path in _UNIVERSE_FILES:
+    for path in _STATIC_UNIVERSE_FILES:
         if not path.exists():
             continue
         with path.open(newline="") as fh:
@@ -89,6 +84,15 @@ def _universe() -> list[str]:
                 ticker = (row.get("ticker") or "").strip().upper()
                 if ticker and ticker not in tickers:
                     tickers.append(ticker)
+
+    # Russell 2000 tickers — fetched live and cached for 7 days so the
+    # constituent list stays current without hitting the network on every run.
+    r2k = yfinance_client().get_russell2000_tickers()
+    if isinstance(r2k, list):
+        for ticker in r2k:
+            if ticker and ticker not in tickers:
+                tickers.append(ticker)
+
     return tickers
 
 
