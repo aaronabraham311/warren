@@ -144,7 +144,8 @@ class ScreenUniverseTool(Tool):
     name = "screen_universe"
     description = (
         "Screen the US universe (Russell 2000 + portfolio + watchlist) against "
-        "quantitative fundamental and deep-value filters. Returns the tickers that pass every filter. "
+        "quantitative fundamental and deep-value filters. "
+        "Returns the tickers that pass every filter. "
         "Supports fundamentals (pe_ratio_max, pb_ratio_max, roe_min, de_max), "
         "valuation (max_ev_ebit, max_price_to_ncav, max_market_cap_usd), and "
         "quality (require_net_cash, min_consecutive_profit_years) criteria. "
