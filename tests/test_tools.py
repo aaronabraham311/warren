@@ -122,7 +122,9 @@ class _FakeYF:
             | DataSourceError
             | None
         ) = None,
-        quality: QualityData | DataSourceError | None = None,
+        quality: (
+            Callable[[str], QualityData | DataSourceError] | QualityData | DataSourceError | None
+        ) = None,
         ownership: OwnershipData | DataSourceError | None = None,
         financial_strength: FinancialStrengthData | DataSourceError | None = None,
         financials: FinancialsHistory | DataSourceError | None = None,
@@ -159,6 +161,8 @@ class _FakeYF:
 
     def get_quality_metrics(self, ticker: str) -> QualityData | DataSourceError:
         assert self._quality is not None
+        if callable(self._quality):
+            return self._quality(ticker)
         return self._quality
 
     def get_ownership(self, ticker: str) -> OwnershipData | DataSourceError:
@@ -519,6 +523,269 @@ def test_screen_universe_excludes_missing_metric(monkeypatch: pytest.MonkeyPatch
     assert result.data.tickers == []
 
 
+def test_screen_universe_unknown_key_ignored(monkeypatch: pytest.MonkeyPatch) -> None:
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, pe=12.0))
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(criteria={"totally_unknown_key": 999, "pe_ratio_max": 15}), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
+def test_screen_universe_require_zero_analyst_coverage_ignored(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, pe=12.0))
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(criteria={"require_zero_analyst_coverage": 1}), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
+def _valuation_for_screen(
+    ticker: str = "AAPL",
+    *,
+    ev_to_ebit: float | None = 8.0,
+    price_to_ncav: float | None = 0.7,
+    market_cap_usd: int | None = 500_000_000,
+    net_cash_positive: bool = True,
+    net_cash_usd: int | None = 50_000_000,
+) -> ValuationData:
+    return ValuationData(
+        ticker=ticker,
+        as_of=date.today(),
+        enterprise_value=None,
+        ev_to_ebit=ev_to_ebit,
+        ev_to_ebitda=None,
+        acquirers_multiple=ev_to_ebit,
+        fcf_yield=None,
+        earnings_yield=None,
+        market_cap_usd=market_cap_usd,
+        ncav=None,
+        ncav_to_market_cap=None,
+        is_net_net=False,
+        price_to_ncav=price_to_ncav,
+        net_cash_usd=net_cash_usd,
+        net_cash_positive=net_cash_positive,
+        p_tangible_book=None,
+        dividend_yield_pct=None,
+        data_age_hours=0,
+    )
+
+
+def _quality_for_screen(
+    ticker: str = "AAPL",
+    *,
+    consecutive_profit_years: int | None = 7,
+) -> QualityData:
+    return QualityData(
+        ticker=ticker,
+        as_of=date.today(),
+        roic_pct=None,
+        roic_series=[],
+        roic_mean=None,
+        roa_pct=None,
+        gross_margin_pct=None,
+        gross_margin_series=[],
+        gross_margin_stdev=None,
+        cash_conversion_ttm=None,
+        cash_conversion_series=[],
+        consecutive_profit_years=consecutive_profit_years,
+        ncav_trend=None,
+        data_age_hours=0,
+    )
+
+
+def test_screen_universe_max_ev_ebit_passes(monkeypatch: pytest.MonkeyPatch) -> None:
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=_valuation_for_screen(ev_to_ebit=8.0),
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"max_ev_ebit": 10}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
+def test_screen_universe_max_ev_ebit_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=_valuation_for_screen(ev_to_ebit=15.0),
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"max_ev_ebit": 10}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == []
+
+
+def test_screen_universe_max_ev_ebit_none_excludes(monkeypatch: pytest.MonkeyPatch) -> None:
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=_valuation_for_screen(ev_to_ebit=None),
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"max_ev_ebit": 10}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == []
+
+
+def test_screen_universe_max_price_to_ncav(monkeypatch: pytest.MonkeyPatch) -> None:
+    pass_v = _valuation_for_screen(price_to_ncav=0.7)
+    fail_v = _valuation_for_screen(price_to_ncav=1.5)
+    valuation_by = {"AAPL": pass_v, "MSFT": fail_v}
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=lambda t: valuation_by[t],
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL", "MSFT"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(criteria={"max_price_to_ncav": 1.0}), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
+def test_screen_universe_max_market_cap_usd(monkeypatch: pytest.MonkeyPatch) -> None:
+    small = _valuation_for_screen(market_cap_usd=300_000_000)
+    large = _valuation_for_screen(market_cap_usd=5_000_000_000)
+    valuation_by = {"AAPL": small, "MSFT": large}
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=lambda t: valuation_by[t],
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL", "MSFT"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(criteria={"max_market_cap_usd": 1_000_000_000}), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
+def test_screen_universe_require_net_cash_passes(monkeypatch: pytest.MonkeyPatch) -> None:
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=_valuation_for_screen(net_cash_positive=True),
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"require_net_cash": 1}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
+def test_screen_universe_require_net_cash_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=_valuation_for_screen(net_cash_positive=False),
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"require_net_cash": 1}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == []
+
+
+def test_screen_universe_require_net_cash_zero_threshold_ignored(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # threshold=0 means "don't require" — net-debt company still passes
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=_valuation_for_screen(net_cash_positive=False),
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"require_net_cash": 0}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
+def test_screen_universe_min_consecutive_profit_years_passes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        quality=_quality_for_screen(consecutive_profit_years=7),
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(criteria={"min_consecutive_profit_years": 5}), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
+def test_screen_universe_min_consecutive_profit_years_fails(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        quality=_quality_for_screen(consecutive_profit_years=3),
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(criteria={"min_consecutive_profit_years": 5}), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == []
+
+
+def test_screen_universe_combined_dirt_criteria(monkeypatch: pytest.MonkeyPatch) -> None:
+    # AAPL passes all; MSFT fails max_ev_ebit
+    val_by = {
+        "AAPL": _valuation_for_screen(ev_to_ebit=7.0, net_cash_positive=True),
+        "MSFT": _valuation_for_screen(ev_to_ebit=20.0, net_cash_positive=True),
+    }
+    qual_by = {
+        "AAPL": _quality_for_screen(consecutive_profit_years=8),
+        "MSFT": _quality_for_screen(consecutive_profit_years=8),
+    }
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=lambda t: val_by[t],
+        quality=lambda t: qual_by[t],
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL", "MSFT"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(
+            criteria={
+                "max_ev_ebit": 10,
+                "require_net_cash": 1,
+                "min_consecutive_profit_years": 5,
+            }
+        ),
+        _ctx(),
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
 # ── get_holding_context ───────────────────────────────────────────────────────
 
 
@@ -572,6 +839,9 @@ def _valuation(
     p_tangible_book: float | None = None
     if mkt_cap and tangible_bv and tangible_bv > 0:
         p_tangible_book = round(mkt_cap / tangible_bv, 2)
+    price_to_ncav_val: float | None = None
+    if ncav is not None and ncav > 0 and mkt_cap and mkt_cap > 0:
+        price_to_ncav_val = round(float(mkt_cap) / ncav, 4)
     return ValuationData(
         ticker=ticker,
         as_of=date.today(),
@@ -581,10 +851,11 @@ def _valuation(
         acquirers_multiple=ev_to_ebit,
         fcf_yield=fcf_yield,
         earnings_yield=earnings_yield,
+        market_cap_usd=mkt_cap,
         ncav=ncav,
         ncav_to_market_cap=ncav_to_mkt_cap,
         is_net_net=is_net_net,
-        price_to_ncav=None,
+        price_to_ncav=price_to_ncav_val,
         net_cash_usd=None,
         net_cash_positive=False,
         p_tangible_book=p_tangible_book,
@@ -819,6 +1090,7 @@ def _peer_valuation(
         acquirers_multiple=ev_to_ebit,
         fcf_yield=fcf_yield,
         earnings_yield=None,
+        market_cap_usd=None,
         ncav=None,
         ncav_to_market_cap=None,
         is_net_net=False,
