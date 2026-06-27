@@ -1185,3 +1185,58 @@ def test_get_key_persons_not_found(yf_conn: sqlite3.Connection) -> None:
         result = client.get_key_persons("ZZZZ")
     assert isinstance(result, DataSourceError)
     assert result.error_code == "not_found"
+
+
+# ── get_russell2000_tickers ───────────────────────────────────────────────────
+
+
+def _vanguard_page(tickers: list[str], total: int) -> dict[str, object]:
+    return {
+        "size": total,
+        "fund": {"entity": [{"ticker": t, "longName": t} for t in tickers]},
+    }
+
+
+def test_get_russell2000_tickers_fetches_and_caches(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    pages = [
+        _vanguard_page(["BE", "CRDO", "STRL"], 600),
+        _vanguard_page(["FN"], 600),
+    ]
+    call_count = 0
+
+    def _mock_get(url: str, *, params: dict[str, object], **_kw: object) -> MagicMock:
+        nonlocal call_count
+        resp = MagicMock()
+        resp.raise_for_status.return_value = None
+        resp.json.return_value = pages[call_count]
+        call_count += 1
+        return resp
+
+    with patch("data_sources.yfinance_client.requests.get", side_effect=_mock_get):
+        result = client.get_russell2000_tickers()
+
+    assert isinstance(result, list)
+    assert "BE" in result
+    assert "FN" in result
+    assert len(result) == 4
+    assert call_count == 2  # two pages fetched
+
+    # Second call must be served from cache — no more HTTP calls
+    with patch("data_sources.yfinance_client.requests.get", side_effect=_mock_get) as mock_get:
+        cached_result = client.get_russell2000_tickers()
+    mock_get.assert_not_called()
+    assert cached_result == result
+
+
+def test_get_russell2000_tickers_network_error_returns_datasource_error(
+    yf_conn: sqlite3.Connection,
+) -> None:
+    client = _make_client(yf_conn)
+    with patch(
+        "data_sources.yfinance_client.requests.get",
+        side_effect=ConnectionError("timeout"),
+    ):
+        result = client.get_russell2000_tickers()
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "network"

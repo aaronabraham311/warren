@@ -130,6 +130,7 @@ class _FakeYF:
         financials: FinancialsHistory | DataSourceError | None = None,
         capital_allocation: CapitalAllocation | DataSourceError | None = None,
         key_persons: KeyPersonsRaw | DataSourceError | None = None,
+        russell2000: list[str] | DataSourceError | None = None,
     ) -> None:
         self._price = price
         self._fundamentals = fundamentals
@@ -140,6 +141,7 @@ class _FakeYF:
         self._financials = financials
         self._capital_allocation = capital_allocation
         self._key_persons = key_persons
+        self._russell2000 = russell2000
         self.fundamentals_calls = 0
 
     def get_price(self, ticker: str) -> PriceData | DataSourceError:
@@ -187,6 +189,11 @@ class _FakeYF:
     def get_key_persons(self, ticker: str) -> KeyPersonsRaw | DataSourceError:
         assert self._key_persons is not None
         return self._key_persons
+
+    def get_russell2000_tickers(self) -> list[str] | DataSourceError:
+        if self._russell2000 is None:
+            return []
+        return self._russell2000
 
 
 class _FakeFinnhub:
@@ -785,6 +792,62 @@ def test_screen_universe_combined_dirt_criteria(monkeypatch: pytest.MonkeyPatch)
     assert isinstance(result, ToolResultOk)
     assert isinstance(result.data, ScreenResult)
     assert result.data.tickers == ["AAPL"]
+
+
+def test_screen_universe_limitation_note_always_present(monkeypatch: pytest.MonkeyPatch) -> None:
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, pe=10.0))
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"pe_ratio_max": 15}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    note = result.data.universe_limitation_note
+    assert "US-only" in note
+    assert "Russell 2000" in note
+    assert "300M" in note or "$300" in note
+
+
+def test_screen_universe_russell2000_tickers_merged(monkeypatch: pytest.MonkeyPatch) -> None:
+    # get_russell2000_tickers() returns R2000 tickers; _universe() merges them
+    # with portfolio/watchlist and deduplicates. Verify R2000-only tickers pass filters.
+    pe_by_ticker = {"AAPL": 12.0, "BE": 8.0, "CRDO": 25.0}
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t, pe=pe_by_ticker[t]),
+        russell2000=["BE", "CRDO"],
+    )
+    # Patch _universe to simulate portfolio containing AAPL plus R2000 results
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL", "BE", "CRDO"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"pe_ratio_max": 15}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert "AAPL" in result.data.tickers
+    assert "BE" in result.data.tickers  # R2000 ticker that passes
+    assert "CRDO" not in result.data.tickers  # R2000 ticker that fails
+
+
+def test_screen_universe_r2k_network_error_falls_back_to_static(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # When get_russell2000_tickers() returns DataSourceError, _universe() still
+    # returns portfolio/watchlist tickers — screen degrades gracefully.
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t, pe=10.0),
+        russell2000=DataSourceError(error_code="network", message="timeout"),
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"pe_ratio_max": 15}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["AAPL"]
+
+
+def test_dirt_persona_limitation_note_matches_screen_result() -> None:
+    from agent.persona import DIRT_SYSTEM_PROMPT
+    from agent.tools.screen import _UNIVERSE_LIMITATION_NOTE
+
+    assert _UNIVERSE_LIMITATION_NOTE in DIRT_SYSTEM_PROMPT
 
 
 # ── get_holding_context ───────────────────────────────────────────────────────

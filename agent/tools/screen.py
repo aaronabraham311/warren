@@ -8,9 +8,13 @@ from agent.tools._clients import yfinance_client
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
 from data_sources.yfinance_client import FundamentalsData, QualityData, ValuationData
 
-# Offline universe: the union of tickers in the portfolio and watchlist CSVs.
-# (There is no full-market source available without live network access.)
-_UNIVERSE_FILES = (Path("data/portfolio.csv"), Path("data/watchlist.csv"))
+# Static CSV files that are always included in the universe.
+_STATIC_UNIVERSE_FILES = (Path("data/portfolio.csv"), Path("data/watchlist.csv"))
+
+_UNIVERSE_LIMITATION_NOTE = (
+    "DIRT universe: US-only (Russell 2000 + portfolio/watchlist); "
+    "aggregator reliability degrades for sub-$300M market-cap names."
+)
 
 # Criteria keyed by the data source they require.
 # "max" keys: metric must be ≤ threshold. "min" keys: metric must be ≥ threshold.
@@ -67,11 +71,12 @@ class ScreenResult(BaseModel):
     tickers: list[str]
     criteria: dict[str, float]
     universe_size: int
+    universe_limitation_note: str
 
 
 def _universe() -> list[str]:
     tickers: list[str] = []
-    for path in _UNIVERSE_FILES:
+    for path in _STATIC_UNIVERSE_FILES:
         if not path.exists():
             continue
         with path.open(newline="") as fh:
@@ -79,6 +84,15 @@ def _universe() -> list[str]:
                 ticker = (row.get("ticker") or "").strip().upper()
                 if ticker and ticker not in tickers:
                     tickers.append(ticker)
+
+    # Russell 2000 tickers — fetched live and cached for 7 days so the
+    # constituent list stays current without hitting the network on every run.
+    r2k = yfinance_client().get_russell2000_tickers()
+    if isinstance(r2k, list):
+        for ticker in r2k:
+            if ticker and ticker not in tickers:
+                tickers.append(ticker)
+
     return tickers
 
 
@@ -129,8 +143,9 @@ def _passes(
 class ScreenUniverseTool(Tool):
     name = "screen_universe"
     description = (
-        "Screen the portfolio+watchlist universe against quantitative fundamental "
-        "and deep-value filters. Returns the tickers that pass every filter. "
+        "Screen the US universe (Russell 2000 + portfolio + watchlist) against "
+        "quantitative fundamental and deep-value filters. "
+        "Returns the tickers that pass every filter. "
         "Supports fundamentals (pe_ratio_max, pb_ratio_max, roe_min, de_max), "
         "valuation (max_ev_ebit, max_price_to_ncav, max_market_cap_usd), and "
         "quality (require_net_cash, min_consecutive_profit_years) criteria. "
@@ -186,5 +201,6 @@ class ScreenUniverseTool(Tool):
                 tickers=passed,
                 criteria=criteria,
                 universe_size=len(universe),
+                universe_limitation_note=_UNIVERSE_LIMITATION_NOTE,
             )
         )

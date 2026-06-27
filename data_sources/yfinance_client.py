@@ -1,3 +1,4 @@
+import json
 import math
 import sqlite3
 import statistics
@@ -7,6 +8,7 @@ from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from typing import Literal, TypeVar
 
+import requests
 import yfinance as yf
 from pydantic import BaseModel
 
@@ -323,6 +325,16 @@ def _as_int(v: object) -> int | None:
 
 
 _TTL_KEY_PERSONS_H = 720.0  # 30 days — persons change rarely
+_TTL_RUSSELL2000_H = 168.0  # 7 days — index rebalances quarterly
+
+# Vanguard VTWO ETF holdings API — returns the full Russell 2000 constituent list
+# as JSON with pagination. No auth required. TTL kept at 7 days so the constituent
+# list stays fresh between quarterly rebalances without hitting the network each run.
+_VTWO_HOLDINGS_URL = (
+    "https://investor.vanguard.com/investment-products/etfs/profile/api/"
+    "VTWO/portfolio-holding/stock"
+)
+_VTWO_PAGE_SIZE = 500
 
 
 def _as_int_safe(v: object) -> int | None:
@@ -1192,6 +1204,66 @@ class YFinanceClient:
         if negatives > positives:
             return "declining"
         return "stable"
+
+    # ── get_russell2000_tickers ───────────────────────────────────────────────
+
+    def get_russell2000_tickers(self) -> list[str] | DataSourceError:
+        """Return the current Russell 2000 constituent tickers, cached for 7 days.
+
+        Fetches from the Vanguard VTWO ETF holdings API (paginated). Falls back
+        to a DataSourceError on network failure so callers can degrade gracefully
+        (portfolio + watchlist still form the fallback universe).
+        """
+        key = make_key("yf_russell2000_tickers")
+        cached = self._cache.get(key)
+        if cached is not None:
+            tickers: list[str] = json.loads(cached)
+            return tickers
+        try:
+            tickers = self._fetch_russell2000_tickers()
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, json.dumps(tickers), _TTL_RUSSELL2000_H)
+        return tickers
+
+    def _fetch_russell2000_tickers(self) -> list[str]:
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            ),
+            "Accept": "application/json",
+        }
+        tickers: list[str] = []
+        start = 1
+        while True:
+            resp = requests.get(
+                _VTWO_HOLDINGS_URL,
+                params={"start": start, "count": _VTWO_PAGE_SIZE},
+                headers=headers,
+                timeout=20,
+            )
+            resp.raise_for_status()
+            data: dict[str, object] = resp.json()
+            fund = data.get("fund")
+            if not isinstance(fund, dict):
+                break
+            entities = fund.get("entity")
+            if not isinstance(entities, list) or not entities:
+                break
+            for entity in entities:
+                if not isinstance(entity, dict):
+                    continue
+                ticker = str(entity.get("ticker", "")).strip().upper()
+                if ticker and ticker not in tickers:
+                    tickers.append(ticker)
+            total = data.get("size")
+            start += _VTWO_PAGE_SIZE
+            if not isinstance(total, int) or start > total:
+                break
+        if not tickers:
+            raise RuntimeError("Vanguard VTWO API returned no tickers")
+        return tickers
 
     # ── get_ownership ─────────────────────────────────────────────────────
 

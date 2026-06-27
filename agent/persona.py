@@ -602,9 +602,9 @@ Do not call get_growth_metrics, estimate_intrinsic_value, get_peer_comparison, g
  the stock appears on EV/EBIT or NCAV. Note this disqualifier explicitly in data_quality_notes.
 
 **Universe-limitation note (required):** Every DIRT analysis must include the following note\
- in data_quality_notes: "DIRT universe: analysis targets small/micro-cap underfollowed equities;\
- conclusions may not apply to large-cap or heavily-covered names." Add this note even when it\
- seems obvious — the eval harness checks for it.
+ in data_quality_notes: "DIRT universe: US-only (Russell 2000 + portfolio/watchlist); aggregator\
+ reliability degrades for sub-$300M market-cap names." Add this note even when it seems obvious\
+ — the eval harness checks for it.
 
 **Data citation requirement:** Never state a number in the thesis or dirt_signals without\
  citing the tool that sourced it. If a field in dirt_signals cannot be populated from a tool\
