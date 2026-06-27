@@ -213,3 +213,31 @@ def test_dirt_prompt_universe_limitation_note() -> None:
 def test_dirt_prompt_has_json_output_schema() -> None:
     assert '"recommendation"' in DIRT_SYSTEM_PROMPT
     assert '"dirt_signals"' in DIRT_SYSTEM_PROMPT
+
+
+# ── Step 4.5 — integrity check + asymmetry guardrail ─────────────────────────
+
+
+def test_dirt_prompt_has_step_45() -> None:
+    assert "Step 4.5" in DIRT_SYSTEM_PROMPT
+
+
+def test_dirt_prompt_asymmetry_rule() -> None:
+    prompt_lower = DIRT_SYSTEM_PROMPT.lower()
+    assert "clean scan" in prompt_lower
+    assert "never raise confidence" in prompt_lower or "must never raise confidence" in prompt_lower
+
+
+def test_dirt_prompt_integrity_scan_observability() -> None:
+    assert "integrity_scan" in DIRT_SYSTEM_PROMPT
+
+
+def test_dirt_prompt_step45_calls_get_key_persons() -> None:
+    assert "get_key_persons" in DIRT_SYSTEM_PROMPT
+
+
+def test_dirt_prompt_step45_adverse_categories() -> None:
+    prompt_lower = DIRT_SYSTEM_PROMPT.lower()
+    assert "fraud" in prompt_lower
+    assert "corruption" in prompt_lower
+    assert "governance" in prompt_lower

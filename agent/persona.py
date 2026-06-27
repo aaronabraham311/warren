@@ -502,6 +502,47 @@ The DIRT edge comes from buying what Wall Street ignores. Analyst coverage is a 
  data_quality_notes: the market-efficiency argument weakens significantly.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+### Step 4.5 — Local-Language Integrity Check
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Before proceeding to source verification, run a mandatory integrity scan on the\
+ company and its key principals. This step exists because small-cap and foreign names\
+ are frequently absent from English-language aggregators yet surfaced by local-language\
+ searches. Absence of results is not a clean bill of health — coverage is partial by\
+ construction.
+
+**Procedure:**
+1. Call get_key_persons to resolve the controlling shareholder, chairman, and CEO.\
+ If the data is unavailable, note the gap and proceed with the company name alone.
+2. Run get_adverse_media and screen_watchlists on:
+   - The company name (always).
+   - The controlling shareholder (highest priority — a controlling owner with fraud or\
+ corruption history is a thesis-ending finding regardless of the multiple).
+   - The chairman and CEO.
+3. Treat any hit in the following categories as potentially thesis-ending; investigate\
+ before proceeding and do not net the finding against a cheap multiple:
+   - Fraud or financial misrepresentation.
+   - Bribery, corruption, or sanctions.
+   - Environmental, health, or safety violations.
+   - Material unresolved litigation or regulatory action.
+   - Governance failures (auditor resignations, repeated restatements, related-party\
+ self-dealing).
+
+**Asymmetry rule (mandatory):**
+A hit in any adverse category may lower confidence or force an avoid recommendation.\
+ A clean scan — finding nothing adverse — must never raise confidence. The absence of\
+ evidence is not evidence of absence: coverage of small foreign outlets is partial,\
+ and the methodology treats the local search as a disqualifying filter, never as a\
+ confidence booster. Record the outcome but do not adjust confidence upward solely\
+ because the integrity scan returned no results.
+
+**Observability (required):** After completing the integrity scan, add one entry to\
+ data_quality_notes using the format "integrity_scan: clean — names checked: [list]"\
+ or "integrity_scan: hit — [category]: [finding summary]". This entry is required even\
+ if get_adverse_media or screen_watchlists return errors or partial results — in that\
+ case log "integrity_scan: incomplete — [tool error summary]".
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ### Step 5 — Source Verification
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -525,7 +566,9 @@ Data aggregators (yfinance, Finnhub) can misclassify small-cap financials, omit 
 ### Tool Usage Strategy (DIRT mode)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Use tools in this order. Maximum 8 tool calls.
+Use tools in this order. Maximum 8 calls for the quantitative assessment (Steps 1–4);\
+ Step 4.5 integrity scan adds up to 3 further calls (get_key_persons, get_adverse_media,\
+ screen_watchlists).
 
 1. **get_quote** — anchor price. Required first call.
 2. **get_fundamentals** — P/B, debt/equity, analyst count, institutional ownership.
@@ -537,6 +580,12 @@ Use tools in this order. Maximum 8 tool calls.
 7. **get_insider_activity** — insider sentiment. Call for Step 3.
 8. **read_filing** — source verification against primary filing. Required by Step 5 whenever\
  aggregator data is more than 45 days old or when NCAV calculation is central to the thesis.
+9. **get_key_persons** — Step 4.5 integrity scan. Resolves controlling shareholder, chairman,\
+ CEO before adverse screening. Always call as the first action of Step 4.5.
+10. **get_adverse_media** — Step 4.5. Run on company name and each key person returned by\
+ get_key_persons. Controlling shareholder is highest priority.
+11. **screen_watchlists** — Step 4.5. Cross-reference company name and key persons against\
+ sanctions, PEP, and enforcement watchlists. Call alongside get_adverse_media.
 
 Do not call get_growth_metrics, estimate_intrinsic_value, get_peer_comparison, get_news, or\
  screen_universe unless the specific analysis requires it. DIRT is a bottom-up, cheapness-first\
