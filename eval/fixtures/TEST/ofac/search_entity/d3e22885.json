@@ -1,0 +1,51 @@
+{
+  "error": null,
+  "pagination": {
+    "pageNum": 1,
+    "pageSize": 20,
+    "totalRecords": 2
+  },
+  "results": [
+    {
+      "uid": "36",
+      "name": "TEST SANCTIONED PERSON",
+      "type": "Individual",
+      "programs": ["UKRAINE-EO13685", "RUSSIA-EO14024"],
+      "title": "Test Title",
+      "remarks": null,
+      "score": 99,
+      "match": true,
+      "akas": [
+        {
+          "uid": "1",
+          "type": "a.k.a.",
+          "category": "strong",
+          "lastName": "SANCTIONED",
+          "firstName": "Test"
+        },
+        {
+          "uid": "2",
+          "type": "a.k.a.",
+          "category": "weak",
+          "lastName": "PERSON",
+          "firstName": "Tst"
+        }
+      ],
+      "addresses": [],
+      "ids": []
+    },
+    {
+      "uid": "42",
+      "name": "TEST RELATED ENTITY",
+      "type": "Entity",
+      "programs": ["SDGT"],
+      "title": null,
+      "remarks": null,
+      "score": 72,
+      "match": false,
+      "akas": [],
+      "addresses": [],
+      "ids": []
+    }
+  ]
+}

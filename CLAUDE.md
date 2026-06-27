@@ -41,6 +41,7 @@ agent/
     capital_allocation.py  # get_capital_allocation → YFinanceClient.get_capital_allocation → CapitalAllocation (share-count CAGR, buyback/dividend/shareholder yield, dividend growth streak, payout ratio, net-debt trajectory — Buffett/Munger management-quality lens)
     persons.py    # get_key_persons → YFinanceClient.get_key_persons (companyOfficers + institutional_holders) + EDGARClient.get_sc13_holders (EFTS SC 13G/D) → KeyPersonsData (persons list with name/role/ownership_pct/source, controlling_holder_identified flag, source_notes)
     adverse_media.py  # get_adverse_media → GDELTClient.get_adverse_articles → AdverseMediaResult (ranked, categorised negative-tone hits across 65 languages; keyword + GKG-theme classification; dual-query dedup)
+    watchlists.py # screen_watchlists → OFACClient.search_entity → WatchlistResult (matches with score, risk_categories=["sanction"], datasets=OFAC programs; asymmetry note always present)
 
 data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
@@ -49,6 +50,7 @@ data_sources/
   edgar_client.py      # EDGARClient — SEC 10-K/10-Q/8-K/DEF 14A filing sections + get_sc13_holders (EFTS SC 13G/D beneficial owner search) (cached, polite)
   finnhub_client.py    # FinnhubClient — news + fundamentals fallback (cached, rate-limited)
   gdelt_client.py      # GDELTClient — GDELT DOC 2.0 ArtList adverse news (keyless, 7d cache). Note: ArtList does not return tone/themes in the response; tone<-2 is a server-side filter only.
+  ofac_client.py       # OFACClient — OFAC SDN free public API (no key), 7-day cache; US sanctions only
 
 storage/
   models.py       # ORM models (Base + all table classes + indexes) — no I/O

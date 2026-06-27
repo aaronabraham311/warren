@@ -78,6 +78,23 @@ def finnhub_fixture() -> dict[str, object]:
 
 
 @pytest.fixture()
+def ofac_conn() -> Generator[sqlite3.Connection, None, None]:
+    """In-memory SQLite connection for OFACClient cache tests."""
+    conn = sqlite3.connect(":memory:")
+    yield conn
+    conn.close()
+
+
+@pytest.fixture()
+def ofac_fixture() -> dict[str, object]:
+    """Recorded OFAC SDN search payloads: {"match": {...}, "empty": {...}}."""
+    return {
+        "match": load_fixture("TEST", "ofac", "search_entity"),
+        "empty": load_fixture("TEST", "ofac", "search_entity", name="error_empty"),
+    }
+
+
+@pytest.fixture()
 def db_engine(monkeypatch: pytest.MonkeyPatch) -> Generator[Engine, None, None]:
     """In-memory SQLite engine; patches storage.engine.engine for the test."""
     test_engine = create_engine("sqlite:///:memory:")
