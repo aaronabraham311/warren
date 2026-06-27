@@ -15,6 +15,7 @@ from agent.tools.quality import GetQualityMetricsTool
 from agent.tools.quote import GetQuoteTool
 from agent.tools.screen import ScreenUniverseTool
 from agent.tools.valuation import GetValuationMultiplesTool
+from agent.tools.watchlists import ScreenWatchlistsTool
 
 TOOL_REGISTRY: dict[str, Tool] = {
     "get_adverse_media": GetAdverseMediaTool(),
@@ -33,6 +34,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "estimate_intrinsic_value": EstimateIntrinsicValueTool(),
     "get_capital_allocation": GetCapitalAllocationTool(),
     "get_key_persons": GetKeyPersonsTool(),
+    "screen_watchlists": ScreenWatchlistsTool(),
 }
 
 TOOL_DEFINITIONS: list[dict[str, object]] = [t.to_api_dict() for t in TOOL_REGISTRY.values()]

@@ -64,9 +64,11 @@ module = [
     "agent.tools.adverse_media",
     "agent.tools.capital_allocation",
     "agent.tools.persons",
+    "agent.tools.watchlists",
     "data_sources.gdelt_client",
     "data_sources.yfinance_client",
     "data_sources.edgar_client",
     "data_sources.finnhub_client",
+    "data_sources.opensanctions_client",
 ]
 disallow_any_explicit = false

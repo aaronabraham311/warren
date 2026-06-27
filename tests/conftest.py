@@ -78,6 +78,23 @@ def finnhub_fixture() -> dict[str, object]:
 
 
 @pytest.fixture()
+def opensanctions_conn() -> Generator[sqlite3.Connection, None, None]:
+    """In-memory SQLite connection for OpenSanctionsClient cache tests."""
+    conn = sqlite3.connect(":memory:")
+    yield conn
+    conn.close()
+
+
+@pytest.fixture()
+def opensanctions_fixture() -> dict[str, object]:
+    """Recorded OpenSanctions payloads: {"match": {...}, "empty": {...}}."""
+    return {
+        "match": load_fixture("TEST", "opensanctions", "match_entity"),
+        "empty": load_fixture("TEST", "opensanctions", "match_entity", name="error_empty"),
+    }
+
+
+@pytest.fixture()
 def db_engine(monkeypatch: pytest.MonkeyPatch) -> Generator[Engine, None, None]:
     """In-memory SQLite engine; patches storage.engine.engine for the test."""
     test_engine = create_engine("sqlite:///:memory:")
