@@ -3,7 +3,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 from agent.budget import RunContext
-from agent.tools._clients import opensanctions_client
+from agent.tools._clients import ofac_client
 from agent.tools.base import (
     Tool,
     ToolResult,
@@ -12,7 +12,7 @@ from agent.tools.base import (
     error_from_data_source,
 )
 from data_sources.errors import DataSourceError
-from data_sources.opensanctions_client import WatchlistResult
+from data_sources.ofac_client import WatchlistResult
 
 
 class ScreenWatchlistsInput(BaseModel):
@@ -23,13 +23,14 @@ class ScreenWatchlistsInput(BaseModel):
     )
     entity_type: Literal["person", "company", "vessel", "aircraft"] = Field(
         default="person",
-        description="Schema type for the entity. Affects which OpenSanctions properties are matched.",  # noqa: E501
+        description="Type of entity — affects which OFAC search index is queried.",
     )
     country_hint: str | None = Field(
         default=None,
         pattern=r"^[a-z]{2}$",
         description=(
-            "ISO 3166-1 alpha-2 country code hint (e.g. 'ru', 'cn') to improve match precision."
+            "ISO 3166-1 alpha-2 country code hint (e.g. 'ru', 'cn'). "
+            "Recorded for context; not used by OFAC API directly."
         ),
     )
 
@@ -37,28 +38,21 @@ class ScreenWatchlistsInput(BaseModel):
 class ScreenWatchlistsTool(Tool):
     name = "screen_watchlists"
     description = (
-        "Check an entity (person, company, vessel, or aircraft) against the OpenSanctions dataset, "
-        "which aggregates hundreds of sanctions lists (OFAC, EU FSF, UN, …), PEP databases, and "
-        "criminal-interest indexes. Returns structured matches with match score, risk categories "
-        "(sanction, pep, criminal, debarment, other), the datasets that flagged the entity, and "
-        "linked entities. An empty match list is not proof of clean status (asymmetry rule)."
+        "Check an entity (person, company, vessel, or aircraft) against the OFAC "
+        "Specially Designated Nationals (SDN) and consolidated sanctions lists "
+        "(US Treasury, free public API). Returns structured matches with match score, "
+        "risk category (sanction), and the OFAC programs that flagged the entity. "
+        "Coverage is US sanctions only — an empty match list is not proof of clean "
+        "status (OFAC is not exhaustive)."
     )
     input_schema = ScreenWatchlistsInput
     output_schema = WatchlistResult
 
     def run(self, tool_input: BaseModel, ctx: RunContext) -> ToolResult:
         assert isinstance(tool_input, ScreenWatchlistsInput)
-        client = opensanctions_client()
-        if client is None:
-            return ToolResultError(
-                error_code="not_found",
-                message=(
-                    "OPENSANCTIONS_API_KEY is not configured; watchlist screening is unavailable."
-                ),
-                retryable=False,
-            )
+        client = ofac_client()
         try:
-            result = client.match_entity(
+            result = client.search_entity(
                 tool_input.entity_name,
                 tool_input.entity_type,
                 tool_input.country_hint,

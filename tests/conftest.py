@@ -78,19 +78,19 @@ def finnhub_fixture() -> dict[str, object]:
 
 
 @pytest.fixture()
-def opensanctions_conn() -> Generator[sqlite3.Connection, None, None]:
-    """In-memory SQLite connection for OpenSanctionsClient cache tests."""
+def ofac_conn() -> Generator[sqlite3.Connection, None, None]:
+    """In-memory SQLite connection for OFACClient cache tests."""
     conn = sqlite3.connect(":memory:")
     yield conn
     conn.close()
 
 
 @pytest.fixture()
-def opensanctions_fixture() -> dict[str, object]:
-    """Recorded OpenSanctions payloads: {"match": {...}, "empty": {...}}."""
+def ofac_fixture() -> dict[str, object]:
+    """Recorded OFAC SDN search payloads: {"match": {...}, "empty": {...}}."""
     return {
-        "match": load_fixture("TEST", "opensanctions", "match_entity"),
-        "empty": load_fixture("TEST", "opensanctions", "match_entity", name="error_empty"),
+        "match": load_fixture("TEST", "ofac", "search_entity"),
+        "empty": load_fixture("TEST", "ofac", "search_entity", name="error_empty"),
     }
 
 
