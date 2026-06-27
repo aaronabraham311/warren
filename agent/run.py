@@ -17,7 +17,7 @@ from agent.portfolio import (
     sync_holdings_to_db,
     sync_watchlist_to_db,
 )
-from agent.routing import HardcodedSonnetRouting
+from agent.routing import PhaseBasedRouting
 from agent.tools._clients import yfinance_client
 from data_sources.yfinance_client import PriceData
 
@@ -97,7 +97,7 @@ def main() -> None:
     persona: DefaultPersona | DirtPersona = (
         DirtPersona() if args.persona == "dirt" else DefaultPersona()
     )
-    routing_policy = HardcodedSonnetRouting()
+    routing_policy = PhaseBasedRouting()
 
     prompt_version_id = ensure_prompt_version(
         version_tag="v1",

@@ -1,14 +1,16 @@
 # Single source of truth for model identifiers and per-token pricing (USD).
 # All other modules must import from here rather than hardcoding strings.
 
-from typing import TypedDict
+from typing import Final, TypedDict
 
 # ── Model identifiers ────────────────────────────────────────────────────────
-HAIKU_4_5 = "claude-haiku-4-5-20251001"
-SONNET_4_6 = "claude-sonnet-4-6"
-OPUS_4_7 = "claude-opus-4-7"
+# Marked Final so mypy infers literal types (e.g. Literal["claude-haiku-4-5-20251001"]),
+# letting agent/routing.py return them where the ModelID Literal is expected.
+HAIKU_4_5: Final = "claude-haiku-4-5-20251001"
+SONNET_4_6: Final = "claude-sonnet-4-6"
+OPUS_4_7: Final = "claude-opus-4-7"
 
-DEFAULT_MODEL_ID = SONNET_4_6
+DEFAULT_MODEL_ID: Final = SONNET_4_6
 
 
 class ModelPricing(TypedDict):
