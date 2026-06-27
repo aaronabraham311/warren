@@ -786,6 +786,41 @@ def test_screen_universe_combined_dirt_criteria(monkeypatch: pytest.MonkeyPatch)
     assert result.data.tickers == ["AAPL"]
 
 
+def test_screen_universe_limitation_note_always_present(monkeypatch: pytest.MonkeyPatch) -> None:
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, pe=10.0))
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"pe_ratio_max": 15}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    note = result.data.universe_limitation_note
+    assert "US-only" in note
+    assert "Russell 2000" in note
+    assert "300M" in note or "$300" in note
+
+
+def test_screen_universe_russell2000_tickers_included(monkeypatch: pytest.MonkeyPatch) -> None:
+    # R2000-only tickers (not in portfolio/watchlist) should appear in the screen result
+    # when they pass the filter. We monkeypatch _universe to simulate a mixed universe.
+    pe_by_ticker = {"AAPL": 12.0, "AEIS": 8.0, "APOG": 25.0}
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, pe=pe_by_ticker[t]))
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL", "AEIS", "APOG"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(ScreenUniverseInput(criteria={"pe_ratio_max": 15}), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert "AAPL" in result.data.tickers
+    assert "AEIS" in result.data.tickers
+    assert "APOG" not in result.data.tickers
+
+
+def test_dirt_persona_limitation_note_matches_screen_result() -> None:
+    from agent.persona import DIRT_SYSTEM_PROMPT
+    from agent.tools.screen import _UNIVERSE_LIMITATION_NOTE
+
+    assert _UNIVERSE_LIMITATION_NOTE in DIRT_SYSTEM_PROMPT
+
+
 # ── get_holding_context ───────────────────────────────────────────────────────
 
 
