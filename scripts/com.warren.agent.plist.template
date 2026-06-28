@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.warren.agent</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/path/to/.venv/bin/python</string>
+    <string>-m</string>
+    <string>agent.run</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/path/to/warren</string>
+
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>2</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/path/to/warren/logs/launchd_stdout.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/path/to/warren/logs/launchd_stderr.log</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>ANTHROPIC_API_KEY</key>
+    <string>PLACEHOLDER_ANTHROPIC_API_KEY</string>
+    <key>FINNHUB_API_KEY</key>
+    <string>PLACEHOLDER_FINNHUB_API_KEY</string>
+  </dict>
+</dict>
+</plist>
