@@ -17,6 +17,7 @@ Warren is an AI stock-analysis agent. The user asks a natural-language question;
 agent/
   run.py          # CLI entrypoint: python -m agent.run [TICKER] [--skip-ticker-validation]
   portfolio.py    # load_portfolio/load_watchlist (validated) + sync_*_to_db snapshots
+  universe.py     # get_current_universe(session, watchlist) → sorted S&P 500 ∪ watchlist for the Haiku screening prefix. Weekly-refreshed (UniverseSnapshot single-row table); SP500Client fetch with data/sp500.csv fallback. Deterministic sort keeps the cache prefix byte-stable.
   loop.py         # Main agentic loop — sends messages, handles tool calls
   persona.py      # System prompt / persona definition
   routing.py      # Decides which model to route each call to
@@ -51,6 +52,7 @@ data_sources/
   finnhub_client.py    # FinnhubClient — news + fundamentals fallback (cached, rate-limited)
   gdelt_client.py      # GDELTClient — GDELT DOC 2.0 ArtList adverse news (keyless, 7d cache). Note: ArtList does not return tone/themes in the response; tone<-2 is a server-side filter only.
   ofac_client.py       # OFACClient — OFAC SDN free public API (no key), 7-day cache; US sanctions only
+  sp500_client.py      # SP500Client — keyless Wikipedia scrape of S&P 500 constituents → list[str] | DataSourceError (no cache; the UniverseSnapshot table is the weekly cache)
 
 storage/
   models.py       # ORM models (Base + all table classes + indexes) — no I/O
@@ -76,6 +78,7 @@ tests/
 data/
   portfolio.csv   # ticker, shares, cost_basis, purchase_date
   watchlist.csv   # ticker, notes
+  sp500.csv       # bootstrap S&P 500 constituents — fallback for agent/universe.py when the live Wikipedia fetch fails
 
 main.py           # Thin wrapper: delegates to agent.run.main
 logs/runs/        # Per-run JSONL traces (gitignored)
