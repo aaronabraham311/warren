@@ -16,6 +16,7 @@ Warren is an AI stock-analysis agent. The user asks a natural-language question;
 ```
 agent/
   run.py          # CLI entrypoint: python -m agent.run [TICKER] [--skip-ticker-validation]
+  cooldown.py     # Discovery cooldown — filter_universe_for_cooldown(), has_material_event(), set_cooldown(), get_cooldown_entry(), clear_cooldown(); 7-day dedup with material-news override
   portfolio.py    # load_portfolio/load_watchlist (validated) + sync_*_to_db snapshots
   loop.py         # Main agentic loop — sends messages, handles tool calls
   persona.py      # System prompt / persona definition
