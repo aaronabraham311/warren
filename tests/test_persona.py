@@ -40,7 +40,6 @@ def test_buffett_heuristics_section_present() -> None:
         "buffett_signals",
         "key_risks",
         "data_quality_notes",
-        "tool_calls_made",
     ],
 )
 def test_output_field_mentioned(field: str) -> None:

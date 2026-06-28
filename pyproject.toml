@@ -45,6 +45,7 @@ plugins = ["pydantic.mypy"]
 # pydantic v2 BaseModel subclasses inherit internal Any annotations (e.g. __pydantic_extra__)
 # which mypy reports as explicit-any — this is a known false positive, not our code.
 module = [
+    "agent.models",
     "agent.loop",
     "agent.portfolio",
     "agent.tools.base",

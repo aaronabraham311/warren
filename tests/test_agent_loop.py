@@ -16,12 +16,11 @@ from sqlalchemy.orm import Session
 
 from agent.budget import Budget, RunContext
 from agent.loop import (
-    AnalysisOutput,
     CostAbortedError,
-    DirtSignals,
     SchemaRepairError,
     analyze_ticker,
 )
+from agent.models import AnalysisOutput, DirtSignals, LynchBuffettSignals
 from agent.persona import DefaultPersona
 from agent.routing import HardcodedSonnetRouting
 from agent.tools.base import ErrorCode, ToolResult, ToolResultError, ToolResultOk
@@ -87,12 +86,13 @@ def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Sessi
             recommendation=result.recommendation,
             confidence=result.confidence,
             thesis=result.thesis,
-            lynch_signals=result.lynch_signals,
-            buffett_signals=result.buffett_signals,
+            lynch_signals=result.lynch_signals.model_dump(),
+            buffett_signals=result.buffett_signals.model_dump(),
             key_risks=result.key_risks,
             data_quality_notes=result.data_quality_notes,
             tool_calls_made=ctx.budget.total_tool_calls,
             tokens_used=ctx.budget.total_input_tokens + ctx.budget.total_output_tokens,
+            termination_reason=result.termination_reason,
         ),
     )
     write_run_end(
@@ -360,8 +360,7 @@ def test_budget_cost_exceeded() -> None:
 
 
 def test_analysis_list_columns_roundtrip(db_engine: object, db_session: Session) -> None:
-    """lynch_signals/buffett_signals/key_risks/data_quality_notes must survive a write/read
-    as Python lists, not raw JSON strings."""
+    """lynch_signals/buffett_signals/key_risks/data_quality_notes survive a write/read."""
     from datetime import datetime, timezone
 
     write_run_start("run-jsontest", datetime.now(timezone.utc))
@@ -373,8 +372,8 @@ def test_analysis_list_columns_roundtrip(db_engine: object, db_session: Session)
             recommendation="buy",
             confidence=0.8,
             thesis="Strong moat.",
-            lynch_signals=["dominant brand", "consistent earnings"],
-            buffett_signals=["high ROE"],
+            lynch_signals={"pros": ["dominant brand", "consistent earnings"], "cons": []},
+            buffett_signals={"pros": ["high ROE"], "cons": []},
             key_risks=["valuation stretched"],
             data_quality_notes=[],
             tool_calls_made=1,
@@ -383,8 +382,8 @@ def test_analysis_list_columns_roundtrip(db_engine: object, db_session: Session)
     )
 
     row = db_session.query(Analysis).filter_by(run_id="run-jsontest", ticker="AAPL").one()
-    assert row.lynch_signals == ["dominant brand", "consistent earnings"]
-    assert row.buffett_signals == ["high ROE"]
+    assert row.lynch_signals == {"pros": ["dominant brand", "consistent earnings"], "cons": []}
+    assert row.buffett_signals == {"pros": ["high ROE"], "cons": []}
     assert row.key_risks == ["valuation stretched"]
     assert row.data_quality_notes == []
 
@@ -615,8 +614,8 @@ def test_dirt_signals_round_trips() -> None:
         recommendation="buy",
         confidence=0.8,
         thesis="Deep-value play with NCAV discount and net-cash balance sheet.",
-        lynch_signals=[],
-        buffett_signals=[],
+        lynch_signals=LynchBuffettSignals(pros=[], cons=[]),
+        buffett_signals=LynchBuffettSignals(pros=[], cons=[]),
         key_risks=["cyclical earnings", "macro headwinds"],
         dirt_signals=signals,
     )
@@ -636,3 +635,157 @@ def test_dirt_signals_round_trips() -> None:
 def test_dirt_signals_aggregator_discrepancies_defaults_false() -> None:
     partial = DirtSignals(ev_ebit=5.0)
     assert partial.aggregator_discrepancies_found is False
+
+
+# ── W4: Idempotent upsert ─────────────────────────────────────────────────────
+
+
+def test_upsert_analysis_idempotent(db_engine: object, db_session: Session) -> None:
+    """Calling upsert_analysis twice with the same (run_id, ticker) yields one row."""
+    from datetime import datetime, timezone
+
+    write_run_start("run-idem", datetime.now(timezone.utc))
+    data = AnalysisData(
+        analysis_type="holding",
+        recommendation="hold",
+        confidence=0.6,
+        thesis="Test idempotency of upsert.",
+        lynch_signals={"pros": ["simple business"], "cons": []},
+        buffett_signals={"pros": [], "cons": ["no moat"]},
+        key_risks=["execution risk"],
+        data_quality_notes=[],
+        tool_calls_made=2,
+        tokens_used=300,
+        termination_reason="success",
+    )
+    upsert_analysis("run-idem", "AAPL", data)
+    upsert_analysis("run-idem", "AAPL", data)
+
+    rows = db_session.query(Analysis).filter_by(run_id="run-idem", ticker="AAPL").all()
+    assert len(rows) == 1
+
+
+# ── W4: termination_reason set by loop ───────────────────────────────────────
+
+
+def test_schema_repair_sets_termination_reason(mock_claude: MagicMock) -> None:
+    """Schema repair success sets termination_reason='schema_repair_success'."""
+    mock_claude(
+        [
+            make_end_turn("this is not json at all"),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
+    result = analyze_ticker("AAPL", _persona(), _routing(), _ctx())
+    assert result.termination_reason == "schema_repair_success"
+
+
+def test_iteration_cap_sets_termination_reason(db_engine: object, mock_claude: MagicMock) -> None:
+    """Hitting the iteration cap sets termination_reason='iteration_capped'."""
+    _TICKERS_LOCAL = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "BRK"]
+    tool_responses = [
+        make_tool_use("get_quote", {"ticker": _TICKERS_LOCAL[i]}, tool_id=f"toolu_{i:02d}")
+        for i in range(8)
+    ]
+    mock_claude(tool_responses + [make_end_turn(VALID_ANALYSIS_JSON)])
+    result = analyze_ticker("AAPL", _persona(), _routing(), _ctx())
+    assert result.termination_reason == "iteration_capped"
+
+
+# ── W4: analyses rows validate against AnalysisOutput ────────────────────────
+
+
+def test_analyses_validate_against_output_schema(db_engine: object, db_session: Session) -> None:
+    """All analyses rows round-trip through AnalysisOutput.model_validate."""
+    from datetime import datetime, timezone
+
+    write_run_start("run-validate", datetime.now(timezone.utc))
+    upsert_analysis(
+        "run-validate",
+        "MSFT",
+        AnalysisData(
+            analysis_type="holding",
+            recommendation="buy",
+            confidence=0.8,
+            thesis="Strong cloud growth and durable enterprise moat justify a buy.",
+            lynch_signals={"pros": ["fast grower"], "cons": []},
+            buffett_signals={"pros": ["high ROIC"], "cons": []},
+            key_risks=["valuation stretched", "macro slowdown"],
+            data_quality_notes=[],
+            tool_calls_made=3,
+            tokens_used=450,
+            termination_reason="success",
+        ),
+    )
+
+    row = db_session.query(Analysis).filter_by(run_id="run-validate", ticker="MSFT").one()
+    validated = AnalysisOutput.model_validate(
+        {
+            "ticker": row.ticker,
+            "analysis_type": row.analysis_type,
+            "recommendation": row.recommendation,
+            "confidence": row.confidence,
+            "thesis": row.thesis,
+            "lynch_signals": row.lynch_signals,
+            "buffett_signals": row.buffett_signals,
+            "key_risks": row.key_risks,
+            "data_quality_notes": row.data_quality_notes or [],
+            "tool_calls_made": row.tool_calls_made or 0,
+            "tokens_used": row.tokens_used or 0,
+            "termination_reason": row.termination_reason or "success",
+        }
+    )
+    assert validated.ticker == "MSFT"
+    assert validated.recommendation == "buy"
+    assert validated.termination_reason == "success"
+
+
+# ── W4: multi-ticker full-run writes multiple rows ────────────────────────────
+
+
+def test_full_run_writes_multiple_rows(
+    db_engine: object, mock_claude: MagicMock, db_session: Session, tmp_path: Path
+) -> None:
+    """Analysing two tickers in sequence writes two rows to the analyses table."""
+    from datetime import datetime, timezone
+
+    mock_claude(
+        [
+            make_tool_use("get_quote", {"ticker": "AAPL"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+            make_tool_use("get_quote", {"ticker": "MSFT"}),
+            make_end_turn(VALID_ANALYSIS_JSON.replace('"AAPL"', '"MSFT"')),
+        ]
+    )
+    run_id = "run-multirow"
+    write_run_start(run_id, datetime.now(timezone.utc))
+    budget = Budget()
+    logger = RunLogger(run_id, tmp_path)
+
+    for ticker, analysis_type in [("AAPL", "holding"), ("MSFT", "discovery")]:
+        ctx = RunContext(run_id=run_id, budget=budget, logger=logger)
+        result = analyze_ticker(ticker, _persona(), _routing(), ctx)
+        result.analysis_type = analysis_type  # type: ignore[assignment]
+        upsert_analysis(
+            run_id,
+            ticker,
+            AnalysisData(
+                analysis_type=result.analysis_type,
+                recommendation=result.recommendation,
+                confidence=result.confidence,
+                thesis=result.thesis,
+                lynch_signals=result.lynch_signals.model_dump(),
+                buffett_signals=result.buffett_signals.model_dump(),
+                key_risks=result.key_risks,
+                data_quality_notes=result.data_quality_notes,
+                tool_calls_made=budget.total_tool_calls,
+                tokens_used=budget.total_input_tokens + budget.total_output_tokens,
+                termination_reason=result.termination_reason,
+            ),
+        )
+
+    rows = db_session.query(Analysis).filter_by(run_id=run_id).all()
+    assert len(rows) == 2
+    tickers_written = {r.ticker for r in rows}
+    assert tickers_written == {"AAPL", "MSFT"}
+    assert all(r.termination_reason == "success" for r in rows)

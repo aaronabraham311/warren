@@ -3,7 +3,7 @@ from typing import Literal, Protocol, runtime_checkable
 
 import anthropic
 
-from agent.models import HAIKU_4_5, OPUS_4_7, SONNET_4_6
+from agent.models import HAIKU_4_5, OPUS_4_7, SONNET_4_6, LynchBuffettSignals
 
 # The set of models the routing layer may select. Kept in sync with agent.models
 # by tests/test_routing.py (a drift guard asserts get_args(ModelID) matches the
@@ -48,9 +48,9 @@ class _Analysis(Protocol):
     @property
     def recommendation(self) -> str: ...
     @property
-    def lynch_signals(self) -> list[str]: ...
+    def lynch_signals(self) -> LynchBuffettSignals: ...
     @property
-    def buffett_signals(self) -> list[str]: ...
+    def buffett_signals(self) -> LynchBuffettSignals: ...
 
 
 class OpusTrigger(Protocol):
@@ -70,9 +70,12 @@ class DefaultOpusTrigger:
         low_conf_action = [a for a in analyses if a.confidence < 0.5 and a.recommendation != "hold"]
         cond_low_conf = len(low_conf_action) >= 2
 
-        # Condition 2: Lynch and Buffett signal counts disagree by ≥3 for any holding.
+        # Condition 2: Lynch and Buffett total signal counts disagree by ≥3 for any holding.
+        def _total(s: LynchBuffettSignals) -> int:
+            return len(s.pros) + len(s.cons)
+
         cond_signal_split = any(
-            abs(len(a.lynch_signals) - len(a.buffett_signals)) >= 3 for a in analyses
+            abs(_total(a.lynch_signals) - _total(a.buffett_signals)) >= 3 for a in analyses
         )
 
         # Condition 3: any sell recommendation in the current run.

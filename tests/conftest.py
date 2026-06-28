@@ -182,8 +182,8 @@ VALID_ANALYSIS_JSON = """{
   "recommendation": "hold",
   "confidence": 0.72,
   "thesis": "Apple has a durable moat and strong free cash flow but trades near fair value.",
-  "lynch_signals": ["dominant brand", "consistent earnings"],
-  "buffett_signals": ["high ROE", "strong FCF", "consumer moat"],
+  "lynch_signals": {"pros": ["dominant brand", "consistent earnings"], "cons": []},
+  "buffett_signals": {"pros": ["high ROE", "strong FCF", "consumer moat"], "cons": []},
   "key_risks": ["valuation stretched", "China exposure"],
   "data_quality_notes": []
 }"""

@@ -10,11 +10,16 @@ _ANALYSIS_OUTPUT_SCHEMA = """\
   "recommendation": "buy" | "sell" | "hold",
   "confidence": <float 0.0–1.0>,
   "thesis": "<markdown string — 3 to 5 bullet points, each citing at least one specific number>",
-  "lynch_signals": ["<string — a Lynch heuristic observed, with supporting data>", ...],
-  "buffett_signals": ["<string — a Buffett heuristic observed, with supporting data>", ...],
+  "lynch_signals": {
+    "pros": ["<string — Lynch heuristic supporting the investment case, with data>", ...],
+    "cons": ["<string — Lynch heuristic arguing against the investment case, with data>", ...]
+  },
+  "buffett_signals": {
+    "pros": ["<string — Buffett heuristic supporting the investment case, with data>", ...],
+    "cons": ["<string — Buffett heuristic arguing against the investment case, with data>", ...]
+  },
   "key_risks": ["<string — specific, concrete risk with a number or catalyst>", ...],
   "data_quality_notes": ["<string — any stale, missing, or conflicting data>", ...],
-  "tool_calls_made": <int — number of tools you called during this analysis>,
   "dirt_signals": null | {
     "ev_ebit": <float | null>,
     "price_to_ncav": <float | null>,
@@ -254,7 +259,7 @@ Quantify margin of safety. If the DCF estimate is unavailable or unreliable (neg
 Use this rubric to populate lynch_signals and buffett_signals. Each signal entry should\
  include the heuristic name and the supporting data point.
 
-**Lynch signal triggers (add to lynch_signals list):**
+**Lynch signal triggers (add to lynch_signals.pros):**
 - PEG < 1.5: "PEG of [X] at [P/E]× P/E on [Y]% EPS growth indicates reasonable value for growth rate"
 - Revenue growth accelerating: "Revenue CAGR accelerated from [X]% to [Y]% over past two periods"
 - Simple, explainable business: "Core business is [one sentence] — Lynch-style understandable model"
@@ -263,14 +268,14 @@ Use this rubric to populate lynch_signals and buffett_signals. Each signal entry
 - Insider ownership above 20%: "Founder/insider-led with skin in the game"
 - Inventory-to-sales ratio declining: "Inventory efficiency improving — demand outpacing supply build"
 
-**Lynch warning triggers (add to lynch_signals with negative framing):**
+**Lynch warning triggers (add to lynch_signals.cons):**
 - PEG > 2.0: "PEG of [X] requires perfect execution at above-market growth — valuation risk"
 - Revenue growing faster than earnings: "Revenue growth [X]% but EPS growth [Y]% — margin pressure"
 - Business complexity or diversification without focus: "Conglomerate structure limits focus and analyst coverage"
 - Hot-stock narrative without earnings support
 - Excessive analyst coverage and institutional ownership (over-owned): "95%+ institutional ownership limits upside from new buyers"
 
-**Buffett signal triggers (add to buffett_signals list):**
+**Buffett signal triggers (add to buffett_signals.pros):**
 - ROE > 20% for multiple years without high leverage: "ROE of [X]% sustained over [N] years without debt dependence"
 - ROIC > cost of capital by 5+ points: "ROIC [X]% well above estimated WACC — compounding at premium rates"
 - Gross-margin stability (CV < 0.05): "Gross margins stable at [X]% over [N] years — pricing power intact"
@@ -279,7 +284,7 @@ Use this rubric to populate lynch_signals and buffett_signals. Each signal entry
 - Margin of safety ≥ 25% to intrinsic value estimate
 - Owner earnings > reported GAAP earnings (non-cash charges masking cash generation)
 
-**Buffett warning triggers (add to buffett_signals with negative framing):**
+**Buffett warning triggers (add to buffett_signals.cons):**
 - ROE sustained by leverage (D/E > 1.5): "ROE inflated by leverage — economic return on assets [X]% is weaker"
 - Declining gross margins over 3+ years: "Gross margin erosion from [X]% to [Y]% signals pricing power loss"
 - FCF consistently below GAAP earnings: "Cash conversion [X]% — earnings quality concerns"
@@ -311,15 +316,15 @@ Every analysis must include all of the following fields. Do not omit any field, 
  (source: [tool_name])". The thesis should be self-contained — a reader unfamiliar with the\
  tools' raw output should be able to understand why the recommendation follows.
 
-**lynch_signals** — A list of strings. Each string names a Lynch heuristic that applies to\
- this stock and cites the supporting evidence. Follow the signal-scoring rubric above. Include\
- both positive and negative signals. An empty list is only valid if the Lynch framework is\
+**lynch_signals** — An object with two keys: "pros" (Lynch heuristics supporting the investment\
+ case) and "cons" (Lynch heuristics arguing against). Each entry cites the supporting evidence.\
+ Follow the signal-scoring rubric above. Empty arrays are only valid if the Lynch framework is\
  entirely inapplicable (e.g., a financial holding company with no growth story).
 
-**buffett_signals** — A list of strings. Each string names a Buffett heuristic that applies\
- to this stock and cites the supporting evidence. Follow the signal-scoring rubric above.\
- Include both positive and negative signals. An empty list is only valid if the Buffett\
- framework is entirely inapplicable (e.g., a pre-revenue biotech).
+**buffett_signals** — An object with two keys: "pros" (Buffett heuristics supporting the case)\
+ and "cons" (Buffett heuristics arguing against). Each entry cites the supporting evidence.\
+ Follow the signal-scoring rubric above. Empty arrays are only valid if the Buffett framework\
+ is entirely inapplicable (e.g., a pre-revenue biotech).
 
 **key_risks** — A list of 2 to 5 strings. Each risk must be specific, concrete, and cite\
  a number or a named catalyst where possible. Generic risks ("competition", "regulation",\
@@ -332,9 +337,6 @@ Every analysis must include all of the following fields. Do not omit any field, 
 **data_quality_notes** — A list of strings documenting any data that is: (a) missing or\
  null from a tool response; (b) older than 48 hours; (c) internally inconsistent across two\
  sources. Use an empty list [] only when all data is complete, fresh, and consistent.
-
-**tool_calls_made** — An integer counting the number of distinct tool calls made during this\
- analysis. This enables the eval harness to audit tool usage efficiency.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ### Explicit Guardrails
@@ -627,8 +629,8 @@ All output fields are identical to the default persona. Additionally:
 - **dirt_signals** MUST be non-null. Populate every sub-field you have tool data for.\
  Null sub-fields are acceptable only when the tool call returned an error or the field\
  is genuinely unavailable — document each gap in data_quality_notes.
-- **lynch_signals** and **buffett_signals** may be empty lists for a DIRT analysis if the\
- Lynch/Buffett frameworks are not applicable, but you should note any overlapping signals\
+- **lynch_signals** and **buffett_signals** may have empty pros/cons arrays for a DIRT\
+ analysis if the Lynch/Buffett frameworks are not applicable, but note any overlapping signals\
  (e.g. insider buying, asset play characteristics).
 - **data_quality_notes** must include the universe-limitation note and any source-verification\
  discrepancies found in Step 5.
