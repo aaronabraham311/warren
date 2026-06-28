@@ -4,6 +4,7 @@ from typing import Literal, TypedDict
 from sqlalchemy import (
     JSON,
     Boolean,
+    CheckConstraint,
     Date,
     DateTime,
     Float,
@@ -138,6 +139,23 @@ class EvalRun(Base):
     passed: Mapped[bool | None] = mapped_column(Boolean)
     check_results: Mapped[str | None] = mapped_column(Text)
     diff_notes: Mapped[str | None] = mapped_column(Text)
+
+
+class UniverseSnapshot(Base):
+    """Single-row snapshot of the sorted screening universe (S&P 500 list).
+
+    The ``CHECK (id = 1)`` constraint plus upsert-on-id keeps at most one row, so the
+    table holds the latest weekly-refreshed list with its ``refreshed_at`` date — no
+    cleanup job needed. ``tickers_json`` is a sorted JSON array for deterministic,
+    byte-stable embedding in the Haiku screening prompt prefix.
+    """
+
+    __tablename__ = "universe_snapshots"
+    __table_args__ = (CheckConstraint("id = 1", name="ck_universe_single_row"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    tickers_json: Mapped[str] = mapped_column(Text, nullable=False)
+    refreshed_at: Mapped[date] = mapped_column(Date, nullable=False)
 
 
 class DiscoveryCooldown(Base):
