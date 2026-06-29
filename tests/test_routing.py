@@ -2,8 +2,7 @@ from typing import get_args, get_protocol_members
 
 import anthropic
 
-from agent.loop import AnalysisOutput
-from agent.models import HAIKU_4_5, OPUS_4_7, SONNET_4_6
+from agent.models import HAIKU_4_5, OPUS_4_7, SONNET_4_6, AnalysisOutput, LynchBuffettSignals
 from agent.routing import (
     SYNTHESIS_PHASE_MARKER,
     DefaultOpusTrigger,
@@ -26,10 +25,10 @@ def _analysis(
         analysis_type="holding",
         recommendation=recommendation,
         confidence=confidence,
-        thesis="t",
-        lynch_signals=lynch_signals or [],
-        buffett_signals=buffett_signals or [],
-        key_risks=[],
+        thesis="t" * 10,
+        lynch_signals=LynchBuffettSignals(pros=lynch_signals or [], cons=[]),
+        buffett_signals=LynchBuffettSignals(pros=buffett_signals or [], cons=[]),
+        key_risks=["risk"],
     )
 
 

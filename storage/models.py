@@ -1,5 +1,5 @@
 from datetime import date, datetime, timezone
-from typing import Literal, TypedDict
+from typing import Literal, NotRequired, TypedDict
 
 from sqlalchemy import (
     JSON,
@@ -77,12 +77,13 @@ class AnalysisData(TypedDict):
     recommendation: str | None
     confidence: float | None
     thesis: str | None
-    lynch_signals: list[str]
-    buffett_signals: list[str]
+    lynch_signals: dict[str, list[str]]
+    buffett_signals: dict[str, list[str]]
     key_risks: list[str]
     data_quality_notes: list[str]
     tool_calls_made: int | None
     tokens_used: int | None
+    termination_reason: NotRequired[str | None]
 
 
 class Analysis(Base):
@@ -96,12 +97,13 @@ class Analysis(Base):
     recommendation: Mapped[str | None] = mapped_column(Text)
     confidence: Mapped[float | None] = mapped_column(Float)
     thesis: Mapped[str | None] = mapped_column(Text)
-    lynch_signals: Mapped[list[str] | None] = mapped_column(JSON)
-    buffett_signals: Mapped[list[str] | None] = mapped_column(JSON)
+    lynch_signals: Mapped[dict[str, list[str]] | None] = mapped_column(JSON)
+    buffett_signals: Mapped[dict[str, list[str]] | None] = mapped_column(JSON)
     key_risks: Mapped[list[str] | None] = mapped_column(JSON)
     data_quality_notes: Mapped[list[str] | None] = mapped_column(JSON)
     tool_calls_made: Mapped[int | None] = mapped_column(Integer)
     tokens_used: Mapped[int | None] = mapped_column(Integer)
+    termination_reason: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime | None] = mapped_column(DateTime, default=_utcnow)
 
 

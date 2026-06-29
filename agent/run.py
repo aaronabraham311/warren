@@ -2,6 +2,7 @@ import argparse
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Literal
 from uuid import uuid4
 
 import anthropic
@@ -12,6 +13,8 @@ from agent.loop import CostAbortedError, analyze_ticker
 from agent.models import DEFAULT_MODEL_ID
 from agent.persona import DefaultPersona, DirtPersona
 from agent.portfolio import (
+    Holding,
+    WatchlistEntry,
     load_portfolio,
     load_watchlist,
     sync_holdings_to_db,
@@ -73,9 +76,114 @@ def _sync_input_data(skip_ticker_validation: bool) -> None:
         sync_watchlist_to_db(entries, session)
 
 
+def _analyze_and_persist(
+    ticker: str,
+    analysis_type: Literal["holding", "discovery"],
+    run_id: str,
+    budget: Budget,
+    logger: RunLogger,
+    persona: DefaultPersona | DirtPersona,
+    routing_policy: PhaseBasedRouting,
+    client: anthropic.Anthropic,
+    portfolio_context: str,
+) -> None:
+    """Run analysis for one ticker and persist the result. Raises on hard failure."""
+    tokens_before = budget.total_input_tokens + budget.total_output_tokens
+    calls_before = budget.total_tool_calls
+
+    run_context = RunContext(run_id=run_id, budget=budget, logger=logger)
+    logger.log("ticker_started", ticker=ticker, phase="deep", model=DEFAULT_MODEL_ID)
+
+    result = analyze_ticker(
+        ticker=ticker,
+        persona=persona,
+        routing_policy=routing_policy,
+        run_context=run_context,
+        client=client,
+        portfolio_context=portfolio_context,
+    )
+    result.analysis_type = analysis_type
+    result.tool_calls_made = budget.total_tool_calls - calls_before
+    result.tokens_used = (budget.total_input_tokens + budget.total_output_tokens) - tokens_before
+
+    logger.log(
+        "ticker_completed",
+        ticker=ticker,
+        recommendation=result.recommendation,
+        confidence=result.confidence,
+        iterations=run_context.iterations,
+        tokens=result.tokens_used,
+        cost_usd=budget.total_cost_usd,
+        termination=result.termination_reason,
+    )
+    upsert_analysis(
+        run_id,
+        ticker,
+        AnalysisData(
+            analysis_type=result.analysis_type,
+            recommendation=result.recommendation,
+            confidence=result.confidence,
+            thesis=result.thesis,
+            lynch_signals=result.lynch_signals.model_dump(),
+            buffett_signals=result.buffett_signals.model_dump(),
+            key_risks=result.key_risks,
+            data_quality_notes=result.data_quality_notes,
+            tool_calls_made=result.tool_calls_made,
+            tokens_used=result.tokens_used,
+            termination_reason=result.termination_reason,
+        ),
+    )
+    print(f"[{ticker}] {result.recommendation} ({result.confidence:.2f}): {result.thesis[:80]}")
+
+
+def _run_tickers(
+    tickers: list[tuple[str, Literal["holding", "discovery"]]],
+    run_id: str,
+    budget: Budget,
+    logger: RunLogger,
+    persona: DefaultPersona | DirtPersona,
+    routing_policy: PhaseBasedRouting,
+    client: anthropic.Anthropic,
+    portfolio_context: str,
+) -> tuple[RunStatus, str | None]:
+    logger.log("run_started", tickers=[t for t, _ in tickers])
+
+    status: RunStatus = "success"
+    error_msg: str | None = None
+
+    for ticker, analysis_type in tickers:
+        try:
+            _analyze_and_persist(
+                ticker,
+                analysis_type,
+                run_id,
+                budget,
+                logger,
+                persona,
+                routing_policy,
+                client,
+                portfolio_context,
+            )
+        except CostAbortedError as e:
+            status = "cost_aborted"
+            error_msg = str(e)
+            print(f"Cost ceiling reached after {ticker}: {e}", file=sys.stderr)
+            break
+        except Exception as e:
+            print(f"[{ticker}] Error: {e}", file=sys.stderr)
+            logger.log("ticker_failed", ticker=ticker, error=str(e))
+
+    return status, error_msg
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Warren stock analysis agent")
-    parser.add_argument("ticker", nargs="?", default="AAPL", help="Ticker symbol to analyse")
+    parser.add_argument(
+        "ticker",
+        nargs="?",
+        default=None,
+        help="Ticker symbol to analyse (omit for full portfolio+watchlist run)",
+    )
     parser.add_argument(
         "--skip-ticker-validation",
         action="store_true",
@@ -89,7 +197,6 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    ticker = args.ticker.upper()
     migrate()
     reconcile_orphans(_LOG_DIR)  # self-heal any run left "running" by a previous crash
     _sync_input_data(args.skip_ticker_validation)
@@ -111,76 +218,41 @@ def main() -> None:
 
     budget = Budget()
     logger = RunLogger(run_id, _LOG_DIR)
-    run_context = RunContext(run_id=run_id, budget=budget, logger=logger)
     client = anthropic.Anthropic()
-    logger.log("run_started", tickers=[ticker])
-    logger.log("ticker_started", ticker=ticker, phase="deep", model=DEFAULT_MODEL_ID)
-
-    status: RunStatus = "success"
-    error_msg: str | None = None
-
     portfolio_context = _build_portfolio_context(_PORTFOLIO_FILE)
 
-    try:
-        result = analyze_ticker(
-            ticker=ticker,
-            persona=persona,
-            routing_policy=routing_policy,
-            run_context=run_context,
-            client=client,
-            portfolio_context=portfolio_context,
+    # Build ticker list: single-ticker mode or full portfolio+watchlist run
+    if args.ticker is not None:
+        tickers: list[tuple[str, Literal["holding", "discovery"]]] = [
+            (args.ticker.upper(), "holding")
+        ]
+    else:
+        holdings: list[Holding] = load_portfolio(_PORTFOLIO_FILE, validate_tickers=False)
+        watchlist: list[WatchlistEntry] = (
+            load_watchlist(_WATCHLIST_FILE) if _WATCHLIST_FILE.exists() else []
         )
-        logger.log(
-            "ticker_completed",
-            ticker=ticker,
-            recommendation=result.recommendation,
-            confidence=result.confidence,
-            iterations=run_context.iterations,
-            tokens=budget.total_input_tokens + budget.total_output_tokens,
-            cost_usd=budget.total_cost_usd,
-            termination="success",
-        )
-        upsert_analysis(
-            run_id,
-            ticker,
-            AnalysisData(
-                analysis_type=result.analysis_type,
-                recommendation=result.recommendation,
-                confidence=result.confidence,
-                thesis=result.thesis,
-                lynch_signals=result.lynch_signals,
-                buffett_signals=result.buffett_signals,
-                key_risks=result.key_risks,
-                data_quality_notes=result.data_quality_notes,
-                tool_calls_made=budget.total_tool_calls,
-                tokens_used=budget.total_input_tokens + budget.total_output_tokens,
-            ),
-        )
-        print(f"Done: {result.recommendation} ({result.confidence:.2f})")
-        print(f"  {result.thesis}")
-    except CostAbortedError as e:
-        status = "cost_aborted"
-        error_msg = str(e)
-        print(f"Aborted: {e}", file=sys.stderr)
+        tickers = [(h.ticker, "holding") for h in holdings] + [
+            (e.ticker, "discovery") for e in watchlist
+        ]
+
+    status, error_msg = _run_tickers(
+        tickers, run_id, budget, logger, persona, routing_policy, client, portfolio_context
+    )
+
+    duration_seconds = (datetime.now(timezone.utc) - started_at).total_seconds()
+    logger.log(
+        "run_completed",
+        status=status,
+        total_cost_usd=budget.total_cost_usd,
+        duration_seconds=duration_seconds,
+        error_msg=error_msg,
+    )
+    with get_session() as session:
+        logger.flush_to_db(session)
+    logger.close()
+
+    if status not in ("success",):
         sys.exit(1)
-    except Exception as e:
-        status = "failed"
-        error_msg = str(e)
-        print(f"Failed: {e}", file=sys.stderr)
-        sys.exit(1)
-    finally:
-        duration_seconds = (datetime.now(timezone.utc) - started_at).total_seconds()
-        logger.log(
-            "run_completed",
-            status=status,
-            total_cost_usd=budget.total_cost_usd,
-            duration_seconds=duration_seconds,
-            error_msg=error_msg,
-        )
-        # Reconcile the JSONL trace (source of truth) into the runs + tool_calls tables.
-        with get_session() as session:
-            logger.flush_to_db(session)
-        logger.close()
 
 
 if __name__ == "__main__":

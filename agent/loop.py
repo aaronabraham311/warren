@@ -4,13 +4,14 @@ import sys
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Literal, Protocol, cast
+from typing import Protocol, cast
 
 import anthropic
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, ValidationError
 
 from agent.budget import RunContext
 from agent.caching import call_claude_with_caching
+from agent.models import AnalysisOutput
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
 
@@ -64,31 +65,6 @@ def _run_with_retry(
         last_error_code = result.error_code
         _sleep(2.0**retries)
         retries += 1
-
-
-class DirtSignals(BaseModel):
-    ev_ebit: float | None = None
-    price_to_ncav: float | None = None
-    ncav_discount_pct: float | None = None
-    net_cash_positive: bool | None = None
-    consecutive_profit_years: int | None = None
-    buyback_active: bool | None = None
-    insider_sentiment: Literal["positive", "negative", "neutral"] | None = None
-    analyst_coverage_count: int | None = None
-    aggregator_discrepancies_found: bool = False
-
-
-class AnalysisOutput(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}([.-][A-Z])?$")
-    analysis_type: Literal["holding", "discovery"]
-    recommendation: Literal["buy", "sell", "hold"]
-    confidence: float = Field(ge=0.0, le=1.0)
-    thesis: str
-    lynch_signals: list[str]
-    buffett_signals: list[str]
-    key_risks: list[str]
-    data_quality_notes: list[str] = Field(default_factory=list)
-    dirt_signals: DirtSignals | None = None
 
 
 class CostAbortedError(Exception):
@@ -237,7 +213,9 @@ def analyze_ticker(
                 ticker,
             )
             try:
-                return _parse_output(_last_text(response.content))
+                result = _parse_output(_last_text(response.content))
+                result.termination_reason = force_label  # type: ignore[assignment]
+                return result
             except (ValidationError, ValueError, json.JSONDecodeError) as exc:
                 raise SchemaRepairError("Forced-final response was not valid JSON") from exc
 
@@ -258,7 +236,10 @@ def analyze_ticker(
         if response.stop_reason == "end_turn":
             text = _last_text(response.content)
             try:
-                return _parse_output(text)
+                result = _parse_output(text)
+                if schema_repair_attempt:
+                    result.termination_reason = "schema_repair_success"
+                return result
             except (ValidationError, ValueError, json.JSONDecodeError):
                 if schema_repair_attempt:
                     raise SchemaRepairError(
@@ -318,29 +299,29 @@ def analyze_ticker(
                     try:
                         parsed = tool.input_schema.model_validate(dict(block.input))
                     except ValidationError as exc:
-                        result: ToolResult = ToolResultError(
+                        tool_result: ToolResult = ToolResultError(
                             error_code="not_found",
                             message=f"invalid input for {block.name}: {exc}",
                             retryable=False,
                         )
                     else:
                         outcome = _run_with_retry(tool, parsed, run_context, _sleep)
-                        result = outcome.result
+                        tool_result = outcome.result
                         retry_count = outcome.retry_count
                         last_retry_error = outcome.last_retry_error
                     # Serialize the result so the agent sees structured errors as data.
-                    if isinstance(result, ToolResultOk):
-                        result_content = result.data.model_dump_json()
-                        cached = result.cached
+                    if isinstance(tool_result, ToolResultOk):
+                        result_content = tool_result.data.model_dump_json()
+                        cached = tool_result.cached
                     else:
                         result_content = json.dumps(
                             {
-                                "error_code": result.error_code,
-                                "message": result.message,
-                                "retryable": result.retryable,
+                                "error_code": tool_result.error_code,
+                                "message": tool_result.message,
+                                "retryable": tool_result.retryable,
                             }
                         )
-                        error_msg = result.message
+                        error_msg = tool_result.message
                 latency_ms = int((time.monotonic() - t0) * 1000)
 
                 run_context.logger.log_tool_call(
@@ -392,7 +373,9 @@ def analyze_ticker(
                     ticker,
                 )
                 try:
-                    return _parse_output(_last_text(response.content))
+                    result = _parse_output(_last_text(response.content))
+                    result.termination_reason = "tool_loop_broken"
+                    return result
                 except (ValidationError, ValueError, json.JSONDecodeError) as exc:
                     raise SchemaRepairError("Forced-final response was not valid JSON") from exc
 
