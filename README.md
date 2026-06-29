@@ -46,6 +46,49 @@ warren/
 └── logs/runs/      # JSONL run traces
 ```
 
+## Nightly Scheduler
+
+Warren can run autonomously at 2 AM via the OS scheduler. The process is short-lived (not a daemon) — it starts, runs, and exits.
+
+### macOS (launchd)
+
+```bash
+# Install — reads API keys from .env and injects them via PlistBuddy (never stored in the template)
+bash scripts/install_scheduler.sh
+
+# Verify the job is registered
+launchctl list | grep warren
+
+# Check logs
+tail -f logs/launchd_stdout.log
+tail -f logs/launchd_stderr.log
+
+# Manual trigger (runs immediately, same as the scheduled run)
+python -m agent.run
+
+# Uninstall
+bash scripts/uninstall_scheduler.sh
+```
+
+### Linux (cron)
+
+```bash
+# Install — reads API keys from .env and injects them into the cron entry
+bash scripts/install_cron.sh
+
+# Verify the entry
+crontab -l | grep warren
+
+# Check logs
+tail -f logs/cron.log
+
+# Manual trigger
+python -m agent.run
+
+# Uninstall — remove the warren line from your crontab
+crontab -e
+```
+
 ## Environment variables
 
 | Variable | Purpose |
