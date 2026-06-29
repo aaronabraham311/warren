@@ -9,6 +9,7 @@ import anthropic
 from dotenv import load_dotenv
 
 from agent.budget import Budget, RunContext
+from agent.cooldown import filter_universe_for_cooldown
 from agent.loop import CostAbortedError, analyze_ticker
 from agent.models import DEFAULT_MODEL_ID
 from agent.persona import DefaultPersona, DirtPersona
@@ -21,7 +22,9 @@ from agent.portfolio import (
     sync_watchlist_to_db,
 )
 from agent.routing import PhaseBasedRouting
+from agent.screening import run_screening_pass
 from agent.tools._clients import yfinance_client
+from agent.universe import get_current_universe
 from data_sources.yfinance_client import PriceData
 
 load_dotenv()  # must precede storage.engine import so WARREN_DB is applied before engine creation
@@ -40,6 +43,7 @@ from storage.recovery import reconcile_orphans  # noqa: E402
 _LOG_DIR = Path("logs/runs")
 _PORTFOLIO_FILE = Path("data/portfolio.csv")
 _WATCHLIST_FILE = Path("data/watchlist.csv")
+_MAX_SCREEN_CANDIDATES = 3
 
 
 def _build_portfolio_context(portfolio_file: Path) -> str:
@@ -182,7 +186,7 @@ def main() -> None:
         "ticker",
         nargs="?",
         default=None,
-        help="Ticker symbol to analyse (omit for full portfolio+watchlist run)",
+        help="Ticker to analyse. Omit for nightly mode: screen universe + analyse holdings.",
     )
     parser.add_argument(
         "--skip-ticker-validation",
@@ -194,6 +198,11 @@ def main() -> None:
         choices=["default", "dirt"],
         default="default",
         help="Analysis persona: 'default' (Lynch/Buffett) or 'dirt' (deep-value DIRT methodology)",
+    )
+    parser.add_argument(
+        "--no-batch",
+        action="store_true",
+        help="Use sequential (non-batch) screening — immediate results, no 50%% discount",
     )
     args = parser.parse_args()
 
@@ -221,19 +230,36 @@ def main() -> None:
     client = anthropic.Anthropic()
     portfolio_context = _build_portfolio_context(_PORTFOLIO_FILE)
 
-    # Build ticker list: single-ticker mode or full portfolio+watchlist run
+    holdings: list[Holding] = load_portfolio(_PORTFOLIO_FILE, validate_tickers=False)
+    watchlist: list[WatchlistEntry] = (
+        load_watchlist(_WATCHLIST_FILE) if _WATCHLIST_FILE.exists() else []
+    )
+
     if args.ticker is not None:
+        # Single-ticker deep analysis
         tickers: list[tuple[str, Literal["holding", "discovery"]]] = [
             (args.ticker.upper(), "holding")
         ]
     else:
-        holdings: list[Holding] = load_portfolio(_PORTFOLIO_FILE, validate_tickers=False)
-        watchlist: list[WatchlistEntry] = (
-            load_watchlist(_WATCHLIST_FILE) if _WATCHLIST_FILE.exists() else []
+        # Nightly mode: screen S&P 500 union watchlist, then analyse holdings + top candidates
+        watchlist_tickers = [e.ticker for e in watchlist]
+        with get_session() as session:
+            universe = get_current_universe(session, watchlist_tickers)
+            cooldown_result = filter_universe_for_cooldown(universe, session, recent_news={})
+
+        screening = run_screening_pass(
+            cooldown_result.active,
+            persona.system_prompt,
+            use_batch_api=not args.no_batch,
+            logger=logger,
         )
-        tickers = [(h.ticker, "holding") for h in holdings] + [
-            (e.ticker, "discovery") for e in watchlist
-        ]
+        candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]
+        print(
+            f"Screening surfaced {len(screening.candidates)} candidates; "
+            f"analysing top {len(candidates)}: {candidates}"
+        )
+
+        tickers = [(h.ticker, "holding") for h in holdings] + [(c, "discovery") for c in candidates]
 
     status, error_msg = _run_tickers(
         tickers, run_id, budget, logger, persona, routing_policy, client, portfolio_context

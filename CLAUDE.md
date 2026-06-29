@@ -150,8 +150,9 @@ not the model output — tests exercise the real parsing path. Load them with
 
 ```bash
 uv sync                        # install / sync deps
-python -m agent.run AAPL       # single ticker
-python -m agent.run            # full portfolio run
+python -m agent.run AAPL       # single ticker deep analysis
+python -m agent.run            # nightly mode: screen universe → deep-analyse top 3 candidates
+python -m agent.run --no-batch # nightly mode with sequential (non-batch) screening
 ruff check .                   # lint
 ruff format .                  # format
 mypy .                         # type check
