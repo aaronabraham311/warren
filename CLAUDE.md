@@ -19,6 +19,7 @@ agent/
   cooldown.py     # Discovery cooldown — filter_universe_for_cooldown(), has_material_event(), set_cooldown(), get_cooldown_entry(), clear_cooldown(); 7-day dedup with material-news override
   portfolio.py    # load_portfolio/load_watchlist (validated) + sync_*_to_db snapshots
   universe.py     # get_current_universe(session, watchlist) → sorted S&P 500 ∪ watchlist for the Haiku screening prefix. Weekly-refreshed (UniverseSnapshot single-row table); SP500Client fetch with data/sp500.csv fallback. Deterministic sort keeps the cache prefix byte-stable.
+  screening.py    # run_screening_pass(universe, system_prompt, ...) → ScreeningResult — Haiku PASS/FAIL filter over the universe. Batch API path (async, 50% discount) and sequential path (immediate, for local dev). Cooldown filtering is the caller's responsibility.
   loop.py         # Main agentic loop — sends messages, handles tool calls
   persona.py      # System prompt / persona definition
   routing.py      # RoutingPolicy Protocol + strategy objects: PhaseBasedRouting (screen→Haiku, deep→Sonnet, synthesize→Opus via DefaultOpusTrigger's 3 independent §4.2 conditions) and HardcodedSonnetRouting (eval baseline). Swappable into analyze_ticker() with zero loop changes.
@@ -75,6 +76,7 @@ tests/
   test_agent_loop.py
   test_{yfinance,edgar,finnhub,gdelt}_client.py
   test_adverse_media.py
+  test_screening.py
 
 data/
   portfolio.csv   # ticker, shares, cost_basis, purchase_date
@@ -148,8 +150,9 @@ not the model output — tests exercise the real parsing path. Load them with
 
 ```bash
 uv sync                        # install / sync deps
-python -m agent.run AAPL       # single ticker
-python -m agent.run            # full portfolio run
+python -m agent.run AAPL       # single ticker deep analysis
+python -m agent.run            # nightly mode: screen universe → deep-analyse top 3 candidates
+python -m agent.run --no-batch # nightly mode with sequential (non-batch) screening
 ruff check .                   # lint
 ruff format .                  # format
 mypy .                         # type check
