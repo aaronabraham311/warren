@@ -141,6 +141,45 @@ Then drive it with the **claude-in-chrome** MCP (`navigate` → `computer` scree
 expand a card's "🔍 Reasoning trace" and an output `st.json` to confirm payloads). If
 the Chrome extension isn't connected, fall back to `open http://localhost:8533`.
 
+### Verify the UI in a browser — required for any page/widget you add or change
+
+`AppTest` proves the *logic*; it does **not** prove the page actually renders or that a
+widget is wired to the right behaviour. For every UI element you add or modify, drive it
+with the claude-in-chrome MCP and **screenshot each state** — don't just load the page
+once and declare it done. Exercise each interactive control and confirm the result
+changes as expected:
+
+1. **Initial load** — screenshot the default state; confirm the result count, headers,
+   and that no error/traceback banner is showing.
+2. **Each input** — type into text inputs, add/remove `multiselect` chips, drag sliders,
+   pick dates — and screenshot after each, asserting the visible output changed (e.g. the
+   result count drops, rows narrow to the filtered set, a badge/label appears).
+3. **Each expander/button/action** — click it and screenshot the opened/triggered state
+   (e.g. a card's "🔍 Reasoning trace" expands to show the LLM-turn / tool-call steps).
+4. **Edge states** — drive filters to an empty result and confirm the `st.info` +
+   `st.stop` path renders, not a blank page or a stack trace.
+5. **Console + server are clean** — `read_console_messages(onlyErrors=true)` and
+   `grep -iE 'error|traceback|exception' streamlit.log` should both come back empty.
+
+Save the key screenshots (`save_to_disk=true`) so the verification is reviewable.
+
+**Gotcha — Streamlit reruns asynchronously, so the screenshot can race the rerun.**
+A `multiselect` removal or a slider drag commits over the websocket and the page reruns a
+beat later; a screenshot taken immediately can still show the *old* result count. If the
+count looks wrong, take one more screenshot (or a no-op scroll) and re-check before
+concluding the widget is broken — the value usually settles on the next frame. Sliders in
+particular commit on handle *release* (use `left_click_drag`), not while dragging.
+
+> Want true cross-browser / visual-regression e2e (real widget interactions, CSS, layout)?
+> Streamlit renders an ordinary web app, so **Playwright works** — target the stable
+> `data-testid` hooks (`stSidebar`, `stExpander`, `stMarkdownContainer`, …) and
+> `get_by_text`/`get_by_role`, never the hashed CSS classes; wait on elements (or network
+> idle), never fixed sleeps, because of the async reruns above. Streamlit's own repo uses
+> Playwright for its e2e suite. We don't depend on it today — `AppTest` covers logic and
+> the claude-in-chrome screenshot pass above covers rendering/interaction — so add
+> Playwright only if we need automated visual regression in CI (it's a real dep: browser
+> binaries, a running server, slower/flakier runs).
+
 ---
 
 ## Common debugging
@@ -178,6 +217,8 @@ the code.** The usual cause is a zombie/stale Streamlit process, not a bug:
 uv run ruff check . && uv run ruff format . && uv run mypy . && uv run pytest -q
 ```
 
-For a UI change, also launch the app and verify the rendered page (screenshot via
-claude-in-chrome), since `AppTest` covers logic but not visual layout. Update
-`CLAUDE.md` (directory map / commands / env vars) in the same change if structure moved.
+For a UI change, also do the **browser verification pass** above — launch the app and
+screenshot every state of each control you added/changed (claude-in-chrome), since
+`AppTest` covers logic but not rendering, layout, or that a widget is wired correctly.
+Update `CLAUDE.md` (directory map / commands / env vars) in the same change if structure
+moved.
