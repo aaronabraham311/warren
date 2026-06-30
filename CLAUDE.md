@@ -72,16 +72,18 @@ eval/
 
 dashboard/        # Streamlit read-only dashboard (never triggers a run)
   app.py          # Multi-page entrypoint — `streamlit run dashboard/app.py`; st.navigation + set_page_config
-  data.py         # Pure data access over the ORM + JSONL logs (no Streamlit) — get_latest_run, get_analyses_for_run (§9.Q3 sort), read_reasoning_trace
+  data.py         # Pure data access over the ORM + JSONL logs (no Streamlit) — get_latest_run, get_analyses_for_run (§9.Q3 sort), search_analyses (History filters), read_reasoning_trace
   pages/today.py  # Today page: run-metadata header + holdings/discovery cards
-  components/analysis_card.py  # render_analysis_card / render_reasoning_trace (full sequential trace; reused by future History page)
-  seed_demo.py    # Dev tool: `python -m dashboard.seed_demo` seeds a demo run + JSONL trace for a dashboard walkthrough
+  pages/history.py  # History page: sidebar filters (ticker/recommendation/date/confidence) → searchable recommendation archive
+  components/analysis_card.py  # render_analysis_card (optional prompt_version label) / render_reasoning_trace; reused by Today + History
+  seed_demo.py    # Dev tool: `python -m dashboard.seed_demo` seeds a demo run + history runs (prompt versions) + JSONL trace for a dashboard walkthrough
 
 tests/
   conftest.py     # Shared fixtures (db_engine, db_session, mock_claude,
                   #   edgar_fixture, finnhub_fixture, gdelt_fixture, autouse _no_live_network guard)
   test_agent_loop.py
   test_dashboard_today.py  # data-layer + headless streamlit AppTest integration
+  test_dashboard_history.py  # search_analyses filters + History page AppTest integration
   test_{yfinance,edgar,finnhub,gdelt}_client.py
   test_adverse_media.py
   test_screening.py

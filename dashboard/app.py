@@ -3,8 +3,8 @@
 Run with: `streamlit run dashboard/app.py`
 
 `set_page_config` lives here (Streamlit allows it once per run); pages must not call
-it. Registering a new page is a single `st.Page(...)` line below — the History and
-Eval pages (later tickets) slot in here once they exist.
+it. Registering a new page is a single `st.Page(...)` line below — the Eval page
+(a later ticket) slots in here once it exists.
 """
 
 import sys
@@ -22,7 +22,7 @@ st.set_page_config(page_title="Warren", layout="wide")
 
 pages = [
     st.Page("pages/today.py", title="Today", icon="📊", default=True),
-    # st.Page("pages/history.py", title="History", icon="🕑"),  # W5 blocks; added later
+    st.Page("pages/history.py", title="History", icon="🕑"),
     # st.Page("pages/eval.py", title="Eval", icon="✅"),
 ]
 st.navigation(pages).run()

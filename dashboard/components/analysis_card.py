@@ -24,8 +24,13 @@ def _as_float(value: object) -> float:
     return float(value) if isinstance(value, (int, float)) else 0.0
 
 
-def render_analysis_card(analysis: Analysis) -> None:
-    """Render one analysis as a colour-coded, expandable card."""
+def render_analysis_card(analysis: Analysis, *, prompt_version: str | None = None) -> None:
+    """Render one analysis as a colour-coded, expandable card.
+
+    When `prompt_version` is given (the History page passes it), the card's date and the
+    prompt version tag are appended to the label so rows from different runs are
+    distinguishable. The Today page omits it, leaving its single-run labels unchanged.
+    """
     badge = _REC_BADGES.get(analysis.recommendation or "", "⚪")
     recommendation = (analysis.recommendation or "n/a").upper()
     confidence = analysis.confidence or 0.0
@@ -38,6 +43,9 @@ def render_analysis_card(analysis: Analysis) -> None:
         f"{badge} **{analysis.ticker}** — {recommendation} "
         f"(confidence: {confidence:.0%}){dq_suffix}"
     )
+    if prompt_version is not None:
+        created = analysis.created_at.strftime("%Y-%m-%d") if analysis.created_at else "—"
+        label += f" · {created} · [{prompt_version}]"
     with st.expander(label, expanded=auto_expand):
         if analysis.thesis:
             st.markdown(analysis.thesis)
