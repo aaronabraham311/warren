@@ -70,10 +70,18 @@ eval/
     __main__.py   # CLI: python -m eval.fixtures --record AAPL MSFT GOOG
     {TICKER}/{client}/{method}/{hash}.json   # committed recorded payloads
 
+dashboard/        # Streamlit read-only dashboard (never triggers a run)
+  app.py          # Multi-page entrypoint — `streamlit run dashboard/app.py`; st.navigation + set_page_config
+  data.py         # Pure data access over the ORM + JSONL logs (no Streamlit) — get_latest_run, get_analyses_for_run (§9.Q3 sort), read_reasoning_trace
+  pages/today.py  # Today page: run-metadata header + holdings/discovery cards
+  components/analysis_card.py  # render_analysis_card / render_reasoning_trace (full sequential trace; reused by future History page)
+  seed_demo.py    # Dev tool: `python -m dashboard.seed_demo` seeds a demo run + JSONL trace for a dashboard walkthrough
+
 tests/
   conftest.py     # Shared fixtures (db_engine, db_session, mock_claude,
                   #   edgar_fixture, finnhub_fixture, gdelt_fixture, autouse _no_live_network guard)
   test_agent_loop.py
+  test_dashboard_today.py  # data-layer + headless streamlit AppTest integration
   test_{yfinance,edgar,finnhub,gdelt}_client.py
   test_adverse_media.py
   test_screening.py
@@ -144,6 +152,7 @@ not the model output — tests exercise the real parsing path. Load them with
 - Environment variables are loaded once at startup via `dotenv.load_dotenv()` in `agent/run.py`. Everywhere else, read with `os.environ["KEY"]` — no repeated `load_dotenv()` calls.
 - Do not commit `.env`, `warren.db`, or anything under `logs/`.
 - `local/` is a gitignored scratch dir for review notes, findings, and throwaway artifacts — never shipped or imported by code.
+- **Working on the Streamlit dashboard (`dashboard/`)? Use the `/streamlit` skill** — it covers the three-layer structure, `AppTest` e2e testing, running the app, `python -m dashboard.seed_demo`, and the stale-server/port debugging gotchas.
 - **Prefer `@dataclass` over plain tuples for multi-value returns** (named fields, no positional unpacking drift). Use `NamedTuple` only for genuinely tuple-like data (e.g. a coordinate pair). Raw tuples are fine for single-purpose, immediately-unpacked returns.
 
 ## Common commands
@@ -157,6 +166,8 @@ ruff check .                   # lint
 ruff format .                  # format
 mypy .                         # type check
 pytest                         # run tests
+streamlit run dashboard/app.py # launch the read-only dashboard (Today page)
+python -m dashboard.seed_demo  # seed a demo run + trace to view the dashboard without a real run
 ```
 
 ## Definition of done
@@ -169,3 +180,4 @@ Before claiming a task complete, run and pass `ruff check .`, `mypy .`, and `pyt
 |---|---|
 | `ANTHROPIC_API_KEY` | `agent/run.py` — constructs the Anthropic client |
 | `WARREN_DB` | `storage/engine.py` — SQLite path override (default: `warren.db`) |
+| `WARREN_LOGS_DIR` | `dashboard/data.py` — JSONL run-log dir for the reasoning trace (default: `logs/runs`) |
