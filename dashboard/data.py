@@ -8,12 +8,14 @@ strictly read-only — it never writes to `warren.db` or triggers an analysis.
 
 import json
 import os
+from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 
-from sqlalchemy import case, select
+from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
-from storage.models import Analysis, Run
+from storage.models import Analysis, PromptVersion, Run
 
 # Event kinds from RunLogger that make up a ticker's reasoning trace.
 _TRACE_EVENTS = {"tool_call", "llm_call"}
@@ -39,6 +41,61 @@ def get_analyses_for_run(session: Session, run_id: str) -> list[Analysis]:
             .order_by(hold_last.asc(), Analysis.confidence.desc())
         )
     )
+
+
+@dataclass
+class AnalysisSearchResult:
+    """One History-page row: an analysis plus the prompt version that produced it.
+
+    `prompt_version` is the `version_tag` joined through `runs → prompt_versions`, or
+    `None` when the run has no linked prompt version (older runs, or seeds without one).
+    """
+
+    analysis: Analysis
+    prompt_version: str | None
+
+
+def search_analyses(
+    session: Session,
+    *,
+    ticker: str | None = None,
+    recommendations: list[str] | None = None,
+    date_from: date | None = None,
+    date_to: date | None = None,
+    conf_min: float = 0.0,
+    conf_max: float = 1.0,
+    limit: int = 500,
+) -> list[AnalysisSearchResult]:
+    """Filtered, newest-first search across every analysis for the History page.
+
+    Each active filter narrows the query: `ticker` is a case-insensitive `LIKE` substring
+    match, `recommendations` an `IN` set, `date_from`/`date_to` bound the calendar day of
+    `created_at`, and `conf_min`/`conf_max` bound confidence. Results are ordered newest
+    first and capped at `limit` (the `idx_analyses_ticker_created` index keeps this fast).
+    The prompt version tag is joined in via `runs → prompt_versions`.
+    """
+    stmt = (
+        select(Analysis, PromptVersion.version_tag)
+        .outerjoin(Run, Analysis.run_id == Run.id)
+        .outerjoin(PromptVersion, Run.prompt_version_id == PromptVersion.id)
+    )
+    if ticker:
+        stmt = stmt.where(Analysis.ticker.like(f"%{ticker.upper()}%"))
+    if recommendations:
+        stmt = stmt.where(Analysis.recommendation.in_(recommendations))
+    if date_from is not None:
+        stmt = stmt.where(func.date(Analysis.created_at) >= str(date_from))
+    if date_to is not None:
+        stmt = stmt.where(func.date(Analysis.created_at) <= str(date_to))
+    stmt = (
+        stmt.where(Analysis.confidence.between(conf_min, conf_max))
+        .order_by(Analysis.created_at.desc())
+        .limit(limit)
+    )
+    return [
+        AnalysisSearchResult(analysis=analysis, prompt_version=version_tag)
+        for analysis, version_tag in session.execute(stmt)
+    ]
 
 
 def run_duration_seconds(run: Run) -> float | None:
