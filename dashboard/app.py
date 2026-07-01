@@ -23,6 +23,7 @@ st.set_page_config(page_title="Warren", layout="wide")
 pages = [
     st.Page("pages/today.py", title="Today", icon="📊", default=True),
     st.Page("pages/history.py", title="History", icon="🕑"),
+    st.Page("pages/metrics.py", title="Metrics", icon="📈"),
     # st.Page("pages/eval.py", title="Eval", icon="✅"),
 ]
 st.navigation(pages).run()
