@@ -246,6 +246,11 @@ def main() -> None:
         with get_session() as session:
             universe = get_current_universe(session, watchlist_tickers)
             cooldown_result = filter_universe_for_cooldown(universe, session, recent_news={})
+        logger.log(
+            "discovery_cooldown_applied",
+            suppressed_count=len(cooldown_result.suppressed),
+            suppressed_tickers=cooldown_result.suppressed,
+        )
 
         screening = run_screening_pass(
             cooldown_result.active,

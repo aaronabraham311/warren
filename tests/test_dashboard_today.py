@@ -7,6 +7,7 @@ to cover the acceptance criteria that depend on actual rendering (auto-expand, t
 """
 
 import json
+import subprocess
 from collections.abc import Generator
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -20,8 +21,10 @@ from streamlit.testing.v1 import AppTest
 
 import storage.engine as eng
 from dashboard.data import (
+    cooldown_suppressed_count,
     get_analyses_for_run,
     get_latest_run,
+    previous_recommendation,
     read_reasoning_trace,
     run_duration_seconds,
 )
@@ -130,6 +133,47 @@ def test_read_reasoning_trace_filters_by_ticker_and_event(tmp_path: Path) -> Non
 
 def test_read_reasoning_trace_missing_file(tmp_path: Path) -> None:
     assert read_reasoning_trace("nope", "AAPL", base_dir=tmp_path) == []
+
+
+def test_cooldown_suppressed_count_reads_event(tmp_path: Path) -> None:
+    log = tmp_path / "run-1.jsonl"
+    lines = [
+        {"event": "run_started", "run_id": "run-1"},
+        {"event": "discovery_cooldown_applied", "suppressed_count": 4, "suppressed_tickers": []},
+    ]
+    log.write_text("\n".join(json.dumps(line) for line in lines) + "\n", encoding="utf-8")
+    assert cooldown_suppressed_count("run-1", base_dir=tmp_path) == 4
+
+
+def test_cooldown_suppressed_count_zero_when_event_absent(tmp_path: Path) -> None:
+    log = tmp_path / "run-1.jsonl"
+    log.write_text(json.dumps({"event": "run_started", "run_id": "run-1"}) + "\n", encoding="utf-8")
+    assert cooldown_suppressed_count("run-1", base_dir=tmp_path) == 0
+
+
+def test_cooldown_suppressed_count_zero_when_file_missing(tmp_path: Path) -> None:
+    assert cooldown_suppressed_count("nope", base_dir=tmp_path) == 0
+
+
+def test_previous_recommendation_returns_most_recent_before(db_session: Session) -> None:
+    db_session.add_all([_make_run("run-1"), _make_run("run-2")])
+    earlier = _make_analysis("run-1", "AAPL", recommendation="sell", confidence=0.5)
+    earlier.created_at = _RUN_START - timedelta(days=5)
+    later = _make_analysis("run-2", "AAPL", recommendation="hold", confidence=0.5)
+    later.created_at = _RUN_START - timedelta(days=1)
+    db_session.add_all([earlier, later])
+    db_session.commit()
+
+    prior = previous_recommendation(db_session, "AAPL", _RUN_START)
+    assert prior == "hold"
+
+
+def test_previous_recommendation_none_when_no_earlier_analysis(db_session: Session) -> None:
+    db_session.add(_make_run())
+    db_session.add(_make_analysis("run-1", "NVDA", recommendation="buy", confidence=0.9))
+    db_session.commit()
+
+    assert previous_recommendation(db_session, "NVDA", _RUN_START - timedelta(days=100)) is None
 
 
 # --------------------------------------------------------------------------- #
@@ -293,3 +337,123 @@ def test_apptest_data_quality_badge_in_label(today_env: SimpleNamespace) -> None
     assert not at.exception
     aapl_label = next(e.label for e in at.expander if "AAPL" in e.label)
     assert "⚠️" in aapl_label
+
+
+def test_apptest_suppressed_count_metric_column(today_env: SimpleNamespace) -> None:
+    _seed(today_env.engine, [_make_analysis("run-1", "AAPL")])
+    log = today_env.logs_dir / "run-1.jsonl"
+    log.write_text(
+        json.dumps({"event": "discovery_cooldown_applied", "suppressed_count": 4}) + "\n",
+        encoding="utf-8",
+    )
+    at = AppTest.from_file(_TODAY_PAGE).run()
+    assert not at.exception
+    metrics = {m.label: m.value for m in at.metric}
+    assert metrics["Suppressed (cooldown)"] == "4"
+
+
+def test_apptest_run_status_banner_on_failed_run(today_env: SimpleNamespace) -> None:
+    failed_run = _make_run()
+    failed_run.status = "failed"
+    failed_run.error_msg = "cost ceiling reached after AAPL"
+    _seed(today_env.engine, [_make_analysis("run-1", "AAPL")], run=failed_run)
+    at = AppTest.from_file(_TODAY_PAGE).run()
+    assert not at.exception
+    error_text = " ".join(e.value for e in at.error)
+    assert "failed" in error_text
+    assert "cost ceiling reached after AAPL" in error_text
+
+
+def test_apptest_no_status_banner_on_success(today_env: SimpleNamespace) -> None:
+    _seed(today_env.engine, [_make_analysis("run-1", "AAPL")])
+    at = AppTest.from_file(_TODAY_PAGE).run()
+    assert not at.exception
+    assert len(at.error) == 0
+
+
+def test_apptest_budget_banner_over_monthly_ceiling(today_env: SimpleNamespace) -> None:
+    over_budget_run = _make_run()
+    over_budget_run.total_cost_usd = 19.0
+    _seed(today_env.engine, [_make_analysis("run-1", "AAPL")], run=over_budget_run)
+    at = AppTest.from_file(_TODAY_PAGE).run()
+    assert not at.exception
+    warning_text = " ".join(w.value for w in at.warning)
+    assert "approaching the $20 ceiling" in warning_text
+
+
+def test_apptest_no_budget_banner_under_ceiling(today_env: SimpleNamespace) -> None:
+    _seed(today_env.engine, [_make_analysis("run-1", "AAPL")])  # default cost 0.1234
+    at = AppTest.from_file(_TODAY_PAGE).run()
+    assert not at.exception
+    warning_text = " ".join(w.value for w in at.warning)
+    assert "approaching the $20 ceiling" not in warning_text
+
+
+def test_apptest_prior_recommendation_delta_shown(today_env: SimpleNamespace) -> None:
+    with Session(today_env.engine) as session:
+        session.add(Run(id="run-0", started_at=_RUN_START - timedelta(days=1)))
+        session.flush()  # insert the run before its analysis (FK enforced on file DB)
+        older = _make_analysis("run-0", "AAPL", recommendation="hold", confidence=0.5)
+        older.created_at = _RUN_START - timedelta(days=1)
+        session.add(older)
+        session.commit()
+    _seed(
+        today_env.engine,
+        [_make_analysis("run-1", "AAPL", recommendation="buy", confidence=0.9)],
+    )
+    at = AppTest.from_file(_TODAY_PAGE).run()
+    assert not at.exception
+    aapl_label = next(e.label for e in at.expander if "AAPL" in e.label)
+    assert "was HOLD" in aapl_label
+
+
+def test_apptest_no_delta_when_recommendation_unchanged(today_env: SimpleNamespace) -> None:
+    with Session(today_env.engine) as session:
+        session.add(Run(id="run-0", started_at=_RUN_START - timedelta(days=1)))
+        session.flush()
+        older = _make_analysis("run-0", "AAPL", recommendation="buy", confidence=0.5)
+        older.created_at = _RUN_START - timedelta(days=1)
+        session.add(older)
+        session.commit()
+    _seed(
+        today_env.engine,
+        [_make_analysis("run-1", "AAPL", recommendation="buy", confidence=0.9)],
+    )
+    at = AppTest.from_file(_TODAY_PAGE).run()
+    assert not at.exception
+    aapl_label = next(e.label for e in at.expander if "AAPL" in e.label)
+    assert "was" not in aapl_label
+
+
+def test_apptest_run_now_button_success(
+    today_env: SimpleNamespace, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _seed(today_env.engine, [_make_analysis("run-1", "AAPL")])
+
+    def _fake_run(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        return subprocess.CompletedProcess(args=[], returncode=0, stdout="", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", _fake_run)
+    at = AppTest.from_file(_TODAY_PAGE).run()
+    assert not at.exception
+    at.button[0].click().run()
+    assert not at.exception
+    success_text = " ".join(s.value for s in at.success)
+    assert "Run completed" in success_text
+
+
+def test_apptest_run_now_button_failure(
+    today_env: SimpleNamespace, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    _seed(today_env.engine, [_make_analysis("run-1", "AAPL")])
+
+    def _fake_run(*args: object, **kwargs: object) -> subprocess.CompletedProcess[str]:
+        return subprocess.CompletedProcess(args=[], returncode=1, stdout="", stderr="boom")
+
+    monkeypatch.setattr(subprocess, "run", _fake_run)
+    at = AppTest.from_file(_TODAY_PAGE).run()
+    at.button[0].click().run()
+    assert not at.exception
+    error_text = " ".join(e.value for e in at.error)
+    assert "Run failed" in error_text
+    assert "boom" in error_text

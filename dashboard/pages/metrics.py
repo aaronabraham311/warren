@@ -20,6 +20,7 @@ import pandas as pd  # noqa: E402
 import streamlit as st  # noqa: E402
 
 from dashboard.data import (  # noqa: E402
+    MONTHLY_WARNING_THRESHOLD_USD,
     cache_hit_rate,
     get_recent_runs_with_tokens,
     monthly_cost,
@@ -30,7 +31,6 @@ from storage.engine import get_session  # noqa: E402
 # Tech Spec success criterion: stay under $20/mo. Bars/banner flag runs and months
 # approaching that ceiling.
 _COST_ALERT_THRESHOLD_USD = 1.25
-_MONTHLY_WARNING_THRESHOLD_USD = 18.0
 
 st.title("Warren · Run Metrics")
 
@@ -112,7 +112,7 @@ with get_session() as session:
         }
     )
     st.dataframe(monthly_df, use_container_width=True)
-    if not monthly_df.empty and monthly_df.iloc[0]["monthly_cost"] > _MONTHLY_WARNING_THRESHOLD_USD:
+    if not monthly_df.empty and monthly_df.iloc[0]["monthly_cost"] > MONTHLY_WARNING_THRESHOLD_USD:
         st.warning(
             f"⚠️ This month's cost is ${monthly_df.iloc[0]['monthly_cost']:.2f} "
             f"— approaching the $20 ceiling."
