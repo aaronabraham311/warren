@@ -1,0 +1,578 @@
+{
+  "data": {
+    "days": 7,
+    "items": [
+      {
+        "datetime": "2026-07-09T12:15:00Z",
+        "headline": "Why Is Exxon Mobil (XOM) Taking Cuba To Court Again?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Exxon Mobil Corporation (NYSE:XOM) is one of the 10 Best Major Stocks to Buy According to Analysts. On July 3, RBC Capital analyst Biraj Borkhataria reiterated a Hold rating on Exxon Mobil Corporation (NYSE:XOM) stock and set a target price of $180. The firm\u2019s price target reflects 32% upside from current levels, which sits just [\u2026]",
+        "url": "https://finnhub.io/api/news?id=5880954484b49a77e836bd76edaf67da04d1b2a5bc7c94fb9d62c81641099bcb"
+      },
+      {
+        "datetime": "2026-07-09T12:12:51Z",
+        "headline": "Are Energy Stocks Still A Long-Term Buy (Technical Analysis)?",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Sentiment indicators in the energy sector are nearing a long-term buy but have not yet reached levels that triggered previous buying signals. Click for more.",
+        "url": "https://finnhub.io/api/news?id=f310b257d411a9d535dae2cbff601315183beadd0d4bf51c79ff959e7327909a"
+      },
+      {
+        "datetime": "2026-07-09T11:15:24Z",
+        "headline": "Coca-Cola vs Exxon: Which Blue Chip Won the Decade?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "One blue chip quietly compounded dividends for 64 straight years while the other got kicked out of the Dow during a historic crash. A thousand dollars placed in each tells a surprisingly complicated story about which path actually paid off.",
+        "url": "https://finnhub.io/api/news?id=f6d7c4af919cb6a364822e6bc3326bed53244e2255099319aa637d709d68bc91"
+      },
+      {
+        "datetime": "2026-07-09T10:50:00Z",
+        "headline": "ExxonMobil vs. Chevron: Which Oil Dividend Stock is the Better Buy for a Lifetime of Passive Income",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "These two oil giants go head-to-head.",
+        "url": "https://finnhub.io/api/news?id=72f1f8ba52e949b4b82ab2f6f5c8f491b1e30e720a565dfa8d4f5df1e9146b0f"
+      },
+      {
+        "datetime": "2026-07-09T10:30:00Z",
+        "headline": "Imperial Oil: I Will Be Selling My Residual Position",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Imperial Oil stock remains a \"Hold\" with solid production, resilient free cash flow, and 2026 guidance. Here's what you need to know about IMO.",
+        "url": "https://finnhub.io/api/news?id=c06146a59e7a8a373d909dcae295e0c5200d220813d0126554f091164759fa95"
+      },
+      {
+        "datetime": "2026-07-09T10:18:53Z",
+        "headline": "ExxonMobil and partners commit $1bn to launch Usan Infill Project",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The project is expected to add 40,000bpd of oil production in Nigeria.",
+        "url": "https://finnhub.io/api/news?id=b6b4cce17d3f866e98fbaf51a79e1048dd9a04fd77a9cba9a0a1d0413e03bb3e"
+      },
+      {
+        "datetime": "2026-07-09T10:00:22Z",
+        "headline": "What To Expect From June's Inflation Report As Chip Prices Rise, Energy Falls",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Memory inflation, driven by OpenAI's massive DRAM orders and supply constraints, is expected to persist until at least 2028. Read more here.",
+        "url": "https://finnhub.io/api/news?id=5841936222387fd6c1e8a181ac1ed132374a92d90d6cd6e64f138d8bfa69e128"
+      },
+      {
+        "datetime": "2026-07-09T09:29:40Z",
+        "headline": "Mizuho Maintains Neutral on ExxonMobil Holdings, Lowers Price Target to $170",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Mizuho  analyst Nitin Kumar   maintains ExxonMobil Holdings (NYSE:XOM) with a Neutral and lowers the price target from $175 to $170.",
+        "url": "https://finnhub.io/api/news?id=8a5ab6cad5a0bf3a7e16349168720f60447562f9db1d1b522c99b4a5a28ad322"
+      },
+      {
+        "datetime": "2026-07-09T05:54:51Z",
+        "headline": "Apple Hands Broadcom a $30 Billion Lifeline as Trump Declares the Iran Ceasefire Dead",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Broadcom rallied on a $30 billion Apple chip commitment and Nvidia climbed on a value case, while a weak Amazon bond sale hinted at cooling AI-capex appetite. Overnight, Trump declared the Iran ceasefire over and U.S. strikes on more than 80 targets sent oil and Treasury yields higher heading into Thursday's open.",
+        "url": "https://finnhub.io/api/news?id=7534d58bcc652d7233f82430056a296a3cc984025ebbffb4ff3fe45a122b5bf7"
+      },
+      {
+        "datetime": "2026-07-09T04:00:32Z",
+        "headline": "Iran war windfall puts Big Oil on collision course with Trump",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "America\u2019s Big Oil groups are set to post record profits stemming from Donald Trump\u2019s Iran war, setting them on a collision course with the US...",
+        "url": "https://finnhub.io/api/news?id=7ebcca6893c7fdef7c1dafea0e2783c27bcb75a5809f7401f09d91ae059c00db"
+      },
+      {
+        "datetime": "2026-07-08T20:05:55Z",
+        "headline": "CVX Handed Shareholders $115 Bil In Five Years",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chevron showered its owners with a fortune in cash, but the real question is what that money says about the company's future.",
+        "url": "https://finnhub.io/api/news?id=5fc001567101399c292866a4ec88848e04f2a46dbbeb1398294786f10dba61cf"
+      },
+      {
+        "datetime": "2026-07-08T19:30:00Z",
+        "headline": "Exxon Mobil updates Q2 earnings considerations, cites impacts across key businesses",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Exxon Mobil Corp (NYSE:XOM, XETRA:XONA) updated its second quarter 2026 earnings considerations after the market close on Tuesday, prompting UBS to slightly lower its earnings estimate while noting stronger quarter-over-quarter performance across the company's major business...",
+        "url": "https://finnhub.io/api/news?id=e402ddff2c31feb84e25d8130929348e32ac7a8b9c27d9d1e4ae9ae8e5cf0911"
+      },
+      {
+        "datetime": "2026-07-08T19:12:44Z",
+        "headline": "What ExxonMobil (XOM)'s Texas Move and Governance Overhaul Means For Shareholders",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In early July 2026, Exxon Mobil Corporation completed its redomiciliation merger to Texas, overhauled its charter and by-laws, and closed several long-running ESOP-related shelf registrations while a new, smaller board and refreshed executive team took office. These governance and structural changes coincided with a sharp oil price spike linked to renewed U.S.-Iran tensions, amplifying attention on how ExxonMobil\u2019s tighter share structure and leaner leadership could influence its response to...",
+        "url": "https://finnhub.io/api/news?id=b55df9887510b07c5f27a965fb847656c104ef4b72c5f899fba3b128813460e2"
+      },
+      {
+        "datetime": "2026-07-08T18:39:00Z",
+        "headline": "Micron, Broadcom, Palantir, Delta, SpaceX, and More Stocks That Explain Today\u2019s Market",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stocks fall broadly as the Iran war cease-fire appears to be over. Crude prices rise, pushing many oil stocks higher.",
+        "url": "https://finnhub.io/api/news?id=45854c77af1654d14b7b09b1adeb3222998018077d44d2110fb62f8e56cb0224"
+      },
+      {
+        "datetime": "2026-07-08T17:22:17Z",
+        "headline": "Occidental Petroleum Jumps 4% While ExxonMobil, Chevron Lag: Evercore Upgrade and Oil Spike Fuel OXY\u2019s Lead",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Shares of Occidental Petroleum (NYSE:OXY) are up 4% at midday Wednesday, trading at $53.90. The move puts Occidental well ahead of integrated peers ExxonMobil (NYSE:XOM) and Chevron (NYSE:CVX). ExxonMobil stock is off 1% at $140.51, essentially flat. Meanwhile, Chevron shares are higher by 1% to $176.07, a modest gain that trails Occidental by a wide ... Occidental Petroleum Jumps 4% While ExxonMobil, Chevron Lag: Evercore Upgrade and Oil Spike Fuel OXY\u2019s Lead",
+        "url": "https://finnhub.io/api/news?id=6439d2f91794145c123d89cd9cb6b46dd20c96b146d561134f74218d7245b99f"
+      },
+      {
+        "datetime": "2026-07-08T17:21:00Z",
+        "headline": "What Is SpaceX Really Worth? Wall Street Disagrees on Elon Musk\u2019s Huge Valuation.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Analysts prefer a sum-of-the-parts approach to determining the value of Elon Musk\u2019s rocket and AI company, SpaceX.",
+        "url": "https://finnhub.io/api/news?id=5411ee73d22644b952f2227cebb47f6749f0e0fb4eca9d9a99e4ab8d0a9fc9b9"
+      },
+      {
+        "datetime": "2026-07-08T16:42:35Z",
+        "headline": "Stock Market Today, July 8: Stocks Slide and Dow Drops 1.5% as Middle East Tensions Spike",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "On July 8, 2026, a reescalation of U.S.-Iran tensions sent crude surging and equities tumbling across all three major indexes.",
+        "url": "https://finnhub.io/api/news?id=43f3f9022671f48cbd55c5e7f5cfca2cc7e7b5c7e5f284a3db76b839690dbf22"
+      },
+      {
+        "datetime": "2026-07-08T16:10:02Z",
+        "headline": "Why Exxon (XOM) Could Beat Earnings Estimates Again",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Exxon (XOM) has an impressive earnings surprise history and currently possesses the right combination of the two key ingredients for a likely beat in its next quarterly report.",
+        "url": "https://finnhub.io/api/news?id=0326c2c4065252f30a3228902d1d85d2b92ca1fe4ede7647a524da8e6783e3e8"
+      },
+      {
+        "datetime": "2026-07-08T15:28:00Z",
+        "headline": "Oil Prices Jump After U.S. Strikes Kharg Island, Trump Says Cease-Fire Is \u2018Over\u2019",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The U.S. launched strikes on more than 80 Iranian targets, including Kharg Island, air defense systems, radar sites, and small boats.",
+        "url": "https://finnhub.io/api/news?id=98b5ed934264efe27477812cd78f46bc13fa80e8a0379be5ee8c29796b899520"
+      },
+      {
+        "datetime": "2026-07-08T14:48:08Z",
+        "headline": "ExxonMobil Earnings Jump Nearly $4 Billion on Oil Surge",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Iran conflict-driven crude gains lifted ExxonMobil's second-quarter profit outlook, partly offset by Middle East production losses.",
+        "url": "https://finnhub.io/api/news?id=ee5089ea3d53c79e459da209393c978f61bb0451a2a44320b38ada4c92ac169d"
+      },
+      {
+        "datetime": "2026-07-08T14:05:00Z",
+        "headline": "The Math Behind All the Crazy SpaceX Valuations",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Analysts prefer a sum-of-the-parts approach to determining the value of Elon Musk\u2019s rocket and AI company, SpaceX.",
+        "url": "https://finnhub.io/api/news?id=7dbd4fda6a9a72e38eea3d8006e5b3e63f226959b73176b6d8ab3b962b6962eb"
+      },
+      {
+        "datetime": "2026-07-08T13:22:48Z",
+        "headline": "Sector Update: Energy Stocks Advance Pre-Bell Wednesday",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Energy stocks were advancing pre-bell Wednesday, with the State Street Energy Select Sector SPDR ETF",
+        "url": "https://finnhub.io/api/news?id=cdd0cc4df9b23d01bc75ed053bc2d2a4d461521f5cab9334582ef791894f9c47"
+      },
+      {
+        "datetime": "2026-07-08T13:20:59Z",
+        "headline": "Software and cloud computing names have strong growth scenarios, says ETF Action's Mike Akins",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Mike Akins, ETF Action founding partner, joins 'Halftime Report' to discuss the under-appreciated market trades, catch up trades for the rest of the year and much more.",
+        "url": "https://finnhub.io/api/news?id=c8f467e1ed158fcec22bad8db27051c262b7c5c889f593124c45188044a6eec0"
+      },
+      {
+        "datetime": "2026-07-08T13:19:13Z",
+        "headline": "Stocks making the biggest moves midday: Broadcom, Chevron, Alibaba, Carnival & more",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Here are the companies making headlines in midday trading.",
+        "url": "https://finnhub.io/api/news?id=e3c8c78faca763456a5113d64219c755674488df3e625f6f0fc935d770bbba1a"
+      },
+      {
+        "datetime": "2026-07-08T12:51:59Z",
+        "headline": "Update: US Equity Futures Fall Pre-Bell as Middle East Hostilities Restart, President Trump Declares US-Iran Ceasefire 'Over'",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with economic data, recent oil price movement, world markets' overview and corporate stock",
+        "url": "https://finnhub.io/api/news?id=766e00457ab78fac1725abc35e3b6157d46a4b52032ea008ae917515dd674331"
+      },
+      {
+        "datetime": "2026-07-08T12:34:17Z",
+        "headline": "Ceasefire Cracks, Oil Bounces: Why Exxon, Chevron Stocks Are Hot Again",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Oil prices and energy stocks rise as traders reassess supply disruptions and tensions in the Strait of Hormuz.",
+        "url": "https://finnhub.io/api/news?id=de574011bf2b0bf0477480f733f2b94cc065adff18253229c24bc833c1252745"
+      },
+      {
+        "datetime": "2026-07-08T12:08:00Z",
+        "headline": "Big Oil Battle Royale: Is ExxonMobil or Chevron the Better Buy for 2030 Right Now?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Oil stocks have dipped recently, making these two integrated giants appealing options for investors today.",
+        "url": "https://finnhub.io/api/news?id=682fcc5228c3eacf00d3bc2f2e469e99e47b21c4094a83e79fb57dcad09478d7"
+      },
+      {
+        "datetime": "2026-07-08T11:45:36Z",
+        "headline": "ExxonMobil: Advantaged Assets In The Spotlight",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Middle East tensions and strong commodity prices could boost Exxon Mobil earnings and cash flow. Click to read more about the XOM stock.",
+        "url": "https://finnhub.io/api/news?id=b9d96bb95eb6b93b22f87f1c066880176f6dc91ea483ec92a66a7f2fae2f7905"
+      },
+      {
+        "datetime": "2026-07-08T11:00:02Z",
+        "headline": "3 Calendar Spread Trade Ideas For This Wednesday",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Calendar spreads are an option trade that involves selling a short-term option and buying a longer-term option with the same strike.",
+        "url": "https://finnhub.io/api/news?id=f9ce9cd6b729ec3d883d5329ba2d095955e7327a92559f853111c8fcab5d63b1"
+      },
+      {
+        "datetime": "2026-07-08T09:51:00Z",
+        "headline": "Stock Market News for July 8, 2026",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "U.S. stock markets closed lower on Tuesday following the escalation of war between the United States and Iran.",
+        "url": "https://finnhub.io/api/news?id=b1136afd76b182199220217661575008dbea3a8ba59e879cd7f4f04074ed474c"
+      },
+      {
+        "datetime": "2026-07-08T08:28:07Z",
+        "headline": "Stock Market Today: S&P 500, Dow, Nasdaq Futures Fall as Trump Says Iran Ceasefire Is 'Over'\u2014 Saratoga, Exxon Mobil, Levi's Strauss In Focus (UPDATED)",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "U.S. stock futures declined on Wednesday, as the Dow Jones, Nasdaq 100, and S&amp;P 500 indices fell, following Tuesday&#39;s lower close.",
+        "url": "https://finnhub.io/api/news?id=3d8afd33e7f6ecf1cd6a877db1d9e36334869d897e12edca0b191ce03b5fc621"
+      },
+      {
+        "datetime": "2026-07-08T07:41:39Z",
+        "headline": "Stocks making the biggest moves premarket: United Airlines, Micron, Chevron & more",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "These are the stocks posting the largest moves premarket.",
+        "url": "https://finnhub.io/api/news?id=65ec690e9909d48208e4e6b61fd1efee6de977b8dd8be3badf11ed3382a8d8c5"
+      },
+      {
+        "datetime": "2026-07-08T06:38:36Z",
+        "headline": "From Crude to Chemicals: Why Exxon Is Defying Broader Market Dip",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "ExxonMobil&#39;s rising oil prices boosted expectations for stronger second-quarter upstream earnings despite war-related disruptions and weaker chemical margins.",
+        "url": "https://finnhub.io/api/news?id=3adf1618f65b51bdef12555800a28bb8e6242a88f92343ff7c37a29d1e655c09"
+      },
+      {
+        "datetime": "2026-07-08T06:02:02Z",
+        "headline": "How a Fed rate hike can affect mortgages \u2014 and affordable lenders to help you save",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "There could be three Fed rate hikes this year. Here's what that means for mortgages.",
+        "url": "https://finnhub.io/api/news?id=32bbb008b9e650de5e4860913d993f25a07c1c45596e1e3b3651915cc4ccb478"
+      },
+      {
+        "datetime": "2026-07-08T05:05:08Z",
+        "headline": "Exxon Mobil (XOM) Price Target Lowered by $17 at TD Cowen. Here is Why",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "With an annual dividend yield of 3.01%, Exxon Mobil Corporation (NYSE:XOM) is included among the 14 Best Blue Chip Dividend Stocks to Buy According to Hedge Funds. Exxon Mobil Corporation (NYSE:XOM) is one of the largest integrated fuels, lubricants, and chemical companies in the world. On July 2, TD Cowen trimmed its price target on Exxon [\u2026]",
+        "url": "https://finnhub.io/api/news?id=d4ebfa597a8dd3aba8d6efd9ceb2b0dc418a53f57a96fe22d57d336f232f5e8f"
+      },
+      {
+        "datetime": "2026-07-08T01:51:27Z",
+        "headline": "Justin Wolfers Says Trouble in Iran Means 'Turmoil' in Energy Markets: 'Expect Higher Gas Prices'",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Economist Justin Wolfers warned Tuesday that U.S. strikes on Iran renewed concerns over global energy supplies and higher gas prices",
+        "url": "https://finnhub.io/api/news?id=4636e3261a13232d5541c27e56fc64dac5e39187679084ab6c6f9a16f210e4fc"
+      },
+      {
+        "datetime": "2026-07-08T00:07:10Z",
+        "headline": "Exxon Mobil, Battalion Oil, Occidental Petroleum Are Trending After Hours as Hormuz Strait Disruption Reignites: XOM, BATL, OXY Spike",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Exxon Mobil shares 1.03% after hours as oil stocks gained following U.S. strikes on Iran amid Middle East tensions.\n",
+        "url": "https://finnhub.io/api/news?id=c3b5a9db29e102757a3ac3fbad253c740ec9d14c692537bed3d7547b57d3871e"
+      },
+      {
+        "datetime": "2026-07-07T23:29:52Z",
+        "headline": "ExxonMobil and Chevron Shares Skyrocket, What You Need To Know",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A number of stocks jumped in the afternoon session after oil prices surged following attacks on commercial ships near the Strait of Hormuz.",
+        "url": "https://finnhub.io/api/news?id=3ba6194380a5248f7ae728238f5d9bfa455c5fff627f0826ac3adf7cd9910066"
+      },
+      {
+        "datetime": "2026-07-07T23:14:51Z",
+        "headline": "XOM Stock Posts Best Day In Over Five Months \u2014 Exxon Lifts Q2 Upstream Income Outlook To Highest Since 2022",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Exxon Mobil sees Q2 upstream income jump by $3.5 billion to $3.9 billion as oil prices spike.",
+        "url": "https://finnhub.io/api/news?id=2ed171b069421269c5b9ca81cb2f576fb5011f33f9e821aba98474bbaf381568"
+      },
+      {
+        "datetime": "2026-07-07T22:08:36Z",
+        "headline": "ExxonMobil (XOM) Expands In Nigeria Deepwater Oil As Export Hub Ambitions Grow",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "ExxonMobil (NYSE:XOM) is committing significant new capital to Nigeria's deepwater oil sector alongside Shell. The investments align with Nigeria's broader energy reforms and its push to strengthen its role as an African export hub. Nigeria has joined the International Energy Agency as the first OPEC member and is progressing refinery IPOs and other energy reforms. ExxonMobil is expanding its presence in Nigeria's deepwater oil sector at a time when the country is working to reinforce its...",
+        "url": "https://finnhub.io/api/news?id=8e46f1bb508d1c846a8d2f75244402eb69af411f4030ee28f12e56f386b5e34a"
+      },
+      {
+        "datetime": "2026-07-07T21:15:21Z",
+        "headline": "ExxonMobil Holdings (XOM) Following Its Texas Move Has Investors Rechecking Valuation",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "ExxonMobil Holdings (XOM) has just completed its redomiciliation to Texas, reshaping its legal structure, shrinking the authorized share count to 100, and installing a much smaller board. This gives investors fresh governance details to weigh. See our latest analysis for ExxonMobil Holdings. Despite the governance shift, ExxonMobil Holdings\u2019 recent share price has eased, with the stock down about 9% over the past month and 17% over the past quarter. Its 1-year total shareholder return of...",
+        "url": "https://finnhub.io/api/news?id=cdfbe1bd04ca9f467e93b8bfd4f63c723e865d804d86e6624a9d8ddfc03f1bee"
+      },
+      {
+        "datetime": "2026-07-07T20:00:00Z",
+        "headline": "Big Oil's Windfall Earnings Threaten to Reignite Trump's Price-Gouging Push",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Trump is escalating pressure on oil companies, accusing them of price gouging and demanding gasoline prices fall toward $2.50 per gallon.",
+        "url": "https://finnhub.io/api/news?id=bcff9884b898c190e70fc77a80fa9d15a0e04046e178e044755e1058c8019ec1"
+      },
+      {
+        "datetime": "2026-07-07T19:48:44Z",
+        "headline": "Oil Prices Jump As U.S. Yanks Iran Sanctions Waiver Over Tanker Attacks",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The U.S. pulled its Iran oil sales waiver after Tehran reportedly attacked ships in the Strait of the Hormuz.",
+        "url": "https://finnhub.io/api/news?id=580b30a3c37944b25168e7a914ee60b4b10d81dfdaf1c789b2db316d45c1faad"
+      },
+      {
+        "datetime": "2026-07-07T19:03:28Z",
+        "headline": "Oil\u2019s $100 Threshold: What It Means for Energy Stocks Now",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Number With oil now trading well below the $100 level (and seemingly poised to continue heading lower, after OPEC announced further production increases recently and recessionary concerns pick up), it\u2019s unclear where certain oil stocks are headed. One such name that\u2019s on my radar right now just reported its Q1 2026 earnings in early ... Oil\u2019s $100 Threshold: What It Means for Energy Stocks Now",
+        "url": "https://finnhub.io/api/news?id=b3ebecaf56e1c3c04a040d0f29e904ab0caa5411b234b85e3b5d05c64d1cbac4"
+      },
+      {
+        "datetime": "2026-07-07T18:29:17Z",
+        "headline": "ConocoPhillips: Stock Below Pre-War Level Prior To Expected Bullish Q2 Print",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "ConocoPhillips stock remains below levels seen earlier in the year. Click for more on COP stock prospects.",
+        "url": "https://finnhub.io/api/news?id=bc4bc273b7b458e642cbc11ec02ef807195ca99e1562ce84ebe75dc6f975a45f"
+      },
+      {
+        "datetime": "2026-07-07T18:04:03Z",
+        "headline": "Dow tumbles 600 points as oil jumps with Trump saying attacks on Iran to continue: Live updates",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "U.S. President Donald Trump told the NATO summit in Turkey that the ceasefire with Iran is \"over.\"",
+        "url": "https://finnhub.io/api/news?id=9dadf140096398f85a5fa9be9d2490158acbb06dbf9c1241a424992f52af09e3"
+      },
+      {
+        "datetime": "2026-07-07T17:39:53Z",
+        "headline": "ExxonMobil Trade Can Pump Out A Premium Or Discounted Shares For The Oil Heavyweight",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "ExxonMobil stock is attracting institutional interest. An options trade can offer a premium or the chance to buy the stock at a discount.",
+        "url": "https://finnhub.io/api/news?id=ba30c18b2ef65a2832540709da8ed7a437dc4f24c280f2a35b2583db352c679a"
+      },
+      {
+        "datetime": "2026-07-07T17:28:35Z",
+        "headline": "'Fast Money' traders talk oil price expectations, outlook",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC\u2019s \u201cFast Money\u201d team discusses the day's market action and oil prices spiking late in the trading session after the U.S. Treasury Department revoked a license that allowed Iran to sell its oil around the world.",
+        "url": "https://finnhub.io/api/news?id=b9f3a5064fbee6de60f1f755021931287b3afd25c0f96e18e4ad64a699990c7c"
+      },
+      {
+        "datetime": "2026-07-07T16:29:14Z",
+        "headline": "ExxonMobil Announces Changes In Liquids Prices To Affect Q2 Upstream Results By $3.5B - $3.9B Vs Q1, Changes In Gas Prices To Impact Q2 Upstream Results By $0.2B - $0.2B Vs Q1, Changes In Margins To Impact Q2 Chemical Products Earnings By $1B - $1.2B Vs Q1",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "https://www.sec.gov/Archives/edgar/data/2115436/000211543626000003/f8k2q991070726.htm",
+        "url": "https://finnhub.io/api/news?id=96ae09d347dfb924994ea209f156b63a82fd8da27f387e349e6351793db35f49"
+      },
+      {
+        "datetime": "2026-07-07T15:49:07Z",
+        "headline": "Noble vs. Transocean: Which Off-Shore Drilling Stock Is a Better Buy in 2026?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Noble's profitability and lean balance sheet stand in sharp contrast to Transocean's $2.9B loss, but scale and valuation tell a different story.",
+        "url": "https://finnhub.io/api/news?id=04a710f5b3d7f6c0831c125624984c1ee8ea662663ab52006635fb21c0b96a15"
+      },
+      {
+        "datetime": "2026-07-07T14:48:00Z",
+        "headline": "After an Almost 20% One-Year Run, is ExxonMobil Still Worth Buying?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "XOM's Permian strength, sturdy balance sheet and dividend record support its case, but softer oil prices and premium valuation call for caution.",
+        "url": "https://finnhub.io/api/news?id=5341c85cd8d9db9b63823a6954bf8093355bf3431ff637142451fe7ab316f7dc"
+      },
+      {
+        "datetime": "2026-07-07T13:04:09Z",
+        "headline": "When shareholder activists attack a company, its rivals may feel the heat too and change their ways",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "When companies are hit by activists, managers of competitors may fear that their company\u2019s reputation would suffer if their turn comes next.",
+        "url": "https://finnhub.io/api/news?id=b6fabe096b831128e4b235dd896840d2debd3a9f70a712228d79f02296cbfc17"
+      },
+      {
+        "datetime": "2026-07-07T13:01:05Z",
+        "headline": "ConocoPhillips: The Glut Makes It A Sell",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "ConocoPhillips (COP) downgraded to Sell as oil oversupply hits demand.",
+        "url": "https://finnhub.io/api/news?id=f07acd3aefe4a61c4e2a8dabb96d912fba4bc26fd89ad081423cdc830ac6ac11"
+      },
+      {
+        "datetime": "2026-07-07T10:37:26Z",
+        "headline": "Sky Quarry Shares Resume Trade",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=03f60dd042447b52bed862fa96a4d53cd0716e6288fe1762bf86958e181d140f"
+      },
+      {
+        "datetime": "2026-07-07T08:30:00Z",
+        "headline": "The OPEC Oil Production Increase Announcement Is The Least Of My Concerns",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "OPEC\u00e2\u0080\u0099s 188k BOED hike is a rounding error vs global demand; Iran tensions could cut millions of barrels.",
+        "url": "https://finnhub.io/api/news?id=775f63dec460dc644720c9626a0148b772efb0a8a54bf864769525527c6090be"
+      },
+      {
+        "datetime": "2026-07-06T22:00:00Z",
+        "headline": "Big Oil Heads for Record Profits as Trump Turns Up the Heat on Gas Prices",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The earnings surge is intensifying political pressure, with President Trump demanding gasoline prices fall to $2.25\u2013$2.50 per gallon and launching price-gouging investigations despite industry claims that pump prices lag crude price declines.",
+        "url": "https://finnhub.io/api/news?id=6cacd80bc673d6955261abca40aa3848b3fa695c0b4b65d6c581ed16b6ea7385"
+      },
+      {
+        "datetime": "2026-07-06T21:00:00Z",
+        "headline": "Shell And ExxonMobil Are Betting Billions On Nigeria's Deepwater Comeback",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Nigeria joins the IEA as the first OPEC member, while Dangote's refinery eyes a $4 billion IPO and Shell, ExxonMobil deepen their Nigeria bets.",
+        "url": "https://finnhub.io/api/news?id=3d5a6ac65d965c482db909c8729e15e1e1d5c8cf80fdaa65ed3e3ba09567e5ec"
+      },
+      {
+        "datetime": "2026-07-06T19:24:17Z",
+        "headline": "3 Energy ETFs Surging Past 50% as Hormuz Crisis Reshapes Oil Markets in 2026",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "West Texas Intermediate crude opened 2026 near $57 a barrel and spiked to almost $115 on April 7 after the Strait of Hormuz effectively closed to tanker traffic. Brent followed a parallel path, climbing from about $67 in January to a $138 intraday high in April. That move briefly carried VanEck Oil Services ETF (NYSEARCA:OIH), ... 3 Energy ETFs Surging Past 50% as Hormuz Crisis Reshapes Oil Markets in 2026",
+        "url": "https://finnhub.io/api/news?id=0ddab5c9f767332d3bc83968589b4356563dd3dc69221973183da7cf9775b191"
+      },
+      {
+        "datetime": "2026-07-06T19:05:42Z",
+        "headline": "A 2.86% Yield, 0.08% Fee, and 75 Stocks: Is HDV the Anti-Hype ETF?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Dividend funds pulled in $24.1 billion in the first quarter of 2026, their strongest opening quarter in four years, and a lot of that cash went looking for a boring place to hide from AI-hype exhaustion. The iShares Core High Dividend ETF (NYSEARCA:HDV) is one of them. HDV holds 75 positions, charges 0.08%, and yields ... A 2.86% Yield, 0.08% Fee, and 75 Stocks: Is HDV the Anti-Hype ETF?",
+        "url": "https://finnhub.io/api/news?id=ddff0ace2d7ef2d65edf1d86bc46735f872c44ab2e339ed948872a65db162ebb"
+      },
+      {
+        "datetime": "2026-07-06T12:00:14Z",
+        "headline": "Here's How Much $100 Invested In ExxonMobil Holdings 5 Years Ago Would Be Worth Today",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "ExxonMobil Holdings (NYSE:XOM) has outperformed the market over the past 5 years by 5.87% on an annualized basis producing an average annual return of 17.38%. Currently, ExxonMobil Holdings has a market capitalization",
+        "url": "https://finnhub.io/api/news?id=728aa83e73f6685d7724403235c9a0cddea03f2ac6a12fae7c057968cb5893e3"
+      },
+      {
+        "datetime": "2026-07-06T08:52:00Z",
+        "headline": "Aliphatic Hydrocarbon Market to Hit $6.81 Billion by 2032 with 4.4% CAGR",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The global aliphatic hydrocarbon solvents and thinners market is forecasted to grow from USD 5.26 billion in 2026 to USD 6.81 billion by 2032, with a 4.4% CAGR. This expansion is driven by rising demand in industries like coatings, adhesives, and industrial maintenance. The mineral spirits segment leads, fueled by its extensive industrial application, particularly in paints and coatings. Significant growth in the Asia Pacific is supported by construction, automotive, and packaging industries. Ke",
+        "url": "https://finnhub.io/api/news?id=c7cbe39c479b06b7233521e49ebe3a04568a7672ef03a2b4333ba5e8b95cfceb"
+      },
+      {
+        "datetime": "2026-07-05T12:30:25Z",
+        "headline": "3 Energy Stocks to Buy in July",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Energy stocks just gave investors a buying window. After WTI crude spiked to $114.58 per barrel on April 7, on the Strait of Hormuz disruption, prices have cooled to $78.94 per barrel as of June 22, dragging the three integrated majors down with them. Exxon Mobil is off 6% over the past month, Chevron is ... 3 Energy Stocks to Buy in July",
+        "url": "https://finnhub.io/api/news?id=6f48506c79bb46ce0c47f0fd0bd020e433cd688fcc9b2d7dd880fc59b5b8134f"
+      },
+      {
+        "datetime": "2026-07-05T08:58:42Z",
+        "headline": "Mid-Year 2026 Market Outlook: Oil, Gold, And Copper",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "2026 oil shock and Strait of Hormuz closure are reviving inflation and shifting Fed policy.",
+        "url": "https://finnhub.io/api/news?id=904db13d0633662ed71f952f6f828927be7107114dc2db69df58b0be0a212c89"
+      },
+      {
+        "datetime": "2026-07-04T23:21:01Z",
+        "headline": "Chevron vs. Exxon Mobil: Which Energy Stock Is a Better Buy in 2026?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chevron is targeting tech-driven energy demand while Exxon Mobil is expanding its lead in carbon capture, see how their strategies stack up.",
+        "url": "https://finnhub.io/api/news?id=ea6c6f5ee46932ac0cd9538cc6d6d533031c574bf35de2b524eb2c83851ee758"
+      },
+      {
+        "datetime": "2026-07-04T13:35:00Z",
+        "headline": "Oil is Starting to Flow Out of the Strait of Hormuz Again. Should You Still Buy Oil Stocks?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "There is one important lesson from the geopolitical conflict in the Middle East: Energy is still vital to the world.",
+        "url": "https://finnhub.io/api/news?id=a46df98897e1af4f7b853763a8d62a1565ac91948f465329d9cea69350e7a998"
+      },
+      {
+        "datetime": "2026-07-04T09:09:36Z",
+        "headline": "Sable Offshore (SOC) Is Down 42.3% After Convertible Notes And Equity Sale To Rework Exxon Loan",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In late June and early July 2026, Sable Offshore Corp. completed a US$300,000,000 offering of 6.5% convertible notes due 2031 and a US$100,000,002 follow-on common stock sale at US$3.08 per share, both aimed at refinancing its senior secured term loan with Exxon Mobil. Beneath the headlines, the package of new unsecured convertible debt, common equity issuance, and amended loan terms with Exxon materially reshapes Sable Offshore\u2019s capital structure and funding flexibility. Next, we\u2019ll...",
+        "url": "https://finnhub.io/api/news?id=896efd045647241bddd2b71ba1d1e8b83e85acd5bd2d39f6dd8ca0d583c5bb98"
+      },
+      {
+        "datetime": "2026-07-03T19:25:00Z",
+        "headline": "Prediction: This Oil Stock Will Beat the S&P 500 in the Second Half of 2026",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Exxon doesn't need higher oil prices to win.",
+        "url": "https://finnhub.io/api/news?id=8d868ee102df33d2874d34707e17e20b0f6d96f31ac984ce648fabdb55fe1714"
+      },
+      {
+        "datetime": "2026-07-03T17:33:00Z",
+        "headline": "Exxon (XOM) flashes key signals on New Jersey exit",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Exxon Mobil (XOM) officially moved its legal home from New Jersey to Texas this week. The move became official on July 1, as shareholders had already approved it. Exxon also won a major legal battle. On June 23, the U.S. Supreme Court ruled 6-3 in Exxon's favor. The ruling revives an old lawsuit ...",
+        "url": "https://finnhub.io/api/news?id=d74d55f6e8c074914f3f2a7854a255a608a4d14ec40c92ea0675d0a5aa673170"
+      },
+      {
+        "datetime": "2026-07-03T15:42:00Z",
+        "headline": "XOM, QatarEnergy Reach Milestone in Cyprus Offshore Gas Development",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "ExxonMobil and QatarEnergy's Declaration of Marketability with Cyprus marks a key milestone for Glaucus and Pegasus, advancing the fields toward development.",
+        "url": "https://finnhub.io/api/news?id=7407cf1e1d20130ad2b9ee45e84036a08fb37d5de6c5aa394c5c571e7c126629"
+      },
+      {
+        "datetime": "2026-07-03T13:00:06Z",
+        "headline": "Exxon Mobil Corporation (XOM) is Attracting Investor Attention: Here is What You Should Know",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Exxon (XOM) has been one of the stocks most watched by Zacks.com users lately. So, it is worth exploring what lies ahead for the stock.",
+        "url": "https://finnhub.io/api/news?id=2883948fb615c041d059fc04b89ec116b76227666be16bc8d2e32fe826581077"
+      },
+      {
+        "datetime": "2026-07-03T06:23:23Z",
+        "headline": "ExxonMobil: I'm Re-Entering As Valuation Is Attractive With Overlooked Market Opportunities (Rating Upgrade)",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "ExxonMobil is approaching oversold territory, presenting renewed buying opportunities as its valuation becomes more attractive. See why XOM stock is upgraded to buy.",
+        "url": "https://finnhub.io/api/news?id=df500c332296e083163ca648c9ba6ab886cf2658f4763c7af5d9b4f00ff84a4a"
+      }
+    ],
+    "ticker": "XOM"
+  },
+  "recorded_at": "2026-07-10T11:45:11.342041+00:00",
+  "status": "ok"
+}

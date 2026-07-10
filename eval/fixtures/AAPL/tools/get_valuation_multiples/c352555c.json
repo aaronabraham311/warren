@@ -1,0 +1,25 @@
+{
+  "data": {
+    "acquirers_multiple": null,
+    "as_of": "2026-07-10",
+    "data_age_hours": 6875,
+    "dividend_yield_pct": 34.0,
+    "earnings_yield": null,
+    "enterprise_value": 4660639825920,
+    "ev_to_ebit": null,
+    "ev_to_ebitda": 29.13,
+    "fcf_yield": 2.169,
+    "is_net_net": false,
+    "market_cap_usd": 4644435656704,
+    "ncav": null,
+    "ncav_to_market_cap": null,
+    "net_cash_positive": false,
+    "net_cash_usd": -16203997184,
+    "p_tangible_book": null,
+    "price_to_ncav": null,
+    "source": "yfinance",
+    "ticker": "AAPL"
+  },
+  "recorded_at": "2026-07-10T11:44:04.528588+00:00",
+  "status": "ok"
+}

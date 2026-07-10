@@ -1,0 +1,7 @@
+{
+  "error_code": "not_found",
+  "message": "No data available for subject ticker WBA",
+  "recorded_at": "2026-07-10T11:45:08.409754+00:00",
+  "retryable": false,
+  "status": "error"
+}

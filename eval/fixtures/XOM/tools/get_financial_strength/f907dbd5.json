@@ -1,0 +1,27 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "current_ratio": 1.1528,
+    "data_age_hours": 4595,
+    "f_score": 5,
+    "f_signals": {
+      "accruals_negative": true,
+      "asset_turnover_improved": false,
+      "current_ratio_improved": false,
+      "gross_margin_improved": false,
+      "leverage_decreased": true,
+      "no_dilution": true,
+      "op_cf_positive": true,
+      "roa_improved": false,
+      "roa_positive": true
+    },
+    "interest_coverage": 69.44,
+    "net_debt_to_ebitda": 0.4841,
+    "source": "yfinance",
+    "ticker": "XOM",
+    "z_score": 4.4379,
+    "z_zone": "safe"
+  },
+  "recorded_at": "2026-07-10T11:45:10.354241+00:00",
+  "status": "ok"
+}

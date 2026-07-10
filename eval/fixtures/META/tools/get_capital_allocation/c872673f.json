@@ -1,0 +1,32 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "buyback_yield_pct": 1.6375,
+    "data_age_hours": 4595,
+    "dividend_growth_streak": 2,
+    "dividend_yield_pct": 0.3321,
+    "net_debt_series": [
+      48024000000,
+      5171000000,
+      -4628000000,
+      11910000000,
+      null
+    ],
+    "net_debt_trajectory": "levering",
+    "payout_ratio_pct": 8.8061,
+    "share_count_cagr_pct": -1.0876,
+    "share_count_series": [
+      2529638328,
+      2534487662,
+      2561000000,
+      2614000000,
+      null
+    ],
+    "shareholder_yield_pct": 1.9696,
+    "source": "yfinance",
+    "ticker": "META",
+    "years_covered": 5
+  },
+  "recorded_at": "2026-07-10T11:44:28.170218+00:00",
+  "status": "ok"
+}

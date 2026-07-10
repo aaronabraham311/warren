@@ -1,5 +1,6 @@
 import json
-from datetime import datetime, timezone
+import warnings
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
@@ -137,3 +138,47 @@ def test_recorded_file_is_deterministic_json(tmp_path: Path) -> None:
     assert payload["data"]["ticker"] == "AAPL"
     # sort_keys=True → byte-stable across re-records, so a fixture diff is a real change.
     assert path.read_text() == json.dumps(payload, indent=2, sort_keys=True)
+
+
+# ── staleness ─────────────────────────────────────────────────────────────────
+
+
+def test_recorded_file_carries_a_recorded_at_stamp(tmp_path: Path) -> None:
+    path = record_tool_result(
+        "AAPL", "get_quote", {"ticker": "AAPL"}, ToolResultOk(data=_price()), tmp_path
+    )
+    assert "recorded_at" in json.loads(path.read_text())
+
+
+def test_stale_fixture_warns_on_replay(tmp_path: Path, ctx: RunContext) -> None:
+    old = datetime.now(timezone.utc) - timedelta(days=95)
+    record_tool_result(
+        "AAPL", "get_quote", {"ticker": "AAPL"}, ToolResultOk(data=_price()), tmp_path, old
+    )
+    tool = _quote_tool()
+
+    with pytest.warns(UserWarning, match="95 days old"):
+        FixtureToolRunner("AAPL", tmp_path).run(tool, tool.input_schema(ticker="AAPL"), ctx)
+
+
+def test_fresh_fixture_does_not_warn(tmp_path: Path, ctx: RunContext) -> None:
+    record_tool_result(
+        "AAPL", "get_quote", {"ticker": "AAPL"}, ToolResultOk(data=_price()), tmp_path
+    )
+    tool = _quote_tool()
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        FixtureToolRunner("AAPL", tmp_path).run(tool, tool.input_schema(ticker="AAPL"), ctx)
+
+
+def test_fixture_without_recorded_at_is_silent(tmp_path: Path, ctx: RunContext) -> None:
+    """An undated fixture has unknown age; a warning we can't substantiate is noise."""
+    path = tool_fixture_path("AAPL", "get_quote", {"ticker": "AAPL"}, tmp_path)
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps({"status": "ok", "data": _price().model_dump(mode="json")}))
+    tool = _quote_tool()
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        FixtureToolRunner("AAPL", tmp_path).run(tool, tool.input_schema(ticker="AAPL"), ctx)

@@ -1,0 +1,19 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "data_age_hours": 0,
+    "debt_to_equity": null,
+    "fcf_ttm_usd": null,
+    "gross_margin_pct": null,
+    "net_margin_pct": null,
+    "operating_margin_pct": null,
+    "pb_ratio": 6.6336,
+    "pe_ratio": 22.4616,
+    "roe_pct": 33.129999999999995,
+    "sector": null,
+    "source": "finnhub",
+    "ticker": "MSFT"
+  },
+  "recorded_at": "2026-07-10T11:44:32.201328+00:00",
+  "status": "ok"
+}

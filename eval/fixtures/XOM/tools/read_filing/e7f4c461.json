@@ -1,0 +1,7 @@
+{
+  "error_code": "not_found",
+  "message": "no 10-K filing found",
+  "recorded_at": "2026-07-10T11:45:12.810433+00:00",
+  "retryable": false,
+  "status": "error"
+}

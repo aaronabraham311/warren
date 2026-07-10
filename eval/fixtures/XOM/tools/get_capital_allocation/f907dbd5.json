@@ -1,0 +1,30 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "buyback_yield_pct": 3.5581,
+    "data_age_hours": 4595,
+    "dividend_growth_streak": 3,
+    "dividend_yield_pct": 3.0242,
+    "net_debt_series": [
+      32856000000,
+      18681000000,
+      10034000000,
+      11553000000
+    ],
+    "net_debt_trajectory": "levering",
+    "payout_ratio_pct": 59.7386,
+    "share_count_cagr_pct": 0.0,
+    "share_count_series": [
+      8019000000,
+      8019094536,
+      8019000000,
+      8019000000
+    ],
+    "shareholder_yield_pct": 6.5823,
+    "source": "yfinance",
+    "ticker": "XOM",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-07-10T11:45:10.457495+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,19 @@
+{
+  "data": {
+    "aggregator_discrepancy_note": null,
+    "edgar_url": "https://www.sec.gov/Archives/edgar/data/909832/000090983225000101/cost-20250831.htm",
+    "filing_date": "2025-10-08",
+    "filing_type": "10-K",
+    "fiscal_year": 2025,
+    "key_figures_extracted": [],
+    "section": "risk_factors",
+    "source_language": null,
+    "text": "Item 1A of this Form 10-K for more information on our cybersecurity-related risks.\n19\nTable of Contents",
+    "ticker": "COST",
+    "translate": false,
+    "truncated": false,
+    "word_count": 17
+  },
+  "recorded_at": "2026-07-10T11:44:21.174643+00:00",
+  "status": "ok"
+}

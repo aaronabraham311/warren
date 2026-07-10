@@ -1,0 +1,14 @@
+{
+  "data": {
+    "as_of": "2026-07-10T11:44:27.003070Z",
+    "current_price": 631.48,
+    "data_age_hours": 0,
+    "day_change_pct": -1.31,
+    "previous_close": 639.84,
+    "source": "yfinance",
+    "ticker": "META",
+    "volume": 17304429
+  },
+  "recorded_at": "2026-07-10T11:44:27.004946+00:00",
+  "status": "ok"
+}

@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from agent.budget import RunContext
 from agent.tools._clients import finnhub_client, yfinance_client
 from agent.tools.base import (
+    TICKER_PATTERN,
     Tool,
     ToolResult,
     ToolResultError,
@@ -18,7 +19,7 @@ from data_sources.yfinance_client import OwnershipData
 
 
 class GetInsiderActivityInput(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}$", description="Stock ticker, e.g. AAPL")
+    ticker: str = Field(pattern=TICKER_PATTERN, description="Stock ticker, e.g. AAPL")
     window_days: int = Field(
         default=90, ge=30, le=365, description="Look-back window in days (30–365)"
     )

@@ -1,0 +1,14 @@
+{
+  "data": {
+    "as_of": "2026-07-10T11:44:37.583078Z",
+    "current_price": 42.78,
+    "data_age_hours": 0,
+    "day_change_pct": 0.19,
+    "previous_close": 42.7,
+    "source": "yfinance",
+    "ticker": "NKE",
+    "volume": 23916009
+  },
+  "recorded_at": "2026-07-10T11:44:37.585703+00:00",
+  "status": "ok"
+}

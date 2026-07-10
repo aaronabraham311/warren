@@ -1,0 +1,14 @@
+{
+  "data": {
+    "as_of": "2026-07-10T11:45:08.697004Z",
+    "current_price": 137.46,
+    "data_age_hours": 0,
+    "day_change_pct": 0.0,
+    "previous_close": 137.46,
+    "source": "yfinance",
+    "ticker": "XOM",
+    "volume": 17404153
+  },
+  "recorded_at": "2026-07-10T11:45:08.698673+00:00",
+  "status": "ok"
+}

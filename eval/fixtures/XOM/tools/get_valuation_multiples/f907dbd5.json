@@ -1,0 +1,25 @@
+{
+  "data": {
+    "acquirers_multiple": null,
+    "as_of": "2026-07-10",
+    "data_age_hours": 4595,
+    "dividend_yield_pct": 300.0,
+    "earnings_yield": null,
+    "enterprise_value": 615605469184,
+    "ev_to_ebit": null,
+    "ev_to_ebitda": 10.99,
+    "fcf_yield": 1.8893,
+    "is_net_net": false,
+    "market_cap_usd": 569764478976,
+    "ncav": null,
+    "ncav_to_market_cap": null,
+    "net_cash_positive": false,
+    "net_cash_usd": -39225998848,
+    "p_tangible_book": null,
+    "price_to_ncav": null,
+    "source": "yfinance",
+    "ticker": "XOM"
+  },
+  "recorded_at": "2026-07-10T11:45:10.179752+00:00",
+  "status": "ok"
+}

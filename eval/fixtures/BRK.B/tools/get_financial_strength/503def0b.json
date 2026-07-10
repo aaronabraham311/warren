@@ -1,0 +1,27 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "current_ratio": null,
+    "data_age_hours": 4595,
+    "f_score": 4,
+    "f_signals": {
+      "accruals_negative": false,
+      "asset_turnover_improved": false,
+      "current_ratio_improved": null,
+      "gross_margin_improved": null,
+      "leverage_decreased": true,
+      "no_dilution": true,
+      "op_cf_positive": true,
+      "roa_improved": false,
+      "roa_positive": true
+    },
+    "interest_coverage": 17.27,
+    "net_debt_to_ebitda": null,
+    "source": "yfinance",
+    "ticker": "BRK.B",
+    "z_score": null,
+    "z_zone": null
+  },
+  "recorded_at": "2026-07-10T11:44:11.433395+00:00",
+  "status": "ok"
+}

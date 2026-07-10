@@ -1,0 +1,24 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "assumptions": {
+      "discount_rate": 0.1,
+      "growth_rate": 0.08,
+      "projection_years": 10,
+      "terminal_growth_rate": 0.025
+    },
+    "current_price": 45.32,
+    "data_age_hours": 4595,
+    "intrinsic_equity_value": 113662422351,
+    "intrinsic_value_per_share": 84.63,
+    "margin_of_safety": 0.4645,
+    "owner_earnings_base": 5564000000,
+    "owner_earnings_source": "free_cash_flow",
+    "reverse_dcf_implied_growth": -0.0059,
+    "shares_outstanding": 1343000000,
+    "source": "yfinance",
+    "ticker": "PYPL"
+  },
+  "recorded_at": "2026-07-10T11:44:48.924936+00:00",
+  "status": "ok"
+}

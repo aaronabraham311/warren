@@ -1,0 +1,74 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "controlling_holder_identified": false,
+    "data_age_hours": 971,
+    "persons": [
+      {
+        "name": "Mr. Mark G. Parker",
+        "ownership_pct": null,
+        "role": "Executive Chairman",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Elliott J. Hill",
+        "ownership_pct": null,
+        "role": "CEO, President & Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Matthew  Friend",
+        "ownership_pct": null,
+        "role": "Executive VP & CFO",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Robert  Leinwand",
+        "ownership_pct": null,
+        "role": "EVP & Chief Legal Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Ann M. Miller",
+        "ownership_pct": null,
+        "role": "Executive VP & Global Sports Marketing",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Craig Anthony Williams",
+        "ownership_pct": null,
+        "role": "Full-Time Non-Executive Employee",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Philip H. Knight",
+        "ownership_pct": null,
+        "role": "Co-Founder & Chairman Emeritus",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Johanna  Nielsen",
+        "ownership_pct": null,
+        "role": "VP of Controlling & Principal Accounting Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Michael  Gonda",
+        "ownership_pct": null,
+        "role": "Executive VP & Chief Communications Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Nicole Hubbard Graham",
+        "ownership_pct": null,
+        "role": "Executive VP & Chief Marketing Officer",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [],
+    "ticker": "NKE"
+  },
+  "recorded_at": "2026-07-10T11:44:40.074832+00:00",
+  "status": "ok"
+}

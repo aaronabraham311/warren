@@ -1,0 +1,27 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "current_ratio": 1.2867,
+    "data_age_hours": 4595,
+    "f_score": 9,
+    "f_signals": {
+      "accruals_negative": true,
+      "asset_turnover_improved": true,
+      "current_ratio_improved": true,
+      "gross_margin_improved": true,
+      "leverage_decreased": true,
+      "no_dilution": true,
+      "op_cf_positive": true,
+      "roa_improved": true,
+      "roa_positive": true
+    },
+    "interest_coverage": 15.27,
+    "net_debt_to_ebitda": 0.2518,
+    "source": "yfinance",
+    "ticker": "PYPL",
+    "z_score": 1.8575,
+    "z_zone": "grey"
+  },
+  "recorded_at": "2026-07-10T11:44:48.701747+00:00",
+  "status": "ok"
+}

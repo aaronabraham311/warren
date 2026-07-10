@@ -1,0 +1,7 @@
+{
+  "error_code": "not_found",
+  "message": "ticker WBA not found in EDGAR",
+  "recorded_at": "2026-07-10T11:45:08.413924+00:00",
+  "retryable": false,
+  "status": "error"
+}

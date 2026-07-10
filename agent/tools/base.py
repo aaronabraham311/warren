@@ -19,6 +19,12 @@ if TYPE_CHECKING:
 
 ErrorCode = Literal["rate_limit", "not_found", "stale_data", "network", "unknown"]
 
+# Shared by every tool input's `ticker` field. The optional dotted suffix admits share
+# classes like BRK.B — a golden-set ticker. Matches eval.golden_set.EvalExample.ticker.
+# Data sources spell the suffix differently (Yahoo and SEC want BRK-B); the clients
+# normalise it.
+TICKER_PATTERN = r"^[A-Z]{1,5}(\.[A-Z])?$"
+
 
 class ToolResultOk(BaseModel):
     status: Literal["ok"] = "ok"

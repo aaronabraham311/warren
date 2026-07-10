@@ -1,0 +1,1353 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "insider_ownership_pct": 0.102,
+    "insider_sentiment": "bearish",
+    "institutional_ownership_pct": 79.24,
+    "net_shares_bought": -1901773,
+    "net_value_bought": null,
+    "ticker": "META",
+    "transactions": [
+      {
+        "name": "KIMMITT ROBERT M",
+        "shares": 3443,
+        "transaction_date": "2026-07-01",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Alford Peggy",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Songhurst Charles",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Elkann John",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Collison Patrick",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Houston Andrew",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Killefer Nancy",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Xu Tony",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Arnold John Douglas",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "White Dana",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 83149,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7146,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 1973,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7146,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 12846,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "KIMMITT ROBERT M",
+        "shares": 612,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Andreessen Marc L",
+        "shares": 490,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 83965,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7310,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 2087,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7310,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 12986,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "KIMMITT ROBERT M",
+        "shares": 3943,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Mahoney Curtis J.",
+        "shares": 1118,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 84373,
+        "transaction_date": "2026-05-26",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7392,
+        "transaction_date": "2026-05-26",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 2144,
+        "transaction_date": "2026-05-26",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7392,
+        "transaction_date": "2026-05-26",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 13823,
+        "transaction_date": "2026-05-26",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 84781,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7474,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 2201,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7474,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 14660,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 414,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 468,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 668,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 2671,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 3682,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 5912,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 7061,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 7861,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 13186,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 13268,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 14416,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 16760,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 18569,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 20619,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 21855,
+        "transaction_date": "2026-05-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Powell Dina H.",
+        "shares": 83722,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Powell Dina H.",
+        "shares": 28340,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Powell Dina H.",
+        "shares": 6612,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Powell Dina H.",
+        "shares": 10996,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Powell Dina H.",
+        "shares": 3385,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 74367,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 21567,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 18756,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 20373,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 15497,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 23241,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 18284,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 16323,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 13644,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Mahoney Curtis J.",
+        "shares": 69769,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Mahoney Curtis J.",
+        "shares": 3197,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Mahoney Curtis J.",
+        "shares": 6342,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Cox Christopher K",
+        "shares": 74367,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Cox Christopher K",
+        "shares": 21567,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Cox Christopher K",
+        "shares": 18756,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Cox Christopher K",
+        "shares": 20373,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Cox Christopher K",
+        "shares": 256255,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Cox Christopher K",
+        "shares": 264382,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Cox Christopher K",
+        "shares": 259425,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Cox Christopher K",
+        "shares": 257464,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Cox Christopher K",
+        "shares": 254785,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 74367,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 37512,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 21567,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 20373,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 8261,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 16388,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 11431,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 8752,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bosworth Andrew",
+        "shares": 6791,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 40563,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 19607,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 18756,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 20373,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 18882,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 14397,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 22381,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 29302,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 26598,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 24816,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 22137,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 15346,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 17473,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LI SUSAN J",
+        "shares": 15585,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Anderson Aaron",
+        "shares": 5029,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Anderson Aaron",
+        "shares": 3646,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Anderson Aaron",
+        "shares": 2329,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Anderson Aaron",
+        "shares": 5801,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Anderson Aaron",
+        "shares": 8279,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Anderson Aaron",
+        "shares": 9497,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Anderson Aaron",
+        "shares": 9162,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Anderson Aaron",
+        "shares": 8830,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Anderson Aaron",
+        "shares": 8497,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Songhurst Charles",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Songhurst Charles",
+        "shares": 1205,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Songhurst Charles",
+        "shares": 1264,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Songhurst Charles",
+        "shares": 1372,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Songhurst Charles",
+        "shares": 772,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Elkann John",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Elkann John",
+        "shares": 1205,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Elkann John",
+        "shares": 1343,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Elkann John",
+        "shares": 1420,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Elkann John",
+        "shares": 820,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Arnold John Douglas",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Arnold John Douglas",
+        "shares": 1171,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Arnold John Douglas",
+        "shares": 3162,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Arnold John Douglas",
+        "shares": 2562,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Xu Tony",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Xu Tony",
+        "shares": 8269,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "White Dana",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "White Dana",
+        "shares": 1205,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "White Dana",
+        "shares": 1394,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "White Dana",
+        "shares": 794,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Killefer Nancy",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Killefer Nancy",
+        "shares": 12844,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Houston Andrew",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Houston Andrew",
+        "shares": 12761,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Collison Patrick",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Collison Patrick",
+        "shares": 1232,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Collison Patrick",
+        "shares": 1063,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Collison Patrick",
+        "shares": 463,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Alford Peggy",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Alford Peggy",
+        "shares": 3304,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Travis Tracey Thomas",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Travis Tracey Thomas",
+        "shares": 12844,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "TAN HOCK E",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "TAN HOCK E",
+        "shares": 1171,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "TAN HOCK E",
+        "shares": 3162,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "TAN HOCK E",
+        "shares": 2562,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "KIMMITT ROBERT M",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "KIMMITT ROBERT M",
+        "shares": 4447,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Andreessen Marc L",
+        "shares": 0,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Andreessen Marc L",
+        "shares": 49253,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 85189,
+        "transaction_date": "2026-05-11",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7556,
+        "transaction_date": "2026-05-11",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 2258,
+        "transaction_date": "2026-05-11",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7556,
+        "transaction_date": "2026-05-11",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 6853,
+        "transaction_date": "2026-05-11",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Zuckerberg Mark",
+        "shares": 8663023,
+        "transaction_date": "2026-05-07",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Zuckerberg Mark",
+        "shares": 8663023,
+        "transaction_date": "2026-05-07",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 85597,
+        "transaction_date": "2026-05-04",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7638,
+        "transaction_date": "2026-05-04",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 2315,
+        "transaction_date": "2026-05-04",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7638,
+        "transaction_date": "2026-05-04",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7779,
+        "transaction_date": "2026-05-04",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Alford Peggy",
+        "shares": 2704,
+        "transaction_date": "2026-05-01",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 86005,
+        "transaction_date": "2026-04-27",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7720,
+        "transaction_date": "2026-04-27",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 2372,
+        "transaction_date": "2026-04-27",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7720,
+        "transaction_date": "2026-04-27",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 8705,
+        "transaction_date": "2026-04-27",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 86413,
+        "transaction_date": "2026-04-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7802,
+        "transaction_date": "2026-04-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 2429,
+        "transaction_date": "2026-04-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7802,
+        "transaction_date": "2026-04-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 9631,
+        "transaction_date": "2026-04-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "KIMMITT ROBERT M",
+        "shares": 3847,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 86821,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 86910,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 86970,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 87120,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 87242,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 87445,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 87613,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 87801,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7884,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 2486,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 7884,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 10557,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 10713,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 10872,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 11153,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 11334,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 11517,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 12033,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 12175,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 12822,
+        "transaction_date": "2026-04-13",
+        "transaction_type": "sell",
+        "value": null
+      }
+    ],
+    "window_days": 90
+  },
+  "recorded_at": "2026-07-10T11:44:28.461031+00:00",
+  "status": "ok"
+}

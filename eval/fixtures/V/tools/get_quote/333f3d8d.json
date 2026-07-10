@@ -1,0 +1,14 @@
+{
+  "data": {
+    "as_of": "2026-07-10T11:44:56.822893Z",
+    "current_price": 348.2,
+    "data_age_hours": 0,
+    "day_change_pct": 0.06,
+    "previous_close": 348.0,
+    "source": "yfinance",
+    "ticker": "V",
+    "volume": 8242901
+  },
+  "recorded_at": "2026-07-10T11:44:56.824434+00:00",
+  "status": "ok"
+}

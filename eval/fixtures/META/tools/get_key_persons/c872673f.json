@@ -1,0 +1,74 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "controlling_holder_identified": false,
+    "data_age_hours": 4595,
+    "persons": [
+      {
+        "name": "Mr. Mark Elliot Zuckerberg",
+        "ownership_pct": null,
+        "role": "Founder, Chairman & CEO",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Dina  Powell McCormick",
+        "ownership_pct": null,
+        "role": "President & Vice Chairman",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Susan J. S. Li",
+        "ownership_pct": null,
+        "role": "Chief Financial Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Javier  Olivan",
+        "ownership_pct": null,
+        "role": "Chief Operating Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Andrew  Bosworth",
+        "ownership_pct": null,
+        "role": "Chief Technology Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Christopher K. Cox",
+        "ownership_pct": null,
+        "role": "Chief Product Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Dana  White",
+        "ownership_pct": null,
+        "role": "Independent Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Aaron A. Anderson",
+        "ownership_pct": null,
+        "role": "Chief Accounting Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Atish  Banerjea",
+        "ownership_pct": null,
+        "role": "Chief Information Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Henry T. A. Moniz",
+        "ownership_pct": null,
+        "role": "Chief Compliance Officer",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [],
+    "ticker": "META"
+  },
+  "recorded_at": "2026-07-10T11:44:29.499212+00:00",
+  "status": "ok"
+}

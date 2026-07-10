@@ -18,6 +18,11 @@ from data_sources.errors import DataSourceError
 _T = TypeVar("_T")
 
 
+def _yf_symbol(ticker: str) -> str:
+    """Yahoo spells share classes with a dash: ``BRK.B`` → ``BRK-B``."""
+    return ticker.replace(".", "-")
+
+
 # ── Legacy dataclass + function kept for backward compatibility ───────────────
 
 
@@ -31,7 +36,7 @@ class QuoteData:
 
 
 def get_quote(ticker: str) -> QuoteData:
-    info = yf.Ticker(ticker).fast_info
+    info = yf.Ticker(_yf_symbol(ticker)).fast_info
     price = info.last_price
     prev_close = info.previous_close
     volume = info.three_month_average_volume
@@ -418,7 +423,7 @@ class YFinanceClient:
         return result
 
     def _fetch_price(self, ticker: str) -> PriceData:
-        t = yf.Ticker(ticker)
+        t = yf.Ticker(_yf_symbol(ticker))
         fi = t.fast_info
         price = getattr(fi, "last_price", None)
         prev_close = getattr(fi, "previous_close", None)
@@ -458,7 +463,7 @@ class YFinanceClient:
         return result
 
     def _fetch_fundamentals(self, ticker: str) -> FundamentalsData:
-        t = yf.Ticker(ticker)
+        t = yf.Ticker(_yf_symbol(ticker))
         info: dict[str, object] = t.info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
@@ -502,7 +507,7 @@ class YFinanceClient:
         return result
 
     def _fetch_growth_metrics(self, ticker: str) -> GrowthData:
-        t = yf.Ticker(ticker)
+        t = yf.Ticker(_yf_symbol(ticker))
         info: dict[str, object] = t.info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
@@ -550,7 +555,7 @@ class YFinanceClient:
         return result
 
     def _fetch_valuation_multiples(self, ticker: str) -> ValuationData:
-        info: dict[str, object] = yf.Ticker(ticker).info
+        info: dict[str, object] = yf.Ticker(_yf_symbol(ticker)).info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
         if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
@@ -678,7 +683,7 @@ class YFinanceClient:
         return result
 
     def _fetch_financials(self, ticker: str) -> FinancialsHistory:
-        t = yf.Ticker(ticker)
+        t = yf.Ticker(_yf_symbol(ticker))
         info: dict[str, object] = t.info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
@@ -689,7 +694,7 @@ class YFinanceClient:
         return self._build_financials(t, ticker)
 
     def _fetch_quality_metrics(self, ticker: str) -> QualityData:
-        t = yf.Ticker(ticker)
+        t = yf.Ticker(_yf_symbol(ticker))
         info: dict[str, object] = t.info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
@@ -726,7 +731,7 @@ class YFinanceClient:
         )
 
     def _fetch_financial_strength(self, ticker: str) -> FinancialStrengthData:
-        t = yf.Ticker(ticker)
+        t = yf.Ticker(_yf_symbol(ticker))
         info: dict[str, object] = t.info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
@@ -840,7 +845,7 @@ class YFinanceClient:
         return result
 
     def _fetch_capital_allocation(self, ticker: str) -> CapitalAllocation:
-        t = yf.Ticker(ticker)
+        t = yf.Ticker(_yf_symbol(ticker))
         info: dict[str, object] = t.info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
@@ -1285,7 +1290,7 @@ class YFinanceClient:
         return result
 
     def _fetch_ownership(self, ticker: str) -> OwnershipData:
-        info: dict[str, object] = yf.Ticker(ticker).info
+        info: dict[str, object] = yf.Ticker(_yf_symbol(ticker)).info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
         return OwnershipData(
@@ -1315,7 +1320,7 @@ class YFinanceClient:
         return result
 
     def _fetch_key_persons(self, ticker: str) -> KeyPersonsRaw:
-        t = yf.Ticker(ticker)
+        t = yf.Ticker(_yf_symbol(ticker))
         info: dict[str, object] = t.info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)

@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from agent.budget import RunContext
 from agent.tools._clients import finnhub_client, yfinance_client
 from agent.tools.base import (
+    TICKER_PATTERN,
     Tool,
     ToolResult,
     ToolResultError,
@@ -19,7 +20,7 @@ _STALE_FUNDAMENTALS_H = 48
 
 
 class GetFundamentalsInput(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}$", description="Stock ticker, e.g. AAPL")
+    ticker: str = Field(pattern=TICKER_PATTERN, description="Stock ticker, e.g. AAPL")
 
 
 def _finnhub_to_fundamentals(f: FinnhubFinancials) -> FundamentalsData:

@@ -1,0 +1,14 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "data_age_hours": 9011,
+    "earnings_cagr_3y": 0.1187,
+    "peg_ratio": 1.18,
+    "revenue_cagr_3y": 0.1242,
+    "revenue_cagr_5y": 0.1242,
+    "source": "yfinance",
+    "ticker": "MSFT"
+  },
+  "recorded_at": "2026-07-10T11:44:33.077263+00:00",
+  "status": "ok"
+}

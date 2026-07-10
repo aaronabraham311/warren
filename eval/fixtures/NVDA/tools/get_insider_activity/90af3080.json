@@ -1,0 +1,135 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "insider_ownership_pct": 3.984,
+    "insider_sentiment": "bearish",
+    "institutional_ownership_pct": 70.806,
+    "net_shares_bought": -31209768,
+    "net_value_bought": null,
+    "ticker": "NVDA",
+    "transactions": [
+      {
+        "name": "COXE TENCH",
+        "shares": 25171360,
+        "transaction_date": "2026-07-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "STEVENS MARK A",
+        "shares": 5207271,
+        "transaction_date": "2026-06-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "STEVENS MARK A",
+        "shares": 5772886,
+        "transaction_date": "2026-06-18",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Teter Timothy S.",
+        "shares": 334436,
+        "transaction_date": "2026-06-17",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Kress Colette",
+        "shares": 840641,
+        "transaction_date": "2026-06-17",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Puri Ajay K",
+        "shares": 600321,
+        "transaction_date": "2026-06-17",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Shoquist Debora",
+        "shares": 521755,
+        "transaction_date": "2026-06-17",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "HUANG JEN HSUN",
+        "shares": 70146252,
+        "transaction_date": "2026-06-17",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "HUANG JEN HSUN",
+        "shares": 468131547,
+        "transaction_date": "2026-06-16",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "GAWEL SCOTT",
+        "shares": 59509,
+        "transaction_date": "2026-06-08",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "GAWEL SCOTT",
+        "shares": 45643,
+        "transaction_date": "2026-06-08",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "STEVENS MARK A",
+        "shares": 6092271,
+        "transaction_date": "2026-06-04",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "STEVENS MARK A",
+        "shares": 6399771,
+        "transaction_date": "2026-06-04",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "STEVENS MARK A",
+        "shares": 6799771,
+        "transaction_date": "2026-06-04",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Neal Stephen C",
+        "shares": 116135,
+        "transaction_date": "2026-06-03",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "STEVENS MARK A",
+        "shares": 6899771,
+        "transaction_date": "2026-06-02",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Dabiri John",
+        "shares": 14163,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "sell",
+        "value": null
+      }
+    ],
+    "window_days": 90
+  },
+  "recorded_at": "2026-07-10T11:44:44.470054+00:00",
+  "status": "ok"
+}

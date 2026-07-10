@@ -1,0 +1,36 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "cash_conversion_series": [
+      1.0152,
+      1.1609,
+      0.9609,
+      0.7327
+    ],
+    "cash_conversion_ttm": 1.0152,
+    "consecutive_profit_years": 0,
+    "data_age_hours": 971,
+    "gross_margin_pct": 42.7347,
+    "gross_margin_series": [
+      42.7347,
+      44.5602,
+      43.5246,
+      45.9837
+    ],
+    "gross_margin_stdev": 1.4041,
+    "ncav_trend": "declining",
+    "roa_pct": 8.8001,
+    "roic_mean": 17.2283,
+    "roic_pct": 11.7917,
+    "roic_series": [
+      11.7917,
+      19.5118,
+      17.104,
+      20.5056
+    ],
+    "source": "yfinance",
+    "ticker": "NKE"
+  },
+  "recorded_at": "2026-07-10T11:44:38.959873+00:00",
+  "status": "ok"
+}

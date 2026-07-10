@@ -1,0 +1,42 @@
+{
+  "data": {
+    "days": 7,
+    "items": [
+      {
+        "datetime": "2026-07-08T08:10:18Z",
+        "headline": "Managing A $1 Million Portfolio: A Better Way To Equal Weight The S&P 500",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Many retirees still want exposure to the S&P 500 but fret about the major US market cap weighted indexes due to valuations. Read more here.",
+        "url": "https://finnhub.io/api/news?id=7821ef559ec72586683799b615c292115d2ea99833529980a18a1c280c49cdc7"
+      },
+      {
+        "datetime": "2026-07-07T16:14:18Z",
+        "headline": "Berkshire Hathaway: Poised To Reclaim $540 Record High (Rating Upgrade)",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Berkshire Hathaway stock may be set for a breakout on a strong 2026 insurance outlook, high yields, and bullish technicals. Click to see key BRK.B levels now.",
+        "url": "https://finnhub.io/api/news?id=275ac1f296ef4bc779318f0a0791ca539fec5833e1771c5cdc7f2bedee81c5fb"
+      },
+      {
+        "datetime": "2026-07-07T07:17:55Z",
+        "headline": "M/I Homes: A Muddled Picture",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "M/I Homes (MHO) surges on buyout buzz and legislative tailwinds, but Q1 weakness signals no 2026 rebound.",
+        "url": "https://finnhub.io/api/news?id=501464dd90ac11c781bb767031029dcdbadea3851082e3e44dfce4f7abb64a42"
+      },
+      {
+        "datetime": "2026-07-07T06:30:00Z",
+        "headline": "We're In (The Early Stages Of) A Bubble",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Analyst Clem Chambers explains the market's\u00c2\u00a0big shuffle, AI's value chain and highlights a rare earth pick.",
+        "url": "https://finnhub.io/api/news?id=1eecfc6dd4234ae95f27b4f84553f5dbaaeff325e1bfe798ab6aef4fbc9cb149"
+      }
+    ],
+    "ticker": "BRK.B"
+  },
+  "recorded_at": "2026-07-10T11:44:12.501776+00:00",
+  "status": "ok"
+}

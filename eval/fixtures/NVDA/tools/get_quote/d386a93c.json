@@ -1,0 +1,14 @@
+{
+  "data": {
+    "as_of": "2026-07-10T11:44:42.991265Z",
+    "current_price": 202.78,
+    "data_age_hours": 0,
+    "day_change_pct": 0.23,
+    "previous_close": 202.31,
+    "source": "yfinance",
+    "ticker": "NVDA",
+    "volume": 159090300
+  },
+  "recorded_at": "2026-07-10T11:44:42.992704+00:00",
+  "status": "ok"
+}

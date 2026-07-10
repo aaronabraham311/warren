@@ -1,0 +1,82 @@
+{
+  "data": {
+    "all_metrics": [
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 1.8893,
+        "gross_margin_pct": 29.768,
+        "pb_ratio": 2.2146323,
+        "pe_ratio": 23.141415,
+        "roe_pct": 9.873,
+        "ticker": "XOM"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 3.0202,
+        "gross_margin_pct": 42.421,
+        "pb_ratio": 1.873399,
+        "pe_ratio": 30.322302,
+        "roe_pct": 6.638,
+        "ticker": "CVX"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 3.5602,
+        "gross_margin_pct": 45.591,
+        "pb_ratio": 2.038998,
+        "pe_ratio": 18.308474,
+        "roe_pct": 11.284,
+        "ticker": "COP"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 3.8049,
+        "gross_margin_pct": 17.802,
+        "pb_ratio": 2.698041,
+        "pe_ratio": 20.810574,
+        "roe_pct": 14.066,
+        "ticker": "SLB"
+      }
+    ],
+    "peers": [
+      "CVX",
+      "COP",
+      "SLB"
+    ],
+    "summary": {
+      "ev_to_ebit": {
+        "peer_median": null,
+        "ticker_percentile": null,
+        "ticker_rank": null
+      },
+      "fcf_yield": {
+        "peer_median": 3.5602,
+        "ticker_percentile": 0.0,
+        "ticker_rank": 4
+      },
+      "gross_margin_pct": {
+        "peer_median": 42.421,
+        "ticker_percentile": 33.3,
+        "ticker_rank": 3
+      },
+      "pb_ratio": {
+        "peer_median": 2.039,
+        "ticker_percentile": 33.3,
+        "ticker_rank": 3
+      },
+      "pe_ratio": {
+        "peer_median": 20.8106,
+        "ticker_percentile": 33.3,
+        "ticker_rank": 3
+      },
+      "roe_pct": {
+        "peer_median": 11.284,
+        "ticker_percentile": 33.3,
+        "ticker_rank": 3
+      }
+    },
+    "ticker": "XOM"
+  },
+  "recorded_at": "2026-07-10T11:45:12.071737+00:00",
+  "status": "ok"
+}

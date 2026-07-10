@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from agent.budget import RunContext
 from agent.tools._clients import edgar_client, yfinance_client
 from agent.tools.base import (
+    TICKER_PATTERN,
     Tool,
     ToolResult,
     ToolResultError,
@@ -26,7 +27,7 @@ def _extract_gross_margin(text: str) -> float | None:
 
 
 class ReadFilingInput(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}$", description="Stock ticker, e.g. AAPL")
+    ticker: str = Field(pattern=TICKER_PATTERN, description="Stock ticker, e.g. AAPL")
     filing_type: FilingType = Field(description="SEC filing form to read")
     section: SectionName = Field(description="Which section of the filing to return")
     fiscal_year: int | None = Field(

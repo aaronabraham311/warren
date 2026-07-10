@@ -1,0 +1,74 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "controlling_holder_identified": false,
+    "data_age_hours": 3995,
+    "persons": [
+      {
+        "name": "Mr. Jen-Hsun  Huang",
+        "ownership_pct": null,
+        "role": "Co-Founder, CEO & Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Colette M. Kress",
+        "ownership_pct": null,
+        "role": "Executive VP & CFO",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Debora  Shoquist",
+        "ownership_pct": null,
+        "role": "Executive Vice President of Operations",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Timothy S. Teter J.D.",
+        "ownership_pct": null,
+        "role": "Executive VP, General Counsel & Secretary",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Ajay K. Puri",
+        "ownership_pct": null,
+        "role": "Executive Vice President of Worldwide Field Operations",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Chris A. Malachowsky",
+        "ownership_pct": null,
+        "role": "Co-Founder",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Scott C. Gawel",
+        "ownership_pct": null,
+        "role": "Chief Accounting Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Prof. William J. Dally Ph.D.",
+        "ownership_pct": null,
+        "role": "Chief Scientist & Senior VP of Research",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Toshiya  Hari",
+        "ownership_pct": null,
+        "role": "Vice President of Investor Relations & Strategic Finance",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Mylene  Mangalindan",
+        "ownership_pct": null,
+        "role": "Vice President of Corporate Communications",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [],
+    "ticker": "NVDA"
+  },
+  "recorded_at": "2026-07-10T11:44:45.209868+00:00",
+  "status": "ok"
+}

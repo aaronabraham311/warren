@@ -1,0 +1,24 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "assumptions": {
+      "discount_rate": 0.1,
+      "growth_rate": 0.08,
+      "projection_years": 10,
+      "terminal_growth_rate": 0.025
+    },
+    "current_price": 42.78,
+    "data_age_hours": 971,
+    "intrinsic_equity_value": 66759309174,
+    "intrinsic_value_per_share": 45.23,
+    "margin_of_safety": 0.0542,
+    "owner_earnings_base": 3268000000,
+    "owner_earnings_source": "free_cash_flow",
+    "reverse_dcf_implied_growth": 0.0724,
+    "shares_outstanding": 1476000000,
+    "source": "yfinance",
+    "ticker": "NKE"
+  },
+  "recorded_at": "2026-07-10T11:44:39.277633+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,92 @@
+{
+  "data": {
+    "all_metrics": [
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 3.1256,
+        "gross_margin_pct": 97.778,
+        "pb_ratio": 18.678253,
+        "pe_ratio": 30.383945,
+        "roe_pct": 60.349,
+        "ticker": "V"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": null,
+        "gross_margin_pct": 0.0,
+        "pb_ratio": 2.6131222,
+        "pe_ratio": 16.051197,
+        "roe_pct": 16.465,
+        "ticker": "JPM"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": null,
+        "gross_margin_pct": 0.0,
+        "pb_ratio": 1.5324333,
+        "pe_ratio": 14.702232,
+        "roe_pct": 10.644,
+        "ticker": "BAC"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": null,
+        "gross_margin_pct": 82.271,
+        "pb_ratio": 2.9639516,
+        "pe_ratio": 19.304752,
+        "roe_pct": 14.548,
+        "ticker": "GS"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": null,
+        "gross_margin_pct": 0.0,
+        "pb_ratio": 1.6338309,
+        "pe_ratio": 13.228311,
+        "roe_pct": 12.028,
+        "ticker": "WFC"
+      }
+    ],
+    "peers": [
+      "JPM",
+      "BAC",
+      "GS",
+      "WFC"
+    ],
+    "summary": {
+      "ev_to_ebit": {
+        "peer_median": null,
+        "ticker_percentile": null,
+        "ticker_rank": null
+      },
+      "fcf_yield": {
+        "peer_median": null,
+        "ticker_percentile": 0.0,
+        "ticker_rank": 1
+      },
+      "gross_margin_pct": {
+        "peer_median": 0.0,
+        "ticker_percentile": 100.0,
+        "ticker_rank": 1
+      },
+      "pb_ratio": {
+        "peer_median": 2.1235,
+        "ticker_percentile": 0.0,
+        "ticker_rank": 5
+      },
+      "pe_ratio": {
+        "peer_median": 15.3767,
+        "ticker_percentile": 0.0,
+        "ticker_rank": 5
+      },
+      "roe_pct": {
+        "peer_median": 13.288,
+        "ticker_percentile": 100.0,
+        "ticker_rank": 1
+      }
+    },
+    "ticker": "V"
+  },
+  "recorded_at": "2026-07-10T11:44:59.226691+00:00",
+  "status": "ok"
+}

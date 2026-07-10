@@ -1,0 +1,82 @@
+{
+  "data": {
+    "all_metrics": [
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": null,
+        "gross_margin_pct": 42.913,
+        "pb_ratio": 4.266906,
+        "pe_ratio": 20.37143,
+        "roe_pct": 22.138,
+        "ticker": "NKE"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 0.3566,
+        "gross_margin_pct": 50.604,
+        "pb_ratio": 6.0117297,
+        "pe_ratio": 31.63124,
+        "roe_pct": 24.285,
+        "ticker": "AMZN"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 2.5328,
+        "gross_margin_pct": 33.127,
+        "pb_ratio": 24.341047,
+        "pe_ratio": 24.040455,
+        "roe_pct": 128.38,
+        "ticker": "HD"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 2.3793,
+        "gross_margin_pct": 57.349,
+        "pb_ratio": -152.75691,
+        "pe_ratio": 22.945227,
+        "roe_pct": null,
+        "ticker": "MCD"
+      }
+    ],
+    "peers": [
+      "AMZN",
+      "HD",
+      "MCD"
+    ],
+    "summary": {
+      "ev_to_ebit": {
+        "peer_median": null,
+        "ticker_percentile": null,
+        "ticker_rank": null
+      },
+      "fcf_yield": {
+        "peer_median": 2.3793,
+        "ticker_percentile": null,
+        "ticker_rank": null
+      },
+      "gross_margin_pct": {
+        "peer_median": 50.604,
+        "ticker_percentile": 33.3,
+        "ticker_rank": 3
+      },
+      "pb_ratio": {
+        "peer_median": 6.0117,
+        "ticker_percentile": 66.7,
+        "ticker_rank": 2
+      },
+      "pe_ratio": {
+        "peer_median": 24.0405,
+        "ticker_percentile": 100.0,
+        "ticker_rank": 1
+      },
+      "roe_pct": {
+        "peer_median": 76.3325,
+        "ticker_percentile": 0.0,
+        "ticker_rank": 3
+      }
+    },
+    "ticker": "NKE"
+  },
+  "recorded_at": "2026-07-10T11:44:40.967876+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,82 @@
+{
+  "data": {
+    "all_metrics": [
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 1.7246,
+        "gross_margin_pct": 12.876,
+        "pb_ratio": 24.490852,
+        "pe_ratio": 45.877888,
+        "roe_pct": 29.152,
+        "ticker": "COST"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 0.8043,
+        "gross_margin_pct": 61.744,
+        "pb_ratio": 10.571903,
+        "pe_ratio": 25.984276,
+        "roe_pct": 43.372,
+        "ticker": "KO"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 3.4635,
+        "gross_margin_pct": 50.984,
+        "pb_ratio": 6.362376,
+        "pe_ratio": 21.691286,
+        "roe_pct": 31.112,
+        "ticker": "PG"
+      },
+      {
+        "ev_to_ebit": null,
+        "fcf_yield": 0.7115,
+        "gross_margin_pct": 24.976,
+        "pb_ratio": 9.470797,
+        "pe_ratio": 39.79078,
+        "roe_pct": 24.132,
+        "ticker": "WMT"
+      }
+    ],
+    "peers": [
+      "KO",
+      "PG",
+      "WMT"
+    ],
+    "summary": {
+      "ev_to_ebit": {
+        "peer_median": null,
+        "ticker_percentile": null,
+        "ticker_rank": null
+      },
+      "fcf_yield": {
+        "peer_median": 0.8043,
+        "ticker_percentile": 66.7,
+        "ticker_rank": 2
+      },
+      "gross_margin_pct": {
+        "peer_median": 50.984,
+        "ticker_percentile": 0.0,
+        "ticker_rank": 4
+      },
+      "pb_ratio": {
+        "peer_median": 9.4708,
+        "ticker_percentile": 0.0,
+        "ticker_rank": 4
+      },
+      "pe_ratio": {
+        "peer_median": 25.9843,
+        "ticker_percentile": 0.0,
+        "ticker_rank": 4
+      },
+      "roe_pct": {
+        "peer_median": 31.112,
+        "ticker_percentile": 33.3,
+        "ticker_rank": 3
+      }
+    },
+    "ticker": "COST"
+  },
+  "recorded_at": "2026-07-10T11:44:20.129166+00:00",
+  "status": "ok"
+}

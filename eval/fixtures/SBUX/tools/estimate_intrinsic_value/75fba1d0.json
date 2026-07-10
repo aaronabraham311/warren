@@ -1,0 +1,24 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "assumptions": {
+      "discount_rate": 0.1,
+      "growth_rate": 0.08,
+      "projection_years": 10,
+      "terminal_growth_rate": 0.025
+    },
+    "current_price": 106.41,
+    "data_age_hours": 6851,
+    "intrinsic_equity_value": 49885628213,
+    "intrinsic_value_per_share": 43.88,
+    "margin_of_safety": -1.425,
+    "owner_earnings_base": 2442000000,
+    "owner_earnings_source": "free_cash_flow",
+    "reverse_dcf_implied_growth": 0.2008,
+    "shares_outstanding": 1136900000,
+    "source": "yfinance",
+    "ticker": "SBUX"
+  },
+  "recorded_at": "2026-07-10T11:44:53.740188+00:00",
+  "status": "ok"
+}

@@ -9,8 +9,8 @@ data-fetcher tests (so those tests exercise the real parsing path), this module 
 ``input_hash`` is ``sha256(json.dumps(tool_input, sort_keys=True))[:8]``, matching the
 convention in ``eval.fixtures``. A file holds one of:
 
-    {"status": "ok",    "data": {...}}                                  → ToolResultOk
-    {"status": "error", "error_code": "...", "message": "...", "retryable": false}
+    {"recorded_at": "...", "status": "ok",    "data": {...}}            → ToolResultOk
+    {"recorded_at": "...", "status": "error", "error_code": "...", ...} → ToolResultError
 
 ``FixtureToolRunner`` satisfies ``agent.loop.ToolRunner``. It never calls ``tool.run()``,
 so no data-source client is ever constructed and replay cannot reach the network *by
@@ -20,10 +20,16 @@ A tool call with no recorded fixture is a miss: the runner records it on ``.miss
 returns ``ToolResultError(error_code="not_found", retryable=False)``. Non-retryable is
 load-bearing — a retryable miss would send the loop into exponential backoff on every
 unrecorded call.
+
+Fixtures rot: yfinance schemas drift, filing dates advance, news windows slide. Every file
+carries a ``recorded_at`` stamp, and loading one older than :data:`STALE_AFTER` warns.
+Refresh with ``python -m eval.fixtures.recorder`` — see ``eval/fixtures/README.md``.
 """
 
 import json
+import warnings
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from hashlib import sha256
 from pathlib import Path
 
@@ -33,6 +39,8 @@ from agent.budget import RunContext
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
+
+STALE_AFTER = timedelta(days=90)
 
 
 def tool_input_hash(tool_input: dict[str, object]) -> str:
@@ -86,7 +94,30 @@ class FixtureToolRunner:
                 ),
                 retryable=False,
             )
-        return _deserialize(json.loads(path.read_text()), tool)
+        payload: dict[str, object] = json.loads(path.read_text())
+        warn_if_stale(payload, path)
+        return _deserialize(payload, tool)
+
+
+def warn_if_stale(payload: dict[str, object], path: Path) -> None:
+    """Warn when a fixture was recorded more than :data:`STALE_AFTER` ago.
+
+    Fixtures predating the ``recorded_at`` stamp are silent: their age is unknown, and a
+    warning we cannot substantiate would train the reader to ignore the real ones.
+    """
+    stamp = payload.get("recorded_at")
+    if not isinstance(stamp, str):
+        return
+    recorded_at = datetime.fromisoformat(stamp)
+    if recorded_at.tzinfo is None:
+        recorded_at = recorded_at.replace(tzinfo=timezone.utc)
+    age = datetime.now(timezone.utc) - recorded_at
+    if age > STALE_AFTER:
+        warnings.warn(
+            f"Fixture {path.parent.parent.parent.name}/{path.parent.name} is {age.days} days "
+            f"old — refresh with: python -m eval.fixtures.recorder",
+            stacklevel=3,
+        )
 
 
 def _deserialize(payload: dict[str, object], tool: Tool) -> ToolResult:
@@ -103,11 +134,12 @@ def record_tool_result(
     tool_input: dict[str, object],
     result: ToolResult,
     root: Path = FIXTURES_DIR,
+    recorded_at: datetime | None = None,
 ) -> Path:
-    """Write *result* to its fixture path and return it.
+    """Write *result* to its fixture path and return it. Overwrites any existing fixture.
 
-    Kept here so the on-disk format has exactly one owner; the fixture-recording ticket
-    calls this rather than re-deriving the layout.
+    Kept here so the on-disk format has exactly one owner; the fixture recorder calls this
+    rather than re-deriving the layout.
     """
     path = tool_fixture_path(ticker, tool_name, tool_input, root)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -115,5 +147,6 @@ def record_tool_result(
         payload: dict[str, object] = {"status": "ok", "data": result.data.model_dump(mode="json")}
     else:
         payload = result.model_dump(mode="json")
+    payload["recorded_at"] = (recorded_at or datetime.now(timezone.utc)).isoformat()
     path.write_text(json.dumps(payload, indent=2, sort_keys=True))
     return path

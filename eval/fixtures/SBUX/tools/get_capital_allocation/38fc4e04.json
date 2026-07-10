@@ -1,0 +1,32 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "buyback_yield_pct": 0.0,
+    "data_age_hours": 6851,
+    "dividend_growth_streak": 3,
+    "dividend_yield_pct": 2.2852,
+    "net_debt_series": [
+      23391700000,
+      22516900000,
+      21048300000,
+      20986400000,
+      null
+    ],
+    "net_debt_trajectory": "levering",
+    "payout_ratio_pct": 149.2889,
+    "share_count_cagr_pct": -0.3204,
+    "share_count_series": [
+      1136900000,
+      1133500000,
+      1142600000,
+      1147900000,
+      null
+    ],
+    "shareholder_yield_pct": 2.2852,
+    "source": "yfinance",
+    "ticker": "SBUX",
+    "years_covered": 5
+  },
+  "recorded_at": "2026-07-10T11:44:53.635917+00:00",
+  "status": "ok"
+}

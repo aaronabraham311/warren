@@ -1,0 +1,74 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "controlling_holder_identified": false,
+    "data_age_hours": 4595,
+    "persons": [
+      {
+        "name": "Mr. Jon M. Gibbs",
+        "ownership_pct": null,
+        "role": "Senior President of ExxonMobil Global Operations",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Leonard M. Fox",
+        "ownership_pct": null,
+        "role": "VP of Tax, Principal Accounting Officer & Controller",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Jeffrey A. Taylor J.D.",
+        "ownership_pct": null,
+        "role": "VP, General Counsel & Secretary",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Inge A. Van Coppenolle",
+        "ownership_pct": null,
+        "role": "Vice President of Human Resources",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Tracey C. Gunnlaugsson",
+        "ownership_pct": null,
+        "role": "President of Global Trading",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Staale  Gjervik",
+        "ownership_pct": null,
+        "role": "President of ExxonMobil Global Projects Company",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Barton P. Cahir",
+        "ownership_pct": null,
+        "role": "Senior Vice President",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Daniel L. Ammann",
+        "ownership_pct": null,
+        "role": "VP & President of ExxonMobil Upstream Company",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Barry L. Engle II",
+        "ownership_pct": null,
+        "role": "VP & President of Low Carbon Solutions",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Michael P. Zamora",
+        "ownership_pct": null,
+        "role": "President of ExxonMobil Technology & Engineering Company",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [],
+    "ticker": "XOM"
+  },
+  "recorded_at": "2026-07-10T11:45:11.303356+00:00",
+  "status": "ok"
+}

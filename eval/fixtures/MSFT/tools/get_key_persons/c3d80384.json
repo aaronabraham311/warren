@@ -1,0 +1,74 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "controlling_holder_identified": false,
+    "data_age_hours": 9011,
+    "persons": [
+      {
+        "name": "Mr. Satya  Nadella",
+        "ownership_pct": null,
+        "role": "Chairman & CEO",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Bradford L. Smith LCA",
+        "ownership_pct": null,
+        "role": "President & Vice Chairman",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Amy E. Hood",
+        "ownership_pct": null,
+        "role": "Executive VP & CFO",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Takeshi  Numoto",
+        "ownership_pct": null,
+        "role": "Executive VP & Chief Marketing Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Judson B. Althoff",
+        "ownership_pct": null,
+        "role": "Executive VP & CEO of Commercial Business",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Carolina  Dybeck Happe",
+        "ownership_pct": null,
+        "role": "Executive VP & COO",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Alice L. Jolla",
+        "ownership_pct": null,
+        "role": "Corporate VP & Chief Accounting Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Matthew  Kerner",
+        "ownership_pct": null,
+        "role": "CTO & Corporate VP of Worldwide Sales and Solutions",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Jonathan  Neilson",
+        "ownership_pct": null,
+        "role": "Vice President of Investor Relations",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Jonathan M. Palmer",
+        "ownership_pct": null,
+        "role": "Corporate Vice President & Chief Legal Officer",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [],
+    "ticker": "MSFT"
+  },
+  "recorded_at": "2026-07-10T11:44:34.327324+00:00",
+  "status": "ok"
+}
