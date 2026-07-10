@@ -1,7 +1,0 @@
-{
-  "error_code": "network",
-  "message": "'exchangeTimezoneName'",
-  "recorded_at": "2026-07-10T11:45:05.614755+00:00",
-  "retryable": true,
-  "status": "error"
-}

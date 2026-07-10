@@ -1,0 +1,59 @@
+ticker: CVX
+notes: |
+  A commodity business, and therefore a test of whether the agent applies margin of safety
+  rather than a growth lens. Chevron has no pricing power: it sells an undifferentiated
+  barrel at the world price. Any moat claim must rest on cost position — low breakeven
+  acreage in the Permian, the Tengiz expansion, the Hess acquisition — and on integration
+  across upstream, downstream, and chemicals, which dampens the cycle. Good analysis cites
+  a breakeven oil price or a unit cost figure rather than asserting a moat.
+
+  The subtlety this file exists to catch: the P/E is *high* here (above 30) precisely
+  because earnings are near a cyclical trough, while ROE sits around 6% and ROIC below 4%.
+  For a cyclical, that inverts the usual screen — Lynch's rule is that a low P/E on peak
+  earnings is the sell signal and a high P/E on trough earnings can mark the entry. An
+  agent that reads 30x as "expensive" without asking where in the cycle the earnings sit
+  has applied a growth lens to a commodity. The reverse error, treating trough earnings as
+  a permanent new base, is equally wrong.
+
+  Net debt is rising, so capital discipline versus growth capex is the live question, as is
+  whether the dividend is covered through the trough. The long-dated demand and
+  stranded-asset debate should be engaged without either dismissing it or treating it as
+  imminent. Earnings are not forecastable enough to justify a confident buy at mid-cycle
+  prices.
+last_curated: 2026-07-10
+
+expectations:
+  recommendation:
+    allowed: [hold, buy]
+    preferred: hold
+
+  thesis_must_mention:
+    - any_of: [cyclical, commodity, oil price, crude, cycle]
+    - any_of: [breakeven, cost position, cost curve, integrated, integration]
+    - any_of: [margin of safety, capital discipline, free cash flow, dividend, buyback]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    cons:
+      min_count: 1
+
+  key_risks:
+    must_include_one_of:
+      - oil price
+      - commodity price
+      - cyclical
+      - energy transition
+      - stranded assets
+      - regulatory
+      - capex
+      - demand
+      - debt
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

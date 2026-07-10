@@ -621,7 +621,9 @@ class YFinanceClient:
             net_cash_usd=net_cash_usd,
             net_cash_positive=net_cash_positive,
             p_tangible_book=p_tangible_book,
-            dividend_yield_pct=_as_pct(info.get("dividendYield")),
+            # Already a percentage upstream (AAPL → 0.34 meaning 0.34%), unlike the
+            # margin fields, which are fractions. Do not scale it again.
+            dividend_yield_pct=_as_float(info.get("dividendYield")),
             data_age_hours=_fiscal_age_hours(info),
         )
 

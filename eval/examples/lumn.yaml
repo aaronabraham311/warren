@@ -1,0 +1,59 @@
+ticker: LUMN
+notes: |
+  A structurally impaired business, and the file that catches an unwarranted bullish call.
+  The legacy wireline and enterprise voice base is in secular decline — revenue has compounded
+  at roughly -11% a year over three years — and the fibre and AI-datacentre-connectivity
+  build that is meant to replace it consumes capital faster than it produces cash. Free cash
+  flow is deeply negative, the company has not earned a profit in any of the years on record,
+  return on invested capital is negative, and return on equity is around -80%. The Piotroski
+  F-score sits at 4.
+
+  The trap is the multiple. EV/EBITDA near 8x reads cheap on a screen, and the enterprise
+  value is dominated by roughly $11.6B of net debt rather than by equity — so the "cheap"
+  multiple is a levered claim on a shrinking EBITDA base, not a margin of safety. Asset sales
+  are bringing net debt down, which is a liquidity manoeuvre, not evidence of a franchise. A
+  DCF that extrapolates any stabilisation produces an intrinsic value close to the current
+  price, meaning there is no cushion for the decline continuing — which is the base case.
+
+  `buy` is excluded deliberately. If the agent produces a bullish call on a business with
+  negative ROIC, negative free cash flow, and a double-digit revenue decline because the
+  EV/EBITDA multiple looks low, the eval must fail. A `hold` is defensible only when grounded
+  in asset value, the fibre backlog, or a credible refinancing path — never in the multiple.
+last_curated: 2026-07-10
+
+expectations:
+  recommendation:
+    allowed: [sell, hold]
+    preferred: sell
+
+  thesis_must_mention:
+    - any_of: [secular decline, revenue decline, legacy, wireline, shrinking]
+    - any_of: [debt, leverage, refinancing, free cash flow, liquidity, capex]
+    - any_of: [return on capital, ROIC, return on equity, ROE, losses, unprofitable]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    cons:
+      min_count: 2
+
+  key_risks:
+    must_include_one_of:
+      - debt
+      - leverage
+      - liquidity
+      - refinancing
+      - secular decline
+      - competition
+      - capex
+      - value trap
+      - cash flow
+      - dilution
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true
