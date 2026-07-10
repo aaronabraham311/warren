@@ -1,0 +1,25 @@
+{
+  "data": {
+    "acquirers_multiple": null,
+    "as_of": "2026-07-10",
+    "data_age_hours": 4595,
+    "dividend_yield_pct": 4.09,
+    "earnings_yield": null,
+    "enterprise_value": 389928648704,
+    "ev_to_ebit": null,
+    "ev_to_ebitda": 10.29,
+    "fcf_yield": 3.0202,
+    "is_net_net": false,
+    "market_cap_usd": 346637598720,
+    "ncav": null,
+    "ncav_to_market_cap": null,
+    "net_cash_positive": false,
+    "net_cash_usd": -40100998656,
+    "p_tangible_book": null,
+    "price_to_ncav": null,
+    "source": "yfinance",
+    "ticker": "CVX"
+  },
+  "recorded_at": "2026-07-10T11:46:43.845609+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,450 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "insider_ownership_pct": 0.679,
+    "insider_sentiment": "bearish",
+    "institutional_ownership_pct": 79.84,
+    "net_shares_bought": -154302,
+    "net_value_bought": null,
+    "ticker": "PYPL",
+    "transactions": [
+      {
+        "name": "Keller Frank",
+        "shares": 146778,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Miller Jamie S",
+        "shares": 5820,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Miller Jamie S",
+        "shares": 18188,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Miller Jamie S",
+        "shares": 146778,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Miller Jamie S",
+        "shares": 76904,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "buy",
+        "value": null
+      },
+      {
+        "name": "Miller Jamie S",
+        "shares": 83033,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Miller Jamie S",
+        "shares": 80123,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 41567,
+        "transaction_date": "2026-06-03",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 1770,
+        "transaction_date": "2026-06-03",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Kereere Suzan",
+        "shares": 30983,
+        "transaction_date": "2026-06-03",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 48315,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 10254,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 46179,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 51888,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 44985,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 715,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 7157,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 2322,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 2712,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 2609,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Kereere Suzan",
+        "shares": 48315,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Kereere Suzan",
+        "shares": 34362,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Kereere Suzan",
+        "shares": 37886,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Webster Aaron",
+        "shares": 32210,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Webster Aaron",
+        "shares": 58616,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Webster Aaron",
+        "shares": 60713,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Miller Jamie S",
+        "shares": 51893,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Miller Jamie S",
+        "shares": 71029,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Miller Jamie S",
+        "shares": 74815,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "LORES ENRIQUE",
+        "shares": 587168,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Chik Joy",
+        "shares": 10882,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Di Sibio Carmine",
+        "shares": 14319,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Kereere Suzan",
+        "shares": 30983,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Kereere Suzan",
+        "shares": 31183,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "MESSEMER DEBORAH M.",
+        "shares": 20251,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Stanley Deirdre",
+        "shares": 12489,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Henry Alyssa",
+        "shares": 7485,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "CHRISTODORO JONATHAN",
+        "shares": 47751,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Yeary Frank D",
+        "shares": 57036,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Sarnoff Ann",
+        "shares": 38142,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "MOFFETT DAVID M",
+        "shares": 77297,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "DORMAN DAVID W",
+        "shares": 81121,
+        "transaction_date": "2026-05-19",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Kereere Suzan",
+        "shares": 25507,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Kereere Suzan",
+        "shares": 35145,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Kereere Suzan",
+        "shares": 39487,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 41567,
+        "transaction_date": "2026-04-29",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 51567,
+        "transaction_date": "2026-04-29",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 1586,
+        "transaction_date": "2026-04-29",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 6556,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 52299,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Keller Frank",
+        "shares": 53206,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 13629,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 2923,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Natali Chris",
+        "shares": 3866,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Webster Aaron",
+        "shares": 10488,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Webster Aaron",
+        "shares": 23601,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Webster Aaron",
+        "shares": 56111,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Webster Aaron",
+        "shares": 59994,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Webster Aaron",
+        "shares": 57372,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Scotti Diego",
+        "shares": 25762,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Scotti Diego",
+        "shares": 38128,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Scotti Diego",
+        "shares": 42878,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      }
+    ],
+    "window_days": 90
+  },
+  "recorded_at": "2026-07-10T11:47:26.324734+00:00",
+  "status": "ok"
+}

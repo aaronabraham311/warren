@@ -25,6 +25,7 @@ from pydantic import BaseModel, Field
 from agent.budget import RunContext
 from agent.tools._clients import yfinance_client
 from agent.tools.base import (
+    TICKER_PATTERN,
     Tool,
     ToolResult,
     ToolResultError,
@@ -149,7 +150,7 @@ def _shares_outstanding(hist: FinancialsHistory) -> int | None:
 
 
 class EstimateIntrinsicValueInput(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}$", description="Stock ticker, e.g. AAPL")
+    ticker: str = Field(pattern=TICKER_PATTERN, description="Stock ticker, e.g. AAPL")
     growth_rate: float | None = Field(
         default=None, description="Near-term annual owner-earnings growth (default 0.08)"
     )

@@ -1,0 +1,100 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "insider_ownership_pct": 2.693,
+    "insider_sentiment": "insufficient_data",
+    "institutional_ownership_pct": 73.245,
+    "net_shares_bought": 0,
+    "net_value_bought": null,
+    "ticker": "LUMN",
+    "transactions": [
+      {
+        "name": "Linear Diankha",
+        "shares": 223426,
+        "transaction_date": "2026-05-21",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "MCMILLAN STEPHEN",
+        "shares": 76591,
+        "transaction_date": "2026-05-21",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "GOLDBERG MICHELLE J",
+        "shares": 76591,
+        "transaction_date": "2026-05-21",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Capossela Christopher C",
+        "shares": 92199,
+        "transaction_date": "2026-05-21",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Collins Michael",
+        "shares": 25197,
+        "transaction_date": "2026-05-21",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Chilton Kevin P.",
+        "shares": 436716,
+        "transaction_date": "2026-05-21",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Allen Quincy L",
+        "shares": 352764,
+        "transaction_date": "2026-05-21",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Bejar Martha Helena",
+        "shares": 421144,
+        "transaction_date": "2026-05-21",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Fowler James",
+        "shares": 1608275,
+        "transaction_date": "2026-05-14",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Johnson Kathleen E",
+        "shares": 3606127,
+        "transaction_date": "2026-05-07",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Johnson Kathleen E",
+        "shares": 8509539,
+        "transaction_date": "2026-05-07",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Hodges Jennifer A.",
+        "shares": 389668,
+        "transaction_date": "2026-04-20",
+        "transaction_type": "other",
+        "value": null
+      }
+    ],
+    "window_days": 90
+  },
+  "recorded_at": "2026-07-10T11:46:59.432449+00:00",
+  "status": "ok"
+}

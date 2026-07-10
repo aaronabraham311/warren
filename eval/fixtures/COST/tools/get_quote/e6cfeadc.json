@@ -1,0 +1,14 @@
+{
+  "data": {
+    "as_of": "2026-07-10T11:46:37.661156Z",
+    "current_price": 912.97,
+    "data_age_hours": 0,
+    "day_change_pct": -0.11,
+    "previous_close": 913.94,
+    "source": "yfinance",
+    "ticker": "COST",
+    "volume": 2325024
+  },
+  "recorded_at": "2026-07-10T11:46:37.662725+00:00",
+  "status": "ok"
+}

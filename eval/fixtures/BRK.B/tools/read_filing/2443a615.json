@@ -1,0 +1,19 @@
+{
+  "data": {
+    "aggregator_discrepancy_note": null,
+    "edgar_url": "https://www.sec.gov/Archives/edgar/data/1067983/000119312526083899/brka-20251231.htm",
+    "filing_date": "2026-03-02",
+    "filing_type": "10-K",
+    "fiscal_year": 2025,
+    "key_figures_extracted": [],
+    "section": "mdna",
+    "source_language": null,
+    "text": "Item 7 \u201cManagement\u2019s Discussion and Analysis of Financial Condition and Results of Operations.\u201d\n \nManagement\u2019s Report on Internal Control Over Financial Reporting\n \nManagement of Berkshire Hathaway Inc. is responsible for establishing and maintaining adequate internal control over financial reporting, as such term is defined in the Securities Exchange Act of 1934 Rule 13a-15(f). Under the supervision and with the participation of our management, including our principal executive officer and principal financial officer, we conducted an evaluation of the effectiveness of the Company\u2019s internal control over financial reporting as of December 31, 2025, as required by the Securities Exchange Act of 1934 Rule 13a-15(c). In making this assessment, we used the criteria set forth in the framework in \nInternal Control\u2014Integrated Framework\n (2013) issued by the Committee of Sponsoring Organizations of the Treadway Commission. Based on our evaluation under the framework in \nInternal Control\u2014Integrated Framework \n(2013), our management concluded that our internal control over financial reporting was effective as of December 31, 2025.\n \nThe effectiveness of our internal control over financial reporting as of December 31, 2025 has been audited by Deloitte & Touche LLP, an independent registered public accounting firm, as stated in their report which appears on page K-64.\n \nBerkshire Hathaway Inc.\n \nFebruary 28, 2026\n\n\nK-\n63",
+    "ticker": "BRK.B",
+    "translate": false,
+    "truncated": false,
+    "word_count": 206
+  },
+  "recorded_at": "2026-07-10T11:46:37.469100+00:00",
+  "status": "ok"
+}

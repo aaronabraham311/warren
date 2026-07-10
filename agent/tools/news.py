@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from agent.budget import RunContext
 from agent.tools._clients import finnhub_client
 from agent.tools.base import (
+    TICKER_PATTERN,
     Tool,
     ToolResult,
     ToolResultError,
@@ -14,7 +15,7 @@ from data_sources.finnhub_client import NewsItem
 
 
 class GetNewsInput(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}$", description="Stock ticker, e.g. AAPL")
+    ticker: str = Field(pattern=TICKER_PATTERN, description="Stock ticker, e.g. AAPL")
     days: int = Field(default=7, ge=1, le=30, description="Look-back window in days (1-30)")
 
 

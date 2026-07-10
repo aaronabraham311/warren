@@ -1,0 +1,74 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "controlling_holder_identified": false,
+    "data_age_hours": 4595,
+    "persons": [
+      {
+        "name": "Ms. Kathleen E. Johnson",
+        "ownership_pct": null,
+        "role": "CEO & Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Christopher David Stansbury",
+        "ownership_pct": null,
+        "role": "President & CFO",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. James Robert Fowler",
+        "ownership_pct": null,
+        "role": "Executive VP and Chief Technology & Product Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Donald  Holt",
+        "ownership_pct": null,
+        "role": "Chief Accounting Officer & Controller",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. James Dennis Breen Jr., C.F.A.",
+        "ownership_pct": null,
+        "role": "Senior Vice President of Investor Relation",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Jennifer  Hodges",
+        "ownership_pct": null,
+        "role": "Executive VP & Chief Legal Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Jessica  Taylor",
+        "ownership_pct": null,
+        "role": "Senior VP & Chief Communications Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Ryan  Asdourian",
+        "ownership_pct": null,
+        "role": "EVP and Chief Strategy & Marketing Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Ana Maria White",
+        "ownership_pct": null,
+        "role": "Executive VP, Chief People & AI Enablement Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. John F. Jones",
+        "ownership_pct": null,
+        "role": "Senior Vice President of Public Policy & Government Relations",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [],
+    "ticker": "LUMN"
+  },
+  "recorded_at": "2026-07-10T11:47:00.342721+00:00",
+  "status": "ok"
+}

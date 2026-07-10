@@ -1008,6 +1008,9 @@ def test_get_valuation_multiples_net_cash_positive(yf_conn: sqlite3.Connection) 
     # existing fields still present
     assert result.ev_to_ebit is not None
     assert result.ncav_to_market_cap is not None
+    # yfinance reports dividendYield already as a percentage (0.55 → 0.55%), unlike the
+    # margin fields it reports as fractions. Passing it through _as_pct would give 55%.
+    assert result.dividend_yield_pct == pytest.approx(0.55, abs=1e-4)
 
 
 # ── get_valuation_multiples: net-debt (GM) ────────────────────────────────────

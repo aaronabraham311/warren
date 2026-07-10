@@ -72,8 +72,11 @@ eval/
   examples/       # Hand-curated golden expectations, one YAML per ticker (Tech Spec §6.2)
     {ticker}.yaml # e.g. aapl.yaml, brk_b.yaml — dotted tickers use an underscore stem
   fixtures/
-    __init__.py   # load_fixture(ticker, client, method, name=) + record_fixtures()
+    README.md     # The two fixture kinds + the quarterly rotation policy
+    __init__.py   # CLIENT-level: load_fixture(ticker, client, method, name=) + record_fixtures()
     __main__.py   # CLI: python -m eval.fixtures --record AAPL MSFT GOOG
+    recorder.py   # CLI: python -m eval.fixtures.recorder [TICKER...] (default: whole golden set)
+                  #   Hits live APIs once and writes via eval.tool_fixtures.record_tool_result
     {TICKER}/{client}/{method}/{hash}.json   # raw upstream payloads — for the data-fetcher tests
     {TICKER}/tools/{tool_name}/{hash}.json   # serialized ToolResults — for eval replay
 
@@ -155,13 +158,21 @@ is mocked at its upstream boundary and fed a **recorded payload** committed unde
 `sha256(json.dumps(input, sort_keys=True))[:8]` (error cases use names like
 `error_not_found.json`). Fixtures store the *raw upstream payload* the client parses,
 not the model output — tests exercise the real parsing path. Load them with
-`eval.fixtures.load_fixture(...)`; the same paths feed the Week-6 eval harness.
+`eval.fixtures.load_fixture(...)`.
 
 - An autouse `_no_live_network` guard in `conftest.py` blocks `socket.connect`, so any
   unmocked live call fails loudly. Keep the suite offline.
 - Fixtures are committed and **never regenerated in CI**. To refresh them from live APIs
   (requires network; Finnhub also needs `FINNHUB_API_KEY`, else it's skipped):
   `python -m eval.fixtures --record AAPL`.
+
+**Eval fixtures are a second, separate kind** (`eval/fixtures/README.md`). They live under
+`{TICKER}/tools/{tool_name}/{hash}.json` and store the *serialized `ToolResult`* a tool
+returned, keyed by its validated input. `eval.tool_fixtures` owns that format — reading it
+(`FixtureToolRunner`) and writing it (`record_tool_result`). Record with
+`python -m eval.fixtures.recorder AAPL` (hits live APIs, overwrites in place; no args
+records the whole golden set). Fixtures rot — a `recorded_at` older than 90 days warns on
+load; refresh quarterly.
 
 ## Code conventions
 
@@ -190,6 +201,8 @@ mypy .                         # type check
 pytest                         # run tests
 python -m agent.eval --golden-set --output runs/eval-2026-05-10.json  # eval replay (exits 1 on any failure)
 streamlit run dashboard/app.py # launch the read-only dashboard (Today page)
+python -m eval.fixtures.recorder        # re-record eval fixtures for the whole golden set
+python -m eval.fixtures.recorder AAPL   # …or just one ticker (overwrites in place)
 python -m dashboard.seed_demo  # seed a demo run + trace to view the dashboard without a real run
 ```
 

@@ -1,0 +1,32 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "buyback_yield_pct": 15.1387,
+    "data_age_hours": 4595,
+    "dividend_growth_streak": 1,
+    "dividend_yield_pct": 0.3252,
+    "net_debt_series": [
+      1938000000,
+      3217000000,
+      595000000,
+      2641000000,
+      null
+    ],
+    "net_debt_trajectory": "delevering",
+    "payout_ratio_pct": 2.4842,
+    "share_count_cagr_pct": 0.8584,
+    "share_count_series": [
+      1343000000,
+      1330000000,
+      1317000000,
+      1309000000,
+      null
+    ],
+    "shareholder_yield_pct": 15.4639,
+    "source": "yfinance",
+    "ticker": "PYPL",
+    "years_covered": 5
+  },
+  "recorded_at": "2026-07-10T11:47:26.160069+00:00",
+  "status": "ok"
+}

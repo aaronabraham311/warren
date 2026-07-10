@@ -1,0 +1,36 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "cash_conversion_series": [
+      -0.2133,
+      -20.0364,
+      0.0913,
+      -1.1105
+    ],
+    "cash_conversion_ttm": -0.2133,
+    "consecutive_profit_years": 0,
+    "data_age_hours": 4595,
+    "gross_margin_pct": 46.4764,
+    "gross_margin_series": [
+      46.4764,
+      48.8633,
+      50.924,
+      54.9834
+    ],
+    "gross_margin_stdev": 3.6059,
+    "ncav_trend": "growing",
+    "roa_pct": -5.0638,
+    "roic_mean": 3.1321,
+    "roic_pct": -0.3933,
+    "roic_series": [
+      -0.3933,
+      0.7988,
+      4.0349,
+      8.0879
+    ],
+    "source": "yfinance",
+    "ticker": "LUMN"
+  },
+  "recorded_at": "2026-07-10T11:46:59.081096+00:00",
+  "status": "ok"
+}

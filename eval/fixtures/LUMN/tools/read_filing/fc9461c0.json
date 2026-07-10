@@ -1,0 +1,19 @@
+{
+  "data": {
+    "aggregator_discrepancy_note": null,
+    "edgar_url": "https://www.sec.gov/Archives/edgar/data/18926/000001892626000014/lumn-20251231.htm",
+    "filing_date": "2026-02-20",
+    "filing_type": "10-K",
+    "fiscal_year": 2025,
+    "key_figures_extracted": [],
+    "section": "business",
+    "source_language": null,
+    "text": "Item 1, and \"Risk Factors \u2014 Legal and Regulatory Risks\" in",
+    "ticker": "LUMN",
+    "translate": false,
+    "truncated": false,
+    "word_count": 11
+  },
+  "recorded_at": "2026-07-10T11:47:01.783419+00:00",
+  "status": "ok"
+}

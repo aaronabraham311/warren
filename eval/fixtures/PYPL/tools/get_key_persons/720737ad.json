@@ -1,0 +1,74 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "controlling_holder_identified": false,
+    "data_age_hours": 4595,
+    "persons": [
+      {
+        "name": "Mr. Enrique J. Lores",
+        "ownership_pct": null,
+        "role": "President, CEO & Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Jamie S. Miller",
+        "ownership_pct": null,
+        "role": "Chief Financial & Operating Officer and Executive VP",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Frank  Keller",
+        "ownership_pct": null,
+        "role": "President of Checkout Solutions & PayPal",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Suzan Bulyaba Kereere",
+        "ownership_pct": null,
+        "role": "President of Global Markets",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Christopher  Natali",
+        "ownership_pct": null,
+        "role": "Senior VP & Chief Accounting Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Srinivasan  Venkatesan",
+        "ownership_pct": null,
+        "role": "Chief Technology Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Steven Eric Winoker",
+        "ownership_pct": null,
+        "role": "Chief Investor Relations Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Bimal  Patel",
+        "ownership_pct": null,
+        "role": "Chief Legal Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Amy  Bonitatibus",
+        "ownership_pct": null,
+        "role": "Chief Corporate Affairs & Communications Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Antonio J. Lucio",
+        "ownership_pct": null,
+        "role": "Chief Marketing & Corporate Affairs Officer",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [],
+    "ticker": "PYPL"
+  },
+  "recorded_at": "2026-07-10T11:47:27.113795+00:00",
+  "status": "ok"
+}

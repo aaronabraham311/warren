@@ -5,14 +5,14 @@ from pydantic import BaseModel, Field
 
 from agent.budget import RunContext
 from agent.tools._clients import yfinance_client
-from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
+from agent.tools.base import TICKER_PATTERN, Tool, ToolResult, ToolResultError, ToolResultOk
 from data_sources.yfinance_client import PriceData
 
 _PORTFOLIO_FILE = Path("data/portfolio.csv")
 
 
 class GetHoldingContextInput(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}$", description="Stock ticker, e.g. AAPL")
+    ticker: str = Field(pattern=TICKER_PATTERN, description="Stock ticker, e.g. AAPL")
 
 
 class HoldingContext(BaseModel):

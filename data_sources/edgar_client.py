@@ -312,9 +312,11 @@ class EDGARClient:
     # ── Step 1: ticker → CIK via the authoritative bulk map ────────────────
 
     def _resolve_cik(self, ticker: str) -> str:
-        cik = self._cik_map_lookup(ticker.upper())
+        # SEC's map spells share classes with a dash: BRK.B → BRK-B.
+        want = ticker.upper().replace(".", "-")
+        cik = self._cik_map_lookup(want)
         if cik is None:
-            raise _NotFoundError(f"ticker {ticker.upper()} not found in EDGAR")
+            raise _NotFoundError(f"ticker {want} not found in EDGAR")
         return cik
 
     def _cik_map_lookup(self, want: str) -> str | None:

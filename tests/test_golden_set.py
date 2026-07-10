@@ -24,8 +24,8 @@ from eval.golden_set import (
 
 AMBIGUOUS = {"INTC", "PYPL", "NKE", "SBUX"}
 CLEAR_BUY = {"COST", "V"}
-CLEAR_HOLD = {"AAPL", "BRK.B", "MSFT", "XOM", "META", "NVDA"}
-CLEAR_SELL = {"WBA"}
+CLEAR_HOLD = {"AAPL", "BRK.B", "MSFT", "CVX", "META", "NVDA"}
+CLEAR_SELL = {"LUMN"}
 
 EXAMPLE_PATHS = sorted(EXAMPLES_DIR.glob("*.yaml"))
 
@@ -79,11 +79,11 @@ def test_clear_hold_prefers_hold(by_ticker: dict[str, EvalExample]) -> None:
         assert by_ticker[ticker].expectations.recommendation.preferred == "hold"
 
 
-# ── AC: WBA excludes buy; at least one other ticker shares that constraint ────────────
+# ── AC: the impaired case excludes buy; at least one other ticker shares that constraint ──
 
 
-def test_wba_allows_only_sell_and_hold(by_ticker: dict[str, EvalExample]) -> None:
-    recommendation = by_ticker["WBA"].expectations.recommendation
+def test_impaired_case_allows_only_sell_and_hold(by_ticker: dict[str, EvalExample]) -> None:
+    recommendation = by_ticker["LUMN"].expectations.recommendation
     assert set(recommendation.allowed) == {"sell", "hold"}
     assert "buy" not in recommendation.allowed
     assert recommendation.preferred == "sell"
@@ -91,7 +91,7 @@ def test_wba_allows_only_sell_and_hold(by_ticker: dict[str, EvalExample]) -> Non
 
 def test_buy_excluded_for_at_least_two_tickers(examples: list[EvalExample]) -> None:
     excluded = {e.ticker for e in examples if "buy" not in e.expectations.recommendation.allowed}
-    assert "WBA" in excluded
+    assert "LUMN" in excluded
     assert len(excluded) >= 2, f"expected a second buy-excluding ticker, got {excluded}"
 
 

@@ -1,0 +1,24 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "assumptions": {
+      "discount_rate": 0.1,
+      "growth_rate": 0.08,
+      "projection_years": 10,
+      "terminal_growth_rate": 0.025
+    },
+    "current_price": 6.75,
+    "data_age_hours": 4595,
+    "intrinsic_equity_value": 7578856702,
+    "intrinsic_value_per_share": 7.39,
+    "margin_of_safety": 0.0866,
+    "owner_earnings_base": 371000000,
+    "owner_earnings_source": "free_cash_flow",
+    "reverse_dcf_implied_growth": 0.0677,
+    "shares_outstanding": 1025446000,
+    "source": "yfinance",
+    "ticker": "LUMN"
+  },
+  "recorded_at": "2026-07-10T11:46:59.367405+00:00",
+  "status": "ok"
+}

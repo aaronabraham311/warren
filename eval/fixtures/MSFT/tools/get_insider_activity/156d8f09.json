@@ -1,0 +1,247 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "insider_ownership_pct": 0.078,
+    "insider_sentiment": "bearish",
+    "institutional_ownership_pct": 75.66,
+    "net_shares_bought": -255916,
+    "net_value_bought": null,
+    "ticker": "MSFT",
+    "transactions": [
+      {
+        "name": "Jolla Alice L.",
+        "shares": 76153,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Coleman Amy",
+        "shares": 45445,
+        "transaction_date": "2026-06-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Di Sibio Carmine",
+        "shares": 13,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Walmsley Emma N",
+        "shares": 1263,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Rainey John D",
+        "shares": 296,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "List Teri",
+        "shares": 23075,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Hoffman Reid",
+        "shares": 16963,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Mason Mark",
+        "shares": 232,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "MacGregor Catherine",
+        "shares": 2180,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Johnston Hugh F",
+        "shares": 2140,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "PETERSON SANDRA E",
+        "shares": 26233,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "PRITZKER PENNY S",
+        "shares": 14323,
+        "transaction_date": "2026-06-11",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Numoto Takeshi",
+        "shares": 47468,
+        "transaction_date": "2026-06-10",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Numoto Takeshi",
+        "shares": 51968,
+        "transaction_date": "2026-06-08",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "STANTON JOHN W",
+        "shares": 84054,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Di Sibio Carmine",
+        "shares": 13,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Di Sibio Carmine",
+        "shares": 360,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Walmsley Emma N",
+        "shares": 1260,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Rainey John D",
+        "shares": 296,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "List Teri",
+        "shares": 149,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Hoffman Reid",
+        "shares": 16924,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Mason Mark",
+        "shares": 231,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "MacGregor Catherine",
+        "shares": 2175,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Johnston Hugh F",
+        "shares": 2135,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "SCHARF CHARLES W",
+        "shares": 45041,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "PETERSON SANDRA E",
+        "shares": 26172,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "PRITZKER PENNY S",
+        "shares": 14290,
+        "transaction_date": "2026-06-05",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Althoff Judson",
+        "shares": 110477,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Coleman Amy",
+        "shares": 45481,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Jolla Alice L.",
+        "shares": 71149,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Coleman Amy",
+        "shares": 45915,
+        "transaction_date": "2026-05-15",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Coleman Amy",
+        "shares": 46003,
+        "transaction_date": "2026-05-14",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Coleman Amy",
+        "shares": 47266,
+        "transaction_date": "2026-04-15",
+        "transaction_type": "other",
+        "value": null
+      }
+    ],
+    "window_days": 90
+  },
+  "recorded_at": "2026-07-10T11:47:09.145102+00:00",
+  "status": "ok"
+}
