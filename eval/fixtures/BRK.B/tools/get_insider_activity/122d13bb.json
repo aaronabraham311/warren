@@ -1,0 +1,15 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "insider_ownership_pct": 0.261,
+    "insider_sentiment": "insufficient_data",
+    "institutional_ownership_pct": 67.304,
+    "net_shares_bought": 0,
+    "net_value_bought": null,
+    "ticker": "BRK.B",
+    "transactions": [],
+    "window_days": 90
+  },
+  "recorded_at": "2026-07-10T11:46:32.398331+00:00",
+  "status": "ok"
+}

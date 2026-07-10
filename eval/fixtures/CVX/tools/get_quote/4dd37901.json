@@ -1,0 +1,14 @@
+{
+  "data": {
+    "as_of": "2026-07-10T11:46:42.666149Z",
+    "current_price": 174.05,
+    "data_age_hours": 0,
+    "day_change_pct": -0.08,
+    "previous_close": 174.19,
+    "source": "yfinance",
+    "ticker": "CVX",
+    "volume": 9904227
+  },
+  "recorded_at": "2026-07-10T11:46:42.668185+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,74 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "controlling_holder_identified": false,
+    "data_age_hours": 4595,
+    "persons": [
+      {
+        "name": "Mr. Michael K. Wirth",
+        "ownership_pct": null,
+        "role": "Chairman & CEO",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Eimear P. Bonner",
+        "ownership_pct": null,
+        "role": "Chief Financial Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. R. Hewitt Pate J.D.",
+        "ownership_pct": null,
+        "role": "Chief Legal Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Mark A. Nelson",
+        "ownership_pct": null,
+        "role": "Vice Chairman & Executive VP of Oil, Products and Gas",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Robert Clay Neff",
+        "ownership_pct": null,
+        "role": "President of Upstream",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Amit Rajindrasingh Ghai",
+        "ownership_pct": null,
+        "role": "Controller & Principal Accounting Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. T. Ryder Booth",
+        "ownership_pct": null,
+        "role": "Chief Technology & Engineering Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Jeanine  Wai",
+        "ownership_pct": null,
+        "role": "Director of Investor Relations",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Frank W. Mount",
+        "ownership_pct": null,
+        "role": "President of Corporate Business Development",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Michelle R. Green",
+        "ownership_pct": null,
+        "role": "Chief Human Resources Officer",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [],
+    "ticker": "CVX"
+  },
+  "recorded_at": "2026-07-10T11:46:45.188409+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,25 @@
+{
+  "data": {
+    "acquirers_multiple": null,
+    "as_of": "2026-07-10",
+    "data_age_hours": 971,
+    "dividend_yield_pct": 3.83,
+    "earnings_yield": null,
+    "enterprise_value": 65431629824,
+    "ev_to_ebit": null,
+    "ev_to_ebitda": 14.43,
+    "fcf_yield": null,
+    "is_net_net": false,
+    "market_cap_usd": 63352344576,
+    "ncav": null,
+    "ncav_to_market_cap": null,
+    "net_cash_positive": false,
+    "net_cash_usd": -2005999616,
+    "p_tangible_book": null,
+    "price_to_ncav": null,
+    "source": "yfinance",
+    "ticker": "NKE"
+  },
+  "recorded_at": "2026-07-10T11:47:15.798024+00:00",
+  "status": "ok"
+}

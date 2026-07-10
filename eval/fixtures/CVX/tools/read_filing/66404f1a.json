@@ -1,0 +1,19 @@
+{
+  "data": {
+    "aggregator_discrepancy_note": null,
+    "edgar_url": "https://www.sec.gov/Archives/edgar/data/93410/000009341026000078/cvx-20251231.htm",
+    "filing_date": "2026-02-24",
+    "filing_type": "10-K",
+    "fiscal_year": 2025,
+    "key_figures_extracted": [],
+    "section": "mdna",
+    "source_language": null,
+    "text": "Item 7. Management\u2019s Discussion and Analysis of Financial Condition and Results of Operations\nThe index to Management\u2019s Discussion and Analysis of Financial Condition and Results of Operations is presented in the \nFinancial Table of Contents\n.",
+    "ticker": "CVX",
+    "translate": false,
+    "truncated": false,
+    "word_count": 36
+  },
+  "recorded_at": "2026-07-10T11:46:48.756532+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,36 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "cash_conversion_series": [
+      1.0757,
+      0.9468,
+      1.1403,
+      1.1954
+    ],
+    "cash_conversion_ttm": 1.0757,
+    "consecutive_profit_years": 4,
+    "data_age_hours": 6803,
+    "gross_margin_pct": 80.3625,
+    "gross_margin_series": [
+      80.3625,
+      80.3986,
+      79.8885,
+      80.4401
+    ],
+    "gross_margin_stdev": 0.2579,
+    "ncav_trend": "declining",
+    "roa_pct": 20.1331,
+    "roic_mean": 28.7795,
+    "roic_pct": 34.0919,
+    "roic_series": [
+      34.0919,
+      29.2076,
+      26.7114,
+      25.107
+    ],
+    "source": "yfinance",
+    "ticker": "V"
+  },
+  "recorded_at": "2026-07-10T11:47:34.900748+00:00",
+  "status": "ok"
+}

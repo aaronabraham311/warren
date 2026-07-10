@@ -1,0 +1,19 @@
+{
+  "data": {
+    "aggregator_discrepancy_note": null,
+    "edgar_url": "https://www.sec.gov/Archives/edgar/data/50863/000005086326000011/intc-20251227.htm",
+    "filing_date": "2026-01-23",
+    "filing_type": "10-K",
+    "fiscal_year": 2025,
+    "key_figures_extracted": [],
+    "section": "risk_factors",
+    "source_language": null,
+    "text": "Item 1A.\nRisk Factors\nPages \n37\n-\n51",
+    "ticker": "INTC",
+    "translate": false,
+    "truncated": false,
+    "word_count": 8
+  },
+  "recorded_at": "2026-07-10T11:46:53.079139+00:00",
+  "status": "ok"
+}

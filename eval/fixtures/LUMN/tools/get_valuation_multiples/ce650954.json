@@ -1,0 +1,25 @@
+{
+  "data": {
+    "acquirers_multiple": null,
+    "as_of": "2026-07-10",
+    "data_age_hours": 4595,
+    "dividend_yield_pct": null,
+    "earnings_yield": null,
+    "enterprise_value": 18579599360,
+    "ev_to_ebit": null,
+    "ev_to_ebitda": 8.03,
+    "fcf_yield": -10.5485,
+    "is_net_net": false,
+    "market_cap_usd": 6954599424,
+    "ncav": null,
+    "ncav_to_market_cap": null,
+    "net_cash_positive": false,
+    "net_cash_usd": -11624999936,
+    "p_tangible_book": null,
+    "price_to_ncav": null,
+    "source": "yfinance",
+    "ticker": "LUMN"
+  },
+  "recorded_at": "2026-07-10T11:46:58.950513+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,32 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "buyback_yield_pct": 0.0,
+    "data_age_hours": 4595,
+    "dividend_growth_streak": 0,
+    "dividend_yield_pct": 0.0144,
+    "net_debt_series": [
+      16704000000,
+      16270000000,
+      18022000000,
+      19665000000,
+      null
+    ],
+    "net_debt_trajectory": "delevering",
+    "payout_ratio_pct": null,
+    "share_count_cagr_pct": 0.7844,
+    "share_count_series": [
+      1025446000,
+      1014768000,
+      1008486000,
+      1001688000,
+      null
+    ],
+    "shareholder_yield_pct": 0.0144,
+    "source": "yfinance",
+    "ticker": "LUMN",
+    "years_covered": 5
+  },
+  "recorded_at": "2026-07-10T11:46:59.274449+00:00",
+  "status": "ok"
+}

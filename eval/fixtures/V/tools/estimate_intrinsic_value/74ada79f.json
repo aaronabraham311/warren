@@ -1,0 +1,24 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "assumptions": {
+      "discount_rate": 0.1,
+      "growth_rate": 0.08,
+      "projection_years": 10,
+      "terminal_growth_rate": 0.025
+    },
+    "current_price": 348.2,
+    "data_age_hours": 6803,
+    "intrinsic_equity_value": 440778951666,
+    "intrinsic_value_per_share": 228.0,
+    "margin_of_safety": -0.5272,
+    "owner_earnings_base": 21577000000,
+    "owner_earnings_source": "free_cash_flow",
+    "reverse_dcf_implied_growth": 0.1375,
+    "shares_outstanding": 1933259368,
+    "source": "yfinance",
+    "ticker": "V"
+  },
+  "recorded_at": "2026-07-10T11:47:35.230293+00:00",
+  "status": "ok"
+}

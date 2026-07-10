@@ -1,0 +1,36 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "cash_conversion_series": [
+      1.3491,
+      0.8518,
+      0.9256,
+      1.061
+    ],
+    "cash_conversion_ttm": 1.3491,
+    "consecutive_profit_years": 4,
+    "data_age_hours": 4595,
+    "gross_margin_pct": 30.4101,
+    "gross_margin_series": [
+      30.4101,
+      29.4322,
+      30.6689,
+      31.3859
+    ],
+    "gross_margin_stdev": 0.8081,
+    "ncav_trend": "declining",
+    "roa_pct": 3.7958,
+    "roic_mean": 7.5767,
+    "roic_pct": 3.6281,
+    "roic_series": [
+      3.6281,
+      5.5897,
+      8.2759,
+      12.8131
+    ],
+    "source": "yfinance",
+    "ticker": "CVX"
+  },
+  "recorded_at": "2026-07-10T11:46:44.027707+00:00",
+  "status": "ok"
+}

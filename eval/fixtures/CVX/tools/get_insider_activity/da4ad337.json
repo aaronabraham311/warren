@@ -1,0 +1,184 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "insider_ownership_pct": 4.727,
+    "insider_sentiment": "bearish",
+    "institutional_ownership_pct": 70.284,
+    "net_shares_bought": -4730645,
+    "net_value_bought": null,
+    "ticker": "CVX",
+    "transactions": [
+      {
+        "name": "WARNER CYNTHIA J",
+        "shares": 403,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "HEWSON MARILLYN A",
+        "shares": 6131,
+        "transaction_date": "2026-06-01",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Austin Wanda M",
+        "shares": 3032,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Moyo Dambisa F",
+        "shares": 14790,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "WARNER CYNTHIA J",
+        "shares": 7837,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Umpleby III Donald J",
+        "shares": 3031,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Huntsman Jon M Jr",
+        "shares": 12002,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "Frank John",
+        "shares": 20333,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "REED DEBRA L",
+        "shares": 17420,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "HEWSON MARILLYN A",
+        "shares": 15020,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "HORTON THOMAS W",
+        "shares": 1734,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 356900,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "HERNANDEZ ENRIQUE JR",
+        "shares": 34859,
+        "transaction_date": "2026-05-27",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 278045,
+        "transaction_date": "2026-05-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 281080,
+        "transaction_date": "2026-05-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 311661,
+        "transaction_date": "2026-05-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 318699,
+        "transaction_date": "2026-05-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 361377,
+        "transaction_date": "2026-05-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 420422,
+        "transaction_date": "2026-05-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 540209,
+        "transaction_date": "2026-05-20",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Moyo Dambisa F",
+        "shares": 13518,
+        "transaction_date": "2026-05-06",
+        "transaction_type": "other",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 658045,
+        "transaction_date": "2026-05-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 736093,
+        "transaction_date": "2026-05-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "HESS JOHN B",
+        "shares": 825014,
+        "transaction_date": "2026-05-06",
+        "transaction_type": "sell",
+        "value": null
+      }
+    ],
+    "window_days": 90
+  },
+  "recorded_at": "2026-07-10T11:46:44.426103+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,24 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "assumptions": {
+      "discount_rate": 0.1,
+      "growth_rate": 0.08,
+      "projection_years": 10,
+      "terminal_growth_rate": 0.025
+    },
+    "current_price": 316.22,
+    "data_age_hours": 6875,
+    "intrinsic_equity_value": 2017630565847,
+    "intrinsic_value_per_share": 136.57,
+    "margin_of_safety": -1.3154,
+    "owner_earnings_base": 98767000000,
+    "owner_earnings_source": "free_cash_flow",
+    "reverse_dcf_implied_growth": 0.1944,
+    "shares_outstanding": 14773260000,
+    "source": "yfinance",
+    "ticker": "AAPL"
+  },
+  "recorded_at": "2026-07-10T11:46:26.435806+00:00",
+  "status": "ok"
+}

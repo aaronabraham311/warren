@@ -6,18 +6,19 @@ contract: it drives the real tools, overwrites in place, records data-source err
 than dropping them, and leaves the golden set fully covered.
 """
 
+from collections.abc import Iterator
+from contextlib import ExitStack, contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from agent.tools import TOOL_REGISTRY
-from eval.golden_set import EvalExample
-from agent.tools.base import ToolResultError, ToolResultOk
+from agent.tools.base import ToolResult, ToolResultError, ToolResultOk
 from data_sources.yfinance_client import PriceData
 from eval.fixtures.recorder import RECORDED_CALLS, record_ticker
-from eval.golden_set import load_all_examples
+from eval.golden_set import EvalExample, load_all_examples
 from eval.tool_fixtures import FIXTURES_DIR, tool_fixture_path
 
 
@@ -35,12 +36,28 @@ def _ok(price: float) -> ToolResultOk:
     )
 
 
+@contextmanager
+def _stub_every_tool(
+    return_value: ToolResult | None = None, side_effect: Exception | None = None
+) -> Iterator[None]:
+    """Stub ``run`` on every registered tool.
+
+    Each tool overrides ``run``, so patching ``Tool.run`` on the base class would silently
+    leave the real implementations in place — and the recorder would hit the network.
+    """
+    with ExitStack() as stack:
+        for tool in TOOL_REGISTRY.values():
+            stub = MagicMock(return_value=return_value, side_effect=side_effect)
+            stack.enter_context(patch.object(type(tool), "run", stub))
+        yield
+
+
 def test_record_ticker_overwrites_rather_than_duplicating(tmp_path: Path) -> None:
     quote_input = TOOL_REGISTRY["get_quote"].input_schema(ticker="AAPL").model_dump(mode="json")
 
-    with patch("agent.tools.base.Tool.run", return_value=_ok(190.5)):
+    with _stub_every_tool(return_value=_ok(190.5)):
         record_ticker("AAPL", tmp_path)
-    with patch("agent.tools.base.Tool.run", return_value=_ok(200.0)):
+    with _stub_every_tool(return_value=_ok(200.0)):
         record_ticker("AAPL", tmp_path)
 
     quote_dir = (tmp_path / "AAPL" / "tools" / "get_quote").iterdir()
@@ -54,7 +71,7 @@ def test_record_ticker_persists_tool_errors(tmp_path: Path) -> None:
     """A data source that is genuinely unavailable replays as that error, not as a hole."""
     error = ToolResultError(error_code="not_found", message="delisted", retryable=False)
 
-    with patch("agent.tools.base.Tool.run", return_value=error):
+    with _stub_every_tool(return_value=error):
         summary = record_ticker("ZZZZ", tmp_path)
 
     assert summary.ok == 0
@@ -66,7 +83,7 @@ def test_record_ticker_persists_tool_errors(tmp_path: Path) -> None:
 
 def test_record_ticker_survives_a_raising_tool(tmp_path: Path) -> None:
     """An exception is a bug, not data: report it and leave the old fixture in place."""
-    with patch("agent.tools.base.Tool.run", side_effect=RuntimeError("boom")):
+    with _stub_every_tool(side_effect=RuntimeError("boom")):
         summary = record_ticker("AAPL", tmp_path)
 
     assert summary.ok == 0

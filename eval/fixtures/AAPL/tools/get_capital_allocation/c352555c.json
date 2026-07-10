@@ -1,0 +1,32 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "buyback_yield_pct": 1.9531,
+    "data_age_hours": 6875,
+    "dividend_growth_streak": 3,
+    "dividend_yield_pct": 0.332,
+    "net_debt_series": [
+      62723000000,
+      76686000000,
+      81123000000,
+      108834000000,
+      null
+    ],
+    "net_debt_trajectory": "delevering",
+    "payout_ratio_pct": 13.7675,
+    "share_count_cagr_pct": -2.5089,
+    "share_count_series": [
+      14773260000,
+      15116786000,
+      15550061000,
+      15943425000,
+      null
+    ],
+    "shareholder_yield_pct": 2.2851,
+    "source": "yfinance",
+    "ticker": "AAPL",
+    "years_covered": 5
+  },
+  "recorded_at": "2026-07-10T11:46:26.330063+00:00",
+  "status": "ok"
+}

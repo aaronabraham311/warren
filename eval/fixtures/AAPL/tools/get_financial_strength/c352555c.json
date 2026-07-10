@@ -1,0 +1,27 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "current_ratio": 0.8933,
+    "data_age_hours": 6875,
+    "f_score": 7,
+    "f_signals": {
+      "accruals_negative": false,
+      "asset_turnover_improved": true,
+      "current_ratio_improved": true,
+      "gross_margin_improved": true,
+      "leverage_decreased": true,
+      "no_dilution": false,
+      "op_cf_positive": true,
+      "roa_improved": true,
+      "roa_positive": true
+    },
+    "interest_coverage": 33.83,
+    "net_debt_to_ebitda": 0.4333,
+    "source": "yfinance",
+    "ticker": "AAPL",
+    "z_score": 12.0264,
+    "z_zone": "safe"
+  },
+  "recorded_at": "2026-07-10T11:46:26.246107+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,19 @@
+{
+  "data": {
+    "aggregator_discrepancy_note": null,
+    "edgar_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm",
+    "filing_date": "2025-07-30",
+    "filing_type": "10-K",
+    "fiscal_year": 2025,
+    "key_figures_extracted": [],
+    "section": "mdna",
+    "source_language": null,
+    "text": "Item 7\n\u00a0\n\n\nSTATEMENT OF MANAGEMENT\u2019S RESPONSIBILITY FOR FINANCIAL STATEMENTS\n \nManagement is responsible for the preparation of the consolidated financial statements and related information that are presented in this report. The consolidated financial statements, which include amounts based on management\u2019s estimates and judgments, have been prepared in conformity with accounting principles generally accepted in the United States of America.\n \nThe Company designs and maintains accounting and internal control systems to provide reasonable assurance at reasonable cost that assets are safeguarded against loss from unauthorized use or disposition, and that the financial records are reliable for preparing consolidated financial statements and maintaining accountability for assets. These systems are augmented by written policies, an organizational structure providing division of responsibilities, careful selection and training of qualified personnel, and a program of internal audits.\n \nThe Company engaged Deloitte & Touche LLP, an independent registered public accounting firm, to audit and render an opinion on the consolidated financial statements and internal control over financial reporting in accordance with the standards of the Public Company Accounting Oversight Board (United States).\n \nThe Board of Directors, through its Audit Committee, consisting solely of independent directors of the Company, meets periodically with management, internal auditors, and our independent registered public accounting firm to ensure that each is meeting its responsibilities and to discuss matters concerning internal controls and financial reporting. Deloitte & Touche LLP and the internal auditors each have full and free access to the Audit Committee.\n \n\u00a0\n\n\n\n\n\n\n\n\n\n\n\n\nSatya Nadella\n\n\n\n\n\n\nChief Executive Officer\n\n\n\n\n\n\n\u00a0\n\n\n\n\n\n\nAmy E. Hood\n\n\n\n\n\n\nExecutive Vice President and Chief Financial Officer\n\n\n\n\n\n\n\u00a0\n\n\n\n\n\n\nAlice L. Jolla\n\n\n\n\n\n\nCorporate Vice President and Chief Accounting Officer\n\n\n\n\n\u00a0\n\n\n48\n\n\n\n\nPART II",
+    "ticker": "MSFT",
+    "translate": false,
+    "truncated": false,
+    "word_count": 267
+  },
+  "recorded_at": "2026-07-10T11:47:14.149992+00:00",
+  "status": "ok"
+}

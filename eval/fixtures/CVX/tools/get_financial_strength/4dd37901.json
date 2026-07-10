@@ -1,0 +1,27 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "current_ratio": 1.1547,
+    "data_age_hours": 4595,
+    "f_score": 6,
+    "f_signals": {
+      "accruals_negative": true,
+      "asset_turnover_improved": false,
+      "current_ratio_improved": true,
+      "gross_margin_improved": true,
+      "leverage_decreased": false,
+      "no_dilution": true,
+      "op_cf_positive": true,
+      "roa_improved": false,
+      "roa_positive": true
+    },
+    "interest_coverage": 17.22,
+    "net_debt_to_ebitda": 0.8321,
+    "source": "yfinance",
+    "ticker": "CVX",
+    "z_score": 3.2667,
+    "z_zone": "safe"
+  },
+  "recorded_at": "2026-07-10T11:46:44.176810+00:00",
+  "status": "ok"
+}

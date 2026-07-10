@@ -1,0 +1,25 @@
+{
+  "data": {
+    "acquirers_multiple": null,
+    "as_of": "2026-07-10",
+    "data_age_hours": 4595,
+    "dividend_yield_pct": null,
+    "earnings_yield": null,
+    "enterprise_value": -265515581440,
+    "ev_to_ebit": null,
+    "ev_to_ebitda": -2.25,
+    "fcf_yield": null,
+    "is_net_net": false,
+    "market_cap_usd": 1068613238784,
+    "ncav": null,
+    "ncav_to_market_cap": null,
+    "net_cash_positive": true,
+    "net_cash_usd": 268497010688,
+    "p_tangible_book": null,
+    "price_to_ncav": null,
+    "source": "yfinance",
+    "ticker": "BRK.B"
+  },
+  "recorded_at": "2026-07-10T11:46:31.832816+00:00",
+  "status": "ok"
+}

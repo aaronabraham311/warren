@@ -1,0 +1,36 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "cash_conversion_series": [
+      0.9677,
+      0.8998,
+      1.072,
+      0.5991
+    ],
+    "cash_conversion_ttm": 0.9677,
+    "consecutive_profit_years": 4,
+    "data_age_hours": 7523,
+    "gross_margin_pct": 12.8432,
+    "gross_margin_series": [
+      12.8432,
+      12.6133,
+      12.2597,
+      12.1487
+    ],
+    "gross_margin_stdev": 0.32,
+    "ncav_trend": "growing",
+    "roa_pct": 10.5047,
+    "roic_mean": 18.7844,
+    "roic_pct": 19.4377,
+    "roic_series": [
+      19.4377,
+      20.4349,
+      16.9876,
+      18.2776
+    ],
+    "source": "yfinance",
+    "ticker": "COST"
+  },
+  "recorded_at": "2026-07-10T11:46:39.010816+00:00",
+  "status": "ok"
+}

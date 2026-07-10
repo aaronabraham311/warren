@@ -1,0 +1,74 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "controlling_holder_identified": false,
+    "data_age_hours": 4691,
+    "persons": [
+      {
+        "name": "Mr. Lip-Bu  Tan",
+        "ownership_pct": null,
+        "role": "CEO & Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. David A. Zinsner",
+        "ownership_pct": null,
+        "role": "Executive VP, CFO and Principal Financial & Accounting Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Nagasubramaniyan  Chandrasekaran",
+        "ownership_pct": null,
+        "role": "Executive VP, Chief Technology and Operations Officer & GM of Intel Foundry",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Pushkar  Ranade Ph.D.",
+        "ownership_pct": null,
+        "role": "CTO & Chief of Staff to the CEO",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Cynthia A. Stoddard",
+        "ownership_pct": null,
+        "role": "Senior VP & Chief Information Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. John William Pitzer",
+        "ownership_pct": null,
+        "role": "Corporate Vice President of Corporate Planning & Investor Relations",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Aparna  Bawa Esq.",
+        "ownership_pct": null,
+        "role": "Executive VP and Chief Legal & People Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Ms. Annie Shea Weckesser",
+        "ownership_pct": null,
+        "role": "Senior VP and Chief Marketing & Communications Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Gregory  Ernst",
+        "ownership_pct": null,
+        "role": "Corporate VP, Chief Revenue Officer & General Manager of Sales Group",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. James A. Murray",
+        "ownership_pct": null,
+        "role": "Chief Antitrust Counsel and VP of Law & Policy Group",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [],
+    "ticker": "INTC"
+  },
+  "recorded_at": "2026-07-10T11:46:51.597714+00:00",
+  "status": "ok"
+}

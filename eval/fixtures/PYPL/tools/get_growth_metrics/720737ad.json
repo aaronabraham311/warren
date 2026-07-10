@@ -1,0 +1,14 @@
+{
+  "data": {
+    "as_of": "2026-07-10",
+    "data_age_hours": 4595,
+    "earnings_cagr_3y": 0.2933,
+    "peg_ratio": 0.8,
+    "revenue_cagr_3y": 0.0643,
+    "revenue_cagr_5y": 0.0643,
+    "source": "yfinance",
+    "ticker": "PYPL"
+  },
+  "recorded_at": "2026-07-10T11:47:25.668335+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,19 @@
+{
+  "data": {
+    "aggregator_discrepancy_note": null,
+    "edgar_url": "https://www.sec.gov/Archives/edgar/data/829224/000082922425000114/sbux-20250928.htm",
+    "filing_date": "2025-11-14",
+    "filing_type": "10-K",
+    "fiscal_year": 2025,
+    "key_figures_extracted": [],
+    "section": "mdna",
+    "source_language": null,
+    "text": "Item\u00a07 of this Report.\n42\nTable of Contents",
+    "ticker": "SBUX",
+    "translate": false,
+    "truncated": false,
+    "word_count": 9
+  },
+  "recorded_at": "2026-07-10T11:47:33.716870+00:00",
+  "status": "ok"
+}
