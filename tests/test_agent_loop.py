@@ -4,6 +4,7 @@ All Anthropic API calls are monkeypatched; yfinance is patched where relevant.
 SQLite runs in-memory via the db_engine fixture.
 """
 
+import json
 import tempfile
 from collections.abc import Callable
 from datetime import datetime, timezone
@@ -586,6 +587,27 @@ def test_wal_no_retry_fields_zero(mock_claude: MagicMock, tmp_path: Path) -> Non
     assert len(events) == 1
     assert events[0]["retry_count"] == 0
     assert events[0]["last_retry_error"] is None
+
+
+def test_wal_discovery_cooldown_applied_records_suppressed_count(tmp_path: Path) -> None:
+    """agent/run.py's nightly-mode logging call — the event the Today page's
+    suppressed-count metric (dashboard.data.cooldown_suppressed_count) reads back."""
+    from agent.cooldown import CooldownResult
+
+    logger = RunLogger("run-cooldown", tmp_path)
+    cooldown_result = CooldownResult(active=["AAPL"], suppressed=["INTC", "TSLA"])
+    logger.log(
+        "discovery_cooldown_applied",
+        suppressed_count=len(cooldown_result.suppressed),
+        suppressed_tickers=cooldown_result.suppressed,
+    )
+    logger.close()
+
+    lines = (tmp_path / "run-cooldown.jsonl").read_text(encoding="utf-8").splitlines()
+    events = [json.loads(line) for line in lines]
+    event = next(e for e in events if e["event"] == "discovery_cooldown_applied")
+    assert event["suppressed_count"] == 2
+    assert event["suppressed_tickers"] == ["INTC", "TSLA"]
 
 
 # ── DirtSignals ───────────────────────────────────────────────────────────────

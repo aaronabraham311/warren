@@ -70,10 +70,10 @@ eval/
     __main__.py   # CLI: python -m eval.fixtures --record AAPL MSFT GOOG
     {TICKER}/{client}/{method}/{hash}.json   # committed recorded payloads
 
-dashboard/        # Streamlit read-only dashboard (never triggers a run)
+dashboard/        # Streamlit read-only dashboard — one exception: Today's "Run now" button (see below)
   app.py          # Multi-page entrypoint — `streamlit run dashboard/app.py`; st.navigation + set_page_config
-  data.py         # Pure data access over the ORM + JSONL logs (no Streamlit) — get_latest_run, get_analyses_for_run (§9.Q3 sort), search_analyses (History filters), read_reasoning_trace
-  pages/today.py  # Today page: run-metadata header + holdings/discovery cards
+  data.py         # Pure data access over the ORM + JSONL logs (no Streamlit) — get_latest_run, get_analyses_for_run (§9.Q3 sort), search_analyses (History filters), read_reasoning_trace, cooldown_suppressed_count, previous_recommendation, MONTHLY_WARNING_THRESHOLD_USD
+  pages/today.py  # Today page: run-metadata header (incl. cooldown-suppressed count + budget/status banners) + holdings/discovery cards (prior-call delta) + sidebar "Run now" button (`subprocess.run(["python", "-m", "agent.run"])`, the one deliberate exception to the read-only rule — a human-clicked dev convenience, not an automated write path)
   pages/history.py  # History page: sidebar filters (ticker/recommendation/date/confidence) → searchable recommendation archive
   components/analysis_card.py  # render_analysis_card (optional prompt_version label) / render_reasoning_trace; reused by Today + History
   seed_demo.py    # Dev tool: `python -m dashboard.seed_demo` seeds a demo run + history runs (prompt versions) + JSONL trace for a dashboard walkthrough
@@ -113,7 +113,10 @@ dashboard, not written incrementally during the loop.
 - `storage.recovery.reconcile_orphans()` runs on `agent.run` startup: any run left
   `status="running"` with a trace on disk (a crash) is reconciled — the DB self-heals.
 - Wired events (single-ticker loop): `run_started`, `ticker_started`, `llm_call`,
-  `tool_call`, `ticker_completed`, `run_completed`. `phase_started`/`phase_completed` are
+  `tool_call`, `ticker_completed`, `run_completed`. Nightly mode additionally logs
+  `discovery_cooldown_applied` (with `suppressed_count`/`suppressed_tickers`) right after
+  cooldown filtering — the Today page's suppressed-count metric reads it back via
+  `dashboard.data.cooldown_suppressed_count`. `phase_started`/`phase_completed` are
   supported by `RunLogger.log()` but unwired until the screening orchestrator exists.
 
 Debug the trace with `jq`, e.g. per-call cost breakdown:

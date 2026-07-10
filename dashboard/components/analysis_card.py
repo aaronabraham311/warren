@@ -24,24 +24,38 @@ def _as_float(value: object) -> float:
     return float(value) if isinstance(value, (int, float)) else 0.0
 
 
-def render_analysis_card(analysis: Analysis, *, prompt_version: str | None = None) -> None:
+def render_analysis_card(
+    analysis: Analysis,
+    *,
+    prompt_version: str | None = None,
+    prior_recommendation: str | None = None,
+) -> None:
     """Render one analysis as a colour-coded, expandable card.
 
     When `prompt_version` is given (the History page passes it), the card's date and the
     prompt version tag are appended to the label so rows from different runs are
     distinguishable. The Today page omits it, leaving its single-run labels unchanged.
+
+    When `prior_recommendation` is given and differs from the current call (the Today
+    page passes it), a "was <PRIOR>" suffix flags the change so a recurring reviewer
+    spots it without opening History.
     """
     badge = _REC_BADGES.get(analysis.recommendation or "", "⚪")
     recommendation = (analysis.recommendation or "n/a").upper()
     confidence = analysis.confidence or 0.0
     dq_notes = analysis.data_quality_notes or []
     dq_suffix = " ⚠️" if dq_notes else ""
+    changed_suffix = (
+        f" · was {prior_recommendation.upper()}"
+        if prior_recommendation is not None and prior_recommendation != analysis.recommendation
+        else ""
+    )
 
     auto_expand = analysis.recommendation != "hold" and confidence > _AUTO_EXPAND_CONFIDENCE
 
     label = (
         f"{badge} **{analysis.ticker}** — {recommendation} "
-        f"(confidence: {confidence:.0%}){dq_suffix}"
+        f"(confidence: {confidence:.0%}){dq_suffix}{changed_suffix}"
     )
     if prompt_version is not None:
         created = analysis.created_at.strftime("%Y-%m-%d") if analysis.created_at else "—"

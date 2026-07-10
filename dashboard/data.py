@@ -3,7 +3,10 @@
 Pure functions over the existing ORM (`storage.models`) and the JSONL run logs.
 No Streamlit imports here so this layer stays trivially unit-testable and reusable
 across pages (Today, and the History/Eval pages that land later). The dashboard is
-strictly read-only — it never writes to `warren.db` or triggers an analysis.
+read-only — it never writes to `warren.db` — with one deliberate exception: the
+Today page's "Run now" button, a human-clicked dev convenience that shells out to
+`python -m agent.run` (see `dashboard/pages/today.py`). No other code path here
+triggers an analysis or writes to the database.
 """
 
 import json
@@ -19,6 +22,10 @@ from storage.models import Analysis, PromptVersion, Run, ToolCall
 
 # Event kinds from RunLogger that make up a ticker's reasoning trace.
 _TRACE_EVENTS = {"tool_call", "llm_call"}
+
+# Tech Spec success criterion: stay under $20/mo. Shared by the Metrics page's
+# monthly-cost banner and the Today page's budget guardrail banner.
+MONTHLY_WARNING_THRESHOLD_USD = 18.0
 
 
 def get_latest_run(session: Session) -> Run | None:
@@ -41,6 +48,22 @@ def get_analyses_for_run(session: Session, run_id: str) -> list[Analysis]:
             .order_by(hold_last.asc(), Analysis.confidence.desc())
         )
     )
+
+
+def previous_recommendation(session: Session, ticker: str, before: datetime) -> str | None:
+    """The most recent recommendation for `ticker` from any analysis strictly before `before`.
+
+    Used by the Today page to show a "prior call → today's call" delta so a recurring
+    reviewer can spot changes at a glance without opening History. Returns None when the
+    ticker has no earlier analysis (e.g. a brand-new discovery candidate).
+    """
+    stmt = (
+        select(Analysis.recommendation)
+        .where(Analysis.ticker == ticker, Analysis.created_at < before)
+        .order_by(Analysis.created_at.desc())
+        .limit(1)
+    )
+    return session.scalar(stmt)
 
 
 @dataclass
@@ -130,6 +153,26 @@ def read_reasoning_trace(
         if event.get("ticker") == ticker and event.get("event") in _TRACE_EVENTS:
             events.append(event)
     return events
+
+
+def cooldown_suppressed_count(run_id: str, base_dir: Path | None = None) -> int:
+    """`suppressed_count` from this run's `discovery_cooldown_applied` event, or 0.
+
+    Single-ticker runs and runs recorded before this event existed have no such event,
+    in which case 0 (nothing suppressed) is the correct display value, not an error.
+    """
+    base = base_dir if base_dir is not None else logs_dir()
+    log_path = base / f"{run_id}.jsonl"
+    if not log_path.exists():
+        return 0
+    for line in log_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        event: dict[str, object] = json.loads(line)
+        if event.get("event") == "discovery_cooldown_applied":
+            count = event.get("suppressed_count")
+            return count if isinstance(count, int) else 0
+    return 0
 
 
 def cache_read_tokens_for_run(run_id: str, base_dir: Path | None = None) -> int:
