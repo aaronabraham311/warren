@@ -240,3 +240,25 @@ def test_dirt_prompt_step45_adverse_categories() -> None:
     assert "fraud" in prompt_lower
     assert "corruption" in prompt_lower
     assert "governance" in prompt_lower
+
+
+# ── Lack-of-control / minority-discount guardrail ─────────────────────────────
+
+
+def test_prompt_mentions_control_tools() -> None:
+    assert "get_key_persons" in SYSTEM_PROMPT
+    assert "get_capital_allocation" in SYSTEM_PROMPT
+
+
+def test_prompt_has_lack_of_control_guardrail() -> None:
+    prompt_lower = SYSTEM_PROMPT.lower()
+    assert "lack-of-control guardrail" in prompt_lower
+    assert "controlling_holder_identified" in SYSTEM_PROMPT
+    assert "shareholder_yield_pct" in SYSTEM_PROMPT
+
+
+def test_dirt_prompt_has_control_discount_check() -> None:
+    prompt_lower = DIRT_SYSTEM_PROMPT.lower()
+    assert "control-discount check" in prompt_lower
+    assert "controlling_holder_identified" in DIRT_SYSTEM_PROMPT
+    assert "shareholder_yield_pct" in DIRT_SYSTEM_PROMPT
