@@ -66,12 +66,16 @@ storage/
 
 eval/
   golden_set.py   # EvalExample / EvalExpectations pydantic models + load_eval_example() / load_all_examples()
+  runner.py       # run_eval() + CLI — replays the agent over the golden set, grades, persists to eval_runs
+  grader.py       # grade_analysis() → EvalGrade / CheckResult; must-vs-should severity model
+  tool_fixtures.py # FixtureToolRunner (agent.loop.ToolRunner) — serves recorded ToolResults; record_tool_result()
   examples/       # Hand-curated golden expectations, one YAML per ticker (Tech Spec §6.2)
     {ticker}.yaml # e.g. aapl.yaml, brk_b.yaml — dotted tickers use an underscore stem
   fixtures/
     __init__.py   # load_fixture(ticker, client, method, name=) + record_fixtures()
     __main__.py   # CLI: python -m eval.fixtures --record AAPL MSFT GOOG
-    {TICKER}/{client}/{method}/{hash}.json   # committed recorded payloads
+    {TICKER}/{client}/{method}/{hash}.json   # raw upstream payloads — for the data-fetcher tests
+    {TICKER}/tools/{tool_name}/{hash}.json   # serialized ToolResults — for eval replay
 
 dashboard/        # Streamlit read-only dashboard — one exception: Today's "Run now" button (see below)
   app.py          # Multi-page entrypoint — `streamlit run dashboard/app.py`; st.navigation + set_page_config
@@ -97,8 +101,17 @@ data/
   sp500.csv       # bootstrap S&P 500 constituents — fallback for agent/universe.py when the live Wikipedia fetch fails
 
 main.py           # Thin wrapper: delegates to agent.run.main
+agent/eval.py     # Entrypoint shim: `python -m agent.eval` → eval.runner.main
 logs/runs/        # Per-run JSONL traces (gitignored)
 ```
+
+## Eval replay
+
+`python -m agent.eval --golden-set` replays the agent over the golden set against recorded
+tool fixtures and grades the results into `eval_runs`. **Working on `eval/`? Use the `/eval`
+skill** — it covers the three determinism invariants (fixture replay, `temperature=0`, a
+pinned `--eval-run-id`), the `must`/`should` severity model, how to record tool fixtures, and
+the gotchas that have already bitten.
 
 ## Run logging — JSONL-as-WAL
 
@@ -161,6 +174,7 @@ not the model output — tests exercise the real parsing path. Load them with
 - Do not commit `.env`, `warren.db`, or anything under `logs/`.
 - `local/` is a gitignored scratch dir for review notes, findings, and throwaway artifacts — never shipped or imported by code.
 - **Working on the Streamlit dashboard (`dashboard/`)? Use the `/streamlit` skill** — it covers the three-layer structure, `AppTest` e2e testing, running the app, `python -m dashboard.seed_demo`, and the stale-server/port debugging gotchas.
+- **Working on the eval harness (`eval/`)? Use the `/eval` skill** — it covers the determinism invariants, the `must`/`should` grading model, recording tool fixtures, and `python -m agent.eval`.
 - **Prefer `@dataclass` over plain tuples for multi-value returns** (named fields, no positional unpacking drift). Use `NamedTuple` only for genuinely tuple-like data (e.g. a coordinate pair). Raw tuples are fine for single-purpose, immediately-unpacked returns.
 
 ## Common commands
@@ -174,6 +188,7 @@ ruff check .                   # lint
 ruff format .                  # format
 mypy .                         # type check
 pytest                         # run tests
+python -m agent.eval --golden-set --output runs/eval-2026-05-10.json  # eval replay (exits 1 on any failure)
 streamlit run dashboard/app.py # launch the read-only dashboard (Today page)
 python -m dashboard.seed_demo  # seed a demo run + trace to view the dashboard without a real run
 ```

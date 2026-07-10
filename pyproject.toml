@@ -69,6 +69,7 @@ module = [
     "agent.tools.persons",
     "agent.tools.watchlists",
     "eval.golden_set",
+    "eval.grader",
     "data_sources.gdelt_client",
     "data_sources.ofac_client",
     "data_sources.yfinance_client",

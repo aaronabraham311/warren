@@ -32,8 +32,13 @@ def build_claude_request(
     portfolio_context: str,
     messages: list[anthropic.types.MessageParam],
     max_tokens: int,
+    temperature: float | None = None,
 ) -> dict[str, object]:
-    """Return the full API request dict with cache breakpoints in correct TTL order."""
+    """Return the full API request dict with cache breakpoints in correct TTL order.
+
+    ``temperature`` is omitted from the request entirely when None, leaving the SDK
+    default in place. The eval harness passes 0.0 for reproducible grading.
+    """
     # BP1: cache_control on the last tool definition
     tools: list[dict[str, object]] = [
         {**t, "cache_control": _CACHE_CONTROL} if i == len(tool_defs) - 1 else dict(t)
@@ -52,13 +57,16 @@ def build_claude_request(
     # BP4: cache_control on last content block of the last user message
     marked_messages = _mark_last_user_turn(messages)
 
-    return {
+    req: dict[str, object] = {
         "model": model,
         "max_tokens": max_tokens,
         "tools": tools,
         "system": system,
         "messages": marked_messages,
     }
+    if temperature is not None:
+        req["temperature"] = temperature
+    return req
 
 
 def call_claude_with_caching(
@@ -70,6 +78,7 @@ def call_claude_with_caching(
     portfolio_context: str,
     messages: list[anthropic.types.MessageParam],
     max_tokens: int,
+    temperature: float | None = None,
 ) -> anthropic.types.Message:
     """Make an Anthropic API call with 4-breakpoint prompt caching."""
     req = build_claude_request(
@@ -79,13 +88,17 @@ def call_claude_with_caching(
         portfolio_context=portfolio_context,
         messages=messages,
         max_tokens=max_tokens,
+        temperature=temperature,
     )
+    # anthropic.omit is the SDK's "parameter absent" sentinel — passing it leaves the
+    # server-side default in place, exactly as if temperature were never named.
     return client.messages.create(
         model=cast(str, req["model"]),
         max_tokens=cast(int, req["max_tokens"]),
         tools=cast(list[anthropic.types.ToolParam], req["tools"]),
         system=cast(list[anthropic.types.TextBlockParam], req["system"]),
         messages=cast(list[anthropic.types.MessageParam], req["messages"]),
+        temperature=temperature if temperature is not None else anthropic.omit,
     )
 
 
