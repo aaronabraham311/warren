@@ -1,0 +1,67 @@
+ticker: NKE
+notes: |
+  Brand moat eroding, or a dip in a durable franchise? A nuance test.
+
+  The bull case: Nike is one of the strongest consumer brands in existence, with pricing
+  power demonstrated across decades and gross margins well above the athletic-apparel group.
+  Brand equity of this kind does not evaporate in a few weak quarters — it has survived
+  prior cycles of the same complaint. The direct-to-consumer channel, whatever its recent
+  execution problems, structurally captures wholesale margin. The balance sheet is
+  investment grade, the dividend has grown for two decades, and buybacks are ongoing. Bought
+  during a period of depressed sentiment, a franchise like this has historically compounded
+  for the patient holder.
+
+  The bear case: revenue has stalled, inventory has run heavy enough to force promotional
+  clearing, and discounting is the one thing that genuinely damages a premium brand. The DTC
+  pivot alienated wholesale partners whose shelf space has since been filled by On and
+  Hoka — challengers taking share in exactly the running category that anchors Nike's
+  credibility. Greater China has been persistently weak. Innovation cadence, the actual
+  engine of the brand, has been criticised as thin, and management has been changed out.
+  Lynch would ask whether earnings back the story; they currently do not.
+
+  Held in balance deliberately. The bull sees a stalwart on weakness; the bear sees the
+  early innings of brand decay. Prompt framing decides which.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [buy, sell, hold]
+    preferred: null
+
+  thesis_must_mention:
+    - any_of: [brand, pricing power, moat]
+    - any_of: [inventory, discounting, promotional, gross margin]
+    # "On" is quoted: bare `On` is a YAML 1.1 boolean, not the running brand.
+    - any_of: [competition, market share, "On", Hoka, wholesale, direct-to-consumer]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+    - "sure thing"
+
+  buffett_signals:
+    pros:
+      min_count: 1
+    cons:
+      min_count: 1
+
+  lynch_signals:
+    cons:
+      min_count: 1
+
+  key_risks:
+    must_include_one_of:
+      - competition
+      - brand
+      - China
+      - inventory
+      - discounting
+      - execution
+      - market share
+      - innovation
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

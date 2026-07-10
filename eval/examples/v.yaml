@@ -1,0 +1,47 @@
+ticker: V
+notes: |
+  Visa is a toll booth on global payment volume, not a lender — it carries no consumer
+  credit risk. Good analysis should identify the two-sided network effect (issuers and
+  merchants each make the other more valuable), the capital-light model, and the resulting
+  operating margin in the 60%+ range with very high return on invested capital. Revenue
+  scales with nominal consumer spend, which makes it a quiet inflation hedge.
+
+  The bear considerations that a serious analyst must engage: regulatory and antitrust
+  pressure on interchange fees, and the long-horizon threat from account-to-account rails
+  and real-time payment schemes. Neither has dented volume growth so far, but a buy case
+  that never names them is incomplete. `hold` remains allowed since the multiple is rarely
+  cheap.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [buy, hold]
+    preferred: buy
+
+  thesis_must_mention:
+    - any_of: [network effect, two-sided, moat]
+    - any_of: [capital-light, capital light, operating margin, return on capital, ROIC]
+    - any_of: [payment volume, transaction volume, consumer spend, cross-border]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    pros:
+      min_count: 2
+
+  key_risks:
+    must_include_one_of:
+      - regulatory
+      - antitrust
+      - interchange
+      - competition
+      - real-time payments
+      - valuation
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

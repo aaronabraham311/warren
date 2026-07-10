@@ -1,0 +1,52 @@
+ticker: NVDA
+notes: |
+  The sell-discipline test. The business is extraordinary — CUDA is a genuine switching-cost
+  moat built over fifteen years, datacenter revenue has compounded at a rate with almost no
+  precedent at this scale, and gross margins in the 70s are evidence of real pricing power.
+  None of that is in dispute, and the agent should surface it.
+
+  The question this file asks is whether the agent can hold a great business and still
+  decline to buy it at any price. Expectations embedded in the multiple assume both
+  hyperscaler capex and Nvidia's share of it persist for years. Customer concentration is
+  severe: a handful of buyers drive most of datacenter revenue, and each is funding an
+  in-house accelerator program. Cyclical semiconductor demand has historically overshot and
+  corrected hard, and inventory build is the classic leading indicator. `buy` is excluded —
+  not because the business is bad, but because a Buffett-style margin of safety cannot be
+  established at a priced-for-perfection multiple, and an agent that reaches for buy here
+  has lost sell discipline.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [hold, sell]
+    preferred: hold
+
+  thesis_must_mention:
+    - any_of: [valuation, multiple, priced for perfection, expectations]
+    - any_of: [CUDA, moat, switching costs, software ecosystem]
+    - any_of: [customer concentration, hyperscaler, capex, cyclical, demand]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    cons:
+      min_count: 1
+
+  key_risks:
+    must_include_one_of:
+      - valuation
+      - customer concentration
+      - competition
+      - cyclical
+      - inventory
+      - custom silicon
+      - hyperscaler capex
+      - export controls
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

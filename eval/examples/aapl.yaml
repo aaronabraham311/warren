@@ -1,0 +1,46 @@
+ticker: AAPL
+notes: |
+  Apple is a Buffett-style holding. Good analysis should surface the ecosystem moat and
+  the switching costs that come with it, services as high-margin recurring revenue that is
+  re-rating the whole business, and the capital return program (one of the largest buyback
+  authorisations in corporate history).
+
+  It is not screaming cheap. The agent should not recommend buy without citing a specific
+  catalyst — an installed-base upgrade cycle, a services acceleration, a concrete margin
+  step-up. Hardware revenue growth has been unremarkable for years, so the bull case leans
+  almost entirely on services mix and share count reduction. Regulatory pressure on the
+  App Store take rate is the single most quantifiable threat to that mix.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [hold, buy]
+    preferred: hold
+
+  thesis_must_mention:
+    - any_of: [moat, ecosystem, switching costs]
+    - any_of: [services, recurring revenue]
+    - any_of: [buyback, capital return, shareholder return]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    pros:
+      min_count: 2
+
+  key_risks:
+    must_include_one_of:
+      - regulatory
+      - antitrust
+      - services growth
+      - China
+      - App Store
+      - valuation
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

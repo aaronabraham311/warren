@@ -1,0 +1,49 @@
+ticker: XOM
+notes: |
+  A commodity business, and therefore a test of whether the agent applies margin of safety
+  rather than a growth lens. Exxon has no pricing power: it sells an undifferentiated barrel
+  at the world price. Any moat claim must rest on cost position — low breakeven acreage in
+  the Permian and Guyana — and on integration across upstream, downstream, and chemicals,
+  which dampens the cycle. Good analysis cites a breakeven oil price or a unit cost figure.
+
+  Lynch would classify this a cyclical, and the classic trap follows: a low P/E on peak
+  earnings is a sell signal, not a bargain. The agent should engage the reinvestment
+  question — capital discipline versus growth capex — and the long-dated demand and
+  stranded-asset debate without either dismissing it or treating it as imminent. Earnings
+  are not forecastable enough to justify a confident buy at mid-cycle prices.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [hold, buy]
+    preferred: hold
+
+  thesis_must_mention:
+    - any_of: [cyclical, commodity, oil price, crude, cycle]
+    - any_of: [breakeven, cost position, cost curve, integrated, integration]
+    - any_of: [margin of safety, capital discipline, free cash flow, dividend, buyback]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    cons:
+      min_count: 1
+
+  key_risks:
+    must_include_one_of:
+      - oil price
+      - commodity price
+      - cyclical
+      - energy transition
+      - stranded assets
+      - regulatory
+      - capex
+      - demand
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

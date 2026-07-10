@@ -1,0 +1,48 @@
+ticker: COST
+notes: |
+  Costco is the archetypal quality compounder: the membership fee is the profit engine,
+  and merchandise is sold at close to cost to defend it. Good analysis should surface the
+  membership renewal rate (~90%+ in the US) and the fact that membership income is a
+  high-margin, recurring, prepaid annuity — not retail margin. It should note the low
+  gross margin as a *feature* (a deliberate price-trust flywheel), not a weakness, and
+  connect scale to purchasing power.
+
+  The valuation is the honest tension: COST persistently trades at a premium P/E to the
+  retail group, and any buy case must acknowledge that the multiple, not the business, is
+  the risk. An analyst who recommends buy purely on business quality without engaging the
+  multiple has not done the work. A hold on valuation grounds is entirely defensible here,
+  which is why `hold` stays in the allowed set.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [buy, hold]
+    preferred: buy
+
+  thesis_must_mention:
+    - any_of: [membership, renewal rate, subscription]
+    - any_of: [moat, scale, purchasing power, pricing power]
+    - any_of: [valuation, multiple, premium, P/E]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    pros:
+      min_count: 2
+
+  key_risks:
+    must_include_one_of:
+      - valuation
+      - multiple
+      - competition
+      - e-commerce
+      - membership growth
+      - margin
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

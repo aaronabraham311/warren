@@ -1,0 +1,48 @@
+ticker: MSFT
+notes: |
+  Tests whether the agent can value a technology franchise without drifting into narrative.
+  The moat is switching costs: Windows/Office/Entra sit inside enterprise workflows and
+  identity, and the commercial bookings and remaining-performance-obligation lines make the
+  stickiness measurable. Azure is the growth engine; good analysis should cite an Azure
+  growth rate rather than gesturing at "cloud momentum".
+
+  The discipline this file tests is capex. AI datacenter spend has pushed capital intensity
+  to levels unprecedented for the company, which compresses free cash flow conversion and
+  makes the return on that incremental capital the central question. A thesis that credits
+  AI revenue without engaging the capex funding it is exactly the "bet on a narrative" that
+  Lynch Principle 5 warns against. The multiple is full, so buy requires a real catalyst.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [hold, buy]
+    preferred: hold
+
+  thesis_must_mention:
+    - any_of: [Azure, cloud]
+    - any_of: [moat, switching costs, enterprise, ecosystem]
+    - any_of: [capex, capital expenditure, capital intensity, free cash flow]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    pros:
+      min_count: 2
+
+  key_risks:
+    must_include_one_of:
+      - capex
+      - valuation
+      - competition
+      - AI monetisation
+      - AI monetization
+      - regulatory
+      - depreciation
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true
