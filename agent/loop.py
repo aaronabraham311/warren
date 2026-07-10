@@ -27,6 +27,23 @@ class _RoutingPolicy(Protocol):
     ) -> str: ...
 
 
+class ToolRunner(Protocol):
+    """How the loop executes a tool. The one seam the eval harness swaps.
+
+    The default runs the tool for real. ``eval.tool_fixtures.FixtureToolRunner`` reads a
+    recorded result from disk instead, so replay never constructs a data-source client.
+    """
+
+    def run(self, tool: Tool, tool_input: BaseModel, ctx: RunContext) -> ToolResult: ...
+
+
+class LiveToolRunner:
+    """Production runner — dispatches straight to the tool."""
+
+    def run(self, tool: Tool, tool_input: BaseModel, ctx: RunContext) -> ToolResult:
+        return tool.run(tool_input, ctx)
+
+
 _MAX_ITERATIONS = 8
 _MAX_TOOL_REPEATS = 3
 _FORCE_FINAL_MAX_TOKENS = 2048
@@ -47,12 +64,13 @@ def _run_with_retry(
     parsed: BaseModel,
     run_context: RunContext,
     _sleep: Callable[[float], None],
+    tool_runner: ToolRunner,
 ) -> _RetryOutcome:
-    """Run tool.run(), retrying transient errors with exponential backoff."""
+    """Run the tool, retrying transient errors with exponential backoff."""
     retries = 0
     last_error_code: str | None = None
     while True:
-        result = tool.run(parsed, run_context)
+        result = tool_runner.run(tool, parsed, run_context)
         if isinstance(result, ToolResultOk):
             return _RetryOutcome(result, retries, last_error_code)
         if not result.retryable:
@@ -134,6 +152,7 @@ def _call_claude(
     portfolio_context: str,
     messages: list[anthropic.types.MessageParam],
     max_tokens: int,
+    temperature: float | None = None,
 ) -> anthropic.types.Message:
     return call_claude_with_caching(
         client,
@@ -143,6 +162,7 @@ def _call_claude(
         portfolio_context=portfolio_context,
         messages=messages,
         max_tokens=max_tokens,
+        temperature=temperature,
     )
 
 
@@ -155,10 +175,13 @@ def _call_and_record(
     max_tokens: int,
     run_context: RunContext,
     ticker: str,
+    temperature: float | None = None,
 ) -> anthropic.types.Message:
     """Time the call, record token/cost usage, and emit an llm_call WAL event."""
     t0 = time.monotonic()
-    response = _call_claude(client, model, persona_prompt, portfolio_context, messages, max_tokens)
+    response = _call_claude(
+        client, model, persona_prompt, portfolio_context, messages, max_tokens, temperature
+    )
     latency_ms = int((time.monotonic() - t0) * 1000)
     _record_usage(run_context, response)
     run_context.logger.log_llm_call(
@@ -175,9 +198,13 @@ def analyze_ticker(
     client: anthropic.Anthropic | None = None,
     portfolio_context: str = "",
     _sleep: Callable[[float], None] = time.sleep,
+    temperature: float | None = None,
+    tool_runner: ToolRunner | None = None,
 ) -> AnalysisOutput:
     if client is None:
         client = anthropic.Anthropic()
+    if tool_runner is None:
+        tool_runner = LiveToolRunner()
     messages: list[anthropic.types.MessageParam] = [
         cast(anthropic.types.MessageParam, {"role": "user", "content": _initial_prompt(ticker)})
     ]
@@ -211,6 +238,7 @@ def analyze_ticker(
                 _FORCE_FINAL_MAX_TOKENS,
                 run_context,
                 ticker,
+                temperature,
             )
             try:
                 result = _parse_output(_last_text(response.content))
@@ -230,6 +258,7 @@ def analyze_ticker(
             4096,
             run_context,
             ticker,
+            temperature,
         )
 
         # ── end_turn → try to parse output ───────────────────────────────────
@@ -305,7 +334,7 @@ def analyze_ticker(
                             retryable=False,
                         )
                     else:
-                        outcome = _run_with_retry(tool, parsed, run_context, _sleep)
+                        outcome = _run_with_retry(tool, parsed, run_context, _sleep, tool_runner)
                         tool_result = outcome.result
                         retry_count = outcome.retry_count
                         last_retry_error = outcome.last_retry_error
@@ -371,6 +400,7 @@ def analyze_ticker(
                     _FORCE_FINAL_MAX_TOKENS,
                     run_context,
                     ticker,
+                    temperature,
                 )
                 try:
                     result = _parse_output(_last_text(response.content))

@@ -1,0 +1,139 @@
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+import pytest
+
+from agent.budget import Budget, RunContext
+from agent.tools import TOOL_REGISTRY
+from agent.tools.base import Tool, ToolResultError, ToolResultOk
+from data_sources.yfinance_client import PriceData
+from eval.tool_fixtures import (
+    FixtureMiss,
+    FixtureToolRunner,
+    has_tool_fixtures,
+    record_tool_result,
+    tool_fixture_path,
+    tool_input_hash,
+)
+from storage.logger import RunLogger
+
+
+@pytest.fixture()
+def ctx(tmp_path: Path) -> RunContext:
+    return RunContext(run_id="eval-test", budget=Budget(), logger=RunLogger("eval-test", tmp_path))
+
+
+def _quote_tool() -> Tool:
+    return TOOL_REGISTRY["get_quote"]
+
+
+def _price() -> PriceData:
+    return PriceData(
+        ticker="AAPL",
+        current_price=190.5,
+        previous_close=188.0,
+        day_change_pct=1.33,
+        volume=50_000_000,
+        as_of=datetime(2026, 1, 1, tzinfo=timezone.utc),
+        data_age_hours=1,
+    )
+
+
+def test_input_hash_is_stable_and_order_independent() -> None:
+    assert tool_input_hash({"ticker": "AAPL", "a": 1}) == tool_input_hash(
+        {"a": 1, "ticker": "AAPL"}
+    )
+    assert tool_input_hash({"ticker": "AAPL"}) != tool_input_hash({"ticker": "MSFT"})
+
+
+def test_fixture_path_layout(tmp_path: Path) -> None:
+    path = tool_fixture_path("AAPL", "get_quote", {"ticker": "AAPL"}, tmp_path)
+    assert path.parent == tmp_path / "AAPL" / "tools" / "get_quote"
+    assert path.name == f"{tool_input_hash({'ticker': 'AAPL'})}.json"
+
+
+def test_has_tool_fixtures_false_when_absent(tmp_path: Path) -> None:
+    assert not has_tool_fixtures("NKE", tmp_path)
+    (tmp_path / "NKE" / "tools" / "get_quote").mkdir(parents=True)
+    assert not has_tool_fixtures("NKE", tmp_path), "an empty tools/ dir is not coverage"
+
+
+def test_record_then_replay_round_trips_ok_result(tmp_path: Path, ctx: RunContext) -> None:
+    tool = _quote_tool()
+    tool_input = tool.input_schema.model_validate({"ticker": "AAPL"})
+    record_tool_result(
+        "AAPL", "get_quote", {"ticker": "AAPL"}, ToolResultOk(data=_price()), tmp_path
+    )
+
+    assert has_tool_fixtures("AAPL", tmp_path)
+    result = FixtureToolRunner("AAPL", tmp_path).run(tool, tool_input, ctx)
+
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, PriceData), "payload rehydrated into the concrete model"
+    assert result.data.current_price == 190.5
+    assert result.cached is True
+
+
+def test_record_then_replay_round_trips_error_result(tmp_path: Path, ctx: RunContext) -> None:
+    tool = _quote_tool()
+    tool_input = tool.input_schema.model_validate({"ticker": "AAPL"})
+    record_tool_result(
+        "AAPL",
+        "get_quote",
+        {"ticker": "AAPL"},
+        ToolResultError(error_code="stale_data", message="too old", retryable=False),
+        tmp_path,
+    )
+
+    result = FixtureToolRunner("AAPL", tmp_path).run(tool, tool_input, ctx)
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "stale_data"
+    assert result.message == "too old"
+
+
+def test_missing_fixture_returns_non_retryable_not_found(tmp_path: Path, ctx: RunContext) -> None:
+    """retryable=False is load-bearing: a retryable miss sends the loop into backoff."""
+    tool = _quote_tool()
+    tool_input = tool.input_schema.model_validate({"ticker": "MSFT"})
+    runner = FixtureToolRunner("MSFT", tmp_path)
+
+    result = runner.run(tool, tool_input, ctx)
+
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+    assert result.retryable is False
+    assert runner.misses == [FixtureMiss("get_quote", tool_input_hash({"ticker": "MSFT"}))]
+
+
+def test_fixture_runner_never_calls_the_real_tool(tmp_path: Path, ctx: RunContext) -> None:
+    """Replay must not construct a data-source client — the offline guarantee."""
+
+    class _ExplodingTool(Tool):
+        name = "get_quote"
+        description = "boom"
+        input_schema = _quote_tool().input_schema
+        output_schema = PriceData
+
+        def run(self, tool_input: object, ctx: object) -> ToolResultOk:
+            raise AssertionError("FixtureToolRunner must never dispatch to the real tool")
+
+    tool = _ExplodingTool()
+    tool_input = tool.input_schema.model_validate({"ticker": "AAPL"})
+    record_tool_result(
+        "AAPL", "get_quote", {"ticker": "AAPL"}, ToolResultOk(data=_price()), tmp_path
+    )
+
+    result = FixtureToolRunner("AAPL", tmp_path).run(tool, tool_input, ctx)
+    assert isinstance(result, ToolResultOk)
+
+
+def test_recorded_file_is_deterministic_json(tmp_path: Path) -> None:
+    path = record_tool_result(
+        "AAPL", "get_quote", {"ticker": "AAPL"}, ToolResultOk(data=_price()), tmp_path
+    )
+    payload = json.loads(path.read_text())
+    assert payload["status"] == "ok"
+    assert payload["data"]["ticker"] == "AAPL"
+    # sort_keys=True → byte-stable across re-records, so a fixture diff is a real change.
+    assert path.read_text() == json.dumps(payload, indent=2, sort_keys=True)

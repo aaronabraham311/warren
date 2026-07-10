@@ -11,7 +11,15 @@ from typing import Protocol
 from sqlalchemy import Engine, create_engine, delete, event, text
 from sqlalchemy.orm import Session
 
-from storage.models import Analysis, AnalysisData, PromptVersion, Run, RunStatus, ToolCall
+from storage.models import (
+    Analysis,
+    AnalysisData,
+    EvalRun,
+    PromptVersion,
+    Run,
+    RunStatus,
+    ToolCall,
+)
 
 log = logging.getLogger(__name__)
 
@@ -87,6 +95,67 @@ def upsert_analysis(run_id: str, ticker: str, data: AnalysisData) -> None:
             delete(Analysis).where(Analysis.run_id == run_id, Analysis.ticker == ticker)
         )
         session.add(Analysis(run_id=run_id, ticker=ticker, **data))
+        session.commit()
+
+
+def ensure_run_started(
+    run_id: str, started_at: datetime, prompt_version_id: int | None = None
+) -> None:
+    """Insert a ``runs`` row, or reset an existing one to a fresh 'running' state.
+
+    ``write_run_start`` raises on a duplicate id, which is the right guard for the nightly
+    run (a UUID collision is a bug). The eval command deliberately reuses a pinned
+    ``--eval-run-id`` across runs so the grades can be diffed, so it needs upsert
+    semantics instead.
+    """
+    with Session(get_engine()) as session:
+        run = session.get(Run, run_id)
+        if run is None:
+            session.add(
+                Run(
+                    id=run_id,
+                    started_at=started_at,
+                    status="running",
+                    prompt_version_id=prompt_version_id,
+                )
+            )
+        else:
+            run.started_at = started_at
+            run.status = "running"
+            run.prompt_version_id = prompt_version_id
+            run.completed_at = None
+            run.error_msg = None
+        session.commit()
+
+
+def write_eval_run(
+    run_id: str,
+    example_ticker: str,
+    passed: bool,
+    check_results: str,
+    diff_notes: str | None = None,
+) -> None:
+    """Persist one ticker's eval grade, idempotently.
+
+    Delete-then-insert on (run_id, example_ticker) so re-running an eval under a fixed
+    ``--eval-run-id`` overwrites rather than duplicates. ``eval_runs.run_id`` is an FK to
+    ``runs.id``, so ``write_run_start`` must have run first.
+    """
+    with Session(get_engine()) as session:
+        session.execute(
+            delete(EvalRun).where(
+                EvalRun.run_id == run_id, EvalRun.example_ticker == example_ticker
+            )
+        )
+        session.add(
+            EvalRun(
+                run_id=run_id,
+                example_ticker=example_ticker,
+                passed=passed,
+                check_results=check_results,
+                diff_notes=diff_notes,
+            )
+        )
         session.commit()
 
 
