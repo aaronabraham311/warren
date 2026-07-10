@@ -1,0 +1,53 @@
+ticker: META
+notes: |
+  Tests whether the agent can handle a controversial name without either flinching from it
+  or cheerleading. The core advertising business is exceptional: a genuine network effect
+  across roughly three billion daily users, high incremental margins, and ad revenue that
+  keeps compounding on improved targeting and ranking models. It has historically traded at
+  a discount to the megacap group on earnings.
+
+  The discount is not free. Reality Labs has absorbed tens of billions in cumulative
+  operating losses with no line of sight to profitability, and AI infrastructure capex has
+  stepped up sharply. Both are discretionary spend decisions by a founder with voting
+  control, which is the governance fact a serious analyst names rather than skips.
+  Regulatory exposure — privacy regimes, antitrust, teen-safety litigation — is chronic
+  rather than acute. A buy case must engage the capex and the governance structure.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [hold, buy]
+    preferred: hold
+
+  thesis_must_mention:
+    - any_of: [advertising, ad revenue, engagement, daily active users]
+    - any_of: [network effect, moat, scale]
+    - any_of: [Reality Labs, capex, capital expenditure, spending, cost discipline]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    pros:
+      min_count: 1
+    cons:
+      min_count: 1
+
+  key_risks:
+    must_include_one_of:
+      - regulatory
+      - antitrust
+      - privacy
+      - Reality Labs
+      - capex
+      - governance
+      - voting control
+      - competition
+      - TikTok
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

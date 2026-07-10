@@ -1,0 +1,66 @@
+ticker: PYPL
+notes: |
+  A former high-flyer at value prices. Growth-versus-competitive-threat, with the evidence
+  genuinely pointing both ways.
+
+  The bull case: PayPal still processes enormous total payment volume across a large active
+  account base, generates real free cash flow, and trades at a low-teens or better multiple
+  of earnings — a valuation that prices in continued decay. Branded checkout remains a
+  trusted consumer button with two-sided merchant acceptance, Venmo is an underused asset
+  with monetisation runway, and management has been retiring a meaningful share of the
+  float through buybacks. If transaction margin stabilises at all, the earnings yield plus
+  share count reduction alone clears a reasonable hurdle rate without any multiple
+  re-rating.
+
+  The bear case: transaction take rate has compressed for years, and the mix has shifted
+  toward unbranded processing (Braintree), which is high-volume and low-margin — volume
+  growth that flatters the top line while diluting economics. Branded checkout is where the
+  profit lives, and it faces Apple Pay, Shop Pay, and direct card-network checkout. The
+  active-account count has stalled or declined. A moat that must be defended by cutting
+  price is a moat in name only, and Lynch's warning about revenue growth without earnings
+  growth applies almost literally here.
+
+  Neither case is favoured. Whether cheap-and-shrinking reads as a bargain or a value trap
+  is precisely what the persona prompt decides.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [buy, sell, hold]
+    preferred: null
+
+  thesis_must_mention:
+    - any_of: [take rate, transaction margin, branded checkout, unbranded]
+    - any_of: [competition, Apple Pay, Shop Pay, competitive]
+    - any_of: [valuation, free cash flow, buyback, multiple, earnings yield]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+    - "sure thing"
+
+  buffett_signals:
+    pros:
+      min_count: 1
+    cons:
+      min_count: 1
+
+  lynch_signals:
+    cons:
+      min_count: 1
+
+  key_risks:
+    must_include_one_of:
+      - competition
+      - take rate
+      - margin compression
+      - active accounts
+      - value trap
+      - branded checkout
+      - growth
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

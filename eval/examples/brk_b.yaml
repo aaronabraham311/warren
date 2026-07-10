@@ -1,0 +1,50 @@
+ticker: BRK.B
+notes: |
+  The meta-case: how does the agent analyse a holding company? Standard screens misfire
+  here. P/E is nearly meaningless because GAAP earnings swing with unrealised marks on the
+  equity portfolio (an accounting artefact of ASU 2016-01, not economics). Good analysis
+  should reach for book value per share, the operating-earnings-ex-investment-gains line,
+  the float from the insurance businesses as a cost-free (often negative-cost) source of
+  leverage, and the enormous cash and Treasury position.
+
+  A serious analyst names the two structural issues: size is now the enemy of returns —
+  the universe of needle-moving acquisitions is tiny — and succession risk is real and
+  unhedgeable. Buybacks below intrinsic value are the disciplined capital-allocation
+  signal to look for. Discovering a Lynch "fast grower" here would be a category error;
+  this is a conglomerate, and the complexity itself is a Lynch red flag worth naming.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [hold, buy]
+    preferred: hold
+
+  thesis_must_mention:
+    - any_of: [book value, intrinsic value, sum-of-the-parts, sum of the parts]
+    - any_of: [float, insurance, underwriting]
+    - any_of: [cash, Treasury, treasuries, capital allocation, buyback]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  buffett_signals:
+    pros:
+      min_count: 2
+
+  key_risks:
+    must_include_one_of:
+      - succession
+      - size
+      - scale
+      - key man
+      - key-man
+      - cash drag
+      - concentration
+      - insurance losses
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

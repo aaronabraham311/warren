@@ -1,0 +1,70 @@
+ticker: SBUX
+notes: |
+  A thesis-breakage test. Same-store sales — the single number that defines whether a
+  restaurant business is healthy — have turned negative, and the agent must decide what that
+  means.
+
+  The bull case: the brand and the store footprint are extremely hard to replicate, the
+  rewards program is a large, prepaid, high-frequency customer base that functions as
+  float, and the loyalty data is a real asset. Comps have gone negative before and
+  recovered. Store-level unit economics remain attractive where throughput is fixed, the
+  turnaround plan targets exactly the operational failures that caused the decline (mobile
+  order congestion, long wait times, the in-store experience), and a credible operator has
+  been brought in to execute it. Bought during negative comps and sold after recovery is
+  historically how money has been made in this name.
+
+  The bear case: negative comps driven by declining transactions — not price — mean fewer
+  people are walking in, and that is a demand problem, not a throughput problem. Price
+  increases have masked traffic erosion for several years, and that lever is exhausted. The
+  China business faces well-capitalised local competition at a fraction of the price point.
+  Labour costs and unionisation raise the structural cost floor. The dividend and the debt
+  load constrain how aggressively a turnaround can be funded. A turnaround that depends on
+  winning back a consumer who has found a cheaper habit is not the tractable, internally
+  driven kind Lynch prefers.
+
+  The two cases are given equal weight on purpose. Whether "comps are negative" reads as
+  the entry point or the thesis breaking is the most prompt-sensitive judgement in the set.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [buy, sell, hold]
+    preferred: null
+
+  thesis_must_mention:
+    - any_of: [same-store sales, comparable sales, comps, traffic, transactions]
+    - any_of: [brand, loyalty, rewards, moat]
+    - any_of: [turnaround, China, competition, pricing, labour, labor]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+    - "sure thing"
+
+  buffett_signals:
+    pros:
+      min_count: 1
+    cons:
+      min_count: 1
+
+  lynch_signals:
+    cons:
+      min_count: 1
+
+  key_risks:
+    must_include_one_of:
+      - same-store sales
+      - traffic
+      - China
+      - competition
+      - execution
+      - labour costs
+      - labor costs
+      - turnaround
+      - pricing power
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

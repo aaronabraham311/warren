@@ -1,0 +1,67 @@
+ticker: INTC
+notes: |
+  A turnaround, and the case where Lynch and Buffett signals most reliably conflict.
+
+  The bull case: Intel still owns the x86 installed base and remains the volume supplier to
+  enterprise servers and PCs. The foundry buildout is a genuine attempt to reclaim process
+  leadership, backed by government incentives that materially lower the effective cost of
+  the fabs. The stock trades near or below tangible book, so a Lynch asset-play or
+  turnaround framing has real support: if the process node lands and external foundry
+  customers sign, the earnings power of the current asset base is several multiples of what
+  the market is discounting. Insider and government alignment is unusual.
+
+  The bear case: the turnaround depends on execution against a competitor that has not
+  stumbled once in a decade. Process roadmaps have slipped repeatedly, and each slip is
+  expensive because the capex is committed years ahead of the revenue. Datacenter share has
+  been lost to a rival and to in-house Arm silicon at every hyperscaler. Free cash flow has
+  been deeply negative through the buildout, the dividend was cut, and foundry gross margins
+  are far below the corporate average — meaning a successful foundry may still be a
+  structurally worse business than the one it replaces. Buffett would call this a fixable
+  problem with an unforecastable outcome; Lynch would ask whether the cash on hand survives
+  the recovery period.
+
+  Both cases are stated at equal depth on purpose. This file exists to move under prompt
+  changes — a risk-heavy persona should tip it to sell, a growth-oriented one to buy.
+last_curated: 2026-07-09
+
+expectations:
+  recommendation:
+    allowed: [buy, sell, hold]
+    preferred: null
+
+  thesis_must_mention:
+    - any_of: [foundry, process node, manufacturing, fab]
+    - any_of: [execution, turnaround, roadmap, delay]
+    - any_of: [capex, free cash flow, cash burn, balance sheet, book value]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+    - "sure thing"
+
+  buffett_signals:
+    pros:
+      min_count: 1
+    cons:
+      min_count: 1
+
+  lynch_signals:
+    cons:
+      min_count: 1
+
+  key_risks:
+    must_include_one_of:
+      - execution
+      - competition
+      - capex
+      - cash flow
+      - market share
+      - foundry
+      - dilution
+      - process delay
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true

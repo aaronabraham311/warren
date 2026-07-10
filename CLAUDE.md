@@ -65,6 +65,9 @@ storage/
   migrations/     # Alembic migration scripts
 
 eval/
+  golden_set.py   # EvalExample / EvalExpectations pydantic models + load_eval_example() / load_all_examples()
+  examples/       # Hand-curated golden expectations, one YAML per ticker (Tech Spec §6.2)
+    {ticker}.yaml # e.g. aapl.yaml, brk_b.yaml — dotted tickers use an underscore stem
   fixtures/
     __init__.py   # load_fixture(ticker, client, method, name=) + record_fixtures()
     __main__.py   # CLI: python -m eval.fixtures --record AAPL MSFT GOOG
