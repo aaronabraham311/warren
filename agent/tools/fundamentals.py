@@ -14,9 +14,13 @@ from data_sources.errors import DataSourceError
 from data_sources.finnhub_client import FinnhubFinancials
 from data_sources.yfinance_client import FundamentalsData
 
-# yfinance fundamentals are keyed to the last fiscal-year end; once that data is
-# older than this threshold we treat it as stale and reach for Finnhub instead.
-_STALE_FUNDAMENTALS_H = 48
+# yfinance fundamentals are keyed to the last fiscal-year end, so _fiscal_age_hours()
+# reports their age in months even when the fetch is current (a company only reports
+# annually). A short bar here would treat every company as stale on every run and
+# downgrade to Finnhub's narrower basics. Only reach for Finnhub once a full fiscal
+# year has lapsed without fresh data — i.e. the company has effectively missed an
+# expected annual filing.
+_STALE_FUNDAMENTALS_H = 456 * 24  # ~15 months (12mo fiscal cycle + 1 quarter grace)
 
 
 class GetFundamentalsInput(BaseModel):
