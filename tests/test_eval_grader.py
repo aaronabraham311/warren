@@ -12,6 +12,19 @@ from eval.golden_set import (
     ThesisMention,
 )
 from eval.grader import failed_grade, grade_analysis
+from eval.judge import JudgeVerdict
+
+
+class _FakeJudge:
+    """Deterministic, offline ThesisJudge: returns a scripted verdict and records calls."""
+
+    def __init__(self, passes: bool, reasoning: str = "scripted") -> None:
+        self._verdict = JudgeVerdict(passes=passes, reasoning=reasoning)
+        self.calls: list[tuple[str, list[str], str]] = []
+
+    def judge(self, *, thesis: str, concept: list[str], ticker: str) -> JudgeVerdict:
+        self.calls.append((thesis, concept, ticker))
+        return self._verdict
 
 
 def _analysis(
@@ -80,6 +93,44 @@ def test_thesis_must_mention_uses_any_of_semantics() -> None:
     grade = grade_analysis(_analysis(), missing)
     assert not grade.passed
     assert any(c.check_name.startswith("thesis_mentions_") and not c.passed for c in grade.checks)
+
+
+def test_judge_passes_thesis_that_misses_the_keyword_but_engages_the_topic() -> None:
+    """The whole point: a topic-on, vocabulary-off thesis fails substring but passes the judge."""
+    # "cost curve" is nowhere in the thesis, so the substring path would fail this.
+    example = _example(must_mention=[ThesisMention(any_of=["cost curve", "breakeven"])])
+    thesis = "CVX at 12.1x, 18% ROE, 4% yield: low on the industry's marginal production expense."
+    judge = _FakeJudge(passes=True, reasoning="Thesis reasons about relative production cost.")
+
+    # Substring path fails it...
+    assert not grade_analysis(_analysis(thesis=thesis), example).passed
+    # ...judge path passes it.
+    grade = grade_analysis(_analysis(thesis=thesis), example, judge)
+    assert grade.passed
+    check = next(c for c in grade.checks if c.check_name.startswith("thesis_mentions_"))
+    assert check.severity == "must"
+    assert check.actual == "Thesis reasons about relative production cost."
+    # The judge saw the full thesis, the concept keywords, and the ticker.
+    assert judge.calls == [(thesis, ["cost curve", "breakeven"], "AAPL")]
+
+
+def test_judge_negative_fails_the_example_at_must_severity() -> None:
+    example = _example(must_mention=[ThesisMention(any_of=["moat"])])
+    # "moat" IS present, so substring would pass — but the judge overrides to a fail.
+    judge = _FakeJudge(passes=False, reasoning="Mentions moat but never analyzes it.")
+    grade = grade_analysis(_analysis(), example, judge)
+    assert not grade.passed
+    check = next(c for c in grade.checks if c.check_name.startswith("thesis_mentions_"))
+    assert not check.passed
+    assert check.severity == "must"
+
+
+def test_judge_is_not_called_when_absent() -> None:
+    """judge=None keeps the substring path — the default and back-compat guarantee."""
+    example = _example(must_mention=[ThesisMention(any_of=["moat"])])
+    judge = _FakeJudge(passes=False)
+    grade_analysis(_analysis(), example)  # no judge arg
+    assert judge.calls == []
 
 
 def test_thesis_must_not_mention_fails_when_forbidden_term_present() -> None:

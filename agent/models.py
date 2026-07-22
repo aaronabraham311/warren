@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field
 # letting agent/routing.py return them where the ModelID Literal is expected.
 HAIKU_4_5: Final = "claude-haiku-4-5-20251001"
 SONNET_4_6: Final = "claude-sonnet-4-6"
+SONNET_5: Final = "claude-sonnet-5"
 OPUS_4_7: Final = "claude-opus-4-7"
 
 DEFAULT_MODEL_ID: Final = SONNET_4_6
@@ -31,6 +32,8 @@ def _per_mtok(rate: float) -> float:
 # Per-token pricing keyed by model id. Source: Tech Spec §8 pricing tiers.
 #   Haiku 4.5: $1/$5 in/out, cache read $0.10, cache write 5m $1.25
 #   Sonnet 4.6: $3/$15 in/out, cache read $0.30, cache write 5m = 1.25× input
+#   Sonnet 5:  $3/$15 in/out, cache read $0.30, cache write 5m = 1.25× input
+#              (standard sticker; the intro $2/$10 rate lapses 2026-08-31)
 #   Opus 4.7:  $5/$25 in/out, cache read $0.50, cache write 5m = 1.25× input
 PRICING: dict[str, ModelPricing] = {
     HAIKU_4_5: {
@@ -40,6 +43,12 @@ PRICING: dict[str, ModelPricing] = {
         "cache_write_5m": _per_mtok(1.25),
     },
     SONNET_4_6: {
+        "input": _per_mtok(3.0),
+        "output": _per_mtok(15.0),
+        "cache_read": _per_mtok(0.30),
+        "cache_write_5m": _per_mtok(3.0) * 1.25,
+    },
+    SONNET_5: {
         "input": _per_mtok(3.0),
         "output": _per_mtok(15.0),
         "cache_read": _per_mtok(0.30),
