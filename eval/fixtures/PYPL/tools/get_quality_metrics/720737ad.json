@@ -1,6 +1,6 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "cash_conversion_series": [
       1.0633,
       1.6318,
@@ -9,7 +9,7 @@
     ],
     "cash_conversion_ttm": 1.0633,
     "consecutive_profit_years": 4,
-    "data_age_hours": 4595,
+    "data_age_hours": 4873,
     "gross_margin_pct": 46.6206,
     "gross_margin_series": [
       46.6206,
@@ -31,6 +31,6 @@
     "source": "yfinance",
     "ticker": "PYPL"
   },
-  "recorded_at": "2026-07-10T11:47:25.933783+00:00",
+  "recorded_at": "2026-07-22T01:50:13.283060+00:00",
   "status": "ok"
 }

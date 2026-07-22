@@ -1,9 +1,9 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "insider_ownership_pct": 0.078,
     "insider_sentiment": "bearish",
-    "institutional_ownership_pct": 75.66,
+    "institutional_ownership_pct": 76.176,
     "net_shares_bought": -255916,
     "net_value_bought": null,
     "ticker": "MSFT",
@@ -231,17 +231,10 @@
         "transaction_date": "2026-05-14",
         "transaction_type": "sell",
         "value": null
-      },
-      {
-        "name": "Coleman Amy",
-        "shares": 47266,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
       }
     ],
     "window_days": 90
   },
-  "recorded_at": "2026-07-10T11:47:09.145102+00:00",
+  "recorded_at": "2026-07-22T01:49:58.441407+00:00",
   "status": "ok"
 }

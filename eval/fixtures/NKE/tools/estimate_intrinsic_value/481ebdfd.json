@@ -1,24 +1,24 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "assumptions": {
       "discount_rate": 0.1,
       "growth_rate": 0.08,
       "projection_years": 10,
       "terminal_growth_rate": 0.025
     },
-    "current_price": 42.78,
-    "data_age_hours": 971,
-    "intrinsic_equity_value": 66759309174,
-    "intrinsic_value_per_share": 45.23,
-    "margin_of_safety": 0.0542,
-    "owner_earnings_base": 3268000000,
+    "current_price": 42.96,
+    "data_age_hours": 1249,
+    "intrinsic_equity_value": 44615156436,
+    "intrinsic_value_per_share": 30.07,
+    "margin_of_safety": -0.4287,
+    "owner_earnings_base": 2184000000,
     "owner_earnings_source": "free_cash_flow",
-    "reverse_dcf_implied_growth": 0.0724,
-    "shares_outstanding": 1476000000,
+    "reverse_dcf_implied_growth": 0.1284,
+    "shares_outstanding": 1483498703,
     "source": "yfinance",
     "ticker": "NKE"
   },
-  "recorded_at": "2026-07-10T11:47:16.339945+00:00",
+  "recorded_at": "2026-07-22T01:50:03.334305+00:00",
   "status": "ok"
 }

@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "current_ratio": null,
-    "data_age_hours": 4595,
+    "data_age_hours": 4873,
     "f_score": 4,
     "f_signals": {
       "accruals_negative": false,
@@ -22,6 +22,6 @@
     "z_score": null,
     "z_zone": null
   },
-  "recorded_at": "2026-07-10T11:46:32.153453+00:00",
+  "recorded_at": "2026-07-22T01:49:27.921615+00:00",
   "status": "ok"
 }

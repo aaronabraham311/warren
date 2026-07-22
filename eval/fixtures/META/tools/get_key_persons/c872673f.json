@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "controlling_holder_identified": false,
-    "data_age_hours": 4595,
+    "data_age_hours": 4873,
     "persons": [
       {
         "name": "Mr. Mark Elliot Zuckerberg",
@@ -69,6 +69,6 @@
     "source_notes": [],
     "ticker": "META"
   },
-  "recorded_at": "2026-07-10T11:47:05.562735+00:00",
+  "recorded_at": "2026-07-22T01:49:55.237210+00:00",
   "status": "ok"
 }

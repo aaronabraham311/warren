@@ -1,9 +1,9 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "insider_ownership_pct": 1.631,
     "insider_sentiment": "bearish",
-    "institutional_ownership_pct": 65.731,
+    "institutional_ownership_pct": 66.213,
     "net_shares_bought": -11556280,
     "net_value_bought": null,
     "ticker": "AAPL",
@@ -56,80 +56,10 @@
         "transaction_date": "2026-04-23",
         "transaction_type": "sell",
         "value": null
-      },
-      {
-        "name": "Borders Ben",
-        "shares": 2312,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
-      },
-      {
-        "name": "Borders Ben",
-        "shares": 1852,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
-      },
-      {
-        "name": "Borders Ben",
-        "shares": 1423,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
-      },
-      {
-        "name": "Borders Ben",
-        "shares": 540,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
-      },
-      {
-        "name": "Borders Ben",
-        "shares": 39987,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
-      },
-      {
-        "name": "Borders Ben",
-        "shares": 40879,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
-      },
-      {
-        "name": "Parekh Kevan",
-        "shares": 15331,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
-      },
-      {
-        "name": "Parekh Kevan",
-        "shares": 5816,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
-      },
-      {
-        "name": "Parekh Kevan",
-        "shares": 14900,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
-      },
-      {
-        "name": "Parekh Kevan",
-        "shares": 19693,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "other",
-        "value": null
       }
     ],
     "window_days": 90
   },
-  "recorded_at": "2026-07-10T11:46:26.535360+00:00",
+  "recorded_at": "2026-07-22T01:49:21.545126+00:00",
   "status": "ok"
 }

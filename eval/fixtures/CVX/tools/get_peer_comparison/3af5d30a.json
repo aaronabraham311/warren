@@ -3,37 +3,37 @@
     "all_metrics": [
       {
         "ev_to_ebit": null,
-        "fcf_yield": 3.0202,
+        "fcf_yield": 2.7802,
         "gross_margin_pct": 42.421,
-        "pb_ratio": 1.873399,
-        "pe_ratio": 30.322302,
+        "pb_ratio": 2.0565948,
+        "pe_ratio": 33.0,
         "roe_pct": 6.638,
         "ticker": "CVX"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 1.8893,
+        "fcf_yield": 1.7239,
         "gross_margin_pct": 29.768,
-        "pb_ratio": 2.2146323,
-        "pe_ratio": 23.141415,
+        "pb_ratio": null,
+        "pe_ratio": 24.99341,
         "roe_pct": 9.873,
         "ticker": "XOM"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 3.5602,
+        "fcf_yield": 3.3034,
         "gross_margin_pct": 45.591,
-        "pb_ratio": 2.038998,
-        "pe_ratio": 18.308474,
+        "pb_ratio": 2.2179437,
+        "pe_ratio": 19.616028,
         "roe_pct": 11.284,
         "ticker": "COP"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 3.8049,
+        "fcf_yield": 3.8517,
         "gross_margin_pct": 17.802,
-        "pb_ratio": 2.698041,
-        "pe_ratio": 20.810574,
+        "pb_ratio": 2.660917,
+        "pe_ratio": 20.434212,
         "roe_pct": 14.066,
         "ticker": "SLB"
       }
@@ -50,7 +50,7 @@
         "ticker_rank": null
       },
       "fcf_yield": {
-        "peer_median": 3.5602,
+        "peer_median": 3.3034,
         "ticker_percentile": 33.3,
         "ticker_rank": 3
       },
@@ -60,12 +60,12 @@
         "ticker_rank": 2
       },
       "pb_ratio": {
-        "peer_median": 2.2146,
+        "peer_median": 2.4394,
         "ticker_percentile": 100.0,
         "ticker_rank": 1
       },
       "pe_ratio": {
-        "peer_median": 20.8106,
+        "peer_median": 20.4342,
         "ticker_percentile": 0.0,
         "ticker_rank": 4
       },
@@ -77,6 +77,6 @@
     },
     "ticker": "CVX"
   },
-  "recorded_at": "2026-07-10T11:46:45.907225+00:00",
+  "recorded_at": "2026-07-22T01:49:41.231241+00:00",
   "status": "ok"
 }

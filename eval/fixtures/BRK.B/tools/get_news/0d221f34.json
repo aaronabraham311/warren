@@ -3,40 +3,104 @@
     "days": 7,
     "items": [
       {
-        "datetime": "2026-07-08T08:10:18Z",
-        "headline": "Managing A $1 Million Portfolio: A Better Way To Equal Weight The S&P 500",
+        "datetime": "2026-07-21T19:33:07Z",
+        "headline": "Tracking Bruce Berkowitz's Fairholme Portfolio: Q1 2026 Update",
         "sentiment": null,
         "source": "SeekingAlpha",
-        "summary": "Many retirees still want exposure to the S&P 500 but fret about the major US market cap weighted indexes due to valuations. Read more here.",
-        "url": "https://finnhub.io/api/news?id=7821ef559ec72586683799b615c292115d2ea99833529980a18a1c280c49cdc7"
+        "summary": "Fairholme\u00e2\u0080\u0099s latest 13F: a $1.51B portfolio with JOE at ~80%, plus key buys in PGR, EPD, and new KHC stakes. Click here to read more.",
+        "url": "https://finnhub.io/api/news?id=104f5cb47a0a4b8615d0c2ef31822e452d1a9e6b7c32f6f19d4d472cb59263ae"
       },
       {
-        "datetime": "2026-07-07T16:14:18Z",
-        "headline": "Berkshire Hathaway: Poised To Reclaim $540 Record High (Rating Upgrade)",
+        "datetime": "2026-07-21T08:30:00Z",
+        "headline": "Earnings Season May Be Last Hurrah For Hyperscalers And A Turning Point In The Market Cycle",
         "sentiment": null,
         "source": "SeekingAlpha",
-        "summary": "Berkshire Hathaway stock may be set for a breakout on a strong 2026 insurance outlook, high yields, and bullish technicals. Click to see key BRK.B levels now.",
-        "url": "https://finnhub.io/api/news?id=275ac1f296ef4bc779318f0a0791ca539fec5833e1771c5cdc7f2bedee81c5fb"
+        "summary": "Q2 earnings could mark a market turning point as AI/growth risks rise and sentiment shifts to sector rotation. Click here to read what investors need to know.",
+        "url": "https://finnhub.io/api/news?id=7ac950c7354798115fbe4e373a4bc1d4e6d7936dbc7fc2f91eb25fd2697239ef"
       },
       {
-        "datetime": "2026-07-07T07:17:55Z",
-        "headline": "M/I Homes: A Muddled Picture",
+        "datetime": "2026-07-21T04:08:33Z",
+        "headline": "Undercovered Dozen: ServiceNow, Kraft Heinz, Infleqtion, And More",
         "sentiment": null,
         "source": "SeekingAlpha",
-        "summary": "M/I Homes (MHO) surges on buyout buzz and legislative tailwinds, but Q1 weakness signals no 2026 rebound.",
-        "url": "https://finnhub.io/api/news?id=501464dd90ac11c781bb767031029dcdbadea3851082e3e44dfce4f7abb64a42"
+        "summary": "Explore top stock picks: ServiceNow, Kraft Heinz, and GigaCloud rated Strong Buys, plus Corning downgraded to Sell.",
+        "url": "https://finnhub.io/api/news?id=501e5fb617eefb247a8912f0d6ec808ca7462634a393bd8e67b2c3c947268dbb"
       },
       {
-        "datetime": "2026-07-07T06:30:00Z",
-        "headline": "We're In (The Early Stages Of) A Bubble",
+        "datetime": "2026-07-18T10:53:36Z",
+        "headline": "Two unexpected revelations in Warren Buffett's CNBC interview",
         "sentiment": null,
-        "source": "SeekingAlpha",
-        "summary": "Analyst Clem Chambers explains the market's\u00c2\u00a0big shuffle, AI's value chain and highlights a rare earth pick.",
-        "url": "https://finnhub.io/api/news?id=1eecfc6dd4234ae95f27b4f84553f5dbaaeff325e1bfe798ab6aef4fbc9cb149"
+        "source": "CNBC",
+        "summary": "Warren Buffett tells CNBC that Bill Gates' ties to Jeffrey Epstein didn't drive his termination of donations.",
+        "url": "https://finnhub.io/api/news?id=128545b5f8c011b3a4ba5e6a786db42d4d2d8efc2c4dcaa5a7bd01abb4051063"
+      },
+      {
+        "datetime": "2026-07-15T21:06:31Z",
+        "headline": "CNBC Daily Open: Big Tech rally drowns out Iran war fears \u2014 Buffett urges caution",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Stocks closed higher on Big Tech gains and a surprise drop in wholesale prices, shrugging off fresh U.S. strikes on Iran, a naval blockade.",
+        "url": "https://finnhub.io/api/news?id=1e07bdef80a0af08fd01bf638b3f218f3b9f7a6365800ce65e099e1193803362"
+      },
+      {
+        "datetime": "2026-07-15T09:10:03Z",
+        "headline": "Watch CNBC's full interview with Berkshire Hathaway Chairman Warren Buffett",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC's Becky Quick sits down with Berkshire Hathaway Chairman Warren Buffett in Omaha. They discuss the pace of his annual donations of Berkshire Hathaway shares, why he has not included the Gates Foundation this year, his views on his company's portfolio, and more.",
+        "url": "https://finnhub.io/api/news?id=130c8197f4cc86ed70609b5d01f2bbf7e046e280c6a996136344ab8d8d2aac11"
+      },
+      {
+        "datetime": "2026-07-15T09:06:54Z",
+        "headline": "Warren Buffett on the market today: It's tough to find values when everybody is preferring gambling",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Berkshire Hathaway Chairman Warren Buffett joins 'Squawk Box' to discuss the latest market trends, whether the markets right now make sense to him, and more.",
+        "url": "https://finnhub.io/api/news?id=db476932ca13b4120a9263776af06bf4fab3f405438246b664d42916a5c3d5de"
+      },
+      {
+        "datetime": "2026-07-15T07:55:56Z",
+        "headline": "Warren Buffett speeds up pace of annual donations, will leave it to his kids on how to manage",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Berkshire Hathaway Chairman Warren Buffett joins 'Squawk Box' to discuss his goals for his annual donations, the pressures that his kids will face in distributing those funds, his faith in CEO Greg Abel, and more.",
+        "url": "https://finnhub.io/api/news?id=f3ac0222f94c3f4dfe7469fc98bb78db52e38389de4147534e0aaaa6f3dc6666"
+      },
+      {
+        "datetime": "2026-07-15T07:41:33Z",
+        "headline": "Warren Buffett: I initiated Berkshire Hathaway's investment in Alphabet",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Berkshire Hathaway Chairman Warren Buffett joins 'Squawk Box' to discuss the company's $31B-plus stake in Alphabet, whose idea it was to buy into the tech giant, his investment in technology, and more.",
+        "url": "https://finnhub.io/api/news?id=54ef5a2c42e70875e9d9d078d2b9cf1df6c267b606468510a6fd00f04f49d37d"
+      },
+      {
+        "datetime": "2026-07-15T07:04:56Z",
+        "headline": "Warren Buffett on the timeline and distribution of his annual stock donations",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Berkshire Hathaway Chairman Warren Buffett joins 'Squawk Box' to discuss the timeline to distribute his fortune, why he's expediting the rate from ten years after his death to a little over eight years from now, and more.",
+        "url": "https://finnhub.io/api/news?id=c7680a9fbe1c45c9b9e41021aa8a2d0e5e8e3ca5fbb8a9710855da590b6ea150"
+      },
+      {
+        "datetime": "2026-07-14T11:25:59Z",
+        "headline": "Warren Buffett is accelerating his charitable donations with aim to give away Berkshire wealth by 2034",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Warren Buffett is speeding up the pace of his annual donations of Berkshire Hathaway shares to four family foundations, giving them a total of almost $6 billion now.",
+        "url": "https://finnhub.io/api/news?id=d33832e7313a463d1fa154a66981889c0a503da4a12d2c37edff085bb2b9ebe2"
+      },
+      {
+        "datetime": "2026-07-14T08:23:11Z",
+        "headline": "Warren Buffett excludes Gates Foundation from his annual donations of Berkshire stock",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC's Becky Quick reports on the latest news on Warren Buffett.",
+        "url": "https://finnhub.io/api/news?id=20f1a712077a2671a11987fbf72d1d9eb06ce810963fc91f405a2d960c5428da"
       }
     ],
     "ticker": "BRK.B"
   },
-  "recorded_at": "2026-07-10T11:46:33.233065+00:00",
+  "recorded_at": "2026-07-22T01:49:29.106087+00:00",
   "status": "ok"
 }

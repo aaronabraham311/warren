@@ -1,19 +1,19 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 0,
-    "debt_to_equity": null,
-    "fcf_ttm_usd": null,
-    "gross_margin_pct": null,
-    "net_margin_pct": null,
-    "operating_margin_pct": null,
-    "pb_ratio": 16.1541,
-    "pe_ratio": 29.4909,
-    "roe_pct": 58.9,
-    "sector": null,
-    "source": "finnhub",
+    "as_of": "2026-07-21",
+    "data_age_hours": 7081,
+    "debt_to_equity": 67.233,
+    "fcf_ttm_usd": 20839749632,
+    "gross_margin_pct": 97.778,
+    "net_margin_pct": 51.679,
+    "operating_margin_pct": 67.346,
+    "pb_ratio": null,
+    "pe_ratio": 31.432863,
+    "roe_pct": 60.349,
+    "sector": "Financial Services",
+    "source": "yfinance",
     "ticker": "V"
   },
-  "recorded_at": "2026-07-10T11:47:34.079545+00:00",
+  "recorded_at": "2026-07-22T01:50:21.960664+00:00",
   "status": "ok"
 }

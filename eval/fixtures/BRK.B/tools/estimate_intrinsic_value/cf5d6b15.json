@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "assumptions": {
       "discount_rate": 0.1,
       "growth_rate": 0.08,
       "projection_years": 10,
       "terminal_growth_rate": 0.025
     },
-    "current_price": 495.45,
-    "data_age_hours": 4595,
+    "current_price": 489.65,
+    "data_age_hours": 4873,
     "intrinsic_equity_value": 511562613321,
     "intrinsic_value_per_share": 308524.31,
     "margin_of_safety": 0.9984,
@@ -19,6 +19,6 @@
     "source": "yfinance",
     "ticker": "BRK.B"
   },
-  "recorded_at": "2026-07-10T11:46:32.324696+00:00",
+  "recorded_at": "2026-07-22T01:49:28.126990+00:00",
   "status": "ok"
 }

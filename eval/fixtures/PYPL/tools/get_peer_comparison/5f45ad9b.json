@@ -3,10 +3,10 @@
     "all_metrics": [
       {
         "ev_to_ebit": null,
-        "fcf_yield": 9.6525,
+        "fcf_yield": 7.9147,
         "gross_margin_pct": 40.929,
-        "pb_ratio": 2.018888,
-        "pe_ratio": 8.361624,
+        "pb_ratio": 2.487972,
+        "pe_ratio": 10.658397,
         "roe_pct": 25.12,
         "ticker": "PYPL"
       },
@@ -14,36 +14,36 @@
         "ev_to_ebit": null,
         "fcf_yield": null,
         "gross_margin_pct": 0.0,
-        "pb_ratio": 2.6131222,
-        "pe_ratio": 16.051197,
-        "roe_pct": 16.465,
+        "pb_ratio": 2.5955777,
+        "pe_ratio": 14.5115595,
+        "roe_pct": 17.789,
         "ticker": "JPM"
       },
       {
         "ev_to_ebit": null,
         "fcf_yield": null,
         "gross_margin_pct": 0.0,
-        "pb_ratio": 1.5324333,
-        "pe_ratio": 14.702232,
-        "roe_pct": 10.644,
+        "pb_ratio": 1.5560979,
+        "pe_ratio": 13.945331,
+        "roe_pct": 11.199,
         "ticker": "BAC"
       },
       {
         "ev_to_ebit": null,
         "fcf_yield": null,
-        "gross_margin_pct": 82.271,
-        "pb_ratio": 2.9639516,
-        "pe_ratio": 19.304752,
-        "roe_pct": 14.548,
+        "gross_margin_pct": 82.076,
+        "pb_ratio": 2.9623609,
+        "pe_ratio": 16.757643,
+        "roe_pct": 16.952,
         "ticker": "GS"
       },
       {
         "ev_to_ebit": null,
         "fcf_yield": null,
         "gross_margin_pct": 0.0,
-        "pb_ratio": 1.6338309,
-        "pe_ratio": 13.228311,
-        "roe_pct": 12.028,
+        "pb_ratio": 1.6494341,
+        "pe_ratio": 12.5522175,
+        "roe_pct": 12.575,
         "ticker": "WFC"
       }
     ],
@@ -70,23 +70,23 @@
         "ticker_rank": 2
       },
       "pb_ratio": {
-        "peer_median": 2.1235,
+        "peer_median": 2.1225,
         "ticker_percentile": 50.0,
         "ticker_rank": 3
       },
       "pe_ratio": {
-        "peer_median": 15.3767,
+        "peer_median": 14.2284,
         "ticker_percentile": 100.0,
         "ticker_rank": 1
       },
       "roe_pct": {
-        "peer_median": 13.288,
+        "peer_median": 14.7635,
         "ticker_percentile": 100.0,
         "ticker_rank": 1
       }
     },
     "ticker": "PYPL"
   },
-  "recorded_at": "2026-07-10T11:47:27.147436+00:00",
+  "recorded_at": "2026-07-22T01:50:15.307165+00:00",
   "status": "ok"
 }

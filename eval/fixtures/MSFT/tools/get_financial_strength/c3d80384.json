@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "current_ratio": 1.3534,
-    "data_age_hours": 9011,
+    "data_age_hours": 9289,
     "f_score": 5,
     "f_signals": {
       "accruals_negative": true,
@@ -19,9 +19,9 @@
     "net_debt_to_ebitda": 0.1895,
     "source": "yfinance",
     "ticker": "MSFT",
-    "z_score": 7.979,
+    "z_score": 8.1956,
     "z_zone": "safe"
   },
-  "recorded_at": "2026-07-10T11:47:08.812057+00:00",
+  "recorded_at": "2026-07-22T01:49:58.065955+00:00",
   "status": "ok"
 }

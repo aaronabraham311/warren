@@ -3,704 +3,624 @@
     "days": 7,
     "items": [
       {
-        "datetime": "2026-07-10T09:10:00Z",
-        "headline": "Chevron Signs Five-Year WA Gas Supply Deal With Alinta Energy",
+        "datetime": "2026-07-21T20:09:09Z",
+        "headline": "Nasdaq Rallies Ahead of Magnificent 7 Earnings: Stock Market Today",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Chevron has signed a five-year agreement to supply 46 petajoules of natural gas to Alinta Energy from July 2027, reinforcing domestic gas supply and energy security in Western Australia.",
-        "url": "https://finnhub.io/api/news?id=b7520070465dcdb7351ca847ac12e9d823db87d52524f4d2347d2632eb2c24b8"
+        "summary": "Earnings are the most important thing, and expectations are high. But interest rates are rising, and energy tensions aren't easing.",
+        "url": "https://finnhub.io/api/news?id=87e8e182d41000fb4dc16142382a9ec4fe911d4f89455a8c17de205be9edfed1"
       },
       {
-        "datetime": "2026-07-10T02:09:17Z",
-        "headline": "The Real Risk Inside ExxonMobil Stock",
+        "datetime": "2026-07-21T15:09:51Z",
+        "headline": "Does Geopolitics and New Gas Projects Change The Bull Case For Chevron (CVX)?",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The company is an operational powerhouse, but a single, long-term disruption in a key business could test the limits of its strength.",
-        "url": "https://finnhub.io/api/news?id=f7f3563a71cae2dfd510709688f535e63d52ac222eacf3fa98f531c6e55f63e0"
+        "summary": "In recent days, Chevron has been in focus as U.S.-Iran tensions pushed Brent crude above US$90 a barrel, while analysts highlighted the potential for stronger near-term earnings and gas price increases amid ongoing military strikes and supply concerns. At the same time, Chevron has been testing new energy-adjacent avenues such as powering Microsoft\u2019s West Texas AI data center with natural gas turbines and exploring major Iraqi oilfield and export projects that could diversify its operational...",
+        "url": "https://finnhub.io/api/news?id=9bb399f6fe63c4ee7ee9c0cfb7fe226b1d0cb36a5cceaf83b92106e6f67abcc8"
       },
       {
-        "datetime": "2026-07-09T20:10:18Z",
-        "headline": "Micron Gives Stocks a $250 Billion AI Boost: Stock Market Today",
+        "datetime": "2026-07-21T14:21:55Z",
+        "headline": "These Dividend Aristocrats Yield Enough to Let Your Passive Income Do the Heavy Lifting",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Markets looked beyond the Middle East to the promise of the AI revolution, including more capex and another record-breaking IPO.",
-        "url": "https://finnhub.io/api/news?id=d23dcd30336c9884ca6568e6b14b6a08337fcb03f200865ab828a22253017895"
+        "summary": "Some dividend streaks survive a rough quarter, but a rare few have held through five decades of recessions, rate spikes, and oil crashes without missing a single raise. These five names show what that kind of durability actually looks like inside a portfolio built to generate passive income.",
+        "url": "https://finnhub.io/api/news?id=eb105dd46c8709bb2102b6019e83f37bbf9931d57e85f43a77d34b6f7443d0d2"
       },
       {
-        "datetime": "2026-07-09T19:55:09Z",
-        "headline": "Sector Update: Energy Stocks Fall Late Afternoon",
+        "datetime": "2026-07-21T14:02:55Z",
+        "headline": "70 Dividend Aristocrats Face Their Mid-2026 Test: NOBL\u2019s 2% Yield Under Pressure",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Energy stocks were lower late Thursday afternoon, with the NYSE Energy Sector Index falling 1.2% and",
-        "url": "https://finnhub.io/api/news?id=83e4284ac4bbc0ca861f2297389556e01c6f70dfb76fb8340bf50502ef0a9d6d"
+        "summary": "Seventy companies have raised their dividends through every recession and rate shock for at least a quarter century, but a bruising few quarters for some of NOBL's most-watched names put that unbroken record under real pressure heading into mid-2026.",
+        "url": "https://finnhub.io/api/news?id=bf3be5c4aadc5bb0bd972cfa359c3c94ff40f39adcdba75fb3284460badcd206"
       },
       {
-        "datetime": "2026-07-09T19:10:03Z",
-        "headline": "Exploring the top movers within the dow jones index during today's session.",
+        "datetime": "2026-07-21T13:23:17Z",
+        "headline": "Sector Update: Energy Stocks Edge Higher Premarket Tuesday",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Energy stocks were edging higher premarket Tuesday, with the State Street Energy Select Sector SPDR",
+        "url": "https://finnhub.io/api/news?id=b58169e0d8c8e63a65c0920cebbbfdd5268486159f21b1dc2b301dc42d86d4f9"
+      },
+      {
+        "datetime": "2026-07-21T13:17:04Z",
+        "headline": "Oil At $90? Prediction Market Odds Jump, Bringing Energy ETFs Back in Focus",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Prediction markets now see a 51% chance of U.S. oil topping $90 this month, putting energy ETFs like XLE, XOP, OIH and USO back in focus.",
+        "url": "https://finnhub.io/api/news?id=447bbf4a9f6319e90e5bf650c49c3c08cdfc0d17f270f7de0d7df2113c531d20"
+      },
+      {
+        "datetime": "2026-07-21T11:27:01Z",
+        "headline": "Trump Went to War Convinced Iran Would 'Fold Really Quickly,' New Book Claims. Polymarket Prices a Ground Invasion at 27%",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "A new book claims Trump went to war expecting Iran to fold fast. Five months in, Polymarket traders price a US ground invasion at 27%.",
+        "url": "https://finnhub.io/api/news?id=3830b32408e4dae3ac2a0e1fdee273c63d1c82c1421a8b03efd4b5c8f0621c1d"
+      },
+      {
+        "datetime": "2026-07-21T08:30:00Z",
+        "headline": "Earnings Season May Be Last Hurrah For Hyperscalers And A Turning Point In The Market Cycle",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Q2 earnings could mark a market turning point as AI/growth risks rise and sentiment shifts to sector rotation. Click here to read what investors need to know.",
+        "url": "https://finnhub.io/api/news?id=7ac950c7354798115fbe4e373a4bc1d4e6d7936dbc7fc2f91eb25fd2697239ef"
+      },
+      {
+        "datetime": "2026-07-21T06:36:00Z",
+        "headline": "Sintana Energy says Uruguay exploration timetable has been extended",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Sintana Energy Inc (TSX-V:SEI, OTCQB:SEUSF, FRA:3ZX1, AIM:SEI) said the exploration timetable for its offshore Uruguay interests has been extended by a year, while an Argentine offshore licensing opportunity moved towards a formal international tender. Uruguay\u2019s state-owned energy company and...",
+        "url": "https://finnhub.io/api/news?id=25b799e138fd4c892250f904a4e594b910b8d6a4f9ddb4eb8ca281c88c582b93"
+      },
+      {
+        "datetime": "2026-07-21T00:07:27Z",
+        "headline": "The Peer-Group Mispricing Sitting On VG Stock",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In the world of energy giants, one company is posting chart-topping results while its stock price languishes with the laggards, forcing a hard look at what the market truly values.",
+        "url": "https://finnhub.io/api/news?id=ba78a5a9d49076118df36737c0f9cd081c5fe7dc81c6b065d0d91d5718b8f595"
+      },
+      {
+        "datetime": "2026-07-20T22:15:36Z",
+        "headline": "How Time, Not a Trade, Could Re-Rate Chevron Stock",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The oil major looks expensive on paper, but the real question is whether you believe in the growth that makes it cheaper over time.",
+        "url": "https://finnhub.io/api/news?id=61c85204460766aba07886a99b8e0e4f02f0268ae1cf24fa4d6791606603dee7"
+      },
+      {
+        "datetime": "2026-07-20T19:10:04Z",
+        "headline": "Stay informed with the top movers within the dow jones index on Monday.",
         "sentiment": null,
         "source": "ChartMill",
-        "summary": "Stay updated with the movement of dow jones stocks in today's session. Discover which dow jones stocks are making waves on Thursday.",
-        "url": "https://finnhub.io/api/news?id=8aa183e4eb382bb57aaedb6480970e58abb6cea03f36efc9ca36b62b299e7a58"
+        "summary": "Curious about the top performers within the dow jones index one hour before the close of the markets on Monday? Dive into the list of today's session's top gainers and losers for a comprehensive overview.",
+        "url": "https://finnhub.io/api/news?id=02b2e30e4b5a8015da142e1b9a1f892637cc927d311f40cc472a5668f9bca33d"
       },
       {
-        "datetime": "2026-07-09T19:00:28Z",
-        "headline": "CVX Stock Has A New Bull Case \u2014 Why Bank Of America Favors Chevron Over Exxon As Hormuz Risks Push Oil Prices Higher",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "The bank sees the energy giant as the preferred way to benefit from a potential crude price surge if Middle East tensions persist.",
-        "url": "https://finnhub.io/api/news?id=09ea84e57efce5de9f252ab1126c8daf5a1f294caebc94f31b962e20f4726970"
-      },
-      {
-        "datetime": "2026-07-09T18:17:00Z",
-        "headline": "Exxon Mobil signals massive profit spike but Wall Street is divided",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "I covered Chevron CEO Mike Wirth's stark warning about oil price pressure building through June and July, and the IEA data showing global inventories drawing down at a record pace. This week, on July 7, ExxonMobil gave investors the first concrete look at what those dynamics are actually ...",
-        "url": "https://finnhub.io/api/news?id=0a31f58e6e11e23624e6402497142b20faf8bcf8a5895a3ddb838903751d614f"
-      },
-      {
-        "datetime": "2026-07-09T17:46:13Z",
-        "headline": "Sector Update: Energy Stocks Fall Thursday Afternoon",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Energy stocks were lower Thursday afternoon, with the NYSE Energy Sector Index falling 1.1% and the",
-        "url": "https://finnhub.io/api/news?id=0d988943b745805854fdeb5640050a8c49b2afaf31b2d5f18ede4ee565dc7b0a"
-      },
-      {
-        "datetime": "2026-07-09T17:02:32Z",
-        "headline": "Microsoft\u2019s Emissions Surged 25% in 2025 During Data Center Boom",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "(Bloomberg) -- Microsoft Corp. said its carbon emissions climbed 25% in 2025, making it the latest technology company to report a setback in its efforts to erase emissions amid heavy spending on artificial intelligence data centers. Most Read from BloombergMicrosoft\u2019s Xbox to Shift Obsidian Studio to New \u2018Fallout\u2019 Video GameNvidia\u2019s $1 Trillion Slide Sends Valuation to Pre-AI Boom LevelsTrump Vents Anger With Iran and Warns Ceasefire May Be \u2018Over\u2019US Military Launches Strikes on Iran for Second S",
-        "url": "https://finnhub.io/api/news?id=b7149c37cb4ce933f0b9130fbc84df778e53a21ffbe3767e6b39f7a24318e084"
-      },
-      {
-        "datetime": "2026-07-09T16:44:24Z",
-        "headline": "Chevron Poised to Beat Second-Quarter Profit Estimates on Surging Crude Revenue, UBS Says",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Chevron (CVX) is poised to post second-quarter earnings above Wall Street's expectations on stronger",
-        "url": "https://finnhub.io/api/news?id=106edf50417a5fe57792836bcce2b8fde83a77de03124cca936b5b42380e4c3e"
-      },
-      {
-        "datetime": "2026-07-09T16:40:04Z",
-        "headline": "Top dow jones movers in Thursday's session",
+        "datetime": "2026-07-20T16:40:04Z",
+        "headline": "Uncover the latest developments among dow jones stocks in today's session.",
         "sentiment": null,
         "source": "ChartMill",
         "summary": "Let's have a look at the top dow jones gainers and losers in the middle of the day of today's session.",
-        "url": "https://finnhub.io/api/news?id=0d784b8700baa9952e6e2725c6aabb3cd5fb07a43fc8a07af17486eee4f010a8"
+        "url": "https://finnhub.io/api/news?id=e613f9fe68ef0a1cdfe2f10691bd46234a818a12bfae7c5960dbd9c806ea565d"
       },
       {
-        "datetime": "2026-07-09T14:05:51Z",
-        "headline": "With Iran Tensions Heating Up Again, Chevron Stock Looks Enticing",
+        "datetime": "2026-07-20T15:26:23Z",
+        "headline": "Oil Prices Whipsaw On Iran Diplomacy Hopes, Houthi Threat",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "A fracturing peace deal places the spotlight on the Strait of Hormuz, suggesting a cynical play on CVX stock.",
-        "url": "https://finnhub.io/api/news?id=95c297ec2b56dd7f9f492ce676da6579862f3c0bed0453a084eb263e7a291645"
+        "summary": "Crude oil prices were little changed Monday, but don't be fooled. Crude futures have whipsawed on a variety on Iran-related headlines.",
+        "url": "https://finnhub.io/api/news?id=a8e84e57080bb9ffacd5e636a1a0321b884d17cbc56254a50db96a8a36b45aab"
       },
       {
-        "datetime": "2026-07-09T12:52:00Z",
-        "headline": "Chevron's New Technology Licensing Deal to Boost Shale Oil Recovery",
+        "datetime": "2026-07-20T15:25:00Z",
+        "headline": "AI Data Centers Need Power, and These 2 Industrials Are Cashing In",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "CVX licenses its advanced surfactant technology to ZL Chemicals, aiming to improve shale oil recovery, boost production and extend well life.",
-        "url": "https://finnhub.io/api/news?id=5d7c62295cc1b5395a26b5e18990273ca1aa164a6797ff765bb999916d83827d"
+        "summary": "As power capacity becomes AI's key bottleneck, investors are rotating into GE Vernova and Eaton, whose surging backlogs and pricing power reflect the electrification supercycle.",
+        "url": "https://finnhub.io/api/news?id=34c1e9b9c9bd5581bc0711a2cdcd7bd5195b1c0134aa1aa1b57e276c55a208f9"
       },
       {
-        "datetime": "2026-07-09T12:16:03Z",
-        "headline": "Chevron (CVX) Faces DOJ Probe As Iran Tensions Raise Record Profit Stakes",
+        "datetime": "2026-07-20T14:48:00Z",
+        "headline": "Chevron vs. ExxonMobil: Only One Deserves a Spot in Your Portfolio Today.",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Chevron (NYSE:CVX) is positioned for record profit potential as oil prices rise sharply following renewed U.S. Iran conflict. The U.S. government accuses major oil companies of price gouging and has directed the Department of Justice to open an investigation. Heightened political scrutiny is emerging at the same time that Chevron and its peers may see stronger earnings from higher crude prices. Chevron is one of the largest integrated energy companies, with operations that span crude oil...",
-        "url": "https://finnhub.io/api/news?id=2b3a37892d29715512fd6163876706e9f31e82d6a405f0aff49e666471585293"
+        "summary": "Both companies offer attractive yields, but one has lower risk and higher free cash flow.",
+        "url": "https://finnhub.io/api/news?id=0e11cf4522dd8d98042183ef3c151a4134058a1b221a0848f3c3585236c433e3"
       },
       {
-        "datetime": "2026-07-09T12:12:51Z",
-        "headline": "Are Energy Stocks Still A Long-Term Buy (Technical Analysis)?",
+        "datetime": "2026-07-20T14:02:00Z",
+        "headline": "Chevron & 2 Energy Stocks Poised to Beat Q2 Earnings Estimates",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "CVX, BKR and WHD look poised to beat Q2 earnings estimates as high oil prices are likely to have supported production, drilling and oilfield services demand.",
+        "url": "https://finnhub.io/api/news?id=106c3c8be1cb85483d0b59b4084883b03bec6ef914964a62c44d224407b0b218"
+      },
+      {
+        "datetime": "2026-07-20T13:59:31Z",
+        "headline": "Oil Analyst Warns of \u2018Violent Repricing\u2019 as US Oil Reserves Fall to a Level Not Seen Since the Reagan Administration",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The United States has been quietly draining its emergency oil stockpile at a record pace, and one analyst says the moment it runs dry could trigger a price shock the market is not prepared for.",
+        "url": "https://finnhub.io/api/news?id=c0e23684ea2ba4595703942181c48ce3d80467c03c19b265cfd0958b1e6a350a"
+      },
+      {
+        "datetime": "2026-07-20T13:27:00Z",
+        "headline": "Company News for July 20, 2026",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Companies in The News Are: VIST, TRV, CVX, AA",
+        "url": "https://finnhub.io/api/news?id=c20ce2deef57581b7c1d825f2acc217edb9cc667fe2c07e0af070033d53a6b73"
+      },
+      {
+        "datetime": "2026-07-20T12:33:51Z",
+        "headline": "Iran And Energy Markets: Here We Go Again",
         "sentiment": null,
         "source": "SeekingAlpha",
-        "summary": "Sentiment indicators in the energy sector are nearing a long-term buy but have not yet reached levels that triggered previous buying signals. Click for more.",
-        "url": "https://finnhub.io/api/news?id=f310b257d411a9d535dae2cbff601315183beadd0d4bf51c79ff959e7327909a"
+        "summary": "Middle East escalation means higher inflation, no Fed rate cuts, and more volatility in the markets. Read more on how investors should prepare.",
+        "url": "https://finnhub.io/api/news?id=7d8d416b074d54959d57dbc9c821aff36d0934041e239add7ec50f5679933e55"
       },
       {
-        "datetime": "2026-07-09T11:58:28Z",
-        "headline": "Chevron\u2019s (CVX) Data Center Ambitions Are A Great Way To Play The AI Power Bottleneck",
+        "datetime": "2026-07-20T10:25:27Z",
+        "headline": "Nasdaq Futures Lead Rebound Despite Middle East Tensions \u2013 Why LMT, OXY, CVX, XOM, GME Are In Focus",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Chevron Corp (NYSE:CVX) is one of the 12 Best Dow Stocks to Invest In Right Now. Chevron Corp (NYSE:CVX) is one of the best Dow stocks to invest in right now. On July 2, Biraj Borkhataria from RBC Capital reiterated a Buy rating on the stock. The firm also assigned a target price of $220. [\u2026]",
-        "url": "https://finnhub.io/api/news?id=04303ed6963ade541d19e2c4acbab7c211c82febfa7bc930afd0a84952b8e2a2"
+        "summary": "Stocktwits data shows that retail sentiment is split, with investors turning \u2018neutral\u2019 on SPY, but \u2018extremely bullish\u2019 on QQQ.",
+        "url": "https://finnhub.io/api/news?id=2c730cd787011e75c8643a574607e8f2698dfd7c950cc75b26d12978c0773bba"
       },
       {
-        "datetime": "2026-07-09T11:39:00Z",
-        "headline": "Metalworking Fluids Market, Till 2035 Report Published; Profiles Chevron, ExxonMobil Chemical, Quaker Houghton, Fuchs, Lubrizol, and 15 Other Key Players",
+        "datetime": "2026-07-20T04:34:10Z",
+        "headline": "Why Are BATL, TPET, XOM, CVX, USO, UCO Stocks Rising Overnight?",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Significant market opportunities for metalworking fluids exist due to advances in manufacturing technologies, precision machining of lightweight materials, and the rise of electric vehicles requiring advanced lubrication. Sustainability trends and regional dominance, particularly in North America, further drive growth. Metalworking Fluids Market Metalworking Fluids Market Dublin, July 09, 2026 (GLOBE NEWSWIRE) -- The \"Metalworking Fluids Market, Till 2035: Distribution by Type of Product, Applic",
-        "url": "https://finnhub.io/api/news?id=ab00cdebf26c447473fd092c2e0738536666b7da3e77ed72f455b668402944e1"
+        "summary": "Battalion Oil, Trio Petroleum, United States Oil Fund, and ProShares Ultra Bloomberg Crude Oil stocks jumped overnight after oil prices surged to over $90 a barrel.",
+        "url": "https://finnhub.io/api/news?id=48eddca8f3431ea73f7ad4adf168ef1f2d0d3aabd92fc1cec24dfa2bf59e0387"
       },
       {
-        "datetime": "2026-07-09T11:00:20Z",
-        "headline": "Where to Invest Now as US Stock Markets Get Bubbly",
+        "datetime": "2026-07-19T18:05:00Z",
+        "headline": "68% of Greg Abel's Berkshire Hathaway Portfolio Is Invested in Just 5 Stocks. Here's My Favorite of the Bunch.",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "(Bloomberg) -- The US equity market, with the S&P 500 hovering near all-time highs, is expensive. This isn\u2019t controversial. Depending on which measure you use, US stocks have arguably been overpriced for several years. Most Read from BloombergMicrosoft\u2019s Xbox to Shift Obsidian Studio to New \u2018Fallout\u2019 Video GameNvidia\u2019s $1 Trillion Slide Sends Valuation to Pre-AI Boom LevelsTrump Vents Anger With Iran and Warns Ceasefire May Be \u2018Over\u2019US Military Launches Strikes on Iran for Second Straight DayGre",
-        "url": "https://finnhub.io/api/news?id=8f3c2be1dd4ea66bdcfa23f824191ec5a2fae0478863f254b7830b6c5b5e8b60"
+        "summary": "Of Berkshire Hathaway's five biggest stock holdings, one company stands above the rest thanks to a powerful business model that's built to compound for decades.",
+        "url": "https://finnhub.io/api/news?id=2d63faf3f2f2fae08bb43cf0597e725076b225d57301a30042aa722664210cb7"
       },
       {
-        "datetime": "2026-07-09T10:50:00Z",
-        "headline": "ExxonMobil vs. Chevron: Which Oil Dividend Stock is the Better Buy for a Lifetime of Passive Income",
+        "datetime": "2026-07-19T10:05:00Z",
+        "headline": "Chevron Is Hungry for More Power Deals After Inking a 2.7-Gigawatt Contract With Microsoft. Here's Where the Energy Giant Is Looking Next.",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "These two oil giants go head-to-head.",
-        "url": "https://finnhub.io/api/news?id=72f1f8ba52e949b4b82ab2f6f5c8f491b1e30e720a565dfa8d4f5df1e9146b0f"
+        "summary": "Management has already said that when and where the fiscal math makes sense, it intends to replicate this arrangement. And it should.",
+        "url": "https://finnhub.io/api/news?id=5b5dd6cee7f7f8f5e00aed14d55deff6eeb6e1eefc0c972f7da0e6350b9ac84c"
       },
       {
-        "datetime": "2026-07-09T10:18:53Z",
-        "headline": "ExxonMobil and partners commit $1bn to launch Usan Infill Project",
+        "datetime": "2026-07-19T08:46:25Z",
+        "headline": "Top Wall Street analysts suggest these 3 dividend stocks for steady income",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Here are three\u00a0dividend-paying stocks that are highlighted by\u00a0Wall Street's top pros,\u00a0as tracked by TipRanks.",
+        "url": "https://finnhub.io/api/news?id=6a6d39f99e3d74955d6e8ec1d0c6db12c02880b69a54ee3abfdfa8324b4abe92"
+      },
+      {
+        "datetime": "2026-07-18T19:07:03Z",
+        "headline": "Chevron (CVX) Cuts 9,000 Jobs As Record Oil Output Reshapes Its Workforce",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The project is expected to add 40,000bpd of oil production in Nigeria.",
-        "url": "https://finnhub.io/api/news?id=b6b4cce17d3f866e98fbaf51a79e1048dd9a04fd77a9cba9a0a1d0413e03bb3e"
+        "summary": "Chevron (NYSE:CVX) is cutting 9,000 jobs even as it reports record oil production. The company cites increased automation and changing investor priorities as key drivers of the move. The restructuring focuses on reducing costs and reshaping Chevron\u2019s global workforce. Chevron is a major integrated energy company with operations that span upstream production, refining, and related services. The decision to cut 9,000 jobs during a period of record oil output highlights how automation and new...",
+        "url": "https://finnhub.io/api/news?id=a4eb02e147559006b051a7df5b75fc9488deb2eaea93ee1715a7b24a496b7645"
       },
       {
-        "datetime": "2026-07-09T10:00:22Z",
-        "headline": "What To Expect From June's Inflation Report As Chip Prices Rise, Energy Falls",
+        "datetime": "2026-07-18T15:45:02Z",
+        "headline": "Multiple Compression Is a Real Threat to Microsoft Stock, But Its Core Story Isn\u2019t Broken",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Citi cut its Microsoft price target from $620 to $570 while maintaining a 'Buy' rating, citing ongoing software multiple compression after the stock dropped 10%.",
+        "url": "https://finnhub.io/api/news?id=3aaa7bb7956ba21b676399ee6e2562a50b5312e7b22baf6559a717f26768588f"
+      },
+      {
+        "datetime": "2026-07-18T15:00:00Z",
+        "headline": "Oil and Gas Employment Hits a 2026 Low Even as Production Sets Records",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "U.S. oil and gas jobs hit a 2026 low even as production sets records, and the reasons have little to do with falling oil prices.",
+        "url": "https://finnhub.io/api/news?id=29f179694fb6e02536143c85862b18c663064148f9407e2c340117761b5b9daa"
+      },
+      {
+        "datetime": "2026-07-18T13:05:00Z",
+        "headline": "Best Dividend Stock to Buy Now and Hold Forever",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The integrated energy giant is still an evergreen income investment.",
+        "url": "https://finnhub.io/api/news?id=ebaa9da495e63f6b85ff5276960d252856dd96ba459b9212bac9c100d1e99693"
+      },
+      {
+        "datetime": "2026-07-18T12:23:24Z",
+        "headline": "ExxonMobil Stock Offers a Different Kind of Fuel",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "This energy giant has been a standout performer, but its real value to your portfolio lies in how it moves, or doesn't move, with the market.",
+        "url": "https://finnhub.io/api/news?id=c65bf36cb7280db27aea691966e7dbcc0d3a106f7e9554fa7280faca8774034c"
+      },
+      {
+        "datetime": "2026-07-18T11:30:00Z",
+        "headline": "Thousands Of Trucks Haul Iraq\u2019s Oil Through Syria In Sign Of Hormuz Legacy",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Bloomberg) -- Iraq is using a vast fleet of trucks to carry fuel oil through Syria and reroute flows away from the Strait of Hormuz, rapidly transforming its neighbor into the Middle East\u2019s top export hub.Most Read from BloombergFCC Near Rulings Against Disney Over \u2018The View,\u2019 TV LicensesTaylor Farms Pulls Mexican Lettuce as Parasite Cases RiseChip Stocks Slide Into Bear Market in AI Unwind: Markets WrapSpaceX Slump Wipes Out $1 Trillion in Market Value From PeakGoogle Gemini Launch Delayed as",
+        "url": "https://finnhub.io/api/news?id=602beac61f4a7dd2e99af1d0ffe1fd8659fe05b43a2b999e913e36d00d307189"
+      },
+      {
+        "datetime": "2026-07-18T09:50:46Z",
+        "headline": "Chevron: Solid Energy Demand Ahead",
         "sentiment": null,
         "source": "SeekingAlpha",
-        "summary": "Memory inflation, driven by OpenAI's massive DRAM orders and supply constraints, is expected to persist until at least 2028. Read more here.",
-        "url": "https://finnhub.io/api/news?id=5841936222387fd6c1e8a181ac1ed132374a92d90d6cd6e64f138d8bfa69e128"
+        "summary": "Chevron offers a compelling buy as oil inventories are at multi-decade lows, providing a structural floor under crude prices. Read why CVX stock is a buy.",
+        "url": "https://finnhub.io/api/news?id=cba7256da5351c3e1f26d996ee7d959bba05e41adbcafec975969aa70a6c565c"
       },
       {
-        "datetime": "2026-07-09T08:09:00Z",
-        "headline": "Marubeni sells 12.5% Big Foot stake to Modiin Energy",
+        "datetime": "2026-07-17T20:46:01Z",
+        "headline": "S&P 500 Posts Weekly Decline Amid Worries Over Artificial Intelligence, Middle East",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Situated approximately 360km south of New Orleans, Louisiana, US, the Big Foot field operates at a water depth of around 1,600m.",
-        "url": "https://finnhub.io/api/news?id=fd0300544ad39c3680cd89da2c226e9a019dcb1902af5c54c3b02332fae9112c"
+        "summary": "The Standard & Poor's 500 index fell 1.6% this week, led by technology stocks, amid concerns about w",
+        "url": "https://finnhub.io/api/news?id=b28af2036367df812af96127a462ce5fedadd5cea5ddeb139c90fa39be235bb5"
       },
       {
-        "datetime": "2026-07-09T05:54:51Z",
-        "headline": "Apple Hands Broadcom a $30 Billion Lifeline as Trump Declares the Iran Ceasefire Dead",
+        "datetime": "2026-07-17T20:11:17Z",
+        "headline": "US stocks sink this week, semiconductors walloped amid sell-off",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "US equities (^DJI, ^IXIC, ^GSPC) closed Friday's session in negative territory \u2014 led by the Nasdaq Composite's 1.4% drop \u2014 all three of the market indexes seeing weekly losses amid the recent sell-off in semiconductor stocks. Yahoo Finance Markets and Data Editor Jared Blikre examines the day's market moves, taking a closer look at the losses in semiconductor stocks and the gains seen across the software landscape.",
+        "url": "https://finnhub.io/api/news?id=a5fa9601142a2573b7834619e7769b9c509757c13d784bf17048412e618517a7"
+      },
+      {
+        "datetime": "2026-07-17T19:55:41Z",
+        "headline": "Sector Update: Energy Stocks Rise Late Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Energy stocks were higher late Friday afternoon, with the NYSE Energy Sector Index rising 1.3% and t",
+        "url": "https://finnhub.io/api/news?id=939bcedfc2c95685844b225d2b128657b3e427e2a1453c76f2664c0b42225fa1"
+      },
+      {
+        "datetime": "2026-07-17T19:10:04Z",
+        "headline": "These dow jones stocks are moving in today's session",
         "sentiment": null,
         "source": "ChartMill",
-        "summary": "Broadcom rallied on a $30 billion Apple chip commitment and Nvidia climbed on a value case, while a weak Amazon bond sale hinted at cooling AI-capex appetite. Overnight, Trump declared the Iran ceasefire over and U.S. strikes on more than 80 targets sent oil and Treasury yields higher heading into Thursday's open.",
-        "url": "https://finnhub.io/api/news?id=7534d58bcc652d7233f82430056a296a3cc984025ebbffb4ff3fe45a122b5bf7"
+        "summary": "Stay informed about the performance of the dow jones index one hour before the close of the markets on Friday. Uncover the top gainers and losers in today's session for valuable insights.",
+        "url": "https://finnhub.io/api/news?id=b8d366b0978045461c3e2f0f805013981ee50b4718778eb2469f0e71bb1d2514"
       },
       {
-        "datetime": "2026-07-09T05:13:30Z",
-        "headline": "Chevron Licenses Enhanced Oil Recovery Technology to ZL Chemicals",
+        "datetime": "2026-07-17T18:52:15Z",
+        "headline": "ConocoPhillips Joins US Firms Vowing $60 Billion for Iraqi Deals",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Chevron is licensing proprietary enhanced oil recovery technology to expand its commercial use in unconventional oilfields.",
-        "url": "https://finnhub.io/api/news?id=97778f2116c30b68a76f69432764a161c0d84ad49c9a6e6dc57367ec6a9b3c45"
+        "summary": "(Bloomberg) -- ConocoPhillips joined dozens of US firms from the energy, healthcare, finance and tech sectors in signing some $60 billion in deals to lift the Iraqi economy.Most Read from BloombergFCC Near Rulings Against Disney Over \u2018The View,\u2019 TV LicensesChip Stocks Poised for Bear Market in AI Unwind: Markets WrapGoogle Gemini Launch Delayed as Tech Falls Short of Internal GoalsChina\u2019s Moonshot Unveils AI Model, Fueling Tech RoutThailand Scraps Plan to End Visa-Free Entry for Indian TouristsT",
+        "url": "https://finnhub.io/api/news?id=dd244280ae3765fb390b660869cdea1d476e9410e275064da2a367f0a20411a2"
       },
       {
-        "datetime": "2026-07-09T04:00:32Z",
-        "headline": "Iran war windfall puts Big Oil on collision course with Trump",
+        "datetime": "2026-07-17T18:46:00Z",
+        "headline": "Chevron, ConocoPhillips Look to Iraq for Production Growth. Here Are the Risks.",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "America\u2019s Big Oil groups are set to post record profits stemming from Donald Trump\u2019s Iran war, setting them on a collision course with the US...",
-        "url": "https://finnhub.io/api/news?id=7ebcca6893c7fdef7c1dafea0e2783c27bcb75a5809f7401f09d91ae059c00db"
+        "summary": "The second-largest regional oil producer after Saudi Arabia is at the center of American efforts this week to rebuild the Middle East.",
+        "url": "https://finnhub.io/api/news?id=d544151660a1351700677c6f0a23d6231020e3a82758aff9e1b2965b97f604a5"
       },
       {
-        "datetime": "2026-07-08T21:45:03Z",
-        "headline": "Chevron (CVX) Ascends While Market Falls: Some Facts to Note",
+        "datetime": "2026-07-17T17:50:01Z",
+        "headline": "Chevron Will Explore a Pipeline to Bypass the Strait of Hormuz. Here's What it Means for the Energy Stock.",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The latest trading day saw Chevron (CVX) settling at $175.92, representing a +1.1% change from its previous close.",
-        "url": "https://finnhub.io/api/news?id=512115068939e6f9bfb9ce9e8f2f08cecbe6c6b67605b3434ced8dcc6c0388df"
+        "summary": "Chevron is making some potentially big moves in Iraq.",
+        "url": "https://finnhub.io/api/news?id=92d5b5cea36552baeec77a0e48b425673e00df4fe0ab05e3ec2c5cf45de1f604"
       },
       {
-        "datetime": "2026-07-08T20:05:55Z",
-        "headline": "CVX Handed Shareholders $115 Bil In Five Years",
+        "datetime": "2026-07-17T17:07:00Z",
+        "headline": "Chevron makes critical move to sidestep Iran oil risk",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Chevron showered its owners with a fortune in cash, but the real question is what that money says about the company's future.",
-        "url": "https://finnhub.io/api/news?id=5fc001567101399c292866a4ec88848e04f2a46dbbeb1398294786f10dba61cf"
+        "summary": "I have been following the Strait of Hormuz crisis since February 28, when the conflict first began rerouting the global oil trade in ways most investors underestimated. It's been 139 days. I covered Chevron CEO Mike Wirth's warning in May, when he said oil price pressure was building and buffers ...",
+        "url": "https://finnhub.io/api/news?id=74b132b5614f653b8399f21f696126c9ef3827181562f74c2bf6f9fbb1eb1359"
       },
       {
-        "datetime": "2026-07-08T19:56:47Z",
-        "headline": "Sector Update: Energy Stocks Gain Late Afternoon",
+        "datetime": "2026-07-17T16:40:04Z",
+        "headline": "Top dow jones movers in Friday's session",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Stay informed about the performance of the dow jones index in the middle of the day on Friday. Uncover the top gainers and losers in today's session for valuable insights.",
+        "url": "https://finnhub.io/api/news?id=cf957e631b08afbc352ac0c9645261668019b12720ed7857cae855b3ae4f2250"
+      },
+      {
+        "datetime": "2026-07-17T14:24:00Z",
+        "headline": "CVX vs. TTE: Which Energy Giant Deserves a Place in Your Portfolio?",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Energy stocks were higher late Wednesday afternoon, with the NYSE Energy Sector Index and the State",
-        "url": "https://finnhub.io/api/news?id=3a53e21f7a509dc65491b98bac256ef3d22a4a6491dfef360db8fce9274bc8c7"
+        "summary": "Chevron's premium assets, strong balance sheet and steadier earnings outlook give it a slight edge over TotalEnergies for long-term investors.",
+        "url": "https://finnhub.io/api/news?id=28a60b39ff905b767de0490acdf5a2087749920f2d613cc65b2456e3f935e296"
       },
       {
-        "datetime": "2026-07-08T19:10:03Z",
+        "datetime": "2026-07-17T13:25:31Z",
+        "headline": "Sector Update: Energy Stocks Advance Premarket Friday",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Energy stocks were advancing premarket Friday, with the State Street Energy Select Sector SPDR ETF (",
+        "url": "https://finnhub.io/api/news?id=5a83e7757afb9e5a43d81015c45bdd8388661f4f0396ae0e28e232b539f66702"
+      },
+      {
+        "datetime": "2026-07-17T11:47:12Z",
+        "headline": "Chevron signs Iraq oil field deals, eyes Hormuz bypass pipeline",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The non-binding accords cover two major Iraqi fields and a pipeline consortium that could revive a long-dormant route to the Mediterranean",
+        "url": "https://finnhub.io/api/news?id=451975b81033111aecf756f0a6d8efb4d9ef9bc3bdb43464a04a730a4da9249c"
+      },
+      {
+        "datetime": "2026-07-17T11:15:44Z",
+        "headline": "Antero Resources Is in Play: Which Energy Titan Will Acquire It?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Antero Resources has quietly transformed into one of Appalachia's most coveted takeover targets, and a handful of energy titans are circling with very different motivations. The question is not whether a deal happens, but who wins and why.",
+        "url": "https://finnhub.io/api/news?id=c49f5c9cb5f7c0ccfa99ec924e93cb84ffe215498bee6d5d6916a2a279ca997c"
+      },
+      {
+        "datetime": "2026-07-16T21:45:03Z",
+        "headline": "Chevron (CVX) Rises As Market Takes a Dip: Key Facts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In the closing of the recent trading day, Chevron (CVX) stood at $183.86, denoting a +1.24% move from the preceding trading day.",
+        "url": "https://finnhub.io/api/news?id=2fa7f4e7d67bc555c13e902850762d55dc06701ee763e561f7ac68fecd8da367"
+      },
+      {
+        "datetime": "2026-07-16T21:11:49Z",
+        "headline": "Chevron (CVX) Stock Looks Fairly Valued Following Its 123% Five Year Run",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chevron stock has delivered a strong 123.4% return over the past five years, yet current checks suggest it now looks closer to fairly valued than obviously cheap. The 123.4% five year return means long term holders have already seen a substantial payoff, which can limit how much of a discount new investors might reasonably expect today. Expectations around projects linked to higher oil prices and data center power demand can support the current share price. At the same time, geopolitical...",
+        "url": "https://finnhub.io/api/news?id=3c558d67424d39b683b27e9b6626b549bb24fdcdfc527ee9e83a832f06ce5e3f"
+      },
+      {
+        "datetime": "2026-07-16T17:43:56Z",
+        "headline": "Sector Update: Energy Stocks Rise Thursday Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Energy stocks were higher Thursday afternoon, with the NYSE Energy Sector Index increasing 0.3% and",
+        "url": "https://finnhub.io/api/news?id=034fefda8e6e959fe078ec86622e7acd7a8dc76be1a1558bd66ff2e7fb14db62"
+      },
+      {
+        "datetime": "2026-07-16T17:41:56Z",
+        "headline": "Update: Market Chatter: Chevron Slated to Sign Accords With Iraq for Oil Field Investments",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with Chevron comment in the fourth and fifth paragraphs.) Chevron (CVX) is expected to s",
+        "url": "https://finnhub.io/api/news?id=bb656ebfed979b3664317ae7c553f0f9e8a62cbec3e8772266963a606890556d"
+      },
+      {
+        "datetime": "2026-07-16T16:40:03Z",
+        "headline": "Which dow jones stocks are moving on Thursday?",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Stay updated with the movements of the dow jones index in the middle of the day on Thursday. Discover which stocks are leading as top gainers and losers in today's session.",
+        "url": "https://finnhub.io/api/news?id=df07a669a35d66fdcea2e2bf9885d28f50fee2f0d63c29f02167df814cd1ab0a"
+      },
+      {
+        "datetime": "2026-07-16T13:32:44Z",
+        "headline": "Chevron Corporation (CVX) A Top Dividend Stock to Invest in According to Jim Simons\u2019  Renaissance Technologies",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chevron Corp (NYSE:CVX) is one of the best dividend stocks to invest in, according to Jim Simons\u2019 Renaissance Technologies. On July 2, TD Cowen reiterated a Hold rating on Chevron Corp (NYSE:CVX) and cut the price target to $197 from $205. The price target cut aligns with adjusted targets in the oil major\u2019s space ahead [\u2026]",
+        "url": "https://finnhub.io/api/news?id=dc2e2d5890f590903b93e884fd2d8926e649d210978da2c2964bd64cb91ef356"
+      },
+      {
+        "datetime": "2026-07-16T12:09:38Z",
+        "headline": "'Chevron to Sign Oil Investment Accords With Iraq on Friday' - Bloomberg",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "https://www.bloomberg.com/news/articles/2026-07-16/chevron-to-sign-oil-investment-accords-with-iraq-on-friday",
+        "url": "https://finnhub.io/api/news?id=30cf2fcc7338801d3940ee12b29495c2b47f9d86c183afdcf1d4e0c671cc81aa"
+      },
+      {
+        "datetime": "2026-07-16T10:00:00Z",
+        "headline": "$3.2 trillion rotation from chips to the 'Magnificent 7' has left the S&P 500 going nowhere: Chart of the Day",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The S&P 500 and Nasdaq Composite have been stuck for months as Big Tech earnings approach.",
+        "url": "https://finnhub.io/api/news?id=75a169240d376049309b5c86fd8b5ff641926d7743ab58af5f2c27cd4fdfdec6"
+      },
+      {
+        "datetime": "2026-07-16T03:40:17Z",
+        "headline": "BlackRock CEO Larry Fink Warned of an AI Power Crunch\u2014New York Just Halted Large Data Centers: CEG, VST, NEE in Focus",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "NY&#39;s data center ban makes BlackRock CEO Larry Fink&#39;s AI grid warning a reality. See why utility stocks CEG, VST, and NEE are in focus.",
+        "url": "https://finnhub.io/api/news?id=fd925bb5d9b72cf8e4cf49bf42ecd7ea807d1036eeeacb9bf80adf4e953cfcf2"
+      },
+      {
+        "datetime": "2026-07-15T21:20:33Z",
+        "headline": "Best Dividend Stocks to Buy for Dependable Dividend Growth",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "How do you find the best dividend stocks to buy? Income investors know there's no substitute for regular dividend increases over the long haul.",
+        "url": "https://finnhub.io/api/news?id=ab8372ecfee687d7abf018b7dce66c686ad6cd08febf8c3946af69c275a4cd45"
+      },
+      {
+        "datetime": "2026-07-15T19:16:29Z",
+        "headline": "Apple Is Up 20% in 2026. What Will It Take for AAPL Stock to Hit $350?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Apple stock just punched through a fresh record above $325 with a $5 trillion market cap in sight, but Wall Street's average price target still sits below where shares trade today, and one closely watched probability signal flashes caution about the road to $350.",
+        "url": "https://finnhub.io/api/news?id=0d54a759762010027016fe1fd017621119a1a5e8ffb4db17f4928364da1dc44d"
+      },
+      {
+        "datetime": "2026-07-15T18:15:35Z",
+        "headline": "Apple, Goldman Sachs, and Chevron are powering the Dow \u2014 for wildly different reasons: AlphaCheck",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Dow has barely budged in July. Its leaders have broken away.",
+        "url": "https://finnhub.io/api/news?id=f0e5ffdea4941e3e764387dde647702d088a06fcffb15a0b6ded8fcf9ca0e8ba"
+      },
+      {
+        "datetime": "2026-07-15T16:40:03Z",
         "headline": "Stay informed with the top movers within the dow jones index on Wednesday.",
         "sentiment": null,
         "source": "ChartMill",
-        "summary": "Uncover the latest developments among dow jones stocks in today's session. Stay tuned to the dow jones index's top gainers and losers on Wednesday.",
-        "url": "https://finnhub.io/api/news?id=9f5dbca0860c023f09bac87bc2eaea6090b20867b27cdb9d40ab07f3c5d97a89"
+        "summary": "Stay informed about the performance of the dow jones index in the middle of the day on Wednesday. Uncover the top gainers and losers in today's session for valuable insights.",
+        "url": "https://finnhub.io/api/news?id=d3f52428a05de534ed0291c48948492f6aadc30b433f1701d5322f7b8d1fb595"
       },
       {
-        "datetime": "2026-07-08T18:39:00Z",
-        "headline": "Micron, Broadcom, Palantir, Delta, SpaceX, and More Stocks That Explain Today\u2019s Market",
+        "datetime": "2026-07-15T16:10:02Z",
+        "headline": "Why Chevron (CVX) is Poised to Beat Earnings Estimates Again",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Stocks fall broadly as the Iran war cease-fire appears to be over. Crude prices rise, pushing many oil stocks higher.",
-        "url": "https://finnhub.io/api/news?id=45854c77af1654d14b7b09b1adeb3222998018077d44d2110fb62f8e56cb0224"
+        "summary": "Chevron (CVX) has an impressive earnings surprise history and currently possesses the right combination of the two key ingredients for a likely beat in its next quarterly report.",
+        "url": "https://finnhub.io/api/news?id=f4aa2bdd9de00701453482bff11d9689121bdf15bff0c05575cec7804452d63a"
       },
       {
-        "datetime": "2026-07-08T17:37:35Z",
-        "headline": "Sector Update: Energy Stocks Gain Wednesday Afternoon",
+        "datetime": "2026-07-15T12:35:00Z",
+        "headline": "As the Iran War Resumes, 2 Energy ETFs Ride Oil\u2019s Renewed Rally",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Energy stocks were higher Wednesday afternoon, with the NYSE Energy Sector Index rising 1.3% and the",
-        "url": "https://finnhub.io/api/news?id=e7f38e7f5c2843d07ae7ebe119fc17c70476707b06af7b92d983883651c5f07c"
+        "summary": "Renewed Iran-U.S. tensions have pushed oil prices and energy stocks higher, with the Vanguard Energy ETF (VDE) and iShares Global Energy ETF (IXC) both rallying off their July 1 lows.",
+        "url": "https://finnhub.io/api/news?id=0cf21853d4eadb63fe7d685d46384e5f22ec762e95029ed58574c36efef17625"
       },
       {
-        "datetime": "2026-07-08T17:22:17Z",
-        "headline": "Occidental Petroleum Jumps 4% While ExxonMobil, Chevron Lag: Evercore Upgrade and Oil Spike Fuel OXY\u2019s Lead",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Shares of Occidental Petroleum (NYSE:OXY) are up 4% at midday Wednesday, trading at $53.90. The move puts Occidental well ahead of integrated peers ExxonMobil (NYSE:XOM) and Chevron (NYSE:CVX). ExxonMobil stock is off 1% at $140.51, essentially flat. Meanwhile, Chevron shares are higher by 1% to $176.07, a modest gain that trails Occidental by a wide ... Occidental Petroleum Jumps 4% While ExxonMobil, Chevron Lag: Evercore Upgrade and Oil Spike Fuel OXY\u2019s Lead",
-        "url": "https://finnhub.io/api/news?id=6439d2f91794145c123d89cd9cb6b46dd20c96b146d561134f74218d7245b99f"
-      },
-      {
-        "datetime": "2026-07-08T17:01:50Z",
-        "headline": "Update: US Equity Indexes Decline, Crude Oil Jumps as Trump's Threats to Strike Iran Again Elevate Geopolitical Risk",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "(Updates with index/price moves, macroeconomic data, and political news from the first paragraph.)",
-        "url": "https://finnhub.io/api/news?id=f936f07ff455a24d9972660970cf7364be6bd8ce9a1e66797cfaf93620420537"
-      },
-      {
-        "datetime": "2026-07-08T16:31:50Z",
-        "headline": "Today's Market: Dow Plunges 800 Points, Nasdaq and S&P 500 Fall 1% After Trump's Iran Warning",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Wall Street Slides After Trump's Iran Warning Ignites Oil Rally",
-        "url": "https://finnhub.io/api/news?id=65a927f788cf810e8c76b1fa571a1ebb364203fde7ed5380a94c909452fe6a63"
-      },
-      {
-        "datetime": "2026-07-08T16:08:06Z",
-        "headline": "Update: US Equity Indexes Slide, Crude Oil Surges After Trump Threatens More Strikes on Iran",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "(Updates with index/price moves and political news from the first paragraph.) US equity indexes s",
-        "url": "https://finnhub.io/api/news?id=0291ffc63200da476f099a25e76b49c8582c3c1a3133e4d306b65300fad844b4"
-      },
-      {
-        "datetime": "2026-07-08T15:28:00Z",
-        "headline": "Oil Prices Jump After U.S. Strikes Kharg Island, Trump Says Cease-Fire Is \u2018Over\u2019",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "The U.S. launched strikes on more than 80 Iranian targets, including Kharg Island, air defense systems, radar sites, and small boats.",
-        "url": "https://finnhub.io/api/news?id=98b5ed934264efe27477812cd78f46bc13fa80e8a0379be5ee8c29796b899520"
-      },
-      {
-        "datetime": "2026-07-08T13:38:30Z",
-        "headline": "Why Is Chevron Stock Gaining Wednesday?",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "Chevron (NYSE: CVX) stock trades higher as oil prices jump. Check out key support, resistance, and technical levels.",
-        "url": "https://finnhub.io/api/news?id=251e86c9701f20eddbb22b7f99ded57709499f962ba97d84a867832510f5fffb"
-      },
-      {
-        "datetime": "2026-07-08T13:19:25Z",
-        "headline": "Kodiak Gas Powers Multi-Year Turbine Push with Baker Hughes",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "Kodiak Gas shares rise after signing a multi-year agreement with Baker Hughes to deploy gas turbines supporting nearly 1 gigawatt of power capacity by 2030.",
-        "url": "https://finnhub.io/api/news?id=0da0b607a6490657dc19802a12f0569f4671d2ffc7ffc3deaa1cb53df795eb5f"
-      },
-      {
-        "datetime": "2026-07-08T13:19:13Z",
-        "headline": "Stocks making the biggest moves midday: Broadcom, Chevron, Alibaba, Carnival & more",
-        "sentiment": null,
-        "source": "CNBC",
-        "summary": "Here are the companies making headlines in midday trading.",
-        "url": "https://finnhub.io/api/news?id=e3c8c78faca763456a5113d64219c755674488df3e625f6f0fc935d770bbba1a"
-      },
-      {
-        "datetime": "2026-07-08T13:12:14Z",
-        "headline": "Chevron (CVX) Following Index Removal And Guyana Upgrades, Is The Valuation Case Intact?",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Chevron (CVX) was recently removed from the Russell 1000 Dynamic Index, a move that raises fresh questions about how index changes intersect with the company\u2019s evolving projects, cash flow plans, and dividend profile. See our latest analysis for Chevron. Despite the index removal, Chevron\u2019s share price has been resilient, with a 1-day share price return of 3.52% and 7-day share price return of 4.98% following upgrades tied to its Guyana projects. Its 1-year total shareholder return of 18.31%...",
-        "url": "https://finnhub.io/api/news?id=33bddff04df3d5f7c240c51624bd1f2c36a0c9f7e320cbc2779fa3564298b362"
-      },
-      {
-        "datetime": "2026-07-08T13:01:00Z",
-        "headline": "Micron, Occidental, Delta, SpaceX, Alibaba, and More Stocks That Explain Today\u2019s Market",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "The apparent end to the Iran War cease-fire gives investors a good excuse to sell artificial-intelligence stocks, which surged over the first half of 2026.",
-        "url": "https://finnhub.io/api/news?id=a2d0fdca5de9929c6377e21209b58c6cd707392b6b97ab08609b0cb122e7db03"
-      },
-      {
-        "datetime": "2026-07-08T13:00:00Z",
-        "headline": "Chevron and ZL Chemicals Announce Technology Licensing Agreement for Advanced Chemical Surfactant Technology",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "HOUSTON, July 08, 2026--Chevron Technical Center, a division of Chevron U.S.A. Inc., a subsidiary of Chevron Corporation (NYSE:CVX), and ZL Chemicals Ltd today announced a technology licensing agreement under which ZL may commercialize Chevron-developed chemical surfactant technology. ZL plans to offer products and services utilizing the licensed technology under the Vantis\u2122 brand.",
-        "url": "https://finnhub.io/api/news?id=0cb7625f91352dee015ab31d767482faa0d24d6f54c1c508f0379c51d3f2e5bf"
-      },
-      {
-        "datetime": "2026-07-08T12:51:59Z",
-        "headline": "Update: US Equity Futures Fall Pre-Bell as Middle East Hostilities Restart, President Trump Declares US-Iran Ceasefire 'Over'",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "(Updates with economic data, recent oil price movement, world markets' overview and corporate stock",
-        "url": "https://finnhub.io/api/news?id=766e00457ab78fac1725abc35e3b6157d46a4b52032ea008ae917515dd674331"
-      },
-      {
-        "datetime": "2026-07-08T12:34:17Z",
-        "headline": "Ceasefire Cracks, Oil Bounces: Why Exxon, Chevron Stocks Are Hot Again",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "Oil prices and energy stocks rise as traders reassess supply disruptions and tensions in the Strait of Hormuz.",
-        "url": "https://finnhub.io/api/news?id=de574011bf2b0bf0477480f733f2b94cc065adff18253229c24bc833c1252745"
-      },
-      {
-        "datetime": "2026-07-08T12:08:00Z",
-        "headline": "Big Oil Battle Royale: Is ExxonMobil or Chevron the Better Buy for 2030 Right Now?",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Oil stocks have dipped recently, making these two integrated giants appealing options for investors today.",
-        "url": "https://finnhub.io/api/news?id=682fcc5228c3eacf00d3bc2f2e469e99e47b21c4094a83e79fb57dcad09478d7"
-      },
-      {
-        "datetime": "2026-07-08T11:33:50Z",
-        "headline": "The Late Morning Rundown: July 8, 2026",
-        "sentiment": null,
-        "source": "CNBC",
-        "summary": "CNBC brings you fast, accurate, and actionable business news and market updates.",
-        "url": "https://finnhub.io/api/news?id=b1200eb2e63500baf0eedc401eda5ffd1d90c1d053fb5cea2676138c7b5794ec"
-      },
-      {
-        "datetime": "2026-07-08T11:27:00Z",
-        "headline": "Oil Prices, Energy Stocks Jump as Trump Says Iran Cease-Fire Is \u2018Over\u2019",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "The U.S. launched strikes on more than 80 Iranian targets, including air defense systems, radar sites and small boats.",
-        "url": "https://finnhub.io/api/news?id=4dfdd181f5a30eacebe296683f4ccf72cb9014f54b07901101c7aaeb14c255b0"
-      },
-      {
-        "datetime": "2026-07-08T11:18:10Z",
-        "headline": "Occidental Is Winning in Multiple Ways Today",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Evercore's double upgrade adds an analyst catalyst to the crude-driven move",
-        "url": "https://finnhub.io/api/news?id=7e91b6f2dbc8aa5b5537ac3397e1af5d3f68f191c6e730b697122bf3746006d8"
-      },
-      {
-        "datetime": "2026-07-08T10:16:19Z",
-        "headline": "Market Open: July 8, 2026",
-        "sentiment": null,
-        "source": "CNBC",
-        "summary": "CNBC brings you fast, accurate, and actionable business news and market updates.",
-        "url": "https://finnhub.io/api/news?id=5fa60fd60e0fd2db6eace0ce9fac51478dbd4b74fc1b8959081ac5812a1d1c29"
-      },
-      {
-        "datetime": "2026-07-08T09:51:00Z",
-        "headline": "Stock Market News for July 8, 2026",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "U.S. stock markets closed lower on Tuesday following the escalation of war between the United States and Iran.",
-        "url": "https://finnhub.io/api/news?id=b1136afd76b182199220217661575008dbea3a8ba59e879cd7f4f04074ed474c"
-      },
-      {
-        "datetime": "2026-07-08T09:06:07Z",
-        "headline": "Chevron And ZL Chemicals Announce Technology Licensing Agreement Chemical Surfactant Technology; ZL Plans To Offer Products And Services Utilizing Licensed Technology Under Vantis Brand",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "Vantis\u2122 technology designed to support resource recovery in shale and tight reservoirsChevron Technical Center, a division of Chevron U.S.A. Inc., a subsidiary of Chevron Corporation (NYSE:CVX), and ZL Chemicals Ltd",
-        "url": "https://finnhub.io/api/news?id=4a7954f610bf6dd27ee5882ba3a172b1168ab45112379bdb22895a89f7649f4b"
-      },
-      {
-        "datetime": "2026-07-08T09:06:00Z",
-        "headline": "Trump Says Iran Cease-Fire Is \u2018Over\u2019 Sending Oil Prices and Energy Stocks Soaring",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "The U.S. launched strikes on more than 80 Iranian targets, including air defense systems, radar sites and small boats.",
-        "url": "https://finnhub.io/api/news?id=6d5d84a98bd3f0a2ae569f02b8a0f6112ad4ff026ff03597bef2db3f3a580c83"
-      },
-      {
-        "datetime": "2026-07-08T07:41:39Z",
-        "headline": "Stocks making the biggest moves premarket: United Airlines, Micron, Chevron & more",
-        "sentiment": null,
-        "source": "CNBC",
-        "summary": "These are the stocks posting the largest moves premarket.",
-        "url": "https://finnhub.io/api/news?id=65ec690e9909d48208e4e6b61fd1efee6de977b8dd8be3badf11ed3382a8d8c5"
-      },
-      {
-        "datetime": "2026-07-08T07:24:25Z",
-        "headline": "What's Going on With Chevron Stock Wednesday?",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "Chevron stock climbs 2% premarket to $177.50 amid crude spike. Technical setup remains mixed as CVX hovers near its 20-day SMA.",
-        "url": "https://finnhub.io/api/news?id=5db247f86023dc552911cec357047fa9c253274ef9b28fab16927207e8749bcc"
-      },
-      {
-        "datetime": "2026-07-08T05:33:03Z",
-        "headline": "How Your Taxes Will Be Different Next Year, And Why You'll Have Trump To Thank",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "",
-        "url": "https://finnhub.io/api/news?id=7c7bc27315adbe5bcfe5ed5e35cd4e6dcc9d016797069c983e56b5235fa1d71d"
-      },
-      {
-        "datetime": "2026-07-08T05:05:08Z",
-        "headline": "Exxon Mobil (XOM) Price Target Lowered by $17 at TD Cowen. Here is Why",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "With an annual dividend yield of 3.01%, Exxon Mobil Corporation (NYSE:XOM) is included among the 14 Best Blue Chip Dividend Stocks to Buy According to Hedge Funds. Exxon Mobil Corporation (NYSE:XOM) is one of the largest integrated fuels, lubricants, and chemical companies in the world. On July 2, TD Cowen trimmed its price target on Exxon [\u2026]",
-        "url": "https://finnhub.io/api/news?id=d4ebfa597a8dd3aba8d6efd9ceb2b0dc418a53f57a96fe22d57d336f232f5e8f"
-      },
-      {
-        "datetime": "2026-07-08T05:04:26Z",
-        "headline": "Chevron (CVX) \u2013 Among the 14 Best Blue Chip Dividend Stocks to Buy According to Hedge Funds",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "With an annual dividend yield of 4.21%, Chevron Corporation (NYSE:CVX) is included among the 14 Best Blue Chip Dividend Stocks to Buy According to Hedge Funds. Chevron Corporation (NYSE:CVX) manufactures and sells a range of high-quality refined products, including gasoline, diesel, marine and aviation fuels, premium base oil, finished lubricants, and fuel oil additives. On July [\u2026]",
-        "url": "https://finnhub.io/api/news?id=b4ae2fe6d74a014372231cb094faf449c9d81086f103c51a2773a4155ac1484f"
-      },
-      {
-        "datetime": "2026-07-08T05:01:11Z",
-        "headline": "Here is Why Chevron (CVX) is One of the Most Promising Energy Stocks to Buy Now",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "With an average upside potential of 31.53% according to Wall Street analysts, Chevron Corporation (NYSE:CVX) is included among the 10 Most Promising Energy Stocks to Buy Now. Chevron Corporation (NYSE:CVX) manufactures and sells a range of high-quality refined products, including gasoline, diesel, marine and aviation fuels, premium base oil, finished lubricants, and fuel oil additives. Chevron [\u2026]",
-        "url": "https://finnhub.io/api/news?id=30d22fa8fb2369a265e578852d964df99249052c49acb739b286c3054347f260"
-      },
-      {
-        "datetime": "2026-07-08T05:00:39Z",
-        "headline": "TD Cowen Cuts Price Target on TotalEnergies (TTE). Here is Why",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "With an average upside potential of 32.15% according to Wall Street analysts, TotalEnergies SE (NYSE:TTE) is included among the 10 Most Promising Energy Stocks to Buy Now. TotalEnergies SE (NYSE:TTE) is a global integrated energy company that produces and markets energies. On July 2, TD Cowen trimmed its price objective on TotalEnergies SE (NYSE:TTE) from $106 [\u2026]",
-        "url": "https://finnhub.io/api/news?id=99dfe87910b222f06974940022fdc04ccb6c771e2c1420cd6621dcc331a18298"
-      },
-      {
-        "datetime": "2026-07-07T23:29:52Z",
-        "headline": "ExxonMobil and Chevron Shares Skyrocket, What You Need To Know",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "A number of stocks jumped in the afternoon session after oil prices surged following attacks on commercial ships near the Strait of Hormuz.",
-        "url": "https://finnhub.io/api/news?id=3ba6194380a5248f7ae728238f5d9bfa455c5fff627f0826ac3adf7cd9910066"
-      },
-      {
-        "datetime": "2026-07-07T20:00:00Z",
-        "headline": "Big Oil's Windfall Earnings Threaten to Reignite Trump's Price-Gouging Push",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Trump is escalating pressure on oil companies, accusing them of price gouging and demanding gasoline prices fall toward $2.50 per gallon.",
-        "url": "https://finnhub.io/api/news?id=bcff9884b898c190e70fc77a80fa9d15a0e04046e178e044755e1058c8019ec1"
-      },
-      {
-        "datetime": "2026-07-07T19:10:03Z",
-        "headline": "What's going on in today's session: dow jones movers",
-        "sentiment": null,
-        "source": "ChartMill",
-        "summary": "Curious about the top performers within the dow jones index one hour before the close of the markets on Tuesday? Dive into the list of today's session's top gainers and losers for a comprehensive overview.",
-        "url": "https://finnhub.io/api/news?id=8b4af97dddd3317a50c1206ecb3fecd7ad2f983ec27a7e1c72a78c4e14a73ff1"
-      },
-      {
-        "datetime": "2026-07-07T19:03:28Z",
-        "headline": "Oil\u2019s $100 Threshold: What It Means for Energy Stocks Now",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "The Number With oil now trading well below the $100 level (and seemingly poised to continue heading lower, after OPEC announced further production increases recently and recessionary concerns pick up), it\u2019s unclear where certain oil stocks are headed. One such name that\u2019s on my radar right now just reported its Q1 2026 earnings in early ... Oil\u2019s $100 Threshold: What It Means for Energy Stocks Now",
-        "url": "https://finnhub.io/api/news?id=b3ebecaf56e1c3c04a040d0f29e904ab0caa5411b234b85e3b5d05c64d1cbac4"
-      },
-      {
-        "datetime": "2026-07-07T18:29:17Z",
-        "headline": "ConocoPhillips: Stock Below Pre-War Level Prior To Expected Bullish Q2 Print",
+        "datetime": "2026-07-15T10:13:12Z",
+        "headline": "TotalEnergies: A Long-Term Play For The Patient",
         "sentiment": null,
         "source": "SeekingAlpha",
-        "summary": "ConocoPhillips stock remains below levels seen earlier in the year. Click for more on COP stock prospects.",
-        "url": "https://finnhub.io/api/news?id=bc4bc273b7b458e642cbc11ec02ef807195ca99e1562ce84ebe75dc6f975a45f"
+        "summary": "TotalEnergies looks undervalued with a sub-12x P/E, strong profitability and a growing dividend. Read the latest analysis on TTE stock here.",
+        "url": "https://finnhub.io/api/news?id=81e7a908c163b286683f2fad418ec1b498d642c51d539f89474aafedeba0cc53"
       },
       {
-        "datetime": "2026-07-07T18:04:03Z",
-        "headline": "Dow tumbles 600 points as oil jumps with Trump saying attacks on Iran to continue: Live updates",
-        "sentiment": null,
-        "source": "CNBC",
-        "summary": "U.S. President Donald Trump told the NATO summit in Turkey that the ceasefire with Iran is \"over.\"",
-        "url": "https://finnhub.io/api/news?id=9dadf140096398f85a5fa9be9d2490158acbb06dbf9c1241a424992f52af09e3"
-      },
-      {
-        "datetime": "2026-07-07T17:28:35Z",
-        "headline": "'Fast Money' traders talk oil price expectations, outlook",
-        "sentiment": null,
-        "source": "CNBC",
-        "summary": "CNBC\u2019s \u201cFast Money\u201d team discusses the day's market action and oil prices spiking late in the trading session after the U.S. Treasury Department revoked a license that allowed Iran to sell its oil around the world.",
-        "url": "https://finnhub.io/api/news?id=b9f3a5064fbee6de60f1f755021931287b3afd25c0f96e18e4ad64a699990c7c"
-      },
-      {
-        "datetime": "2026-07-07T14:48:00Z",
-        "headline": "After an Almost 20% One-Year Run, is ExxonMobil Still Worth Buying?",
+        "datetime": "2026-07-15T09:08:31Z",
+        "headline": "Chevron (CVX) Offers Rival Drillers Chemical Technology to Increase Shale Oil Output, Reuters Reports",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "XOM's Permian strength, sturdy balance sheet and dividend record support its case, but softer oil prices and premium valuation call for caution.",
-        "url": "https://finnhub.io/api/news?id=5341c85cd8d9db9b63823a6954bf8093355bf3431ff637142451fe7ab316f7dc"
+        "summary": "Chevron Corporation (NYSE:CVX) is one of the top cheap blue chip stocks to buy according to Wall Street analysts. Reuters reported on July 8 that Chevron Corporation (NYSE:CVX) announced on Wednesday that it will allow rival oil producers to purchase a chemical technology it developed to boost production from shale wells. The decision came as [\u2026]",
+        "url": "https://finnhub.io/api/news?id=5660da5caa5c9c612cc5c3d91a23174b709760fbcff67bb24391835cca02393c"
       },
       {
-        "datetime": "2026-07-07T10:37:26Z",
-        "headline": "Sky Quarry Shares Resume Trade",
+        "datetime": "2026-07-15T09:08:00Z",
+        "headline": "The Zacks Analyst Blog Highlights Chevron, TotalEnergies, Robinhood, Oil-Dri and Aeries",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chevron's long-term growth story faces key risks as the Hess deal, LNG strength, and AI-powered expansion compete with regulatory and execution challenges.",
+        "url": "https://finnhub.io/api/news?id=7e3affb97bb07a6429f3e8b7049d5cd54189c8357fbb7ec5742e4ece7e744156"
+      },
+      {
+        "datetime": "2026-07-15T01:40:41Z",
+        "headline": "How Cheap Is ExxonMobil Stock Once You Look Two Years Out?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The company's high price tag today hides a significant discount on future earnings, but that discount only exists if an aggressive growth story actually unfolds.",
+        "url": "https://finnhub.io/api/news?id=df8875222d87b0d84563be82421e0896cdaa7e670b6395539244d1073c01b0a3"
+      },
+      {
+        "datetime": "2026-07-14T20:55:00Z",
+        "headline": "Top Stock Reports for Chevron, TotalEnergies & Robinhood",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chevron's long-term growth drivers face regulatory, geopolitical and valuation hurdles, prompting a cautious stance despite solid operational strengths.",
+        "url": "https://finnhub.io/api/news?id=6b7fc6482eb538c2581711cd3ce46a4cc0a4702ad7b0e352782fd10a8d7d089d"
+      },
+      {
+        "datetime": "2026-07-14T20:36:20Z",
+        "headline": "Jim Cramer Makes Big Claims For Valero Energy Corporation (VLO)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "We recently published Jim Cramer Discussed These 22 Stocks Including A Hidden Oil & Energy Play. Valero Energy Corporation (NYSE:VLO) is one of the stocks discussed by Jim Cramer. Valero Energy Corporation (NYSE:VLO) is an oil and gas refining company. Its shares are up by 83% over the past year and by 69.8% year-to-date. Morgan [\u2026]",
+        "url": "https://finnhub.io/api/news?id=a8df36fed539fc9fdcd640ba15553d0d061214a4b58d16f629a61af93ef97369"
+      },
+      {
+        "datetime": "2026-07-14T19:55:43Z",
+        "headline": "Sector Update: Energy Stocks Advance Late Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Energy stocks were higher late Tuesday afternoon, with the NYSE Energy Sector Index up 0.3% and the",
+        "url": "https://finnhub.io/api/news?id=3333a341a371ae34bd1c6d3292e7589cbf133c09c9d5117a2a1a7d1a406f158b"
+      },
+      {
+        "datetime": "2026-07-14T16:22:36Z",
+        "headline": "3 Dividend Stocks That Pay More Than Social Security COLA",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Social Security's 2026 cost-of-living adjustment barely keeps pace with a grocery bill, but three dividend stocks have been outpacing it for decades with yields that range from nearly 4% to almost 7%.",
+        "url": "https://finnhub.io/api/news?id=1f40fb26371e2b2b0617aeabf2df6d3f888104baeea74bf6907c6417ee483e38"
+      },
+      {
+        "datetime": "2026-07-14T15:27:00Z",
+        "headline": "Oil Crosses $80 Again: Can ExxonMobil's Upstream Business Thrive?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "XOM's Permian outlook strengthens as WTI tops $80, far above $34-$42 shut-in prices, while production targets continue to rise.",
+        "url": "https://finnhub.io/api/news?id=5743bb3a341d5a4033c490c63df3330b04156736ffa2bf3d8863cdc83cb3ac34"
+      },
+      {
+        "datetime": "2026-07-14T13:40:16Z",
+        "headline": "Ranger Energy Secures Chevron Contract for Three Additional ECHO Hybrid Rigs (RNGR)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Ranger Energy Services (NYSE:RNGR) has been awarded a new contract by Hess Corporation, a wholly owned subsidiary of Chevron Corporation (CVX), to supply three additional ECHO hybrid workover rigs for operations across the Lower 48 United States. The agreement expands Ranger\u2019s next-generation rig fleet and strengthens its relationship with one of the country\u2019s largest energy producers.",
+        "url": "https://finnhub.io/api/news?id=1c23955fc85c9b0be142489778bda12969cd43f2115ff2084b3fbf92c9f87ba8"
+      },
+      {
+        "datetime": "2026-07-14T13:26:32Z",
+        "headline": "Sector Update: Energy Stocks Edge Higher Pre-Bell Tuesday",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Energy stocks were edging higher pre-bell Tuesday, with the State Street Energy Select Sector SPDR E",
+        "url": "https://finnhub.io/api/news?id=c97a6cc4e59b54e559814187d8cfcd6d2a4247fd73bbb07332e1d9a3fc709f80"
+      },
+      {
+        "datetime": "2026-07-14T13:00:08Z",
+        "headline": "Chevron Corporation (CVX) is Attracting Investor Attention: Here is What You Should Know",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chevron (CVX) has been one of the stocks most watched by Zacks.com users lately. So, it is worth exploring what lies ahead for the stock.",
+        "url": "https://finnhub.io/api/news?id=dc559074817d315d17fdf735be1ba2fe9fa8118a02f4307f1b14c6cc0b417fff"
+      },
+      {
+        "datetime": "2026-07-14T11:31:00Z",
+        "headline": "Ranger Energy Services Announces Contract with Chevron to Build Three Additional ECHO Hybrid Rigs",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "HOUSTON, July 14, 2026--Ranger Energy Services, Inc. (NYSE: RNGR) (\"Ranger\" or the \"Company\") today announced that it has entered into a contract with Hess Corporation, a wholly owned subsidiary of Chevron Corporation (NYSE: CVX) to deploy three additional ECHO hybrid workover rigs in the Lower 48 United States. Introduced in 2025, Ranger\u2019s ECHO workover rig is the industry\u2019s first Hybrid Double Electric Workover Rig and reflects the Company\u2019s ongoing conversion and electrification of its conven",
+        "url": "https://finnhub.io/api/news?id=5980cbc430f71edbc80bf9882662d8d1327a84c8c5ba89bc1ea450d65892e413"
+      },
+      {
+        "datetime": "2026-07-14T11:00:36Z",
+        "headline": "Chevron Entered The AI Power Business. The Oil Patch Won't Be The Same.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "AI data centers drove Chevron's surprise move into the new gas-to-power business. What should investors expect next?",
+        "url": "https://finnhub.io/api/news?id=8b6a103c53a0c6a873cbef72417fab55c1e02d3833269c5b139f09c93e019ed6"
+      },
+      {
+        "datetime": "2026-07-14T07:35:21Z",
+        "headline": "Ranger Energy Services Inks Contract With Hess To Deploy Three Additional ECHO Hybrid Workover Rigs In Lower 48 U.S.",
         "sentiment": null,
         "source": "Benzinga",
-        "summary": "",
-        "url": "https://finnhub.io/api/news?id=03f60dd042447b52bed862fa96a4d53cd0716e6288fe1762bf86958e181d140f"
+        "summary": "Ranger Energy Services, Inc. (NYSE:RNGR) (&#34;Ranger&#34; or the &#34;Company&#34;) today announced that it has entered into a contract with Hess Corporation, a wholly owned subsidiary of Chevron Corporation (NYSE:CVX)",
+        "url": "https://finnhub.io/api/news?id=ee9ba6fe9688c207a56f52bba729aa2ec38e30f2c56f37f82c726a84e4e18c15"
       },
       {
-        "datetime": "2026-07-07T03:19:59Z",
-        "headline": "Should Chevron\u2019s (CVX) Index Exit and Guyana Upgrade Reframe How Investors View Its Cash-Flow Story?",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "In late June 2026, Chevron Corporation was removed from the Russell 1000 Dynamic Index even as analysts highlighted strengthening fundamentals and project execution. At the same time, research houses pointed to Chevron\u2019s expanding role in Guyana and long-term gas-fired power deals as reshaping its cash-flow profile. Now we\u2019ll examine how Wolfe Research\u2019s upgrade, centered on the Guyana Uaru development, may influence Chevron\u2019s existing investment narrative. The best AI stocks today may...",
-        "url": "https://finnhub.io/api/news?id=a689dcc4875ac9708d94b6016038a663f0bb465323cf520abe87f2d227cf6948"
-      },
-      {
-        "datetime": "2026-07-06T22:00:00Z",
-        "headline": "Big Oil Heads for Record Profits as Trump Turns Up the Heat on Gas Prices",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "The earnings surge is intensifying political pressure, with President Trump demanding gasoline prices fall to $2.25\u2013$2.50 per gallon and launching price-gouging investigations despite industry claims that pump prices lag crude price declines.",
-        "url": "https://finnhub.io/api/news?id=6cacd80bc673d6955261abca40aa3848b3fa695c0b4b65d6c581ed16b6ea7385"
-      },
-      {
-        "datetime": "2026-07-06T19:44:35Z",
-        "headline": "Jefferies Says Microsoft Stands Out in Strong Cloud Spending as Azure Gains Market Share. What This Means for MSFT Stock.",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Jefferies highlights Microsoft as a clear standout in the strong cloud spending environment.",
-        "url": "https://finnhub.io/api/news?id=91e2bd12c84cc51322aa5849b2dc90005106f58e0f342f4e6b4ff3f279b5fe70"
-      },
-      {
-        "datetime": "2026-07-06T19:35:00Z",
-        "headline": "2 Energy Stocks to Load Up on in the Second Half of 2026",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Energy prices have come down after a spike, here's two ways to play the sector now.",
-        "url": "https://finnhub.io/api/news?id=df0ec30ccbdb674d89b6ac35b0b3283fe69030a7a47a8c24976216d10e913e5f"
-      },
-      {
-        "datetime": "2026-07-06T19:05:42Z",
-        "headline": "A 2.86% Yield, 0.08% Fee, and 75 Stocks: Is HDV the Anti-Hype ETF?",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Dividend funds pulled in $24.1 billion in the first quarter of 2026, their strongest opening quarter in four years, and a lot of that cash went looking for a boring place to hide from AI-hype exhaustion. The iShares Core High Dividend ETF (NYSEARCA:HDV) is one of them. HDV holds 75 positions, charges 0.08%, and yields ... A 2.86% Yield, 0.08% Fee, and 75 Stocks: Is HDV the Anti-Hype ETF?",
-        "url": "https://finnhub.io/api/news?id=ddff0ace2d7ef2d65edf1d86bc46735f872c44ab2e339ed948872a65db162ebb"
-      },
-      {
-        "datetime": "2026-07-06T18:06:55Z",
-        "headline": "This Analyst Just Upgraded Chevron Stock. Here's Why.",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Chevron stock inched up on Friday as Wolfe Research upgraded it to \"Outperform.\" Here\u2019s why the firm\u2019s analyst turned bullish on CVX shares.",
-        "url": "https://finnhub.io/api/news?id=d84fbb4ca99209c91e2a6823bd7df0084b5589a98288e612342323a9785107a0"
-      },
-      {
-        "datetime": "2026-07-06T17:47:00Z",
-        "headline": "Battered oil major nabs Wolfe buy recommendation",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Energy investors spent the spring watching oil prices control stock movements. Now, one energy research team on Wall Street says the real story is happening somewhere else entirely. Chevron (CVX) has dropped hard from its 2026 high, pulled down by cooling oil prices and a fading war premium. Even ...",
-        "url": "https://finnhub.io/api/news?id=547ce2319f36dcdb37c9f9a2cb964e3edf213baa43c9822dfec52db1b98aa711"
-      },
-      {
-        "datetime": "2026-07-06T03:52:41Z",
-        "headline": "Reported Earlier, Iraqi Cabinet Backs Basra Oil Company's Strategic Pipeline Push, Approving Chevron-Led Consortium Agreement And KBR Deal For Basra-Haditha Project",
+        "datetime": "2026-07-14T04:12:52Z",
+        "headline": "Gavin Newsom Unveils $3,500 California EV Rebate, Says State Is Filling 'Void Left by Trump'",
         "sentiment": null,
         "source": "Benzinga",
-        "summary": "-Reuters",
-        "url": "https://finnhub.io/api/news?id=e2f4bd5c7e7fae96d6cb15b51d5b907836f0f9c492256c5f5b99cb35def7ed46"
+        "summary": "Gavin Newsom&#39;s new EV rebate program targets first-time buyers with a $3,500 discount, pushing back against Trump&#39;s anti-EV stance.",
+        "url": "https://finnhub.io/api/news?id=a28df7ab989c7d86f41c13e76a9d57d23025215a0990ff1d4f3c56ea94b25f2a"
       },
       {
-        "datetime": "2026-07-06T03:12:32Z",
-        "headline": "South Korean prosecutors indict four major refiners over allegations of oil price collusion",
-        "sentiment": null,
-        "source": "CNBC",
-        "summary": "South Korean prosecutors on Monday indicted four major domestic oil refiners for violating fair trade laws.",
-        "url": "https://finnhub.io/api/news?id=978f4524565da246f9065d324af494cf50cbba1761a81fbeb252912a41f7ceac"
-      },
-      {
-        "datetime": "2026-07-06T00:50:19Z",
-        "headline": "Gavin Newsom Slams Chevron, Says Gas Prices Still 'Elevated' Due to Trump's 'Reckless' Iran War: 'Skip the Brand Names'",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "Gov. Gavin Newsom urges residents to avoid Chevron and other big oil brands due to high gas prices caused by Trump&#39;s Iran war.",
-        "url": "https://finnhub.io/api/news?id=5c52069876f9f77c1d842f49f92cc41b259317fc439433d50c63ef3a4b71a7f5"
-      },
-      {
-        "datetime": "2026-07-05T21:00:00Z",
-        "headline": "Five Energy Stocks Riding Texas's Data Center Power Boom",
+        "datetime": "2026-07-14T00:01:00Z",
+        "headline": "Perryman says data centers can be beneficial with protections",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Texas's AI data center boom needs gigawatts of new power. Here are five stocks, from utilities to pipelines, positioned to profit from the buildout.",
-        "url": "https://finnhub.io/api/news?id=46f6fc1b266517dceea607a836b3ccc056f6fb162bed2d82fde80eef3af35096"
-      },
-      {
-        "datetime": "2026-07-05T17:47:27Z",
-        "headline": "Six Dividend Aristocrats Keeping SCHD\u2019s Income Stream Bulletproof This Year",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Schwab U.S. Dividend Equity ETF (NYSEARCA:SCHD) pays a quarterly distribution from roughly 100 quality-screened U.S. dividend stocks. The fund holds $71.6 billion in assets at an expense ratio of just 0.06%, and it tracks the Dow Jones U.S. Dividend 100 Index, which requires 10 consecutive years of dividend payments and screens on cash flow to ... Six Dividend Aristocrats Keeping SCHD\u2019s Income Stream Bulletproof This Year",
-        "url": "https://finnhub.io/api/news?id=7762ea644fb03778da654b93f7dfa933d7c1234ba00dfef0d0d4b7426470cfe5"
-      },
-      {
-        "datetime": "2026-07-05T12:30:25Z",
-        "headline": "3 Energy Stocks to Buy in July",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Energy stocks just gave investors a buying window. After WTI crude spiked to $114.58 per barrel on April 7, on the Strait of Hormuz disruption, prices have cooled to $78.94 per barrel as of June 22, dragging the three integrated majors down with them. Exxon Mobil is off 6% over the past month, Chevron is ... 3 Energy Stocks to Buy in July",
-        "url": "https://finnhub.io/api/news?id=6f48506c79bb46ce0c47f0fd0bd020e433cd688fcc9b2d7dd880fc59b5b8134f"
-      },
-      {
-        "datetime": "2026-07-05T08:58:42Z",
-        "headline": "Mid-Year 2026 Market Outlook: Oil, Gold, And Copper",
-        "sentiment": null,
-        "source": "SeekingAlpha",
-        "summary": "2026 oil shock and Strait of Hormuz closure are reviving inflation and shifting Fed policy.",
-        "url": "https://finnhub.io/api/news?id=904db13d0633662ed71f952f6f828927be7107114dc2db69df58b0be0a212c89"
-      },
-      {
-        "datetime": "2026-07-04T23:21:01Z",
-        "headline": "Chevron vs. Exxon Mobil: Which Energy Stock Is a Better Buy in 2026?",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Chevron is targeting tech-driven energy demand while Exxon Mobil is expanding its lead in carbon capture, see how their strategies stack up.",
-        "url": "https://finnhub.io/api/news?id=ea6c6f5ee46932ac0cd9538cc6d6d533031c574bf35de2b524eb2c83851ee758"
-      },
-      {
-        "datetime": "2026-07-04T13:35:00Z",
-        "headline": "Oil is Starting to Flow Out of the Strait of Hormuz Again. Should You Still Buy Oil Stocks?",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "There is one important lesson from the geopolitical conflict in the Middle East: Energy is still vital to the world.",
-        "url": "https://finnhub.io/api/news?id=a46df98897e1af4f7b853763a8d62a1565ac91948f465329d9cea69350e7a998"
-      },
-      {
-        "datetime": "2026-07-03T14:18:06Z",
-        "headline": "2 Cash-Producing Stocks to Keep an Eye On and 1 We Brush Off",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "While strong cash flow is a key indicator of stability, it doesn\u2019t always translate to superior returns. Some cash-heavy businesses struggle with inefficient spending, slowing demand, or weak competitive positioning.",
-        "url": "https://finnhub.io/api/news?id=0227711dbb4e0a0e7a08f8e8015692a2402fafec2831bbb94057d72e548806b3"
-      },
-      {
-        "datetime": "2026-07-03T14:03:00Z",
-        "headline": "Can OXY's Robust Proved Reserves Strengthen Its Long-Term Returns?",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Occidental's robust proved reserves, strong reserve replacement and diversified assets support production visibility, cash flow resilience and long-term returns.",
-        "url": "https://finnhub.io/api/news?id=ae5f8adf2fbd5eff4d73fd31b347599c83322e745a99cce714c5d134515d872f"
-      },
-      {
-        "datetime": "2026-07-03T13:00:07Z",
-        "headline": "Chevron Corporation (CVX) Is a Trending Stock: Facts to Know Before Betting on It",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Chevron (CVX) has received quite a bit of attention from Zacks.com users lately. Therefore, it is wise to be aware of the facts that can impact the stock's prospects.",
-        "url": "https://finnhub.io/api/news?id=964b6113f2e5429c77f9dfd0b5f55be6a631a0dcca577f06a75abe774162721b"
+        "summary": "With Microsoft and Chevron joining forces to build a self-powered $7-billion AI data center 20 miles south of Pecos and with other companies envisaging similar plans, Waco economist Ray Perryman says there are justifiable concerns about ensuring that data centers do not lead to problems with the electricity supply or transmission capacity, although many of those concerns are being addressed. ...",
+        "url": "https://finnhub.io/api/news?id=6723ded1cced51efbb1c12da57090e41486a2440e266dd2fff38bd1c3e4e2bf2"
       }
     ],
     "ticker": "CVX"
   },
-  "recorded_at": "2026-07-10T11:46:45.231815+00:00",
+  "recorded_at": "2026-07-22T01:49:40.409989+00:00",
   "status": "ok"
 }

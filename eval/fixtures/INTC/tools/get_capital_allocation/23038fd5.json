@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "buyback_yield_pct": 0.0,
-    "data_age_hours": 4691,
+    "data_age_hours": 4969,
     "dividend_growth_streak": 0,
     "dividend_yield_pct": 0.0,
     "net_debt_series": [
@@ -27,6 +27,6 @@
     "ticker": "INTC",
     "years_covered": 5
   },
-  "recorded_at": "2026-07-10T11:46:50.431374+00:00",
+  "recorded_at": "2026-07-22T01:49:45.146206+00:00",
   "status": "ok"
 }

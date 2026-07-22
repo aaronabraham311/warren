@@ -1,19 +1,19 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 0,
-    "debt_to_equity": null,
-    "fcf_ttm_usd": null,
-    "gross_margin_pct": null,
-    "net_margin_pct": null,
-    "operating_margin_pct": null,
-    "pb_ratio": 26.9275,
-    "pe_ratio": 30.5773,
-    "roe_pct": 111.66,
-    "sector": null,
-    "source": "finnhub",
+    "as_of": "2026-07-21",
+    "data_age_hours": 4273,
+    "debt_to_equity": 6.555,
+    "fcf_ttm_usd": 46335873024,
+    "gross_margin_pct": 74.145,
+    "net_margin_pct": 62.966,
+    "operating_margin_pct": 65.596,
+    "pb_ratio": 25.686493,
+    "pe_ratio": 31.171427,
+    "roe_pct": 114.288,
+    "sector": "Technology",
+    "source": "yfinance",
     "ticker": "NVDA"
   },
-  "recorded_at": "2026-07-10T11:47:19.975637+00:00",
+  "recorded_at": "2026-07-22T01:50:07.762407+00:00",
   "status": "ok"
 }

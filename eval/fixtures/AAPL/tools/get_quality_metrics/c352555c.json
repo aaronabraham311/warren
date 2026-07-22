@@ -1,6 +1,6 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "cash_conversion_series": [
       0.8818,
       1.1608,
@@ -9,7 +9,7 @@
     ],
     "cash_conversion_ttm": 0.8818,
     "consecutive_profit_years": 4,
-    "data_age_hours": 6875,
+    "data_age_hours": 7153,
     "gross_margin_pct": 46.9052,
     "gross_margin_series": [
       46.9052,
@@ -31,6 +31,6 @@
     "source": "yfinance",
     "ticker": "AAPL"
   },
-  "recorded_at": "2026-07-10T11:46:26.030471+00:00",
+  "recorded_at": "2026-07-22T01:49:20.999996+00:00",
   "status": "ok"
 }

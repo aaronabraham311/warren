@@ -1,10 +1,10 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "buyback_yield_pct": 0.223,
-    "data_age_hours": 7523,
+    "as_of": "2026-07-21",
+    "buyback_yield_pct": 0.2191,
+    "data_age_hours": 7801,
     "dividend_growth_streak": 0,
-    "dividend_yield_pct": 0.5392,
+    "dividend_yield_pct": 0.5297,
     "net_debt_series": [
       -5988000000,
       -1737000000,
@@ -22,11 +22,11 @@
       442664000,
       null
     ],
-    "shareholder_yield_pct": 0.7622,
+    "shareholder_yield_pct": 0.7488,
     "source": "yfinance",
     "ticker": "COST",
     "years_covered": 5
   },
-  "recorded_at": "2026-07-10T11:46:39.242792+00:00",
+  "recorded_at": "2026-07-22T01:49:34.895499+00:00",
   "status": "ok"
 }

@@ -1,16 +1,16 @@
 {
   "data": {
     "acquirers_multiple": null,
-    "as_of": "2026-07-10",
-    "data_age_hours": 4691,
+    "as_of": "2026-07-21",
+    "data_age_hours": 4969,
     "dividend_yield_pct": null,
     "earnings_yield": null,
-    "enterprise_value": 591463055360,
+    "enterprise_value": 555828707328,
     "ev_to_ebit": null,
-    "ev_to_ebitda": 41.73,
-    "fcf_yield": -1.4035,
+    "ev_to_ebitda": 39.21,
+    "fcf_yield": -1.4935,
     "is_net_net": false,
-    "market_cap_usd": 565626011648,
+    "market_cap_usd": 529991663616,
     "ncav": null,
     "ncav_to_market_cap": null,
     "net_cash_positive": false,
@@ -20,6 +20,6 @@
     "source": "yfinance",
     "ticker": "INTC"
   },
-  "recorded_at": "2026-07-10T11:46:50.051840+00:00",
+  "recorded_at": "2026-07-22T01:49:44.766203+00:00",
   "status": "ok"
 }

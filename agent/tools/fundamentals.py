@@ -35,11 +35,14 @@ def _finnhub_to_fundamentals(f: FinnhubFinancials) -> FundamentalsData:
         pe_ratio=f.pe_ratio,
         pb_ratio=f.pb_ratio,
         roe_pct=f.roe_pct,
-        debt_to_equity=None,
+        debt_to_equity=f.debt_to_equity,
+        gross_margin_pct=f.gross_margin_pct,
+        operating_margin_pct=f.operating_margin_pct,
+        net_margin_pct=f.net_margin_pct,
+        # Finnhub's basic-financials endpoint supplies neither trailing FCF in a
+        # trustworthy unit nor a sector classification (that needs the separate
+        # company-profile endpoint), so these stay None on the fallback path.
         fcf_ttm_usd=None,
-        gross_margin_pct=None,
-        operating_margin_pct=None,
-        net_margin_pct=None,
         sector=None,
         data_age_hours=0,
         source="finnhub",

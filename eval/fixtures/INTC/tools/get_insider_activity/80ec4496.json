@@ -1,9 +1,9 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "insider_ownership_pct": 14.719,
     "insider_sentiment": "bearish",
-    "institutional_ownership_pct": 64.079,
+    "institutional_ownership_pct": 65.348,
     "net_shares_bought": -310929,
     "net_value_bought": null,
     "ticker": "INTC",
@@ -340,6 +340,6 @@
     ],
     "window_days": 90
   },
-  "recorded_at": "2026-07-10T11:46:50.664943+00:00",
+  "recorded_at": "2026-07-22T01:49:45.323298+00:00",
   "status": "ok"
 }

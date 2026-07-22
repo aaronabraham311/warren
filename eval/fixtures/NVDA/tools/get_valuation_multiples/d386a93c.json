@@ -1,16 +1,16 @@
 {
   "data": {
     "acquirers_multiple": null,
-    "as_of": "2026-07-10",
-    "data_age_hours": 3995,
+    "as_of": "2026-07-21",
+    "data_age_hours": 4273,
     "dividend_yield_pct": 0.49,
     "earnings_yield": null,
-    "enterprise_value": 4866917793792,
+    "enterprise_value": 4976059875328,
     "ev_to_ebit": null,
-    "ev_to_ebitda": 29.4,
-    "fcf_yield": 0.9521,
+    "ev_to_ebitda": 30.06,
+    "fcf_yield": 0.9312,
     "is_net_net": false,
-    "market_cap_usd": 4911534178304,
+    "market_cap_usd": 5020770631680,
     "ncav": null,
     "ncav_to_market_cap": null,
     "net_cash_positive": true,
@@ -20,6 +20,6 @@
     "source": "yfinance",
     "ticker": "NVDA"
   },
-  "recorded_at": "2026-07-10T11:47:21.361075+00:00",
+  "recorded_at": "2026-07-22T01:50:08.317979+00:00",
   "status": "ok"
 }

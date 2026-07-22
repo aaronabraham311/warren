@@ -3,38 +3,38 @@
     "all_metrics": [
       {
         "ev_to_ebit": null,
-        "fcf_yield": 1.5889,
+        "fcf_yield": 1.5586,
         "gross_margin_pct": 81.941,
-        "pb_ratio": 6.577026,
-        "pe_ratio": 22.987988,
+        "pb_ratio": 6.7054462,
+        "pe_ratio": 23.471016,
         "roe_pct": 32.93,
         "ticker": "META"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 0.6516,
+        "fcf_yield": 0.6706,
         "gross_margin_pct": 60.368,
-        "pb_ratio": 9.015538,
-        "pe_ratio": 27.403076,
+        "pb_ratio": 8.761199,
+        "pe_ratio": 26.40656,
         "roe_pct": 38.885,
         "ticker": "GOOG"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 1.7426,
+        "fcf_yield": 1.743,
         "gross_margin_pct": 37.16,
-        "pb_ratio": 1.543734,
-        "pe_ratio": 15.486312,
+        "pb_ratio": 1.5432525,
+        "pe_ratio": 15.3824,
         "roe_pct": 11.01,
         "ticker": "DIS"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 8.0627,
-        "gross_margin_pct": 49.029,
-        "pb_ratio": 10.213832,
-        "pe_ratio": 24.345163,
-        "roe_pct": 48.495,
+        "fcf_yield": 8.651,
+        "gross_margin_pct": 49.118,
+        "pb_ratio": 9.483497,
+        "pe_ratio": 21.260061,
+        "roe_pct": 49.541,
         "ticker": "NFLX"
       }
     ],
@@ -50,24 +50,24 @@
         "ticker_rank": null
       },
       "fcf_yield": {
-        "peer_median": 1.7426,
+        "peer_median": 1.743,
         "ticker_percentile": 33.3,
         "ticker_rank": 3
       },
       "gross_margin_pct": {
-        "peer_median": 49.029,
+        "peer_median": 49.118,
         "ticker_percentile": 100.0,
         "ticker_rank": 1
       },
       "pb_ratio": {
-        "peer_median": 9.0155,
+        "peer_median": 8.7612,
         "ticker_percentile": 66.7,
         "ticker_rank": 2
       },
       "pe_ratio": {
-        "peer_median": 24.3452,
-        "ticker_percentile": 66.7,
-        "ticker_rank": 2
+        "peer_median": 21.2601,
+        "ticker_percentile": 33.3,
+        "ticker_rank": 3
       },
       "roe_pct": {
         "peer_median": 38.885,
@@ -77,6 +77,6 @@
     },
     "ticker": "META"
   },
-  "recorded_at": "2026-07-10T11:47:05.624446+00:00",
+  "recorded_at": "2026-07-22T01:49:55.303253+00:00",
   "status": "ok"
 }

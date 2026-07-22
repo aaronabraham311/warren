@@ -1,19 +1,19 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 0,
-    "debt_to_equity": null,
-    "fcf_ttm_usd": null,
-    "gross_margin_pct": null,
-    "net_margin_pct": null,
-    "operating_margin_pct": null,
-    "pb_ratio": 2.0322,
-    "pe_ratio": 7.8621,
-    "roe_pct": 25.080000000000002,
-    "sector": null,
-    "source": "finnhub",
+    "as_of": "2026-07-21",
+    "data_age_hours": 4873,
+    "debt_to_equity": 58.28,
+    "fcf_ttm_usd": 4083500032,
+    "gross_margin_pct": 40.929,
+    "net_margin_pct": 14.997,
+    "operating_margin_pct": 17.97,
+    "pb_ratio": 2.487972,
+    "pe_ratio": 10.658397,
+    "roe_pct": 25.12,
+    "sector": "Financial Services",
+    "source": "yfinance",
     "ticker": "PYPL"
   },
-  "recorded_at": "2026-07-10T11:47:24.572567+00:00",
+  "recorded_at": "2026-07-22T01:50:12.385021+00:00",
   "status": "ok"
 }

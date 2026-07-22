@@ -3,37 +3,37 @@
     "all_metrics": [
       {
         "ev_to_ebit": null,
-        "fcf_yield": 1.7246,
+        "fcf_yield": 1.6944,
         "gross_margin_pct": 12.876,
-        "pb_ratio": 24.490852,
-        "pe_ratio": 45.877888,
+        "pb_ratio": 24.926765,
+        "pe_ratio": 47.168526,
         "roe_pct": 29.152,
         "ticker": "COST"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 0.8043,
+        "fcf_yield": 0.8102,
         "gross_margin_pct": 61.744,
-        "pb_ratio": 10.571903,
-        "pe_ratio": 25.984276,
+        "pb_ratio": 10.487462,
+        "pe_ratio": 25.858044,
         "roe_pct": 43.372,
         "ticker": "KO"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 3.4635,
+        "fcf_yield": 3.4363,
         "gross_margin_pct": 50.984,
-        "pb_ratio": 6.362376,
-        "pe_ratio": 21.691286,
+        "pb_ratio": null,
+        "pe_ratio": 21.62044,
         "roe_pct": 31.112,
         "ticker": "PG"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 0.7115,
+        "fcf_yield": 0.7224,
         "gross_margin_pct": 24.976,
-        "pb_ratio": 9.470797,
-        "pe_ratio": 39.79078,
+        "pb_ratio": 9.317184,
+        "pe_ratio": 39.566307,
         "roe_pct": 24.132,
         "ticker": "WMT"
       }
@@ -50,7 +50,7 @@
         "ticker_rank": null
       },
       "fcf_yield": {
-        "peer_median": 0.8043,
+        "peer_median": 0.8102,
         "ticker_percentile": 66.7,
         "ticker_rank": 2
       },
@@ -60,12 +60,12 @@
         "ticker_rank": 4
       },
       "pb_ratio": {
-        "peer_median": 9.4708,
+        "peer_median": 9.9023,
         "ticker_percentile": 0.0,
-        "ticker_rank": 4
+        "ticker_rank": 3
       },
       "pe_ratio": {
-        "peer_median": 25.9843,
+        "peer_median": 25.858,
         "ticker_percentile": 0.0,
         "ticker_rank": 4
       },
@@ -77,6 +77,6 @@
     },
     "ticker": "COST"
   },
-  "recorded_at": "2026-07-10T11:46:40.852332+00:00",
+  "recorded_at": "2026-07-22T01:49:36.565777+00:00",
   "status": "ok"
 }

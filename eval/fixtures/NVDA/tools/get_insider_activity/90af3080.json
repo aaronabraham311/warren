@@ -1,9 +1,9 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "insider_ownership_pct": 3.984,
     "insider_sentiment": "bearish",
-    "institutional_ownership_pct": 70.806,
+    "institutional_ownership_pct": 71.229,
     "net_shares_bought": -31209768,
     "net_value_bought": null,
     "ticker": "NVDA",
@@ -130,6 +130,6 @@
     ],
     "window_days": 90
   },
-  "recorded_at": "2026-07-10T11:47:21.907548+00:00",
+  "recorded_at": "2026-07-22T01:50:08.823781+00:00",
   "status": "ok"
 }

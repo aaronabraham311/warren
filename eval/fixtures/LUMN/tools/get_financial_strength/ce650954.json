@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "current_ratio": 1.8016,
-    "data_age_hours": 4595,
+    "data_age_hours": 4873,
     "f_score": 4,
     "f_signals": {
       "accruals_negative": true,
@@ -19,9 +19,9 @@
     "net_debt_to_ebitda": 12.6834,
     "source": "yfinance",
     "ticker": "LUMN",
-    "z_score": -0.339,
+    "z_score": -0.3388,
     "z_zone": "distress"
   },
-  "recorded_at": "2026-07-10T11:46:59.166695+00:00",
+  "recorded_at": "2026-07-22T01:49:49.248395+00:00",
   "status": "ok"
 }

@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10T11:46:24.494529Z",
-    "current_price": 316.22,
+    "as_of": "2026-07-22T01:49:19.423293Z",
+    "current_price": 327.74,
     "data_age_hours": 0,
-    "day_change_pct": 0.32,
-    "previous_close": 315.21,
+    "day_change_pct": 0.54,
+    "previous_close": 325.99,
     "source": "yfinance",
     "ticker": "AAPL",
-    "volume": 54339011
+    "volume": 55103696
   },
-  "recorded_at": "2026-07-10T11:46:24.495980+00:00",
+  "recorded_at": "2026-07-22T01:49:19.424349+00:00",
   "status": "ok"
 }

@@ -1,6 +1,6 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "cash_conversion_series": [
       1.3491,
       0.8518,
@@ -9,7 +9,7 @@
     ],
     "cash_conversion_ttm": 1.3491,
     "consecutive_profit_years": 4,
-    "data_age_hours": 4595,
+    "data_age_hours": 4873,
     "gross_margin_pct": 30.4101,
     "gross_margin_series": [
       30.4101,
@@ -31,6 +31,6 @@
     "source": "yfinance",
     "ticker": "CVX"
   },
-  "recorded_at": "2026-07-10T11:46:44.027707+00:00",
+  "recorded_at": "2026-07-22T01:49:39.278776+00:00",
   "status": "ok"
 }

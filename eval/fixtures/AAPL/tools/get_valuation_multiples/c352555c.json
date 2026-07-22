@@ -1,16 +1,16 @@
 {
   "data": {
     "acquirers_multiple": null,
-    "as_of": "2026-07-10",
-    "data_age_hours": 6875,
-    "dividend_yield_pct": 0.34,
+    "as_of": "2026-07-21",
+    "data_age_hours": 7153,
+    "dividend_yield_pct": 0.33,
     "earnings_yield": null,
-    "enterprise_value": 4660639825920,
+    "enterprise_value": 4829838049280,
     "ev_to_ebit": null,
-    "ev_to_ebitda": 29.13,
-    "fcf_yield": 2.169,
+    "ev_to_ebitda": 30.19,
+    "fcf_yield": 2.093,
     "is_net_net": false,
-    "market_cap_usd": 4644435656704,
+    "market_cap_usd": 4813633880064,
     "ncav": null,
     "ncav_to_market_cap": null,
     "net_cash_positive": false,
@@ -20,6 +20,6 @@
     "source": "yfinance",
     "ticker": "AAPL"
   },
-  "recorded_at": "2026-07-10T11:46:25.838678+00:00",
+  "recorded_at": "2026-07-22T01:49:20.838936+00:00",
   "status": "ok"
 }

@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "buyback_yield_pct": 0.0,
-    "data_age_hours": 4595,
+    "data_age_hours": 4873,
     "dividend_growth_streak": null,
     "dividend_yield_pct": null,
     "net_debt_series": [
@@ -25,6 +25,6 @@
     "ticker": "BRK.B",
     "years_covered": 4
   },
-  "recorded_at": "2026-07-10T11:46:32.220229+00:00",
+  "recorded_at": "2026-07-22T01:49:28.030233+00:00",
   "status": "ok"
 }

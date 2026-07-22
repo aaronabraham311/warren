@@ -3,46 +3,46 @@
     "all_metrics": [
       {
         "ev_to_ebit": null,
-        "fcf_yield": -1.4035,
+        "fcf_yield": -1.4935,
         "gross_margin_pct": 37.2,
-        "pb_ratio": 5.074627,
+        "pb_ratio": 4.754926,
         "pe_ratio": null,
         "roe_pct": -2.911,
         "ticker": "INTC"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 1.2752,
+        "fcf_yield": 1.2329,
         "gross_margin_pct": 68.309,
-        "pb_ratio": 6.891012,
-        "pe_ratio": 22.83779,
+        "pb_ratio": 7.1310754,
+        "pe_ratio": 23.703814,
         "roe_pct": 34.014,
         "ticker": "MSFT"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 0.6516,
+        "fcf_yield": 0.6706,
         "gross_margin_pct": 60.368,
-        "pb_ratio": 9.015538,
-        "pe_ratio": 27.403076,
+        "pb_ratio": 8.761199,
+        "pe_ratio": 26.40656,
         "roe_pct": 38.885,
         "ticker": "GOOG"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 1.5889,
+        "fcf_yield": 1.5586,
         "gross_margin_pct": 81.941,
-        "pb_ratio": 6.577026,
-        "pe_ratio": 22.987988,
+        "pb_ratio": 6.7054462,
+        "pe_ratio": 23.471016,
         "roe_pct": 32.93,
         "ticker": "META"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 0.9521,
+        "fcf_yield": 0.9312,
         "gross_margin_pct": 74.145,
-        "pb_ratio": 25.127634,
-        "pe_ratio": 31.053598,
+        "pb_ratio": 25.686493,
+        "pe_ratio": 31.171427,
         "roe_pct": 114.288,
         "ticker": "NVDA"
       }
@@ -60,7 +60,7 @@
         "ticker_rank": null
       },
       "fcf_yield": {
-        "peer_median": 1.1136,
+        "peer_median": 1.0821,
         "ticker_percentile": 0.0,
         "ticker_rank": 5
       },
@@ -70,12 +70,12 @@
         "ticker_rank": 5
       },
       "pb_ratio": {
-        "peer_median": 7.9533,
+        "peer_median": 7.9461,
         "ticker_percentile": 100.0,
         "ticker_rank": 1
       },
       "pe_ratio": {
-        "peer_median": 25.1955,
+        "peer_median": 25.0552,
         "ticker_percentile": null,
         "ticker_rank": null
       },
@@ -87,6 +87,6 @@
     },
     "ticker": "INTC"
   },
-  "recorded_at": "2026-07-10T11:46:51.652443+00:00",
+  "recorded_at": "2026-07-22T01:49:46.145420+00:00",
   "status": "ok"
 }

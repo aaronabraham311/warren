@@ -346,7 +346,15 @@ def test_get_fundamentals_stale_falls_back_to_finnhub(monkeypatch: pytest.Monkey
     yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, age=_STALE_FUNDAMENTALS_H + 1))  # stale
     fh = _FakeFinnhub(
         financials=FinnhubFinancials(
-            ticker="AAPL", as_of=date.today(), pe_ratio=20.0, pb_ratio=3.0, roe_pct=15.0
+            ticker="AAPL",
+            as_of=date.today(),
+            pe_ratio=20.0,
+            pb_ratio=3.0,
+            roe_pct=15.0,
+            debt_to_equity=187.0,
+            gross_margin_pct=46.2,
+            operating_margin_pct=30.1,
+            net_margin_pct=25.3,
         )
     )
     monkeypatch.setattr("agent.tools.fundamentals.yfinance_client", lambda: yf)
@@ -356,6 +364,14 @@ def test_get_fundamentals_stale_falls_back_to_finnhub(monkeypatch: pytest.Monkey
     assert isinstance(result.data, FundamentalsData)
     assert result.data.source == "finnhub"
     assert fh.financials_calls == 1
+    # Widened projection: margins and debt-to-equity survive the fallback (no longer nulled).
+    assert result.data.debt_to_equity == pytest.approx(187.0)
+    assert result.data.gross_margin_pct == pytest.approx(46.2)
+    assert result.data.operating_margin_pct == pytest.approx(30.1)
+    assert result.data.net_margin_pct == pytest.approx(25.3)
+    # Finnhub's basics endpoint supplies neither — these stay None on the fallback path.
+    assert result.data.fcf_ttm_usd is None
+    assert result.data.sector is None
 
 
 def test_get_fundamentals_stale_without_finnhub_returns_yfinance(

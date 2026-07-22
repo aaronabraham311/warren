@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "assumptions": {
       "discount_rate": 0.1,
       "growth_rate": 0.08,
       "projection_years": 10,
       "terminal_growth_rate": 0.025
     },
-    "current_price": 112.54,
-    "data_age_hours": 4691,
+    "current_price": 105.45,
+    "data_age_hours": 4969,
     "intrinsic_equity_value": null,
     "intrinsic_value_per_share": null,
     "margin_of_safety": null,
@@ -19,6 +19,6 @@
     "source": "yfinance",
     "ticker": "INTC"
   },
-  "recorded_at": "2026-07-10T11:46:50.536576+00:00",
+  "recorded_at": "2026-07-22T01:49:45.221753+00:00",
   "status": "ok"
 }

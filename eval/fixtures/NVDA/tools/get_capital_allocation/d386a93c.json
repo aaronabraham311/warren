@@ -1,10 +1,10 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "buyback_yield_pct": 0.8162,
-    "data_age_hours": 3995,
+    "as_of": "2026-07-21",
+    "buyback_yield_pct": 0.7984,
+    "data_age_hours": 4273,
     "dividend_growth_streak": 2,
-    "dividend_yield_pct": 0.0198,
+    "dividend_yield_pct": 0.0194,
     "net_debt_series": [
       435000000,
       1393000000,
@@ -22,11 +22,11 @@
       24661365720,
       null
     ],
-    "shareholder_yield_pct": 0.836,
+    "shareholder_yield_pct": 0.8178,
     "source": "yfinance",
     "ticker": "NVDA",
     "years_covered": 5
   },
-  "recorded_at": "2026-07-10T11:47:21.694847+00:00",
+  "recorded_at": "2026-07-22T01:50:08.605659+00:00",
   "status": "ok"
 }
