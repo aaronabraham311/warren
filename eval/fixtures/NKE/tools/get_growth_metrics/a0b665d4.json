@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 971,
-    "earnings_cagr_3y": -0.1895,
-    "peg_ratio": 1.63,
-    "revenue_cagr_3y": -0.0029,
-    "revenue_cagr_5y": -0.0029,
+    "as_of": "2026-07-21",
+    "data_age_hours": 1249,
+    "earnings_cagr_3y": -0.1505,
+    "peg_ratio": 1.68,
+    "revenue_cagr_3y": -0.0324,
+    "revenue_cagr_5y": -0.0324,
     "source": "yfinance",
     "ticker": "NKE"
   },
-  "recorded_at": "2026-07-10T11:47:15.764964+00:00",
+  "recorded_at": "2026-07-22T01:50:02.818746+00:00",
   "status": "ok"
 }

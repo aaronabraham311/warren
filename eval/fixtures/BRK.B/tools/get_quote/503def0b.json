@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10T11:46:30.644158Z",
-    "current_price": 495.45,
+    "as_of": "2026-07-22T01:49:26.944782Z",
+    "current_price": 489.65,
     "data_age_hours": 0,
-    "day_change_pct": 0.0,
-    "previous_close": 495.44,
+    "day_change_pct": -0.27,
+    "previous_close": 491.0,
     "source": "yfinance",
     "ticker": "BRK.B",
-    "volume": 5158888
+    "volume": 5046369
   },
-  "recorded_at": "2026-07-10T11:46:30.645510+00:00",
+  "recorded_at": "2026-07-22T01:49:26.945657+00:00",
   "status": "ok"
 }

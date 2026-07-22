@@ -1,9 +1,9 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "insider_ownership_pct": 2.693,
     "insider_sentiment": "insufficient_data",
-    "institutional_ownership_pct": 73.245,
+    "institutional_ownership_pct": 73.457,
     "net_shares_bought": 0,
     "net_value_bought": null,
     "ticker": "LUMN",
@@ -84,17 +84,10 @@
         "transaction_date": "2026-05-07",
         "transaction_type": "other",
         "value": null
-      },
-      {
-        "name": "Hodges Jennifer A.",
-        "shares": 389668,
-        "transaction_date": "2026-04-20",
-        "transaction_type": "other",
-        "value": null
       }
     ],
     "window_days": 90
   },
-  "recorded_at": "2026-07-10T11:46:59.432449+00:00",
+  "recorded_at": "2026-07-22T01:49:49.527477+00:00",
   "status": "ok"
 }

@@ -1,6 +1,6 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "cash_conversion_series": [
       0.9677,
       0.8998,
@@ -9,7 +9,7 @@
     ],
     "cash_conversion_ttm": 0.9677,
     "consecutive_profit_years": 4,
-    "data_age_hours": 7523,
+    "data_age_hours": 7801,
     "gross_margin_pct": 12.8432,
     "gross_margin_series": [
       12.8432,
@@ -31,6 +31,6 @@
     "source": "yfinance",
     "ticker": "COST"
   },
-  "recorded_at": "2026-07-10T11:46:39.010816+00:00",
+  "recorded_at": "2026-07-22T01:49:34.709466+00:00",
   "status": "ok"
 }

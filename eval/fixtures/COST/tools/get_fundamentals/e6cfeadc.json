@@ -1,19 +1,19 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 0,
-    "debt_to_equity": null,
-    "fcf_ttm_usd": null,
-    "gross_margin_pct": null,
-    "net_margin_pct": null,
-    "operating_margin_pct": null,
-    "pb_ratio": 13.2328,
-    "pe_ratio": 46.1423,
-    "roe_pct": 28.27,
-    "sector": null,
-    "source": "finnhub",
+    "as_of": "2026-07-21",
+    "data_age_hours": 7801,
+    "debt_to_equity": 60.257,
+    "fcf_ttm_usd": 6954375168,
+    "gross_margin_pct": 12.876,
+    "net_margin_pct": 3.01,
+    "operating_margin_pct": 3.673,
+    "pb_ratio": 24.926765,
+    "pe_ratio": 47.168526,
+    "roe_pct": 29.152,
+    "sector": "Consumer Defensive",
+    "source": "yfinance",
     "ticker": "COST"
   },
-  "recorded_at": "2026-07-10T11:46:37.853804+00:00",
+  "recorded_at": "2026-07-22T01:49:33.887864+00:00",
   "status": "ok"
 }

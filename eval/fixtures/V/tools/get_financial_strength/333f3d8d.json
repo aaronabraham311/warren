@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "current_ratio": 1.0776,
-    "data_age_hours": 6803,
+    "data_age_hours": 7081,
     "f_score": 6,
     "f_signals": {
       "accruals_negative": true,
@@ -15,13 +15,13 @@
       "roa_improved": false,
       "roa_positive": true
     },
-    "interest_coverage": 42.08,
+    "interest_coverage": null,
     "net_debt_to_ebitda": 0.3079,
     "source": "yfinance",
     "ticker": "V",
-    "z_score": 7.905,
-    "z_zone": "safe"
+    "z_score": null,
+    "z_zone": null
   },
-  "recorded_at": "2026-07-10T11:47:34.985473+00:00",
+  "recorded_at": "2026-07-22T01:50:22.761776+00:00",
   "status": "ok"
 }

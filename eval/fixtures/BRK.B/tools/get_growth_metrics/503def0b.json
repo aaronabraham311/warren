@@ -1,7 +1,7 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 4595,
+    "as_of": "2026-07-21",
+    "data_age_hours": 4873,
     "earnings_cagr_3y": -0.1658,
     "peg_ratio": 10.06,
     "revenue_cagr_3y": 0.2059,
@@ -9,6 +9,6 @@
     "source": "yfinance",
     "ticker": "BRK.B"
   },
-  "recorded_at": "2026-07-10T11:46:31.808161+00:00",
+  "recorded_at": "2026-07-22T01:49:27.642237+00:00",
   "status": "ok"
 }

@@ -3,304 +3,1456 @@
     "days": 7,
     "items": [
       {
-        "datetime": "2026-07-09T19:56:03Z",
-        "headline": "PayPal boosts its stablecoin as banks prepare to launch a shared one",
+        "datetime": "2026-07-21T17:41:10Z",
+        "headline": "PayPal Says a $53 Billion Takeover Offer from Stripe Undervalues It. How to Play PYPL Stock Here.",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The payment company's PYUSD has launched on Polygon's international digital asset rail as big financial institutions give potential heft to Open Standard's pending OpenUSD.",
-        "url": "https://finnhub.io/api/news?id=7bec6a484c9e881755c6c6f21454c90d9e433d3ab3377d8f71bc5240f36f65bb"
+        "summary": "PayPal\u2019s board thinks the $53 billion takeover might be undervaluing the stock. Should you buy the stock here?",
+        "url": "https://finnhub.io/api/news?id=ed5b592963ce3fa88617e5e63c1ce9a521fcc1f10f273ce924e0f9db025b4e18"
       },
       {
-        "datetime": "2026-07-09T14:49:00Z",
-        "headline": "PayPal Expands PYUSD to Polygons $2.6T Stablecoin Settlement Network",
+        "datetime": "2026-07-21T15:16:36Z",
+        "headline": "V Stock: Where Compounding Could Take The Price",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "PayPal (NASDAQ: $PYPL) is expanding the reach of PayPal USD (CRYPTO: $PYUSD) by bringing the stablecoin native...",
-        "url": "https://finnhub.io/api/news?id=a1fc1956d39730e5eb6c9c934b7534c8e3e945fe722b6818ecb7175ec22419c9"
+        "summary": "Visa (V) trades at $360.57 per share on a $651.9B market cap and 29.3x trailing earnings. Under a conservative 3-year scenario, the math points to roughly 42% of upside. Revenue compounding does most of the work in our scenario. Here is the picture the math sits on top of.",
+        "url": "https://finnhub.io/api/news?id=2e7f9b7369cff37fdb8c7049bc526880de33e3cde388aa0308fb6b2e87b60e88"
       },
       {
-        "datetime": "2026-07-09T14:06:11Z",
-        "headline": "Goldman Sachs Maintains Sell on PayPal Holdings, Raises Price Target to $48",
+        "datetime": "2026-07-21T14:00:21Z",
+        "headline": "Earnings Preview: Paypal (PYPL) Q2 Earnings Expected to Decline",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Paypal (PYPL) doesn't possess the right combination of the two key ingredients for a likely earnings beat in its upcoming report. Get prepared with the key expectations.",
+        "url": "https://finnhub.io/api/news?id=a8dff524a57f144286e1312c99459b584a1c906d56863371290a55c241de0fd1"
+      },
+      {
+        "datetime": "2026-07-21T10:51:44Z",
+        "headline": "How Mastercard, Visa, Apple Pay and PayPal performed at the World Cup",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Media data tracking World Cup payment articles reveals a clear split between the major card networks",
+        "url": "https://finnhub.io/api/news?id=4f154a40968c434e62d8744acce223b9164d3a6539421806e40cf73a19900c78"
+      },
+      {
+        "datetime": "2026-07-21T07:04:16Z",
+        "headline": "PYPL Stock Eyes Best Month Ever: ARK Invest Says Venmo 'Most Compelling Strategic Asset' Amid Stripe Takeover Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "According to ARK Investment Management\u2019s Research Analyst Varshika Prasanna, although PayPal\u2019s merchant scale is significant, Venmo would give Stripe access to more than 400 million consumer accounts.",
+        "url": "https://finnhub.io/api/news?id=22ae77c241a1016df8b6a4564bf397b2f30b288c716e6910fda79edfd3d90e9c"
+      },
+      {
+        "datetime": "2026-07-21T01:31:44Z",
+        "headline": "\u201cGrow a Spine\u201d: All-In Podcast Pushes Back on AI Regulation and Calls PayPal\u2019s $60 Takeover Offer Just an Opening Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "David Sacks issued a sharp warning to tech executives cozying up to Washington regulators, while investors are already debating whether PayPal's reported takeover offer drastically undersells one of fintech's most contested assets.",
+        "url": "https://finnhub.io/api/news?id=95e2949a6d9bedc0c49e3d3217c673e939c0c24937f0ee2e5a126674018db19a"
+      },
+      {
+        "datetime": "2026-07-20T16:23:36Z",
+        "headline": "Chamath Says Stripe's PayPal Deal Is 'a Shot Across the Bow' for Visa and Mastercard",
         "sentiment": null,
         "source": "Benzinga",
-        "summary": "Goldman Sachs  analyst Will Nance   maintains PayPal Holdings (NASDAQ:PYPL) with a Sell and raises the price target from $41 to $48.",
-        "url": "https://finnhub.io/api/news?id=2b60f17e02a8bf035a1e4970edc734db74dcce564c3fb1aad60608f79b2cffaa"
+        "summary": "Chamath Palihapitiya says a Stripe-PayPal tie-up is &#34;a shot across the bow&#34; for Visa and Mastercard. Here&#39;s what prediction markets say about the $53B deal.",
+        "url": "https://finnhub.io/api/news?id=0179a59e86b0db7b9be32ca3fa97f308d6e4282efe60a3296db10749ea7d5a15"
       },
       {
-        "datetime": "2026-07-09T05:59:20Z",
-        "headline": "Mastercard Vs PayPal: Barclays Sees Big Upside In Only One Payments Stock",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Barclays analyst Nik Cremo initiated coverage of both Mastercard and PayPal stocks on Wednesday.",
-        "url": "https://finnhub.io/api/news?id=70a4dfe4ffbc7a322af9af4c2526e14de1acdb938b4bdaea02cee58f59fe2a06"
-      },
-      {
-        "datetime": "2026-07-08T22:50:44Z",
-        "headline": "PayPal, Ameriprise Financial, and Ally Financial Shares Are Falling, What You Need To Know",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "A number of stocks fell in the afternoon session after President Trump declared the Iran ceasefire \"over\" and vowed fresh strikes, triggering a broad risk-off move.",
-        "url": "https://finnhub.io/api/news?id=c872dd7a484be93767774610bcd6359c741ca22da6287ccb7dc52db68f21b609"
-      },
-      {
-        "datetime": "2026-07-08T21:16:08Z",
-        "headline": "The Standoff Over PYPL Stock",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "The market has been relentlessly selling this payments giant, but one buyer has been quietly accumulating an enormous position: the company itself.",
-        "url": "https://finnhub.io/api/news?id=16e4bb23ed9cd80f794b8dc420d5a61c0912cac5303379af48dc216490b1651e"
-      },
-      {
-        "datetime": "2026-07-08T20:29:26Z",
-        "headline": "PYPL Stock: Where Compounding Could Take The Price",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "PayPal (PYPL) trades at $45.65 per share on a $41.7B market cap and 8.2x trailing earnings. Under a conservative 3-year scenario, the math points to roughly 15% of upside. Revenue compounding does most of the work in our scenario. Here is the picture that the math sits on top of.",
-        "url": "https://finnhub.io/api/news?id=014466202c2c0b240d5ad05317aba6dcb0f9a6828a7e7084423fc73e39cb8958"
-      },
-      {
-        "datetime": "2026-07-08T17:14:00Z",
-        "headline": "PayPal AI Push: Will $1.5B Savings Drive Faster Growth Ahead?",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "PYPL targets $1.5B in AI-driven savings to fund checkout, Venmo and platform investments as it balances growth with margin pressure.",
-        "url": "https://finnhub.io/api/news?id=d25c267812baa39cb931a8cf40e59cf3dec36359297ac66027b42fbdf4f61bec"
-      },
-      {
-        "datetime": "2026-07-08T13:39:41Z",
-        "headline": "Broadcom downgraded, UnitedHealth upgraded: Wall Street's top analyst calls",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Broadcom downgraded, UnitedHealth upgraded: Wall Street's top analyst calls",
-        "url": "https://finnhub.io/api/news?id=47f384083c6ee52a748eabe8f4447d9598f3181cc470d23ccbbfcf60cd18a18b"
-      },
-      {
-        "datetime": "2026-07-08T13:35:14Z",
-        "headline": "New buy now, pay later rules confirmed \u2013 will they protect you?",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Buy now, pay later borrowers are set to gain stronger rights and clearer information when they access short-term lending.",
-        "url": "https://finnhub.io/api/news?id=548392d55d92e07b6e06c6ce4b953e843e3d1804bd140dd13175b15c13c039e0"
-      },
-      {
-        "datetime": "2026-07-08T13:11:28Z",
-        "headline": "PayPal (PYPL) Is Making BNPL A Bigger Part Of Checkout Growth",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "PayPal Holdings (NasdaqGS:PYPL) is increasing its focus on buy now, pay later, making it a key part of its branded checkout offering. The company aims to use BNPL to attract new customers and help merchants lift basket sizes. This shift comes as BNPL usage continues to change and remains an underpenetrated part of PayPal's broader payments platform. For investors tracking PayPal Holdings, the renewed push into BNPL comes with the stock at $45.65 and recent short term gains, up 3.6% over the...",
-        "url": "https://finnhub.io/api/news?id=ebe679be6ae6a979cde6a4bc68cddf38649fee1610eb16556238756a4af41ab8"
-      },
-      {
-        "datetime": "2026-07-08T13:00:00Z",
-        "headline": "MBA Insurance, a Division of Brown & Brown, Inc., Selects One Inc\u2019s PremiumPay\u00ae to Modernize Inbound Payment Experience",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "FOLSOM, Calif., July 08, 2026--One Inc, the leading digital payments network for the insurance industry, today announced that MBA Insurance, a subsidiary of Brown & Brown, Inc., has selected PremiumPay\u00ae to enhance its inbound digital payment capabilities. This strategic decision supports the organization\u2019s ongoing commitment to delivering an efficient, seamless payment experience for its policyholders.",
-        "url": "https://finnhub.io/api/news?id=1862b356bf14cff2257bb676074bce5c07e5a8630eb6d8ec76d9ea4b77862290"
-      },
-      {
-        "datetime": "2026-07-08T12:02:07Z",
-        "headline": "Here Are Wednesday\u2019s Best Wall Street Analyst Research Calls: Alcoa, Commercial Metals, DTE Energy, Dollar Tree, Occidental Petroleum, PayPal, Pinterest, Snap, Travelers, and More",
-        "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Pre-Market Stock Futures: Futures are trading lower following President Trump\u2019s decision to end the ceasefire with Iran. This comes after a dreadful Tuesday that saw all the major indices get clobbered, with the Nasdaq taking the biggest hit, closing down 1.16% at 25,772, as semiconductors, anything with an AI tailwind, or momentum names, all got ... Here Are Wednesday\u2019s Best Wall Street Analyst Research Calls: Alcoa, Commercial Metals, DTE Energy, Dollar Tree, Occidental Petroleum, PayPal, Pint",
-        "url": "https://finnhub.io/api/news?id=f206f2d837d77772191b253990b770d7391a46c0cc7fe62b6adf58c21716ed36"
-      },
-      {
-        "datetime": "2026-07-08T07:46:14Z",
-        "headline": "This PayPal Analyst Begins Coverage On A Bearish Note; Here Are Top 5 Initiations For Wednesday",
+        "datetime": "2026-07-20T13:35:12Z",
+        "headline": "10 Financials Stocks Whale Activity In Today\u2019s Session",
         "sentiment": null,
         "source": "Benzinga",
-        "summary": "Top analysts changed outlook on RCL, PYPL, HONA, SXT, and PINS. See analyst ratings page for full details. Analysts have mixed opinions on PYPL.",
-        "url": "https://finnhub.io/api/news?id=682fd3fba7ca917578cfee86a0d8b06342d324b2bfc606c5e12d1ea634650328"
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity scanner.\nTraders will",
+        "url": "https://finnhub.io/api/news?id=9bda3323e0d1190e9d994558b344f7df72a6098131f6aa2b01be7094f66c0b36"
       },
       {
-        "datetime": "2026-07-08T05:32:22Z",
-        "headline": "Barclays Initiates Coverage On PayPal Holdings with Underweight Rating, Announces Price Target of $42",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "Barclays  analyst Ramsey El-Assal   initiates coverage on PayPal Holdings (NASDAQ:PYPL) with a Underweight rating and announces Price Target of $42.",
-        "url": "https://finnhub.io/api/news?id=215d89d7144543ae6ad58d9bead09f2791fd0b7f0f64d18410f96ed8ae93a9aa"
-      },
-      {
-        "datetime": "2026-07-08T00:37:35Z",
-        "headline": "Bernie Sanders Asks Who Do You Trust: The Pope or Peter Thiel, After Billionaire Palantir Founder Calls the Pontiff a 'Chinese Communist Agent",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "Sanders criticized Peter Thiel after the billionaire labeled Pope Leo XIV a &#34;Chinese communist agent&#34; over his AI regulation stance.",
-        "url": "https://finnhub.io/api/news?id=f25dbc57efc01864562b545c78ff790b2c99e46c88fe78f15406a0044c1788dc"
-      },
-      {
-        "datetime": "2026-07-07T21:45:04Z",
-        "headline": "Paypal (PYPL) Advances While Market Declines: Some Information for Investors",
+        "datetime": "2026-07-20T13:00:02Z",
+        "headline": "PayPal Holdings, Inc. (PYPL) Is a Trending Stock: Facts to Know Before Betting on It",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Paypal (PYPL) closed at $45.65 in the latest trading session, marking a +1.24% move from the prior day.",
-        "url": "https://finnhub.io/api/news?id=3447d06760ad8e9d6092eac1ce2555b84ee21f974352ab5d45d9bfe47e6f9b98"
+        "summary": "Paypal (PYPL) has been one of the stocks most watched by Zacks.com users lately. So, it is worth exploring what lies ahead for the stock.",
+        "url": "https://finnhub.io/api/news?id=976a14b628d52381c019d5da953f5e79b6308637435835212b570b581f3ac2c3"
       },
       {
-        "datetime": "2026-07-07T15:36:11Z",
-        "headline": "Mastercard Vs. Paypal: The Argument Over Which Undervalued Fintech To Buy Has a Clear Cut Answer",
+        "datetime": "2026-07-20T12:38:04Z",
+        "headline": "This Week In Digital Payment - Emerging Innovations Propel Payment Card Software Market Growth",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Mastercard (NYSE:MA) and PayPal (NASDAQ:PYPL) just closed Q1 2026 reports that look like mirror opposites. Mastercard delivered accelerating services growth and margin expansion from a position of dominance. PayPal beat low expectations under brand-new CEO Enrique Lores, but guided to a flat-to-down 2026. Both stocks trade below where they started the year, and investors are ... Mastercard Vs. Paypal: The Argument Over Which Undervalued Fintech To Buy Has a Clear Cut Answer",
-        "url": "https://finnhub.io/api/news?id=c40c241e13f51417e42637251021c2203671c9698342ddc83b62ccb0f05b6501"
+        "summary": "The global payment card issuance software market is projected to reach $5.04 billion by 2035, driven by innovations in cloud-native platforms, virtual cards, and digital banking. A recent comprehensive report from Research and Markets highlights the significant growth opportunities and competitive dynamics anticipated in the sector. Covering 16 geographies, the strategy-oriented analysis underscores the potential impact of emerging payment technologies and post-pandemic developments on the...",
+        "url": "https://finnhub.io/api/news?id=257927c8e74224527e030d172e7b028978ffd46a36feed8d43fe0db21723da11"
       },
       {
-        "datetime": "2026-07-07T14:44:07Z",
-        "headline": "PayPal Has Truly Hit The Bargain Bin (Upgrade)",
+        "datetime": "2026-07-20T12:15:00Z",
+        "headline": "What to Expect From PayPal\u2019s Next Quarterly Earnings Report",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Wall Street expects PayPal to post a single-digit year-over-year decline in EPS when it reports its second-quarter results next month.",
+        "url": "https://finnhub.io/api/news?id=ea9cbe46681f803bb5df5137d340c7b8aac2c51e242403eb7658d1865bcb5769"
+      },
+      {
+        "datetime": "2026-07-20T12:08:06Z",
+        "headline": "'Flaccid' Digital Names Like Ebay, PayPal Are Targets for AI-Era Buyouts, Friedberg Says on 'All-In'",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "A new class of digital companies are ripe for AI-driven transformation, says David Friedberg on the &#34;All-In&#34; podcast.",
+        "url": "https://finnhub.io/api/news?id=a4e81a61f5cfc12f881ae2c78267caacd74b3e2a3a4501b7439528cba9f35331"
+      },
+      {
+        "datetime": "2026-07-20T11:06:00Z",
+        "headline": "Payments M&A spools up",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe\u2019s potential bid for PayPal isn\u2019t the only merger and acquisition activity underway as deal-making revs up for the second half of the year.",
+        "url": "https://finnhub.io/api/news?id=b54eb655ead034896a3a44126cb47c0cfa58ccec990cf4f196acb39887f416c6"
+      },
+      {
+        "datetime": "2026-07-20T10:03:30Z",
+        "headline": "How PayPal went from Wall Street favorite to unwilling merger target",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Five years ago PayPal was a Wall Street favorite and a leader in digital payments.  Since then the stock has plunged, Apple Pay dominates payment services in the U.S. and PayPal is facing a takeover bid it does not like.  The company synonymous with digital payments this past week got a $53 billion \u200coffer to be taken private by upstart rival Stripe and buyout shop Advent International.",
+        "url": "https://finnhub.io/api/news?id=48cedee496b8452e2e92b12d00d47b34001e6accbc31b4588e3bc50fd76434ad"
+      },
+      {
+        "datetime": "2026-07-20T09:59:33Z",
+        "headline": "3 Small-Cap Stocks Walking a Fine Line",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investors looking for hidden gems should keep an eye on small-cap stocks because they\u2019re frequently overlooked by Wall Street. Many opportunities exist in this part of the market, but it is also a high-risk, high-reward environment due to the lack of reliable analyst price targets.",
+        "url": "https://finnhub.io/api/news?id=6486746d046573c9be2c34c3f66c421a4150e747f6dc895091fccff0b3d65139"
+      },
+      {
+        "datetime": "2026-07-20T02:12:06Z",
+        "headline": "Why Retail Traders Couldn\u2019t Take Their Eyes Off These Stocks Last Week: IBM, PYPL, TSM, NOK, SPCX",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "AI spending narrative dominated markets as investors favored chipmakers and infrastructure firms while software stocks faced pressure.",
+        "url": "https://finnhub.io/api/news?id=78c705551c7553c5f2e130bf3c2c9d9d43322c305b294157a4876502725aefa3"
+      },
+      {
+        "datetime": "2026-07-19T17:05:00Z",
+        "headline": "PayPal: Is Being Bought Out What's Best for the Company Right Now?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The initial offer may have set the floor for PayPal's potential value on the acquisition market.",
+        "url": "https://finnhub.io/api/news?id=9580f805964bea9d872763042e40357bff0278573cb2d2a1bd25f17a66196945"
+      },
+      {
+        "datetime": "2026-07-19T01:09:35Z",
+        "headline": "Why would Stripe want PayPal?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- Stripe could gain consumer reach, merchant-processing scale and a stronger stablecoin position by acquiring PayPal Holdings Inc. (NASDAQ:PYPL), though analysts at Cantor Fitzgerald, Bernstein and Mizuho questioned whether the reported $60.50-per-share offer would secure a deal.",
+        "url": "https://finnhub.io/api/news?id=97d571d629f9afc59398d7f3fa5d31c3b0c6731c124fbf3fdb40c54871732661"
+      },
+      {
+        "datetime": "2026-07-18T23:15:01Z",
+        "headline": "A PayPal Vice President Sold Nearly 4,000 Company Shares. Here's What That Means for Investors.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The digital payments provider reported a notable insider sale amid reports of a buyout offer.",
+        "url": "https://finnhub.io/api/news?id=985380011426815f17861d6d5f5b6f9b9dde08e8d38df082fd7e09df3a5e4395"
+      },
+      {
+        "datetime": "2026-07-18T15:15:50Z",
+        "headline": "Stock Market Week Ahead: Navigating Uncertainty",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Sideways stock market action can be challenging. IBD's Stock Market Week Ahead provides some tips for how to play the coming week, and what to watch for.",
+        "url": "https://finnhub.io/api/news?id=39d7f8e569f35c31547596d94db45d2959d080b64dbf41f986c48d299b696b09"
+      },
+      {
+        "datetime": "2026-07-18T12:00:15Z",
+        "headline": "ASML, Snowflake Lead Five Stocks Near Buy Points In Tough Market",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chip gear giant ASML resisted last week's AI rout. But investors should also look beyond stocks tied to the artificial intelligence buildout",
+        "url": "https://finnhub.io/api/news?id=bdb1fa784547cd03cfbc40bd9e3cd0898b847d3f8c935e72949c9041ca0e2aba"
+      },
+      {
+        "datetime": "2026-07-18T11:22:04Z",
+        "headline": "PayPal: Value Trap No More - Robust Venmo/PSP & Higher Bid Prospects (Rating Downgrade)",
         "sentiment": null,
         "source": "SeekingAlpha",
-        "summary": "PayPal is upgraded to Buy as the stock appears to have found a long-term bottom, trading at just above 8x forward earnings. Read more on PYPL stock here.",
-        "url": "https://finnhub.io/api/news?id=3695d603ae07cb6ece376a79d0f44180f00b16f470f053b6cb8714d760f0274b"
+        "summary": "$53B PayPal bid suggests undervalued EV/Sales and strong FCF, but weak FY2026 guidance adds risk. Click here to read more.",
+        "url": "https://finnhub.io/api/news?id=7a34d21f17cb93fc76aaffc713452b5f2711e051d4e1dad491f781c9e2ff4b0c"
       },
       {
-        "datetime": "2026-07-07T14:35:00Z",
-        "headline": "PayPal's BNPL Push: Will It Drive Higher Checkout Basket Sizes?",
+        "datetime": "2026-07-18T11:00:00Z",
+        "headline": "MarketBeat Week in Review \u2013 07/13- 07/17",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "PYPL expands BNPL to strengthen branded checkout, attract customers and boost merchant sales as strong adoption leaves room for further growth.",
-        "url": "https://finnhub.io/api/news?id=e1c5c4686c9bf323b748ba07e06a1b0d5aca41d17a531402fe923e5f26080808"
+        "summary": "A tech selloff hit the S&P 500 and NASDAQ this week while energy and financial stocks gained; MarketBeat analysts recap Micron, Netflix, Broadcom, Apple and more ahead of Alphabet's earnings.",
+        "url": "https://finnhub.io/api/news?id=73534d700060689b3f3e12bb0a8fd766db23bf8c5f3b1546e2cec50941fb3bf1"
       },
       {
-        "datetime": "2026-07-07T14:07:00Z",
-        "headline": "Top Mobile Payments Stocks to Buy as Cashless Commerce Accelerates",
+        "datetime": "2026-07-18T08:01:12Z",
+        "headline": "Benzinga Bulls and Bears: PayPal, UnitedHealth, Netflix \u2014 And Stocks End Wild Week",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Benzinga examined the prospects for many investors\u2019 favorite stocks over the last week \u2014 here\u2019s a look at some of our top stories.",
+        "url": "https://finnhub.io/api/news?id=cda32defbfffd40b843e907d389d12d2bd8348bfb6230403d1110922b225fcf6"
+      },
+      {
+        "datetime": "2026-07-18T05:10:00Z",
+        "headline": "Whale's Insight: Bitcoin's CPI Rally Is Fake, Built On Borrowed Money",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Trump enters the CLARITY fight, and the stablecoin map is reshaped by Stripe's PayPal bid and the OUSD threat, with Circle's pricing power shifting to distribution. Read more here.",
+        "url": "https://finnhub.io/api/news?id=a19a4c4682597c7d366d0537bce9aeaecd7abb84fb71b1e0b648dd9dbfbb3d70"
+      },
+      {
+        "datetime": "2026-07-18T04:18:40Z",
+        "headline": "PayPal (PYPL) Stock Gets Fair Value Bump As Analysts Weigh Takeover Uncertainty",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Mobile payments are reshaping global commerce. See why V, XYZ, KLAR and GDOT could be among the biggest beneficiaries.",
-        "url": "https://finnhub.io/api/news?id=6f33aa37ff8f0e94c0f7d7732773101524e7205d7bd467b7f98a6539e4661c61"
+        "summary": "PayPal Holdings is back in focus as analysts adjust their price targets, with fair value estimates now set at US$52.42 per share compared with the previous US$51.35. Behind these shifts, recent research reflects a split view, where some analysts lean on takeover speculation and corporate activity, while others question how much potential upside is already reflected. As you read on, you will see how to track these changing assumptions and what they might mean for following the evolving...",
+        "url": "https://finnhub.io/api/news?id=e6878b21e99779c2d2ceb301bfb235cb513e66d9f0a305d1823c5bb6987afb22"
       },
       {
-        "datetime": "2026-07-07T13:00:03Z",
-        "headline": "Investors Heavily Search PayPal Holdings, Inc. (PYPL): Here is What You Need to Know",
+        "datetime": "2026-07-18T02:41:59Z",
+        "headline": "Down 22% In A Year: Is PayPal A Value Trap Or A Turnaround Play?",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Recently, Zacks.com users have been paying close attention to Paypal (PYPL). This makes it worthwhile to examine what the stock has in store.",
-        "url": "https://finnhub.io/api/news?id=433c2ed9f4ab3796038f25a18bbc6b75687fd38fee19616ef5e4002fa631bdf3"
+        "summary": "With its stock trading at a deep discount, PayPal is betting a new CEO and a major overhaul can fix what's broken, forcing investors to weigh a potential bargain against a difficult transformation.",
+        "url": "https://finnhub.io/api/news?id=c52543925180c9e828cd6b80270dcfa8d2d4d93e5e2ac116daefc6c219b23399"
       },
       {
-        "datetime": "2026-07-07T12:04:29Z",
-        "headline": "Why MELI Beats A Bond At Its Own Game",
+        "datetime": "2026-07-17T19:31:38Z",
+        "headline": "Intuitive Surgical Q2: The Market Is Missing The Bigger Picture",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Intuitive Surgical, Inc. Q2 beat: 20% da Vinci procedure growth and 70% gross margin. Click for this updated look at ISRG following the selloff after its earnings.",
+        "url": "https://finnhub.io/api/news?id=3f8aa4782f633bb9db7b666df389bbd553c438f96a54f131707d42e14d6539db"
+      },
+      {
+        "datetime": "2026-07-17T17:57:49Z",
+        "headline": "PayPal: M&A Bids Don't Change The Weak Growth Profile",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "PayPal Holdings, Inc. is rated a Hold and faces stagnant organic growth as active account numbers remain flat. Learn more about PYPL stock here.",
+        "url": "https://finnhub.io/api/news?id=f6402716af72a976f7f0a3e10cedd6527b33745d62e459405ba9377d2c737652"
+      },
+      {
+        "datetime": "2026-07-17T17:15:50Z",
+        "headline": "PayPal Board Sees $53 Billion Stripe-Advent Bid as Too Low",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The market is offering a yield on this growing business that dwarfs government debt, forcing investors to ask if the catch is too good to be true.",
-        "url": "https://finnhub.io/api/news?id=57f9b52f693593d1c3c5a3c409de0c6659564b4888db235a8b6b321e516f830c"
+        "summary": "PayPal's board has not formally responded.",
+        "url": "https://finnhub.io/api/news?id=8280d70389b602cfb0bbca57bfd6160ac7f7a8f5effd15c541ed84d24513c1eb"
       },
       {
-        "datetime": "2026-07-07T05:15:26Z",
-        "headline": "SLS Stock Rises Overnight: Why Retail Traders Prefer Sellas Over IBRX, ONDS, PYPL As Most Bullish Pick",
+        "datetime": "2026-07-17T17:02:58Z",
+        "headline": "Stock Market Losses Led By Nasdaq, AI Stocks; Goldman, GE, Taiwan Semi, IBM In Focus: Weekly Review",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "Traders are watching for the 80th event, data lock and topline results, while some are also speculating about potential M&A.",
-        "url": "https://finnhub.io/api/news?id=3bc77aeeff278947086e977e23dc7acf98ea4f8c911c517f0d84eb2e25f1e811"
+        "summary": "Stock market indexes fell this week, with the heaviest losses on the Nasdaq and AI stocks. Goldman, GE, TSMC, IBM were notable movers.",
+        "url": "https://finnhub.io/api/news?id=19e11e5254530d2e7a7f7bddf526236e35cb4f7a89de87e35befccc32260fd21"
       },
       {
-        "datetime": "2026-07-06T18:46:59Z",
-        "headline": "Shopify Stock And The Peril Of A Personal Best",
+        "datetime": "2026-07-17T16:56:02Z",
+        "headline": "Palantir co-founder Peter Thiel honoured with Axel Springer Award",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The e-commerce giant's growth story is impressive, but its biggest vulnerability may be a profitability metric that has soared far above its own history.",
-        "url": "https://finnhub.io/api/news?id=8cc81919d2cbb07696e5e4320005b46ce764282fae1f6ad8b0828930dab6a08e"
+        "summary": "Peter Thiel is to receive the 2026 Axel Springer Award for shaping digital transformation.",
+        "url": "https://finnhub.io/api/news?id=90b6c55a9816ac7d53a4b70e8ebea88b66bfc1c2bcd03eb1afc7206686924bba"
       },
       {
-        "datetime": "2026-07-06T17:37:55Z",
-        "headline": "Klarna seeks a bank license to directly rival US institutions",
+        "datetime": "2026-07-17T16:33:39Z",
+        "headline": "The Week That Was: July 17, 2026",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC's Dom Chu looks ahead to what are likely to be next week's top business and financial stories.",
+        "url": "https://finnhub.io/api/news?id=692e79bda90ef2ed3752c6f280f79982ef21cedd0035d3c7efe82293507f72bd"
+      },
+      {
+        "datetime": "2026-07-17T16:16:42Z",
+        "headline": "Why PayPal Shares Are Skyrocketing Higher This Week",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The buy now/pay later provider and aspiring neobank submitted applications to the Utah Department of Financial Institutions and the Federal Deposit Insurance Corp. to establish Klarna Bank.",
-        "url": "https://finnhub.io/api/news?id=4f0b1676d3eea193297ef9c963040e0673c65719b055f4cac4b499f812685d3c"
+        "summary": "PayPal's shares are spiking this week after months of acquisition rumors culminated in an offer.",
+        "url": "https://finnhub.io/api/news?id=e84573364d9ca0075d11daf5945041740ca492841f8a82faad5709fbce248955"
       },
       {
-        "datetime": "2026-07-06T13:35:35Z",
+        "datetime": "2026-07-17T15:48:39Z",
+        "headline": "Stripe\u2019s PayPal Bid Shows Private Fintech Has Become Powerful Enough To Buy Public Giants",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Stripe\u2019s bid for PayPal signals a fintech shift: private companies are becoming powerful enough to acquire public-market leaders.",
+        "url": "https://finnhub.io/api/news?id=3d1510ebb21aedfd126bc34ec14f5727f7eeac846c4233977d359a4d7243bb03"
+      },
+      {
+        "datetime": "2026-07-17T14:33:32Z",
+        "headline": "Morgan Stanley Says Stripe-Advent Deal Is PYPL's 'Most Credible' Path To Value Realization After PayPal Board Reportedly Deems Offer Inadequate",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Morgan Stanley added that it does not see any other realistic catalysts for PayPal capable of driving a sustained reacceleration in revenue and earnings growth.",
+        "url": "https://finnhub.io/api/news?id=2910dabfff25eb2e8bcd3008b443138c2e9426d136fd3c105f7e7038479cd7ea"
+      },
+      {
+        "datetime": "2026-07-17T14:30:21Z",
+        "headline": "Can Visa Stock Compound Its Way Higher?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa (V) trades at $365.14 per share on a $660.2B market cap and 29.7x trailing earnings. Under a conservative 3-year scenario, the math points to roughly 42% upside. Revenue compounding does most of the work in our scenario. Here is the picture that the math sits on top of.",
+        "url": "https://finnhub.io/api/news?id=5fc52ee6641c4a4aba281470f3baa308a9c4247f9387ea523a9799b01c7f409f"
+      },
+      {
+        "datetime": "2026-07-17T02:17:36Z",
+        "headline": "'PayPal Board Sees Stripe-Advent Offer As Inadequate, Sources Say' - Reuters Exclusive",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "https://www.reuters.com/business/paypal-board-sees-stripe-advent-offer-inadequate-sources-say-2026-07-16/\u00a0",
+        "url": "https://finnhub.io/api/news?id=07a1a0154c0324309916902bd6d3f13940b837f844b982d36c011ac956d7c48b"
+      },
+      {
+        "datetime": "2026-07-17T01:09:00Z",
+        "headline": "Stripe\u2013PayPal Deal Could Give PYUSD a New Path Into Mainstream Payments",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and Advent International\u2019s reported $53 billion bid for PayPal (NASDAQ: $PYPL) could place one of cryp...",
+        "url": "https://finnhub.io/api/news?id=7f5673d726c88ea1e8967e3d13444341416c4b726327aa4e5748db1ff709f5f2"
+      },
+      {
+        "datetime": "2026-07-16T23:29:06Z",
+        "headline": "PYPL Stock Slips After-Hours \u2014 Why PayPal Board Isn\u2019t Sold On The $53B Stripe-Advent Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal board reportedly believes the $60.50-a-share offer undervalues the payments giant and is weighing execution, financing, and regulatory risks.",
+        "url": "https://finnhub.io/api/news?id=aa605018e4bec89fc15ff6d08a4c5188302f1fa234e4ebdd4edf6b2854759dab"
+      },
+      {
+        "datetime": "2026-07-16T22:25:32Z",
+        "headline": "PayPal board sees Stripe-Advent offer as inadequate, sources say",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal\u2019s board sees a $53 billion takeover bid by rival Stripe and private equity firm Advent International as undervaluing the company and facing regulatory and financing hurdles,\u00a0a person familiar with the matter \u200csaid, potentially setting the stage for negotiations over the future of the U.S. payments giant.  PayPal has not formally responded to the proposal, two other \u200csources said.  The consortium's bid comes as PayPal, founded in the late 1990s, has struggled in recent years to compete against rivals like Apple Pay and Google Pay, with management trying to revive its flagging \u200bshare price in the face of slowing growth.",
+        "url": "https://finnhub.io/api/news?id=c622a52fdf552cb9d632ffcaf3d1d57f4717f49c25abf90d3c47fdc353f0f7a1"
+      },
+      {
+        "datetime": "2026-07-16T21:45:03Z",
+        "headline": "Paypal (PYPL) Gains As Market Dips: What You Should Know",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In the closing of the recent trading day, Paypal (PYPL) stood at $56.73, denoting a +2.18% move from the preceding trading day.",
+        "url": "https://finnhub.io/api/news?id=62fdb474003734bfb1a0ccba8e7012151083e5315e5365cb7411115f57e031ac"
+      },
+      {
+        "datetime": "2026-07-16T20:57:00Z",
+        "headline": "Michael Burry Says PayPal's $60.50 Buyout Offer Is \"Simply Too Low.\" Here's the Case for a Higher Bid.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The famed investor isn't selling his shares, and his math points far higher.",
+        "url": "https://finnhub.io/api/news?id=771a6700e15a0aa834597cd92a324b447408d48f9506f7752f76384a1f0bc15d"
+      },
+      {
+        "datetime": "2026-07-16T20:50:00Z",
+        "headline": "Silicon Valley Midas Investor Michael Moritz on AI, Venture Capital, and Just About Everything",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "When Moritz was at Sequoia, he helped the firm invest in mega home runs like PayPal, Yahoo!, LinkedIn, and Google. Now, he says, \u201cYou can never have enough passports.\u201d",
+        "url": "https://finnhub.io/api/news?id=7cd068ddcdd540daee6fcc1cddbfe96e54bd1a337737ba527353d871561b07c4"
+      },
+      {
+        "datetime": "2026-07-16T20:43:41Z",
+        "headline": "Stripe Wants to Buy PayPal. How You Should Play PYPL Stock Right Now.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal rallied after Stripe's takeover bid, but investors now face a bigger question about PYPL's upside as negotiations unfold.",
+        "url": "https://finnhub.io/api/news?id=947eee33492758893dda8103b15ca976343186425972b96cfb9ef53a7fa922df"
+      },
+      {
+        "datetime": "2026-07-16T19:24:07Z",
+        "headline": "PYPL Stock Jumps 4% \u2014 PayPal\u2019s $60.50 Buyout Offer Has Wall Street And Retail On The Same Side",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Analysts and Stocktwits retail traders alike believe the reported Stripe-Advent offer undervalues the payments giant.",
+        "url": "https://finnhub.io/api/news?id=816fe00cb070638d6914089c03978eb6657708078d871ab70a4bec9190f148c1"
+      },
+      {
+        "datetime": "2026-07-16T19:05:12Z",
+        "headline": "Cantor Sees PayPal Worth More Than the $60.50 Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A sum-of-the-parts analysis puts PayPal's value at $70 a share",
+        "url": "https://finnhub.io/api/news?id=787e82cc181a93bd86f06ecc2526cb9629997e0e1eb95d1d7058e7393ddb067a"
+      },
+      {
+        "datetime": "2026-07-16T18:26:06Z",
+        "headline": "Visa Unveils Stablecoin Platform With OUSD at Its Core",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa's Stablecoin Platform packages OUSD access, wallet infra, and treasury integration for institutions entering crypto.",
+        "url": "https://finnhub.io/api/news?id=86ec8c1bf7f9d085a0d77626eb2c8782e07a629532f99fd498835444c9e3f9f9"
+      },
+      {
+        "datetime": "2026-07-16T17:56:00Z",
+        "headline": "PayPal Deal Buzz: Can New Owners Fix Profitability Pressure?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PYPL faces a $53B+ takeover bid from Stripe and Advent as slowing profitability raises the stakes for a potential deal.",
+        "url": "https://finnhub.io/api/news?id=40326c82490fc573b2ac1ccce537deb4afa8188c8572a3e5744746e2a5983914"
+      },
+      {
+        "datetime": "2026-07-16T17:51:05Z",
+        "headline": "Clear Street starts payments coverage, favors Visa and Mastercard over XYZ, PYPL",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- Clear Street launched coverage of the payments sector on Thursday, initiating Buy ratings on Visa and Mastercard while starting Block and PayPal at Hold.",
+        "url": "https://finnhub.io/api/news?id=bfca2d6e9ac0b5bd5fa79b5657ef5106104591eb2ccf282eef4b219512e6eef1"
+      },
+      {
+        "datetime": "2026-07-16T17:29:51Z",
+        "headline": "The Stablecoin Logic of Stripe's PayPal Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal in the front, Tempo in the back?",
+        "url": "https://finnhub.io/api/news?id=0eea6d54a7a54207476cc7fb50f6d35eac4837a1414f688cb433bdc01923833f"
+      },
+      {
+        "datetime": "2026-07-16T16:10:45Z",
+        "headline": "Barclays Upgrades PayPal Holdings to Equal-Weight, Raises Price Target to $55",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Barclays  analyst Ramsey El-Assal   upgrades PayPal Holdings (NASDAQ:PYPL) from Underweight to Equal-Weight and raises the price target from $42 to $55.",
+        "url": "https://finnhub.io/api/news?id=0941a69b5961946b1237c527f7b84d240ed1ebedb5405830d679a152e60f7a8a"
+      },
+      {
+        "datetime": "2026-07-16T15:52:33Z",
+        "headline": "Cantor sees potential for higher PayPal offer as analysis suggests $70/share value",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- In a note to clients on Thursday, Cantor Fitzgerald published a sum-of-the-parts analysis suggesting a potential PayPal acquisition offer could be raised to approximately $70 per share, above the reported $60.50 per share bid.",
+        "url": "https://finnhub.io/api/news?id=d497830ed19c786cb846ce88c4cde4cabf80cade87d7d0fd9d428c7a1ca36804"
+      },
+      {
+        "datetime": "2026-07-16T14:50:00Z",
+        "headline": "PayPal Stock Surges on $53 Billion Stripe-Advent Buyout Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and Advent International offered $60.50 per share, or $53 billion, for PayPal, but investor Michael Burry and PayPal's fundamentals suggest the bid undervalues the payments company.",
+        "url": "https://finnhub.io/api/news?id=6d58d86215519d068af7e3607876c23edcea1eea6107c61ecf51b73255999221"
+      },
+      {
+        "datetime": "2026-07-16T14:35:53Z",
+        "headline": "Here\u2019s Why SoFi Is a Prime Takeover Target for These Major Financial Players",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SoFi has quietly assembled every feature a major financial player would want to acquire, but owning a chartered bank changes the calculus for every name on the shortlist. Some of the biggest players in finance may find the prize just out of regulatory reach.",
+        "url": "https://finnhub.io/api/news?id=cc7c0c00e175fd06d6ce2d2ce5e4cdb9a821d6b633925132930091fb2d7c5ed4"
+      },
+      {
+        "datetime": "2026-07-16T13:45:00Z",
+        "headline": "Stripe Wants to Buy PayPal for $53 Billion \u2014 Here\u2019s What the Merger Would Mean",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The merger would create one of the world's largest global online payments company, processing $3.7 trillion a year.",
+        "url": "https://finnhub.io/api/news?id=3eabee1d36d807d160e52753e490a7d01a27a4f510b4423337f739a9471c8fd1"
+      },
+      {
+        "datetime": "2026-07-16T13:33:54Z",
+        "headline": "SpaceX initiated, Lululemon downgraded: Wall Street's top analyst calls",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SpaceX initiated, Lululemon downgraded: Wall Street's top analyst calls",
+        "url": "https://finnhub.io/api/news?id=10d75e966d521449cb435e791208bb5a18a79c4ff41421920a9bd92a572ae747"
+      },
+      {
+        "datetime": "2026-07-16T13:28:00Z",
+        "headline": "Paypal (PYPL) Moves 17.2% Higher: Will This Strength Last?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Paypal (PYPL) saw its shares surge in the last session with trading volume being higher than average. The latest trend in FFO estimate revisions may not translate into further price increase in the near term.",
+        "url": "https://finnhub.io/api/news?id=db2845c0aba030d29f4a86a7b0f8e60aaa1aba1a5b194454829dc5f2f1acfee6"
+      },
+      {
+        "datetime": "2026-07-16T12:11:12Z",
+        "headline": "PayPal Acquisition: Daylight Robbery That Won't Fly (Rating Upgrade)",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "PayPal gets a $60.50/share Stripe-Advent buyout offer (28% premium) but may undervalue PYPL vs. $75 fair value. Click to read the latest analysis on PYPL stock.",
+        "url": "https://finnhub.io/api/news?id=ddebae12ef48547043d4313da33fed0dad5bd0915fff750205bc19a23c049b4d"
+      },
+      {
+        "datetime": "2026-07-16T10:47:00Z",
+        "headline": "Company News for July 16, 2026",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Companies In The Article Are:PYPL,PGR,CTAS,BNY",
+        "url": "https://finnhub.io/api/news?id=aff24fc2342bfe618af50b452bbb65bf45a23c60c5982be6610dbbe1db9d94d4"
+      },
+      {
+        "datetime": "2026-07-16T10:18:26Z",
+        "headline": "PayPal: $53 Billion Is A Such A Lowball Offer It Has To Go Up",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "PayPal (PYPL) gets a $60.5 buyout offer from Stripe/Advent\u00e2\u0080\u0094seen as lowball.",
+        "url": "https://finnhub.io/api/news?id=e7b1eaf6aa3f19dd597e55a153fe098f24f2aefbd31573c9f26177a78fecf58d"
+      },
+      {
+        "datetime": "2026-07-16T08:55:46Z",
+        "headline": "PYPL Slips Premarket After Its Best Day Ever: Why This Analyst Says A Buyout Is Far From A Done Deal",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Morningstar says a Stripe-led takeover makes strategic sense but questions whether the reported $60.50-a-share offer will ultimately materialize.",
+        "url": "https://finnhub.io/api/news?id=db6dc620d3e1554262abe01a99987c8316da50c541661cc59ef6e4447657b7a8"
+      },
+      {
+        "datetime": "2026-07-16T08:13:36Z",
+        "headline": "US Stock Market Today: S&P 500 Futures Edge Higher As Inflation Worries Ease",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Morning Bull - US Market Morning Update Thursday, Jul, 16 2026 US stock futures are pointing higher this morning, with S&P 500 contracts up around 0.2% as investors digest a rare drop in the official US inflation report. Consumer prices fell 0.4% in June and the yearly rate eased to 3.5%, while core inflation, which strips out food and energy, held at 2.6%. That softer reading helped pull the 10 year US government bond yield toward 4.57%, which can ease pressure on borrowing costs for...",
+        "url": "https://finnhub.io/api/news?id=dc66ec320182fac6e77ef7cc0a83b67190fb981f9d41ca8331f4fc9220cca855"
+      },
+      {
+        "datetime": "2026-07-16T07:57:17Z",
+        "headline": "BlackRock To Rally Around 25%? Here Are 10 Top Analyst Forecasts For Thursday",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Top Wall Street analysts changed their outlook on top names. See all changes, including upgrades and downgrades, on our analyst ratings page.",
+        "url": "https://finnhub.io/api/news?id=be3fcb6e9af986196dfa165c7528fa89a6180a6035be42ee0761f09b78d0b50a"
+      },
+      {
+        "datetime": "2026-07-16T05:49:03Z",
+        "headline": "Canaccord Genuity Maintains Hold on PayPal Holdings, Raises Price Target to $55",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Canaccord Genuity  analyst Joseph Vafi   maintains PayPal Holdings (NASDAQ:PYPL) with a Hold and raises the price target from $42 to $55.",
+        "url": "https://finnhub.io/api/news?id=8d4bf779b3e2c3c7de7e7f126369985c64edaf930aa7336079f45ccbb741e088"
+      },
+      {
+        "datetime": "2026-07-16T04:01:00Z",
+        "headline": "PayPal Unlikely to Bite on \u2018Low-Ball\u2019 $53B Offer from Stripe, Advent",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Despite its recent struggles, PayPal still has a massive 439 million consumer accounts while Stripe\u2019s customers are mostly merchants.",
+        "url": "https://finnhub.io/api/news?id=a96987aa03bfa3ad4fb6e01a5fe89c33b7c0e198db1c4f8f4f9540185796ea12"
+      },
+      {
+        "datetime": "2026-07-16T02:17:55Z",
+        "headline": "What\u2019s PayPal Stock Really Worth? Retail Traders Reveal Sky-High Price Targets Amid Buyout Buzz",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A Stocktwits poll that sought to gauge what retail investors think the value of the company\u2019s shares should be found that a majority believe PYPL stock is worth over $100.",
+        "url": "https://finnhub.io/api/news?id=7ca866bffcdc83e27b258442861ee22678cc2af5647d8331ec7807d3f08e711a"
+      },
+      {
+        "datetime": "2026-07-16T02:17:00Z",
+        "headline": "PayPal stock jumps as two unlikely buyers circle with billions",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal Holdings (PYPL) is fielding a joint takeover offer from Stripe and private equity firm Advent International worth more than $53 billion, according to Reuters. PayPal runs the checkout button behind millions of online stores and owns Venmo, making it one of the few consumer payment brands ...",
+        "url": "https://finnhub.io/api/news?id=978dcb1246d973db935058876972b04c812db0ecf8e948f571763eb177d3318e"
+      },
+      {
+        "datetime": "2026-07-16T01:41:20Z",
+        "headline": "Why Did AAPL, CRWD, XYZ Stocks Hit 52-Week Highs Today?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The gains came as investors favored companies with strong business advantages and financial performance instead of riskier growth-focused stocks.",
+        "url": "https://finnhub.io/api/news?id=69afb7a574d69554ed5f6402cbca39c55ad7dd7eff2791123f34e5a0a967548b"
+      },
+      {
+        "datetime": "2026-07-16T01:29:39Z",
+        "headline": "Dow, S&P 500 Futures Edge Higher As Record Bank Earnings, Cooling Inflation Lift Risk Appetite: ASTS, ATAI, AAPL, PYPL in Focus",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "June\u2019s Producer Price Index (PPI) declined 0.3% from the previous month, marking its steepest drop in more than a year.",
+        "url": "https://finnhub.io/api/news?id=733f1ab2620a4a9d8266b1820df64771171398e0177f2173acfbd06fc84d4f15"
+      },
+      {
+        "datetime": "2026-07-16T00:35:30Z",
+        "headline": "PayPal (PYPL) Skyrockets on $53B Takeover Reports",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal Holdings surged by 17.20 percent on Wednesday to close at $55.52 apiece as investors gobbled up shares following news that it is set to be taken private for $53 billion. According to a report by Reuters, Stripe and private equity firm Advent International are joining forces to acquire the digital payments company at a [\u2026]",
+        "url": "https://finnhub.io/api/news?id=c5b27153d35b0ce96f916e07dd4d2911cbe85f569986db025327f5ccb28bdd9f"
+      },
+      {
+        "datetime": "2026-07-15T23:55:00Z",
+        "headline": "Review & Preview: Losing Momentum",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Schadenfreude is a beast\u2014and momentum investors are on the receiving end now.  Momentum, the practice of buying the market\u2019s best-performing stocks based on the premise they will stay the best performers, is a wonderful investing strategy when it\u2019s working in your favor.  The returns are fantastic\u2014the Invesco S&P 500 Momentum exchange-traded fund has returned 42% a year for the past three years, more than double the SPDR S&P 500\u00a0ETF\u2019s 20% annual return.",
+        "url": "https://finnhub.io/api/news?id=433d645614b2082b25ac6a6438b585c65850821af0eb42f5f39d334a7833933f"
+      },
+      {
+        "datetime": "2026-07-15T21:44:32Z",
+        "headline": "AST SpaceMobile, PayPal Holdings, Apple, Micron Technology and SanDisk: Why These 5 Stocks Are on Investors' Radars Today",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Major U.S. indices closed higher on Wednesday, with the Dow Jones Industrial Average rising 0.29% to 52,658.64.",
+        "url": "https://finnhub.io/api/news?id=5338e66c577788d4ab505bd4b3828c47e3b5ba8da40c215eef0c47c7d2fb1984"
+      },
+      {
+        "datetime": "2026-07-15T21:41:06Z",
+        "headline": "S&P 500, Dow Edge Higher As Bank Earnings Offset Middle East Oil Concerns \u2014 AAPL, SKHY, ASML, PYPL In Focus",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Cooler-than-expected producer prices contributed to hopes for easing inflation on Wednesday.",
+        "url": "https://finnhub.io/api/news?id=502ff3ba7a1da5727ca18db679a449153c64145e7214677d098a0f43a18ec5af"
+      },
+      {
+        "datetime": "2026-07-15T21:35:01Z",
+        "headline": "Stripe and Advent Reportedly Bid $60.50 a Share for PayPal. Here's the Real Prize: Venmo.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal has struggled to regain momentum since the pandemic.",
+        "url": "https://finnhub.io/api/news?id=0f246046c76608872bcbda1622fbab60b6d4288ad56b13a9995ce041562af499"
+      },
+      {
+        "datetime": "2026-07-15T21:16:13Z",
+        "headline": "Stock Market Today, July 15: Markets Rise on Cooler Inflation and Strong Earnings Start",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Wholesale inflation data cooled while major earnings season kicked off positively, lifting stocks across the board, today, July 15, 2026.",
+        "url": "https://finnhub.io/api/news?id=f0632b36b806d3d0cb47d42432e310a59cbd17a7770bb0e0c19a70aac93b683c"
+      },
+      {
+        "datetime": "2026-07-15T21:09:08Z",
+        "headline": "Stock Market Today, July 15: PayPal Surges 17% on $60.50 Takeover Bid from Stripe and Advent International",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Today, July 15, 2026, the $53 billion acquisition proposal sent shares up 17% on record trading volume, with investors debating whether the premium is sufficient.",
+        "url": "https://finnhub.io/api/news?id=663da1f03068bc4938b338456af837021ed4ace81a5d424131cca10b2943c225"
+      },
+      {
+        "datetime": "2026-07-15T20:41:04Z",
+        "headline": "Update: Wall Street Extends Gains on Further Signs of Cooling Inflation",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with market moves at the end of the day.) US equities rose Wednesday, driving major inde",
+        "url": "https://finnhub.io/api/news?id=3f40d0d220bb53551f310f5bcd0ee47bd98542f25000396dfcf7091a66a6bc2e"
+      },
+      {
+        "datetime": "2026-07-15T20:31:43Z",
+        "headline": "Stripe and Advent's bid for PayPal is not irresistible",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "NurPhoto/Getty Images Stripe and Advent International\u2018s reported interest in acquiring PayPal has been warmly received by PayPal\u2019s investors. Stock in the New York-listed payments business was up just over 17% at the end of Wednesday\u2019s trading. But the bid seems more like an opening salvo than an offer that can\u2019t be refused. Reuters reported that the bid from Stripe, in partnership with the Boston private equity firm, values the payments pioneer at around $53 billion. This is equivalent to $60.5",
+        "url": "https://finnhub.io/api/news?id=131568791a6421926c0c7c21bd576aceba8a708f39cbc44e7717bf8443d84e48"
+      },
+      {
+        "datetime": "2026-07-15T20:23:42Z",
+        "headline": "US Equity Markets End Higher After Unexpected Decline in Producer Price Index",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "US equity indexes closed higher Wednesday after an unexpected drop in producer prices. * The US p",
+        "url": "https://finnhub.io/api/news?id=2269dba3b869c277b90b76a734279fa0d2bdf45f9b06ec11c34ed17f901ce327"
+      },
+      {
+        "datetime": "2026-07-15T20:18:21Z",
+        "headline": "Stripe, Advent offer over $53 billion for PayPal, sources say",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "STORY: :: Stripe and PE firm Advent have made a joint offer to acquire PayPal::\u00a0Milana Vinn, Tech M&A Correspondent:: The deal that would value PayPal at more than $53 billion:: New York/July 15, 2026\"Stripe and Advent had partnered together, and our sources are telling us that they had made a bid about ten days ago, actually. And the bid would value PayPal at more than $53 billion. Exact price is $60.5 a share. This is not the first time they actually placing this bid. We have heard from sources that originally their offer, the first offer was made in early April, and the buyers have been starting PayPal since February. The reason why they are doing this is because the combination actually makes sense. Stripe is really well placed with merchant providers, and PayPal is obviously a really known consumer facing company. They have Venmo, which is peer to peer payment service, as well as they have the PayPal checkout button, which shoppers use online. So by combining the two, you essentially bringing together merchants and consumers in the same platform. So you creating your own network where payments can flow together between the consumers and the merchants. And that really is complementary for both companies. PayPal used to be a really dominant player in online payments. It still is. But during Covid and pandemic, PayPal's valuation was over 300 billion. So it's quite a departure from the prior values. The company has really struggled with the rising competition with, Apple payments and Google payments, as well as other up and coming providers. PayPal really struggled to compete and grow, and I think investors have really been concerned about the growth trajectory of the company.\"The offer, submitted earlier this month, is backed by about $50 billion in committed financing from banks, said one of them. The offer represents around a 28% premium to PayPal's closing share price on Tuesday.The sources declined to be named as the deal discussions are confidential. PayPal, Stripe and Advent declined to comment. Reuters first reported the news late on Tuesday.Combining Stripe and PayPal, the most widely used payment platforms for internet merchants, would create one of the world's largest global online payments company, processing some $3.7 trillion of annual payment volume.The proposal follows an initial approach made in early April, the sources said. Stripe and Advent have not received a response from PayPal and are seeking to advance discussions in the coming weeks, the sources said.",
+        "url": "https://finnhub.io/api/news?id=bceb2384783c7af3ca58d8d485a3a2e926840cf44c99acb341a431460c4de95f"
+      },
+      {
+        "datetime": "2026-07-15T20:11:39Z",
+        "headline": "Stripe, Advent Offer 28% Premium in $53 Billion PayPal Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Reuters says the joint offer values PayPal at $60.50 per share with about $50 billion in committed financing.",
+        "url": "https://finnhub.io/api/news?id=2a84224d30a41e06276b0768480d5ba27a3fc450b8d7340d15aceb4f99586ce1"
+      },
+      {
+        "datetime": "2026-07-15T20:10:12Z",
+        "headline": "Stocks Rise as Mega Caps Rally: Stock Market Today",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A positive day for several of Wall Street's biggest stocks helped offset another down day for chipmakers.",
+        "url": "https://finnhub.io/api/news?id=14186a676c5981c5712893fa32ed42a892c0bc8577fbd9bdab00de8843e0fb04"
+      },
+      {
+        "datetime": "2026-07-15T20:00:53Z",
+        "headline": "PayPal: Gotta Raise The Bid",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "The $60.50 buyout bid for PayPal equates to less than 9x adjusted FCF, which is inadequate given their strong cash generation. Read the full analysis here.",
+        "url": "https://finnhub.io/api/news?id=ee1d012e7a9183e33b8837cf613c6462cf6ea0d93ae06d1f97d1443e433ac5a3"
+      },
+      {
+        "datetime": "2026-07-15T19:45:15Z",
+        "headline": "Sector Update: Financial Stocks Rise Late Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Financial stocks were advancing in late Wednesday afternoon trading, with the NYSE Financial Index r",
+        "url": "https://finnhub.io/api/news?id=53841f4509c73c18bbbbe6384983dbf1101fd4945971d507d34e42f5c9c3f3fa"
+      },
+      {
+        "datetime": "2026-07-15T19:41:00Z",
+        "headline": "Market responds positively to Stripe, Advent bid for PayPal",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and \u2060private equity firm Advent International are reportedly behind a joint offer to acquire \u2060PayPal \u200cHoldings Inc for $60.50 \u2060per share, in a deal that would value the payments company at more than $53bn",
+        "url": "https://finnhub.io/api/news?id=62d843323023613e8b00a4a2fba4c9f39fc4fe36e28c5808278ff1c863a747d1"
+      },
+      {
+        "datetime": "2026-07-15T19:05:01Z",
+        "headline": "Which S&P500 stocks are moving on Wednesday?",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Curious about the S&P500 stocks that are in motion on Wednesday? Join us as we explore the top movers within the S&P500 index during today's session.",
+        "url": "https://finnhub.io/api/news?id=d213a7bc45e61de090c471914ad23104be342b21d7fdfd1d103000c412ff81b2"
+      },
+      {
+        "datetime": "2026-07-15T18:53:17Z",
+        "headline": "Why Is PayPal (PYPL) Stock Soaring Today",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Shares of digital payments platform PayPal (NASDAQ:PYPL) jumped 17.2% in the morning session after reports revealed payments company Stripe and private equity firm Advent International made a joint offer to acquire the company for over $53 billion.",
+        "url": "https://finnhub.io/api/news?id=b48303343e3af243f9e214b904860ad414c09211bdb8043b95eda3143c3ffad1"
+      },
+      {
+        "datetime": "2026-07-15T18:35:01Z",
+        "headline": "PayPal Stock Soars After Report Reveals $53 Billion Stripe Buyout Proposal",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe's $53 Billion Bid Ignites Massive Rally in PayPal Stock",
+        "url": "https://finnhub.io/api/news?id=204f9c48f971927fd52a0889c7bea141117de62585c0b8e697ea9f3c331f2cf2"
+      },
+      {
+        "datetime": "2026-07-15T18:28:45Z",
+        "headline": "Equity Markets Rise Intraday as Big Tech Gains",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "US benchmark equity indexes were higher intraday, aided by certain mega-cap technology stocks, as tr",
+        "url": "https://finnhub.io/api/news?id=b30d60cab0154826511f3d4ffa8f0fde317b1d10269af92518022c774af9fd0e"
+      },
+      {
+        "datetime": "2026-07-15T18:18:08Z",
+        "headline": "Stock Market Today: Nasdaq Gains Steam; PayPal Surges, But Sandisk, Chip Stocks Tumble (Live Coverage)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Dow Jones index rises Wednesday after a cool inflation reading. Dell Technologies slides while Aehr Test Systems rockets 22% higher.",
+        "url": "https://finnhub.io/api/news?id=c6b1c59ad8fb39ef731bc3b969599f1f7891f345f9012e9fe089282a61b53913"
+      },
+      {
+        "datetime": "2026-07-15T18:05:00Z",
+        "headline": "Most active S&P500 stocks in Wednesday's session",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Curious about the most active S&P500 stocks in today's session? Join us as we explore the US markets on Wednesday and uncover the stocks that are leading the way in terms of trading volume and market attention.",
+        "url": "https://finnhub.io/api/news?id=ee6ae2fd3553375659113e147b0c292ea1e77bceec44111b0bc3e6fa0c57cc9a"
+      },
+      {
+        "datetime": "2026-07-15T18:03:00Z",
+        "headline": "Update: US Equity Indexes Edge Up After Producer Price Inflation Unexpectedly Drops, Iran Signals Red Sea Disruption",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with index/price moves, macroeconomic/rates data, and company/geopolitical news from the fi",
+        "url": "https://finnhub.io/api/news?id=6442b4237cfbcef82fbff84493b31d9df2010187df733118cbbb6c4579d7d8fe"
+      },
+      {
+        "datetime": "2026-07-15T17:44:27Z",
+        "headline": "Post Market Wrap: July 15, 2026",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC brings you fast, accurate, and actionable business news and market updates.",
+        "url": "https://finnhub.io/api/news?id=987f07c76650edfd77089a333cb174a55415595d6a1b4573cfb04c3e2c7a9295"
+      },
+      {
+        "datetime": "2026-07-15T17:43:37Z",
+        "headline": "CNBC Markets Now: July 15, 2026",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC Markets Now provides a look at the day's market moves with commentary and analysis from Michael Santoli, CNBC Senior Markets Commentator.",
+        "url": "https://finnhub.io/api/news?id=b31ab438291e681f73117cb611e950821e7fde6d16581666504706528a398b88"
+      },
+      {
+        "datetime": "2026-07-15T17:39:52Z",
+        "headline": "Sector Update: Financial Stocks Rise Wednesday Trading",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Financial stocks were advancing in Wednesday afternoon trading, with the NYSE Financial Index rising",
+        "url": "https://finnhub.io/api/news?id=0270193b00afbfa2db82c419cb0227a9fd42c43f0f14b57851ab654226830e74"
+      },
+      {
+        "datetime": "2026-07-15T17:26:42Z",
+        "headline": "Stock Market Today: Nasdaq, S&P 500 Weaken; PayPal Surges, But Sandisk, Chip Stocks Tumble (Live Coverage)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Dow Jones index rises Wednesday after a cool inflation reading. Dell Technologies slides while Aehr Test Systems rockets 22% higher.",
+        "url": "https://finnhub.io/api/news?id=dfd603fa4c6ab965b1b0484292348e749bbed1adc9a49666aec43c2bb7d4eaa9"
+      },
+      {
+        "datetime": "2026-07-15T17:09:44Z",
+        "headline": "Is PayPal Holdings (PYPL) Stock Still A Bargain After A $60.50 Bid?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal Holdings has just attracted a high profile US$60.50 per share takeover offer while its stock is still trading well below past peaks. This creates a clear tension between a weak 5 year return record and valuation checks that currently screen the shares as cheap. PayPal Holdings\u2019 share price has fallen about 84.0% over the past 5 years, which means the market has already priced in a major reset in expectations. The headline US$53b bid from Stripe and Advent, together with PayPal\u2019s push...",
+        "url": "https://finnhub.io/api/news?id=2958a5e7a968c2e2768efe67f0eb29b2de84f4c14603dce69a9fc469ba6d559f"
+      },
+      {
+        "datetime": "2026-07-15T17:05:00Z",
+        "headline": "In today's session, there are S&P500 stocks with remarkable trading volume.",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Discover the S&P500 stocks that are experiencing unusual trading volume in today's session. Find out more about these stocks below.",
+        "url": "https://finnhub.io/api/news?id=ea73ef9f9e202e26017b35229684a7fe3eff447e8735b75d0d68d745daaf287c"
+      },
+      {
+        "datetime": "2026-07-15T17:01:25Z",
+        "headline": "PayPal: A Bargain For Stripe, A Bad Deal For Shareholders",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "PayPal Holdings, Inc. rated Buy with $70 target as takeover interest and strong FCF suggest undervaluation vs $60.5 offer. Click for this PYPL update.",
+        "url": "https://finnhub.io/api/news?id=68741dff9735bdc8e7d011441dfa019c23981a200f1a8e2292fcc9f44ee4aca8"
+      },
+      {
+        "datetime": "2026-07-15T17:00:00Z",
+        "headline": "Micron, PayPal, IBM, SpaceX, BlackRock, and More Stocks That Explain Today\u2019s Market",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal stock leads the S&P 500 while Sandisk is among the worst performers. Micron falls as chip stocks book significant losses.",
+        "url": "https://finnhub.io/api/news?id=4a791776ab37db358676e8be6b305d1ec3123f5214f8c1346ecc26403cfddb47"
+      },
+      {
+        "datetime": "2026-07-15T16:56:41Z",
+        "headline": "Wall Street Gave Up on PayPal, But the Stock Just Had Its Best Day Ever",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "PayPal shares jumped 17.2% on a reported $60.50-a-share bid from Stripe and Advent. Down 85% from 2021 highs, the discount is what drew buyers in.",
+        "url": "https://finnhub.io/api/news?id=23334d9871f8ac58b3a56700bb995a6ad09b92db2a8ee6f77bac4e7f31f0fe4e"
+      },
+      {
+        "datetime": "2026-07-15T16:46:00Z",
+        "headline": "PayPal Stock is Trading at a Discount: Should You Buy, Sell or Hold?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PYPL trades well below peers on valuation, but can AI commerce, Venmo growth and new partnerships offset cautious 2026 guidance and competition?",
+        "url": "https://finnhub.io/api/news?id=aeb1aed35cbfc29df97a9d1fac327cabc79ac777f0efbc8a59e048058a3236c6"
+      },
+      {
+        "datetime": "2026-07-15T16:39:48Z",
+        "headline": "Update: US Equity Indexes Mixed After Producer Price Inflation Unexpectedly Declines, Iran Signals Potential Red Sea Disruption",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with index/price moves, macroeconomic data and company/geopolitical news from the first par",
+        "url": "https://finnhub.io/api/news?id=75ac722fc6277fa1c1fd30c575ac0d6264c3eed42e6295f36ce1391de5cfaae9"
+      },
+      {
+        "datetime": "2026-07-15T16:35:00Z",
+        "headline": "These S&P500 stocks are moving in today's session",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Curious about the top performers within the S&P500 index in the middle of the day on Wednesday? Dive into the list of today's session's top gainers and losers for a comprehensive overview.",
+        "url": "https://finnhub.io/api/news?id=17e09f5f6e4cea4cc429b9c6762b4a6aea15f224d1fcabc885c31bb22bc18f3f"
+      },
+      {
+        "datetime": "2026-07-15T16:30:00Z",
+        "headline": "Stripe and Advent just bid $53 billion to buy PayPal: What to know",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Scott Melker discusses how Stripe and Advent have put in a $53 billion takeover bid for PayPal (PYPL), sending the payment platform's stock soaring on this news. \"The Daily Wolf with Scott Melker\" airs every day at 12:00 p.m. Tune in for your daily dose of all things crypto. Make sure to also check out Yahoo Finance's new crypto hub to find the latest crypto-related news.",
+        "url": "https://finnhub.io/api/news?id=c437dcbeea1832df7e20822b95740909ef97af5aecb227666b91ea8e72e883ef"
+      },
+      {
+        "datetime": "2026-07-15T16:27:51Z",
+        "headline": "PYPL Stock Surges To 6-Month High On $53B Takeover Bid \u2013 Wall Street's Divided On Whether It's A Good Deal",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "BTIG said the offer may be a \"lifeline worth taking,\u201d given that Stripe has an already-dominant merchant infrastructure, while PayPal is sitting in \"no-man's land.\u201d",
+        "url": "https://finnhub.io/api/news?id=35810f42905a50b4d3e4f58d1ed544c0d9c56d79563473be01658c38c6151bce"
+      },
+      {
+        "datetime": "2026-07-15T16:19:40Z",
+        "headline": "Stripe eyes PayPal with reported $53 billion offer",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Scott Melker discusses the latest crypto-related headlines, including Stripe's offer to buy PayPal PYPL (PYPL) and Michael Saylor's Strategy (MSTR) selling $467 million worth of its own shares to raise more capital. \"The Daily Wolf with Scott Melker\" airs every day at 12:00 p.m. Tune in for your daily dose of all things crypto. Make sure to also check out Yahoo Finance's new crypto hub to find the latest crypto-related news.",
+        "url": "https://finnhub.io/api/news?id=29b9440ec267095d037f12241b1ebd75ac323b0c598df8519f9d5a885ad8ae89"
+      },
+      {
+        "datetime": "2026-07-15T16:13:17Z",
+        "headline": "PYPY Pops 14% as Paypal Reportedly Draws $53 Billion Stripe + Advent Takeover Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A joint takeover bid sent shockwaves through PayPal and every fund tied to it, but one popular income ETF is telling a more complicated story about what covered-call investors actually pocket when a stock explodes overnight.",
+        "url": "https://finnhub.io/api/news?id=c3a4e853b501193f97520db9affa439a64582240ec9c8f1d018ade1fbaf2fc8b"
+      },
+      {
+        "datetime": "2026-07-15T16:00:00Z",
+        "headline": "Stripe, Advent to Buy PayPal in a $53B Deal? ETFs in Focus",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and Advent have made a $53B bid for PayPal, lifting PYPL shares and putting fintech ETFs like PYPU, FINX and IPAY in the spotlight.",
+        "url": "https://finnhub.io/api/news?id=b8422d9c929c4cfd2bfa63ea01a61db05f5f3626c9d6cce4bc209890194f485c"
+      },
+      {
+        "datetime": "2026-07-15T15:50:49Z",
+        "headline": "Top Midday Stories: PayPal Reportedly Gets Acquisition Offer From Stripe, Advent; ASML Misses Q2 EPS, Sales Estimates, Lifts Outlook",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "All three major US stock indexes were up in late-morning trading Wednesday, as technology stocks led",
+        "url": "https://finnhub.io/api/news?id=88fcc255731ec69886d1295814f3e784ca3de4fa2badc7f414c8666b92de4cbb"
+      },
+      {
+        "datetime": "2026-07-15T15:47:23Z",
+        "headline": "Stripe makes $53B bid for PayPal",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and private equity firm Advent International made a $53 billion offer for PayPal, consolidating two of fintech's biggest stablecoin players. CoinDesk's Jennifer Sanasie hosts \"CoinDesk Daily.\"",
+        "url": "https://finnhub.io/api/news?id=3bd80bb1e14edb676b1a9d7f2b142157be16c69a11099386a8777ddc2bb99f7f"
+      },
+      {
+        "datetime": "2026-07-15T15:47:19Z",
+        "headline": "Stripe Bids $53 Billion for PayPal, and Still Won\u2019t Go Public",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Collison brothers might have somehow found a way to swallow their biggest rival using other people\u2019s money and PayPal\u2019s own balance sheet \u2026 no IPO required",
+        "url": "https://finnhub.io/api/news?id=7c5c01519ed021ec622d50a46f25d4692366ed4f9b27153fea4b4db6dd0f548d"
+      },
+      {
+        "datetime": "2026-07-15T15:38:53Z",
+        "headline": "Why Fiserv Stock Just Popped",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "If PayPal stock is cheap, and Fiserv stock is cheaper -- maybe Fiserv is a buyout target, too?",
+        "url": "https://finnhub.io/api/news?id=97f3e75cdcebaacdfeae8bc717d1d5e19fe684ee7f9b5ccc06d5fb04a927a3f7"
+      },
+      {
+        "datetime": "2026-07-15T15:30:26Z",
+        "headline": "Stripe and Advent reportedly offered to buy PayPal for around $53.4B",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and private equity firm Advent International have reportedly submitted a joint bid to acquire PayPal in a deal valued at approximately $53.4 billion. Reuters reports that the offer was submitted earlier this month and is backed by roughly $50 billion in committed bank financing. Under the proposal, Stripe and Advent would jointly own PayPal, [\u2026]",
+        "url": "https://finnhub.io/api/news?id=e81d9bb9f49a25a0b826804efce98c50f7ec6f4498cd996ce0fec393336d5c16"
+      },
+      {
+        "datetime": "2026-07-15T15:20:56Z",
+        "headline": "Why PayPal Stock Just Went to the Moon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal stock got cheap, and now private companies want to own it.",
+        "url": "https://finnhub.io/api/news?id=33384b008a76260f29e13dc88483b09c73aa9a4fac7aeba82bf3ab7ceadf4dbb"
+      },
+      {
+        "datetime": "2026-07-15T14:54:35Z",
+        "headline": "Stripe, Advent Bid $53 Billion for PayPal",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The offer represents a roughly 28% premium to PayPal's recent closing price.",
+        "url": "https://finnhub.io/api/news?id=89206cbc7a63e27c5d340e0774e5218ac6bd8be11ab7861d8025c91f5888a0cf"
+      },
+      {
+        "datetime": "2026-07-15T14:51:01Z",
+        "headline": "Does the PayPal takeover deal make any sense?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In today's Opening Bid panel, our guests tackle the Question of the Day: Is PayPal (PYPL) worth the price? Following reports of a potential offer to acquire the struggling payments company, the panel examines whether the stock is an attractive buy. AllSource Investment Management Founder and Managing Partner Patrick Kennedy, HSBC Strategist Duncan Toms, and Yahoo Finance Senior Business Reporter Brooke DiPalma break down the implications of the reported interest and what it could mean for investors.",
+        "url": "https://finnhub.io/api/news?id=c1496285c315b8e64315b7720a0138c46388ff8b0b0343968adb4604c75d52de"
+      },
+      {
+        "datetime": "2026-07-15T14:33:03Z",
+        "headline": "Stripe and Advent Make a $53B Bid for PayPal, Sending Its Stock Soaring",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal shares surged following a report that Stripe and Advent offered to buy the company.",
+        "url": "https://finnhub.io/api/news?id=8f566c3a4544f6fe59e4040593040135f65682b9dd0ff0de094f0b2f35ae26c7"
+      },
+      {
+        "datetime": "2026-07-15T14:30:00Z",
+        "headline": "The market is filled with gapping stocks in Wednesday's session.",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "There are notable gap-ups and gap-downs in today's session. Let's take a look at which stocks are gapping on Wednesday.",
+        "url": "https://finnhub.io/api/news?id=e4ce8c44fad839cfae1c21cfad25a2e7592a98cefc5773c5d5ca208ce8d53b43"
+      },
+      {
+        "datetime": "2026-07-15T14:21:00Z",
+        "headline": "Intel, Marvell, PayPal, IBM, and More Stocks That Explain Today\u2019s Market",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "FEATURE  Stocks were rising Wednesday, building on recent gains, as a cooler-than-expected producer price index print boosted investor sentiment. Wall Street also assessed another batch of quarterly earnings reports with chip-machine supplier ASML  offering an encouraging read on the artificial-intelligence trade.",
+        "url": "https://finnhub.io/api/news?id=7dab795452149bd3414880bc74c107b79159251545e9f97ed6871bfed9ab6e77"
+      },
+      {
+        "datetime": "2026-07-15T14:20:56Z",
+        "headline": "PayPal shares soar following takeover report",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC\u2019s MacKenzie Sigalos reports on the more than $53 billion takeover bid backed by Stripe, Advent and Block \u2014 and the plan to better monetize Venmo and rebuild PayPal outside the public markets.",
+        "url": "https://finnhub.io/api/news?id=11dbea9976e3477b072fff46d693631d7b8fd3158d40e3bf3062e02ba97d3f7a"
+      },
+      {
+        "datetime": "2026-07-15T14:07:15Z",
+        "headline": "Stripe\u2019s $53B PayPal Takeover Bid Sparks Bullish Bitcoin Adoption Predictions \u2014 Will It Hit $80,000 In August?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and Advent have reportedly offered $53 billion for PayPal. Experts said the deal could expand adoption of Bitcoin and stablecoins. Micha\u00ebl van de Poppe ...",
+        "url": "https://finnhub.io/api/news?id=f944a0d488422adcc51d8b2c1afcb158ba1c8fda744eecea104c11701bd5f846"
+      },
+      {
+        "datetime": "2026-07-15T14:00:00Z",
+        "headline": "Sabre opens travel infrastructure to Silicon Valley developers building the next Voice AI agents powering the complete trip at Bay Area hackathon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Sabre (NASDAQ: SABR) will co-host the DeepLearning.AI Voice AI Hackathon: The Complete Trip on July 18 in Silicon Valley, bringing together developers to explore how agentic travel and voice AI can help remove friction from the end-to-end traveler experience. Sabre pioneered one of the travel industry's first open developer ecosystems, and today it's challenging developers to build agents using its APIs to pull an itinerary into a single conversation, all booked and managed by voice AI.",
+        "url": "https://finnhub.io/api/news?id=458f2b3df3ddaf79e5f2aa3ea69b91cddb9f62398cc198e35547cb9d15544344"
+      },
+      {
+        "datetime": "2026-07-15T13:57:24Z",
+        "headline": "PayPal co-founder and Affirm CEO details his 'very high bar' for M&A",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Words of wisdom from an OG in tech.",
+        "url": "https://finnhub.io/api/news?id=edfe3f13342094c3f50efdbb4ac9e49008bd82ea95f5e5c2e1ef487ea13757dd"
+      },
+      {
+        "datetime": "2026-07-15T13:50:00Z",
+        "headline": "PayPal Stock Jumps 14% on Report of $53 Billion Takeover Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal stock is rising following a report that a rival has teamed up with private-equity firm Advent International to make an offer for the company.",
+        "url": "https://finnhub.io/api/news?id=6bcd53fdd26741de7b63db3578f8a3edcb0f941d2149434f84c55003579fa465"
+      },
+      {
+        "datetime": "2026-07-15T13:35:21Z",
         "headline": "10 Financials Stocks With Whale Alerts In Today\u2019s Session",
         "sentiment": null,
         "source": "Benzinga",
-        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity scanner.\nTraders often",
-        "url": "https://finnhub.io/api/news?id=c0581bf09b988413d54b02daa8fa6f98bec13a52924824531e3033e9d1ca45d3"
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity scanner.\nTraders will",
+        "url": "https://finnhub.io/api/news?id=8a703eb8bbcb6539e58e881d406eeeb7d714632459b5cbc0562bab83ddd9d5a7"
       },
       {
-        "datetime": "2026-07-06T12:40:53Z",
-        "headline": "Oversold vs Undervalued: 3 Stocks Sitting in the Sweet Spot for Retirement Investors",
+        "datetime": "2026-07-15T13:18:00Z",
+        "headline": "PayPal Shares Surge Premarket on Reports of $53 Billion Takeover",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "A stock can look cheap on every metric and still trap investors for years, just as a battered chart can keep sliding long after it screams oversold. The stocks worth owning sit where both conditions collide, and three names are sitting there right now.",
-        "url": "https://finnhub.io/api/news?id=9efcbe09af86a38fe2a6f506f2f33ef844cfe427a7906bf8aefe7b0b98f1b29c"
+        "summary": "PayPal shares climbed in premarket trade on reports that payments start-up Stripe and private equity group Advent International jointly offered to buy the company.",
+        "url": "https://finnhub.io/api/news?id=8dc2c035d8d87f2b91994b2b2ce762989a18b52aa46508c5114be35f9466ff05"
       },
       {
-        "datetime": "2026-07-06T12:40:37Z",
-        "headline": "Digital Payment Update - Open Banking Boom Sparks Fintech Growth Worldwide",
+        "datetime": "2026-07-15T13:11:01Z",
+        "headline": "PayPal stock soars on report of buyout proposal from Stripe, Advent",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The Global Open Banking Market is experiencing significant expansion, driven by regulatory mandates for API-based data sharing, increasing investments in financial technology, and the adoption of cloud-based solutions. These developments are transforming payment systems and enabling new financial products through embedded finance and Banking-as-a-Service platforms. This rapidly evolving market, currently valued at approximately USD 28.7 billion in 2024, is projected to reach around USD 114.9...",
-        "url": "https://finnhub.io/api/news?id=b79e4a076f14e67e4c811feaee163e4877ca153c3f203796c076194aef515fe0"
+        "summary": "Payments company Stripe and private equity firm Advent International reportedly made an offer to acquire PayPal at $60.50 per share in a deal that would value the payments giant at more than $53 billion.",
+        "url": "https://finnhub.io/api/news?id=cf823c358b90182418ecee8d021583d28216f81766707ded51f90fae0737299f"
       },
       {
-        "datetime": "2026-07-06T11:05:40Z",
-        "headline": "What's Going on With PayPal Stock Monday?",
+        "datetime": "2026-07-15T13:01:58Z",
+        "headline": "Memory-Chip Selloff Drags Nasdaq 100 Lower, SanDisk Sinks 13%: Stock Market Today",
         "sentiment": null,
         "source": "Benzinga",
-        "summary": "PayPal falls near 3% as long-term moving averages flash bearish signals. Explore the key PYPL support and resistance levels.",
-        "url": "https://finnhub.io/api/news?id=639f5315b13debc8443ead9eadd5bb5f9a4b75ffb144ec07fe936a9415477f7f"
+        "summary": "A brutal semiconductor and memory selloff dragged the Nasdaq and tech sector lower, even as soft June PPI and strong bank earnings steadied the broader tape.",
+        "url": "https://finnhub.io/api/news?id=0c5824542e5eb9f8557b40ad7da733dd7a3e38cf68147cd465617ec3bb268d4d"
       },
       {
-        "datetime": "2026-07-05T10:25:41Z",
-        "headline": "PayPal's Valuation Is Absurd",
+        "datetime": "2026-07-15T13:01:46Z",
+        "headline": "PayPal Soars 19% on a Reported $53B Stripe-Advent Takeover Offer: What It Means for Visa, Mastercard, and American Express",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and a private-equity giant are circling PayPal with billions in committed financing, but at least one famous short-seller says the offer price insults the company's true worth and he is not budging.",
+        "url": "https://finnhub.io/api/news?id=e18fbe9ddfb0e2940000726173b795492ff13465648c72e80e81ca1f509694cd"
+      },
+      {
+        "datetime": "2026-07-15T12:35:01Z",
+        "headline": "Get insights into the top movers in the S&P500 index of Wednesday's pre-market session.",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "The US market is yet to commence its session on Wednesday, but let's get a preview of the pre-market session and explore the top S&P500 gainers and losers driving the early market movements.",
+        "url": "https://finnhub.io/api/news?id=c6c9fadccd35ba1fed87eb33657c5d3e74fc3bd0010caa0c3e6a9e822474a0f5"
+      },
+      {
+        "datetime": "2026-07-15T12:34:08Z",
+        "headline": "Aehr Test soars, PayPal jumps premarket on reported takeover bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- U.S. stock index futures edged higher on Wednesday after softer inflation data and a strong start to the corporate earnings season boosted investor sentiment, with markets weighing whether resilient corporate profits can continue to support Wall Street\u2019s record rally despite lingering geopolitical risks.",
+        "url": "https://finnhub.io/api/news?id=6abb27c95689d626244c0fb90f826f20e143bbb3f39869b704c23b2dfafab60c"
+      },
+      {
+        "datetime": "2026-07-15T12:30:23Z",
+        "headline": "How Time Re-Rates Block Stock's Demanding Price Tag",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The fintech looks expensive on paper, but its valuation shrinks sharply on future earnings, if you believe the growth story that gets it there.",
+        "url": "https://finnhub.io/api/news?id=21df6d60df036d4583cd0184a398b153b179b76321d1a040f73226d732508341"
+      },
+      {
+        "datetime": "2026-07-15T12:30:00Z",
+        "headline": "Wednesday's pre-market session: top gainers and losers",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Discover the top movers in Wednesday's pre-market session and stay informed about market dynamics.",
+        "url": "https://finnhub.io/api/news?id=ba6a9ccb2f3aec20f176ba09f36d70a4cf18335e927b538c905083dedf6119cf"
+      },
+      {
+        "datetime": "2026-07-15T12:27:27Z",
+        "headline": "Once a $360 Billion Giant, PayPal Draws $53 Billion Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and Advent's $60.50-a-share offer marks a 28% premium",
+        "url": "https://finnhub.io/api/news?id=76ab7dde2a608e4e003abf8226bc34ff5139cafaf80be0b2150476248c125ac9"
+      },
+      {
+        "datetime": "2026-07-15T12:15:12Z",
+        "headline": "Update: Market Chatter: Stripe, Advent Offer to Acquire PayPal for Over $53 Billion",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates to add PayPal's comment in the fourth paragraph.) Payments firm Stripe and Advent Intern",
+        "url": "https://finnhub.io/api/news?id=b69aaa4413eb1473f84531c5fdc05b329f384b920df49ae1f2334ccf559846d2"
+      },
+      {
+        "datetime": "2026-07-15T12:13:57Z",
+        "headline": "Burry balks at PayPal buyout: \"$60.50 is simply too low\"",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and private equity giant Advent International have reportedly teamed up to float a massive $53 billion takeover bid for PayPal Holdings Inc. (NASDAQ: PYPL). At $60.50 per share, the joint offer represents a 28% premium to Tuesday\u2019s closing price of $47.37. But for \"Big Short\" legend Michael Burry, that number isn\u2019t a victory lap\u2014it\u2019s a lowball opening move. Burry, who recently made PayPal one of his top deep-value convictions, immediately poured cold water on the proposed price tag. \"The",
+        "url": "https://finnhub.io/api/news?id=35fa381b2e152ec2103cea162ef0514173c29b5bc8860d0a88c8e20757971333"
+      },
+      {
+        "datetime": "2026-07-15T12:06:27Z",
+        "headline": "5 Things to Know Before the Stock Market Opens on Wednesday",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "News of the day for July 15, 2026",
+        "url": "https://finnhub.io/api/news?id=96eb4c84d427590062d9d4cf07c341c0c76f5da3bf6ed65246a738b27ba4dff8"
+      },
+      {
+        "datetime": "2026-07-15T12:06:00Z",
+        "headline": "PayPal Stock Jumps 20% on Report of $53 Billion Takeover Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal stock is rising following a report that a rival has teamed up with private-equity firm Advent International to make an offer for the company.",
+        "url": "https://finnhub.io/api/news?id=e0979461cdb2e8027cfb16e082aeebc67d5ae0e0f565e1fa2334af4143a26d76"
+      },
+      {
+        "datetime": "2026-07-15T12:03:07Z",
+        "headline": "Crude Oil Moves Lower; US Producer Prices Fall 0.3% In June",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Dow gains over 150 points, NASDAQ and S&amp;P 500 also up. Consumer discretionary shares jump 1.2%, energy stocks fall 0.5%. Producer price index falls below expectations.",
+        "url": "https://finnhub.io/api/news?id=c91f033cfab71a6a72341d5fad0b16deca54d589c90d8b8701b7c1197011f136"
+      },
+      {
+        "datetime": "2026-07-15T11:59:31Z",
+        "headline": "Stripe Proposes $53 Billion PayPal Acquisition: What Do Prediction Markets Say About the Deal?",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Stripe\u2019s $53B buyout offer for PayPal (PYPL) faces pushback from Michael Burry, but Polymarket odds just hit 79%. Will the fintech megadeal go through?",
+        "url": "https://finnhub.io/api/news?id=91eb4b220bcf14d455811abe142d19c6c94ed62c4d1b7af3a62a9a1e855b032c"
+      },
+      {
+        "datetime": "2026-07-15T11:58:35Z",
+        "headline": "PayPal Surges Amid Stripe, Private Equity Takeover Report. Lowball Offer?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal surged on a report that Stripe and private equity firm Advent are working on a $53 billion takeover offer for the digital payments company.",
+        "url": "https://finnhub.io/api/news?id=0a4494f33f971078cf1c923b3a54b6e4ffb22c66e65109d3a5b1d9366b2470fa"
+      },
+      {
+        "datetime": "2026-07-15T11:51:52Z",
+        "headline": "PayPal: Bullish Takeover Offer Makes Shares Surge",
         "sentiment": null,
         "source": "SeekingAlpha",
-        "summary": "PayPal (PYPL) Q1 2026 results show discounted growth, rising revenue and volumes, and buybacks/dividend amid margin pressure.",
-        "url": "https://finnhub.io/api/news?id=f883e4b972488676d316db84fd8e22e472fccb57b80932b2bc9913a563adb450"
+        "summary": "PayPal gets a $60.50 takeover bid from Stripe/Advent; 28% premium, 9\u00e2\u0080\u009311x forward P/E, and $6B buybacks signal upside. Click here to read more on PYPL stock.",
+        "url": "https://finnhub.io/api/news?id=4c8aa1a3d67be4ff04e7f2685c502e4952f857c6071c0655c2f2b295d03fd4df"
       },
       {
-        "datetime": "2026-07-04T02:40:10Z",
-        "headline": "PayPal Holdings (PYPL) Posts Solid Q1 Results,  Expands WeChat Pay Integration",
+        "datetime": "2026-07-15T11:51:00Z",
+        "headline": "Nasdaq rally set to continue, PayPal bid reported, ASML ups outlook",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "PayPal Holdings Inc. (NASDAQ:PYPL) ranks among the best fintech stocks to buy as digital payments volume surges. On June 1, Freedom Broker reduced its price target for PayPal Holdings Inc. (NASDAQ:PYPL) to $60 from $100 while retaining a Buy rating on the stock. Freedom Broker analyst Mikhail Paramonov referred to the company\u2019s first-quarter fiscal 2026 [\u2026]",
-        "url": "https://finnhub.io/api/news?id=f1e146bde2128578f90a78b661a82728c182e5e0242051b28c9eab171c0abc83"
+        "summary": "US stocks appeared set for a steady start on Wednesday as investors drew confidence from strong bank earnings and a softer-than-expected inflation report the day before, even as oil prices remained elevated following fresh US strikes on Iran. Nasdaq futures were up 0.5% ahead of the opening...",
+        "url": "https://finnhub.io/api/news?id=154b74416d717f261e951c7a070b470b34cfc0ccf81b8304dd02a2a9b8117613"
       },
       {
-        "datetime": "2026-07-03T17:30:02Z",
-        "headline": "Five July 4th Fireworks: Unusual Options Activity Flags Cheap Lottery-Ticket Calls in CHWY, AVGO, PYPL, STLA and WMT",
+        "datetime": "2026-07-15T11:27:00Z",
+        "headline": "Intel, Johnson & Johnson, ASML, and More Stocks That Explain Today\u2019s Market",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "These five unusually active July 10 out-of-the-money calls are priced below $0.20. Stellantis offers the highest probability of profit at 26.23%, while Chewy, Broadcom, PayPal, and Walmart round out the list of cheap, speculative bets for next week's expiration.",
-        "url": "https://finnhub.io/api/news?id=8efa1f5a912b2c055148fe4301f43608a27b8e54014f3cee1d09b06fa97b66ad"
+        "summary": "Stocks look set to build on their recent gains as investors try to make sense of another batch of quarterly earnings reports.",
+        "url": "https://finnhub.io/api/news?id=1fcb7f84b47d3bc10563f5ccefe5eebb163514c3e049267d25c046760da9f4a1"
       },
       {
-        "datetime": "2026-07-03T14:05:10Z",
-        "headline": "Which Stocks Win When Google AI Powers Walmart\u2019s Checkout?",
+        "datetime": "2026-07-15T11:18:39Z",
+        "headline": "Stripe and Advent International make $53 billion offer for PayPal",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "When an AI agent browses, recommends, and buys on a shopper's behalf, the retailer is just one piece of a much larger value chain. Five public companies sit at the center of that infrastructure, but they are not all created equal.",
-        "url": "https://finnhub.io/api/news?id=5d2f51e4ba0467d4897e72bff677bb9aaa90d59a18382faee25bf8a90b8103a4"
+        "summary": "The $60.50-per-share bid, backed by about $50 billion in bank financing, represents a 28% premium to PayPal's closing price Tuesday",
+        "url": "https://finnhub.io/api/news?id=7f2d0780c8bf0215ee218e9adae6bf1dee4fcb06a5f5dfa54b76314e4730b4be"
       },
       {
-        "datetime": "2026-07-03T10:00:00Z",
-        "headline": "Inside Cannes: What Executives Said About Leading in the AI Era",
+        "datetime": "2026-07-15T11:10:43Z",
+        "headline": "PayPal: The Bid Has Landed",
         "sentiment": null,
-        "source": "Yahoo",
-        "summary": "Executives across multiple industries joined the WSJ Leadership Institute at the Cannes Lions festival to explore how artificial intelligence is reshaping the corporate landscape and transforming how they lead their companies.",
-        "url": "https://finnhub.io/api/news?id=19c4b0ce960370facbfee585ea3c533d78a027cdcfa065ef785dfe505eaef2a9"
+        "source": "SeekingAlpha",
+        "summary": "PayPal receives a $60.50/share joint acquisition offer from Stripe and Advent, a 28% premium valuing the company at over $53B. Read the latest analysis here.",
+        "url": "https://finnhub.io/api/news?id=3f5a706051476cb4beb74bffe63b9edafe461d5eafb27a5fedc8e6d3b7eea861"
       },
       {
-        "datetime": "2026-07-03T08:14:22Z",
-        "headline": "PayPal joins EPC amid focus on interoperability and instant payments",
+        "datetime": "2026-07-15T11:09:18Z",
+        "headline": "PayPal surges after report of $53 billion takeover approach from Stripe and Advent (PYPL)",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The EPC manages the rules for payment schemes used across the Single Euro Payments Area (SEPA).",
-        "url": "https://finnhub.io/api/news?id=5ebb1b31855043655bb73cccb3dba0f5b49516860e7a0df3de94cbab4a82238a"
+        "summary": "PayPal Holdings (NASDAQ:PYPL) shares jumped in U. S.",
+        "url": "https://finnhub.io/api/news?id=eb959adc2f918a416e9331b08847c589eb9646edf21004b8207f5b420146ab11"
       },
       {
-        "datetime": "2026-07-03T00:48:01Z",
-        "headline": "Michael Burry Just \u2018Shorted Micron\u2019 \u2014 Why He Says AI-Fueled Rally Has Pushed MU Into Bubble Territory",
+        "datetime": "2026-07-15T11:08:00Z",
+        "headline": "Wild Start to Earnings Season Lays Bare the Great AI Divide",
         "sentiment": null,
         "source": "Yahoo",
-        "summary": "The \u2018Big Short\u2019 investor says Micron\u2019s valuation, technical setup and cyclical history point to significant downside after its AI-driven rally.",
-        "url": "https://finnhub.io/api/news?id=f8724a8934dc2168702a76bff81b8c5bb0add554c55ce24fc9a0745718bab2b0"
+        "summary": "IBM stock has its worst day ever, PayPal gets a takeover offer, big banks see deal boom time, and more news to start your day.",
+        "url": "https://finnhub.io/api/news?id=8fc591bbc1efd4c708f870fe6dbfe59027b3aaafb963b63daf817f289d3189c5"
+      },
+      {
+        "datetime": "2026-07-15T11:06:24Z",
+        "headline": "Michael Burry Says $53B Offer For PayPal Is 'Simply Too Low' \u2013 \u2018The Big Short\u2019 Investor Expects Higher Bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Michael Burry estimates PayPal's intrinsic value at between $75 and $115 per share under different valuation scenarios, with his preferred estimate near $100.",
+        "url": "https://finnhub.io/api/news?id=656e210e8ddb5f8d2fe8d22f13e5852dbcda166bdef3b607ccaa406b4bf10f0c"
+      },
+      {
+        "datetime": "2026-07-15T10:45:04Z",
+        "headline": "PayPal: A $53 Billion Deal May Still Misprice The Business",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "PayPal Holdings stock is down 82% as Stripe acquisition rumors swirl. Click for this PYPL update and see why I remain bullish and believe it is undervalued.",
+        "url": "https://finnhub.io/api/news?id=c3a30f42207c527e2b7249d7005afd90b72952a68e0040d3b837f643d61ab5d9"
+      },
+      {
+        "datetime": "2026-07-15T10:13:52Z",
+        "headline": "Market Open: July 15, 2026",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC brings you fast, accurate, and actionable business news and market updates.",
+        "url": "https://finnhub.io/api/news?id=12b4a92770496bcaaf3e50040518b9ff916cb9efc04e9c4890d06a1327ac743f"
+      },
+      {
+        "datetime": "2026-07-15T10:01:13Z",
+        "headline": "Meta\u2019s Sudden Stock Rebound Shows Investors Endorse AI Plans",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Bloomberg) -- In the span of just two weeks, Meta Platforms Inc. has gone from a market afterthought to one of its hottest stocks, as investors finally like what Facebook\u2019s parent is saying about its artificial intelligence plans.Most Read from BloombergThailand Scraps Plan to End Visa-Free Entry for Indian TouristsTrump Drops 20% Fee for Hormuz Cargo After Gulf PressureUS Hits Iran With Strikes, Blockade as Trump Plans Hormuz ChargeOpenAI\u2019s First Device Will Be Movable, Screenless Speaker Buil",
+        "url": "https://finnhub.io/api/news?id=44c725d3026f287421f9894e5bc3710581023ec32c44f359b3ecdda6cc84e625"
+      },
+      {
+        "datetime": "2026-07-15T09:56:32Z",
+        "headline": "PayPal, Veradermics, Alibaba And Other Big Stocks Moving Higher On Wednesday",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "US stocks close higher, Dow Jones up 100 points, PayPal shares rise on $53 billion acquisition proposal, other big gains from Aehr Test, Electrovaya, Robo.ai, Falcon&#39;s Beyond, Veradermics, Lucid Group, Kopin, MINISO, Mesoblast, Nexstar, Lionsgate, Karman.",
+        "url": "https://finnhub.io/api/news?id=24542b4ad5b03a2375e71d2db508710087abff5d48dd7574d0666897eb5e2eac"
+      },
+      {
+        "datetime": "2026-07-15T09:51:21Z",
+        "headline": "KKR Markets Debt Backed by PayPal\u2019s Buy Now, Pay Later Loans",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Bloomberg) -- KKR Inc. has started marketing a debt deal tied to PayPal Holdings Inc.\u2019s buy now, pay later business in Germany, the first of its kind in Europe.Most Read from BloombergThailand Scraps Plan to End Visa-Free Entry for Indian TouristsTrump Drops 20% Fee for Hormuz Cargo After Gulf PressureUS Hits Iran With Strikes, Blockade as Trump Plans Hormuz ChargeOpenAI\u2019s First Device Will Be Movable, Screenless Speaker Built as AI Companion\u2018We Faltered\u2019: IBM Plunges Most Since at Least 1968 o",
+        "url": "https://finnhub.io/api/news?id=c4ea8304fcc4b803b3d73967ac4960aae5415a98e5404869fe2aac1825f8d8bf"
+      },
+      {
+        "datetime": "2026-07-15T09:20:35Z",
+        "headline": "Faber Report: Stripe, Advent International make $60.50/share offer for PayPal, sources say",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC's David Faber delivers his latest 'Faber Report' on PayPal.",
+        "url": "https://finnhub.io/api/news?id=0231a2909329f983bfdf4111c261072abe497a7548dc17b47e15f8c4bcb6a456"
+      },
+      {
+        "datetime": "2026-07-15T09:13:07Z",
+        "headline": "'Stripe, Advent International And Block Contributing $17B In Equity For PayPal Offer' - CNBC",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "https://www.cnbc.com/2026/07/15/stripe-advent-offer-to-buy-paypal-for-more-than-53-billion-reuters.html",
+        "url": "https://finnhub.io/api/news?id=35b8936cc2b12272eedb29bf55a832d4cfb3a4d967f287b347f674c1ecbb59a2"
+      },
+      {
+        "datetime": "2026-07-15T09:09:30Z",
+        "headline": "PayPal (PYPL) Gets a Lower Price Target as Digital Payments Face New Challenges",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "With 76 hedge funds holding stakes in the stock, PayPal Holdings, Inc. (NASDAQ:PYPL) is among the 8 Best Stocks to Buy Following Federal Reserve Pivot Expectations. On June 29, Piper Sandler analyst Bill Carcache lowered the firm\u2019s price target on PayPal Holdings, Inc. (NASDAQ:PYPL) to $42 from $46 while maintaining a Neutral rating following a transfer of [\u2026]",
+        "url": "https://finnhub.io/api/news?id=41d16cdf444a9dcc333ca0866368870b7ffa1e1f1837ec02f3baf7f3f597f21f"
+      },
+      {
+        "datetime": "2026-07-15T09:01:00Z",
+        "headline": "PayPal jumps after Stripe and Advent make reported US$53bn bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal Holdings Inc (NASDAQ:PYPL) shares surged 16% in pre-market trading after reports that payments company Stripe and private equity firm Advent International had made a joint $53 billion takeover approach for the US payments group. According to Reuters, Stripe and Advent have offered...",
+        "url": "https://finnhub.io/api/news?id=af8af27f901e6b46c3e4384ec4dd7ef14c55a2ffc123df395966f46e15c56882"
+      },
+      {
+        "datetime": "2026-07-15T08:59:21Z",
+        "headline": "Billionaire Irish brothers in \u00a340bn swoop for PayPal",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Irish billionaire Collison brothers have launched a $53bn (\u00a340bn) takeover bid for payments business PayPal.",
+        "url": "https://finnhub.io/api/news?id=bc362d6880309d8a90f4f6f35066d1dd59419128013486f87203967ca545522f"
+      },
+      {
+        "datetime": "2026-07-15T08:43:02Z",
+        "headline": "Nasdaq, S&P 500 Futures Rise, Wall Street Eyes PPI After CPI Surprise: Why PYPL, ORCL, ASML, NOK, LCID, TSLA Are In Focus",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stocktwits data showed retail sentiment improved to \u2018bullish\u2019 on SPY and QQQ.",
+        "url": "https://finnhub.io/api/news?id=de03098f53382b8837d97e5ef7aa2850cfac187215d009da57ca8e1c7dfabc3a"
+      },
+      {
+        "datetime": "2026-07-15T08:15:00Z",
+        "headline": "PayPal Stock Jumps on Report of $53 Billion Takeover Approach",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal stock is rising following a report that a rival has teamed up with private-equity firm Advent International to make an offer for the company.",
+        "url": "https://finnhub.io/api/news?id=52a61a10d6edd84c8876994c789b9884c3bc60eda8dacf4f906fff638c15d70e"
+      },
+      {
+        "datetime": "2026-07-15T08:03:52Z",
+        "headline": "Market Chatter: Stripe, Advent Offer to Acquire PayPal for Over $53 Billion",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Payments firm Stripe and Advent International have offered to acquire PayPal (PYPL) for $60.50 per s",
+        "url": "https://finnhub.io/api/news?id=a6a55e7e2c0b67f63ded0fde670e95261a32443bd01bbf772d6fff2391472597"
+      },
+      {
+        "datetime": "2026-07-15T07:29:26Z",
+        "headline": "PayPal Draws $53 Billion Takeover Bid From Stripe and Advent",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stripe and Advent offered $60.50 per share to buy PayPal, a $53 billion bid that could reshape global payments.",
+        "url": "https://finnhub.io/api/news?id=99b4b9031d4113e118a2a50d088d375de9880e7cd08f3ad3f99a0dfbbd52db9f"
+      },
+      {
+        "datetime": "2026-07-15T07:20:30Z",
+        "headline": "PayPal: The Potential Stripe-Advent Offer Still Greatly Undervalues The Company",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "PayPal (PYPL) remains a Strong Buy, with current valuation offering a significant margin of safety and substantial re-rating potential amid ongoing...",
+        "url": "https://finnhub.io/api/news?id=ed6d81a179636e0a9a19737c041845014ba42666cb630ba68fac676c83105207"
+      },
+      {
+        "datetime": "2026-07-15T07:19:51Z",
+        "headline": "Market-Moving News for July 15th",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "PYPL: 21% | PayPal Stock Surges Nearly 15% in Premarket as Stripe and Advent International Reportedly Propose $53 Billion Joint Acquisition\u00a0AEHR: 31% | Aehr Test Systems shares are trading higher after the company",
+        "url": "https://finnhub.io/api/news?id=97066625bd9944df5bd941043dbe29079476d1b525f56fbd86788d6931bf66bf"
+      },
+      {
+        "datetime": "2026-07-15T07:04:31Z",
+        "headline": "Stock futures edge higher, led by semiconductors",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC\u2019s Dominic Chu reports on the news affecting markets.",
+        "url": "https://finnhub.io/api/news?id=688f2a887158eda89d5b2ecfdaf5ff9f740f31ff29d7be25384a1c3e261a8367"
+      },
+      {
+        "datetime": "2026-07-15T06:40:12Z",
+        "headline": "Stripe & Advent Bid $53 Billion to Acquire PayPal amid Stablecoin Push",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Payments giant Stripe and private equity firm Advent International have jointly offered to acquire PayPal Holdings for more than $53 billion. This marks one of the largest acquisition deals as both companies are actively expanding into stablecoins, mainly amid the GENIUS Act and the CLARITY Act developments. Ad Ad PayPal Gets $53 Billion Acquisitions Offer",
+        "url": "https://finnhub.io/api/news?id=6d44e4538493ad39da2a63369014c14781988d9377b616fb1e55fd694de91b3c"
+      },
+      {
+        "datetime": "2026-07-15T06:30:00Z",
+        "headline": "Wall Street Breakfast Podcast: Stripe Checks Out PayPal",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Stripe just made a move on PayPal. Verizon workers brace for more cuts. Lucid slams the brakes on bankruptcy rumors.",
+        "url": "https://finnhub.io/api/news?id=cc676b9703c5d16a81a45d609cc1a216dce8bafacb7831335361ea97441e89a8"
+      },
+      {
+        "datetime": "2026-07-15T06:23:08Z",
+        "headline": "The Pre-Market Rundown: July 15, 2026",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC brings you fast, accurate, and actionable business news and market updates.",
+        "url": "https://finnhub.io/api/news?id=c92f151f6d84db56af1f364877aadccc4ed292f1d9655a1a5a98cfbdfb89a715"
+      },
+      {
+        "datetime": "2026-07-15T06:18:00Z",
+        "headline": "FTSE 100 Live: Miners drag on China slowdown, PayPal jumps on bid",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "FTSE 100 down 23 points to 10,506 Miners fall on weaker China GDP Barratt Redrow, ICG, B&M, NextEnergy Solar publish updates 12.13pm: European stocks in the red, US futures green London's blue-chips and those in other European financial centres remain under pressure at midday...",
+        "url": "https://finnhub.io/api/news?id=9d97ff1330d424ad9b3f8d8f766424a2118df9655f34d9d04831bb7bcdf04c83"
+      },
+      {
+        "datetime": "2026-07-15T04:33:10Z",
+        "headline": "PayPal Stock Surges Nearly 15% in Premarket as Stripe and Advent International Reportedly Propose $53 Billion Joint Acquisition",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Stripe and Advent bid $53 billion for PayPal at $60.50/share, offering a 28% premium in a blockbuster takeover proposal.",
+        "url": "https://finnhub.io/api/news?id=68d5286821b950a668c1beda04ef022a13e60bf0dbbc1b744c44405edf10145a"
+      },
+      {
+        "datetime": "2026-07-15T04:32:34Z",
+        "headline": "Why Aehr Test Systems Shares Are Trading Higher By Around 30%; Here Are 20 Stocks Moving Premarket",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": " Shares of Aehr Test Systems (NASDAQ: AEHR) jumped 29.6% to $93.30 in pre-market trading. Aehr Test Systems beats Q4 estimates and issues FY27 guidance above estimates.",
+        "url": "https://finnhub.io/api/news?id=f2dd7ede6de4a80cef99232a6bea42ba150b0e2912329f1b2cad28e98ba3a360"
+      },
+      {
+        "datetime": "2026-07-15T04:24:03Z",
+        "headline": "Why Is PYPL Stock Surging Nearly 15% Overnight?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The payments giant has reportedly received a $53 billion buyout offer, a premium of more than 27% from the last close.",
+        "url": "https://finnhub.io/api/news?id=936266d65ad34afe6257c8dbe4a002a7855f3ac7faff0cfc01498c311724c6b4"
+      },
+      {
+        "datetime": "2026-07-15T03:25:15Z",
+        "headline": "Exclusive-Stripe, Advent offer to buy PayPal for more than $53 billion, sources say",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Payments company Stripe and private equity firm Advent International have made a joint offer to acquire PayPal Holdings Inc for $60.50 per share, in a deal that would value the payments company at more than $53 billion, two people said.  The offer represents around a 28% premium \u200cto PayPal's closing share price on Tuesday.  PayPal, Stripe and Advent declined to comment.",
+        "url": "https://finnhub.io/api/news?id=bbcc58edbf847edff8874b955f1bf51301d4b0b0dc0c6df6264aa214dc1965e7"
+      },
+      {
+        "datetime": "2026-07-15T03:22:41Z",
+        "headline": "'Stripe, Advent Offer To Buy PayPal For More Than $53 Billion, Sources Say' - Reuters Exclusive",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Payments company Stripe and private equity firm Advent International have made a joint offer to \u200bacquire PayPal Holdings for $60.50 per share, valuing the payments company at more than $53 billion, two people said.The",
+        "url": "https://finnhub.io/api/news?id=d17972f130dd64e440c2f3c821f5ce4160dfc9d8a7b760243185917c3109f8ac"
+      },
+      {
+        "datetime": "2026-07-15T01:04:46Z",
+        "headline": "Stripe, Advent make $53 billion takeover offer for PayPal, sending stock soaring",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Stripe\u00a0and\u00a0Advent\u00a0International have made a joint\u00a0offer\u00a0to acquire\u00a0PayPal\u00a0for $60.50 per share, in a deal that would valued at\u00a0more\u00a0than\u00a0$53\u00a0billion.",
+        "url": "https://finnhub.io/api/news?id=f006d9855295d63136aefaa8b56f52d27b2d5080b11494204c4109e02a3d0025"
+      },
+      {
+        "datetime": "2026-07-14T16:27:00Z",
+        "headline": "Can PayPal Beat Its Q2 FY26 Expectations Amid Tougher Trends?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PYPL faces a tougher Q2 after a solid Q1, with slower branded checkout trends testing whether it can meet guidance and sustain investor confidence.",
+        "url": "https://finnhub.io/api/news?id=1b4cbf626f8f3e1d4235ae94c0f7712b3dba159393836a7a26d2745ad5733581"
+      },
+      {
+        "datetime": "2026-07-14T12:39:42Z",
+        "headline": "Goldman Sachs Raises PayPal (PYPL) Price Target",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal Holdings, Inc. (NASDAQ:PYPL) is one of the 10 Most Promising Fintech Stocks to Buy Now. On July 9, Goldman Sachs raised its price target on PayPal Holdings, Inc. (NASDAQ:PYPL) from $41 to $48 and maintained its Sell rating on the stock. In a research note, the firm said that the payments sector is relatively [\u2026]",
+        "url": "https://finnhub.io/api/news?id=773b3d8d2de7cc075081bb7f2f8a87c767ddac09a11789396c4011a471c8448c"
+      },
+      {
+        "datetime": "2026-07-14T09:11:11Z",
+        "headline": "3 Cash-Producing Stocks with Warning Signs",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "While strong cash flow is a key indicator of stability, it doesn\u2019t always translate to superior returns. Some cash-heavy businesses struggle with inefficient spending, slowing demand, or weak competitive positioning.",
+        "url": "https://finnhub.io/api/news?id=3a353afe4ff947bac098cfa354d03e58cbb690e5963adb39fd86d7a9e66ff97f"
       }
     ],
     "ticker": "PYPL"
   },
-  "recorded_at": "2026-07-10T11:47:27.146195+00:00",
+  "recorded_at": "2026-07-22T01:50:15.304696+00:00",
   "status": "ok"
 }

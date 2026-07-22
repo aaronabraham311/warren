@@ -1,10 +1,10 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "buyback_yield_pct": 2.766,
-    "data_age_hours": 6803,
+    "as_of": "2026-07-21",
+    "buyback_yield_pct": null,
+    "data_age_hours": 7081,
     "dividend_growth_streak": 3,
-    "dividend_yield_pct": 0.6998,
+    "dividend_yield_pct": null,
     "net_debt_series": [
       8007000000,
       8861000000,
@@ -22,11 +22,11 @@
       2086435000,
       null
     ],
-    "shareholder_yield_pct": 3.4658,
+    "shareholder_yield_pct": null,
     "source": "yfinance",
     "ticker": "V",
     "years_covered": 5
   },
-  "recorded_at": "2026-07-10T11:47:35.154038+00:00",
+  "recorded_at": "2026-07-22T01:50:22.862217+00:00",
   "status": "ok"
 }

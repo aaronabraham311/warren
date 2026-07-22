@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "current_ratio": 1.1547,
-    "data_age_hours": 4595,
+    "data_age_hours": 4873,
     "f_score": 6,
     "f_signals": {
       "accruals_negative": true,
@@ -19,9 +19,9 @@
     "net_debt_to_ebitda": 0.8321,
     "source": "yfinance",
     "ticker": "CVX",
-    "z_score": 3.2667,
+    "z_score": 3.421,
     "z_zone": "safe"
   },
-  "recorded_at": "2026-07-10T11:46:44.176810+00:00",
+  "recorded_at": "2026-07-22T01:49:39.370669+00:00",
   "status": "ok"
 }

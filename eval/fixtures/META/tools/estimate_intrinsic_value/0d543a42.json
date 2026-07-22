@@ -1,24 +1,24 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "assumptions": {
       "discount_rate": 0.1,
       "growth_rate": 0.08,
       "projection_years": 10,
       "terminal_growth_rate": 0.025
     },
-    "current_price": 631.48,
-    "data_age_hours": 4595,
+    "current_price": 643.81,
+    "data_age_hours": 4873,
     "intrinsic_equity_value": 941923190546,
     "intrinsic_value_per_share": 372.35,
-    "margin_of_safety": -0.6959,
+    "margin_of_safety": -0.729,
     "owner_earnings_base": 46109000000,
     "owner_earnings_source": "free_cash_flow",
-    "reverse_dcf_implied_growth": 0.1518,
+    "reverse_dcf_implied_growth": 0.1544,
     "shares_outstanding": 2529638328,
     "source": "yfinance",
     "ticker": "META"
   },
-  "recorded_at": "2026-07-10T11:47:04.534891+00:00",
+  "recorded_at": "2026-07-22T01:49:54.344513+00:00",
   "status": "ok"
 }

@@ -1,36 +1,36 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "cash_conversion_series": [
+      0.7027,
       1.0152,
       1.1609,
-      0.9609,
-      0.7327
+      0.9609
     ],
-    "cash_conversion_ttm": 1.0152,
-    "consecutive_profit_years": 0,
-    "data_age_hours": 971,
-    "gross_margin_pct": 42.7347,
+    "cash_conversion_ttm": 0.7027,
+    "consecutive_profit_years": 4,
+    "data_age_hours": 1249,
+    "gross_margin_pct": 42.9135,
     "gross_margin_series": [
+      42.9135,
       42.7347,
       44.5602,
-      43.5246,
-      45.9837
+      43.5246
     ],
-    "gross_margin_stdev": 1.4041,
-    "ncav_trend": "declining",
-    "roa_pct": 8.8001,
-    "roic_mean": 17.2283,
-    "roic_pct": 11.7917,
+    "gross_margin_stdev": 0.8239,
+    "ncav_trend": "growing",
+    "roa_pct": 8.0916,
+    "roic_mean": 15.0268,
+    "roic_pct": 11.6998,
     "roic_series": [
+      11.6998,
       11.7917,
       19.5118,
-      17.104,
-      20.5056
+      17.104
     ],
     "source": "yfinance",
     "ticker": "NKE"
   },
-  "recorded_at": "2026-07-10T11:47:15.941088+00:00",
+  "recorded_at": "2026-07-22T01:50:03.020225+00:00",
   "status": "ok"
 }

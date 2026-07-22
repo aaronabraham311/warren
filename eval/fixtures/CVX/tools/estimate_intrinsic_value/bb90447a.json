@@ -1,24 +1,24 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "assumptions": {
       "discount_rate": 0.1,
       "growth_rate": 0.08,
       "projection_years": 10,
       "terminal_growth_rate": 0.025
     },
-    "current_price": 174.05,
-    "data_age_hours": 4595,
+    "current_price": 191.07,
+    "data_age_hours": 4873,
     "intrinsic_equity_value": 338944448535,
     "intrinsic_value_per_share": 138.76,
-    "margin_of_safety": -0.2543,
+    "margin_of_safety": -0.377,
     "owner_earnings_base": 16592000000,
     "owner_earnings_source": "free_cash_flow",
-    "reverse_dcf_implied_growth": 0.1108,
+    "reverse_dcf_implied_growth": 0.1235,
     "shares_outstanding": 2442676580,
     "source": "yfinance",
     "ticker": "CVX"
   },
-  "recorded_at": "2026-07-10T11:46:44.360745+00:00",
+  "recorded_at": "2026-07-22T01:49:39.573711+00:00",
   "status": "ok"
 }

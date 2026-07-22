@@ -1,24 +1,24 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "assumptions": {
       "discount_rate": 0.1,
       "growth_rate": 0.08,
       "projection_years": 10,
       "terminal_growth_rate": 0.025
     },
-    "current_price": 384.36,
-    "data_age_hours": 9011,
+    "current_price": 397.75,
+    "data_age_hours": 9289,
     "intrinsic_equity_value": 1462882769051,
     "intrinsic_value_per_share": 196.78,
-    "margin_of_safety": -0.9532,
+    "margin_of_safety": -1.0213,
     "owner_earnings_base": 71611000000,
     "owner_earnings_source": "free_cash_flow",
-    "reverse_dcf_implied_growth": 0.1711,
+    "reverse_dcf_implied_growth": 0.1758,
     "shares_outstanding": 7434158655,
     "source": "yfinance",
     "ticker": "MSFT"
   },
-  "recorded_at": "2026-07-10T11:47:09.011047+00:00",
+  "recorded_at": "2026-07-22T01:49:58.271245+00:00",
   "status": "ok"
 }

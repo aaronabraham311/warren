@@ -1,7 +1,7 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 4691,
+    "as_of": "2026-07-21",
+    "data_age_hours": 4969,
     "earnings_cagr_3y": -0.7892,
     "peg_ratio": 1.36,
     "revenue_cagr_3y": -0.0571,
@@ -9,6 +9,6 @@
     "source": "yfinance",
     "ticker": "INTC"
   },
-  "recorded_at": "2026-07-10T11:46:49.988760+00:00",
+  "recorded_at": "2026-07-22T01:49:44.722356+00:00",
   "status": "ok"
 }

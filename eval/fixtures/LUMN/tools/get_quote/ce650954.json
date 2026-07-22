@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10T11:46:53.899541Z",
-    "current_price": 6.75,
+    "as_of": "2026-07-22T01:49:48.260065Z",
+    "current_price": 6.76,
     "data_age_hours": 0,
-    "day_change_pct": 0.75,
-    "previous_close": 6.7,
+    "day_change_pct": 6.29,
+    "previous_close": 6.36,
     "source": "yfinance",
     "ticker": "LUMN",
-    "volume": 14510891
+    "volume": 13815033
   },
-  "recorded_at": "2026-07-10T11:46:53.901627+00:00",
+  "recorded_at": "2026-07-22T01:49:48.261217+00:00",
   "status": "ok"
 }

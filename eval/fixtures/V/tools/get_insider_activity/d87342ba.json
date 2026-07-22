@@ -1,9 +1,9 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "insider_ownership_pct": 0.081,
     "insider_sentiment": "bearish",
-    "institutional_ownership_pct": 91.584,
+    "institutional_ownership_pct": 91.574,
     "net_shares_bought": -75436,
     "net_value_bought": null,
     "ticker": "V",
@@ -88,6 +88,6 @@
     ],
     "window_days": 90
   },
-  "recorded_at": "2026-07-10T11:47:35.290740+00:00",
+  "recorded_at": "2026-07-22T01:50:23.119053+00:00",
   "status": "ok"
 }

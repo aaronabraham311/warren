@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "current_ratio": 0.8933,
-    "data_age_hours": 6875,
+    "data_age_hours": 7153,
     "f_score": 7,
     "f_signals": {
       "accruals_negative": false,
@@ -19,9 +19,9 @@
     "net_debt_to_ebitda": 0.4333,
     "source": "yfinance",
     "ticker": "AAPL",
-    "z_score": 12.0264,
+    "z_score": 12.382,
     "z_zone": "safe"
   },
-  "recorded_at": "2026-07-10T11:46:26.246107+00:00",
+  "recorded_at": "2026-07-22T01:49:21.172074+00:00",
   "status": "ok"
 }

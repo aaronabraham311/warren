@@ -1,18 +1,9 @@
 {
   "data": {
     "days": 7,
-    "items": [
-      {
-        "datetime": "2026-07-06T12:02:36Z",
-        "headline": "Corning's AI Opportunity Is Only Getting Started: Analyst",
-        "sentiment": null,
-        "source": "Benzinga",
-        "summary": "BofA raises Corning (GLW) price target to $243, citing strong AI infrastructure demand and Optical Communications growth. Buy reiterated.",
-        "url": "https://finnhub.io/api/news?id=e4ca29f80cc4a50a926aedf6fafdec07a26337b019bd0caa66d0f2de8f2940f4"
-      }
-    ],
+    "items": [],
     "ticker": "LUMN"
   },
-  "recorded_at": "2026-07-10T11:47:00.366643+00:00",
+  "recorded_at": "2026-07-22T01:49:50.210262+00:00",
   "status": "ok"
 }

@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 7523,
+    "as_of": "2026-07-21",
+    "data_age_hours": 7801,
     "earnings_cagr_3y": 0.1149,
-    "peg_ratio": 4.65,
+    "peg_ratio": 4.56,
     "revenue_cagr_3y": 0.0664,
     "revenue_cagr_5y": 0.0664,
     "source": "yfinance",
     "ticker": "COST"
   },
-  "recorded_at": "2026-07-10T11:46:38.801696+00:00",
+  "recorded_at": "2026-07-22T01:49:34.508730+00:00",
   "status": "ok"
 }

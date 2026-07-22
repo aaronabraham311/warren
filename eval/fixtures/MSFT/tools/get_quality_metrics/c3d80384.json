@@ -1,6 +1,6 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "cash_conversion_series": [
       0.7032,
       0.8404,
@@ -9,7 +9,7 @@
     ],
     "cash_conversion_ttm": 0.7032,
     "consecutive_profit_years": 4,
-    "data_age_hours": 9011,
+    "data_age_hours": 9289,
     "gross_margin_pct": 68.8237,
     "gross_margin_series": [
       68.8237,
@@ -31,6 +31,6 @@
     "source": "yfinance",
     "ticker": "MSFT"
   },
-  "recorded_at": "2026-07-10T11:47:08.715117+00:00",
+  "recorded_at": "2026-07-22T01:49:57.959718+00:00",
   "status": "ok"
 }

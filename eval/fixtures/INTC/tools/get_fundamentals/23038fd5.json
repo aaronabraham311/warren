@@ -1,19 +1,19 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 0,
-    "debt_to_equity": null,
-    "fcf_ttm_usd": null,
-    "gross_margin_pct": null,
-    "net_margin_pct": null,
-    "operating_margin_pct": null,
-    "pb_ratio": 1.8573,
+    "as_of": "2026-07-21",
+    "data_age_hours": 4969,
+    "debt_to_equity": 36.028,
+    "fcf_ttm_usd": -8301250048,
+    "gross_margin_pct": 37.2,
+    "net_margin_pct": -5.904,
+    "operating_margin_pct": 6.879,
+    "pb_ratio": 4.754926,
     "pe_ratio": null,
-    "roe_pct": -2.9499999999999997,
-    "sector": null,
-    "source": "finnhub",
+    "roe_pct": -2.911,
+    "sector": "Technology",
+    "source": "yfinance",
     "ticker": "INTC"
   },
-  "recorded_at": "2026-07-10T11:46:49.132354+00:00",
+  "recorded_at": "2026-07-22T01:49:44.130714+00:00",
   "status": "ok"
 }

@@ -1,19 +1,19 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 0,
-    "debt_to_equity": null,
-    "fcf_ttm_usd": null,
-    "gross_margin_pct": null,
-    "net_margin_pct": null,
-    "operating_margin_pct": null,
-    "pb_ratio": 1.4209,
-    "pe_ratio": 14.7173,
-    "roe_pct": 10.31,
-    "sector": null,
-    "source": "finnhub",
+    "as_of": "2026-07-21",
+    "data_age_hours": 4873,
+    "debt_to_equity": 17.669,
+    "fcf_ttm_usd": 61228249088,
+    "gross_margin_pct": 27.78,
+    "net_margin_pct": 19.305,
+    "operating_margin_pct": 14.352,
+    "pb_ratio": 0.000968531,
+    "pe_ratio": 14.620781,
+    "roe_pct": 10.499,
+    "sector": "Financial Services",
+    "source": "yfinance",
     "ticker": "BRK.B"
   },
-  "recorded_at": "2026-07-10T11:46:30.883550+00:00",
+  "recorded_at": "2026-07-22T01:49:27.136276+00:00",
   "status": "ok"
 }

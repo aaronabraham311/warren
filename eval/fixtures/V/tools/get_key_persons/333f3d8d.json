@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "controlling_holder_identified": false,
-    "data_age_hours": 6803,
+    "data_age_hours": 7081,
     "persons": [
       {
         "name": "Mr. Ryan M. McInerney",
@@ -69,6 +69,6 @@
     "source_notes": [],
     "ticker": "V"
   },
-  "recorded_at": "2026-07-10T11:47:36.184405+00:00",
+  "recorded_at": "2026-07-22T01:50:23.926819+00:00",
   "status": "ok"
 }

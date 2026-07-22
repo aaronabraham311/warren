@@ -3,37 +3,37 @@
     "all_metrics": [
       {
         "ev_to_ebit": null,
-        "fcf_yield": null,
-        "gross_margin_pct": 42.913,
-        "pb_ratio": 4.266906,
-        "pe_ratio": 20.37143,
+        "fcf_yield": 2.8735,
+        "gross_margin_pct": 43.245,
+        "pb_ratio": 4.284859,
+        "pe_ratio": 20.753624,
         "roe_pct": 22.138,
         "ticker": "NKE"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 0.3566,
+        "fcf_yield": 0.3559,
         "gross_margin_pct": 50.604,
-        "pb_ratio": 6.0117297,
-        "pe_ratio": 31.63124,
+        "pb_ratio": 6.024141,
+        "pe_ratio": 29.933493,
         "roe_pct": 24.285,
         "ticker": "AMZN"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 2.5328,
+        "fcf_yield": 2.5786,
         "gross_margin_pct": 33.127,
-        "pb_ratio": 24.341047,
-        "pe_ratio": 24.040455,
+        "pb_ratio": 23.828686,
+        "pe_ratio": 23.635069,
         "roe_pct": 128.38,
         "ticker": "HD"
       },
       {
         "ev_to_ebit": null,
-        "fcf_yield": 2.3793,
+        "fcf_yield": 2.4674,
         "gross_margin_pct": 57.349,
-        "pb_ratio": -152.75691,
-        "pe_ratio": 22.945227,
+        "pb_ratio": -145.80664,
+        "pe_ratio": 22.066053,
         "roe_pct": null,
         "ticker": "MCD"
       }
@@ -50,9 +50,9 @@
         "ticker_rank": null
       },
       "fcf_yield": {
-        "peer_median": 2.3793,
-        "ticker_percentile": null,
-        "ticker_rank": null
+        "peer_median": 2.4674,
+        "ticker_percentile": 100.0,
+        "ticker_rank": 1
       },
       "gross_margin_pct": {
         "peer_median": 50.604,
@@ -60,12 +60,12 @@
         "ticker_rank": 3
       },
       "pb_ratio": {
-        "peer_median": 6.0117,
+        "peer_median": 6.0241,
         "ticker_percentile": 66.7,
         "ticker_rank": 2
       },
       "pe_ratio": {
-        "peer_median": 24.0405,
+        "peer_median": 23.6351,
         "ticker_percentile": 100.0,
         "ticker_rank": 1
       },
@@ -77,6 +77,6 @@
     },
     "ticker": "NKE"
   },
-  "recorded_at": "2026-07-10T11:47:18.039603+00:00",
+  "recorded_at": "2026-07-22T01:50:05.697221+00:00",
   "status": "ok"
 }

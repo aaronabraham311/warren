@@ -1,16 +1,16 @@
 {
   "data": {
     "acquirers_multiple": null,
-    "as_of": "2026-07-10",
-    "data_age_hours": 9011,
-    "dividend_yield_pct": 0.95,
+    "as_of": "2026-07-21",
+    "data_age_hours": 9289,
+    "dividend_yield_pct": 0.9,
     "earnings_yield": null,
-    "enterprise_value": 2902397288448,
+    "enterprise_value": 3001863897088,
     "ev_to_ebit": null,
-    "ev_to_ebitda": 15.73,
-    "fcf_yield": 1.2752,
+    "ev_to_ebitda": 16.27,
+    "fcf_yield": 1.2329,
     "is_net_net": false,
-    "market_cap_usd": 2855193018368,
+    "market_cap_usd": 2954659889152,
     "ncav": null,
     "ncav_to_market_cap": null,
     "net_cash_positive": false,
@@ -20,6 +20,6 @@
     "source": "yfinance",
     "ticker": "MSFT"
   },
-  "recorded_at": "2026-07-10T11:47:08.638388+00:00",
+  "recorded_at": "2026-07-22T01:49:57.887858+00:00",
   "status": "ok"
 }

@@ -1,19 +1,19 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 0,
+    "as_of": "2026-07-21",
+    "data_age_hours": 7129,
     "debt_to_equity": null,
-    "fcf_ttm_usd": null,
-    "gross_margin_pct": null,
-    "net_margin_pct": null,
-    "operating_margin_pct": null,
-    "pb_ratio": 64.1154,
-    "pe_ratio": 81.4828,
-    "roe_pct": 115.68,
-    "sector": null,
-    "source": "finnhub",
+    "fcf_ttm_usd": -1304087552,
+    "gross_margin_pct": 21.897,
+    "net_margin_pct": 3.888,
+    "operating_margin_pct": 8.418,
+    "pb_ratio": -14.059766,
+    "pe_ratio": 79.73283,
+    "roe_pct": null,
+    "sector": "Consumer Cyclical",
+    "source": "yfinance",
     "ticker": "SBUX"
   },
-  "recorded_at": "2026-07-10T11:47:29.640423+00:00",
+  "recorded_at": "2026-07-22T01:50:17.673421+00:00",
   "status": "ok"
 }

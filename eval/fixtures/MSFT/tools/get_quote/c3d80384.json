@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10T11:47:07.616487Z",
-    "current_price": 384.36,
+    "as_of": "2026-07-22T01:49:57.327227Z",
+    "current_price": 397.75,
     "data_age_hours": 0,
-    "day_change_pct": 0.07,
-    "previous_close": 384.11,
+    "day_change_pct": -0.82,
+    "previous_close": 401.02,
     "source": "yfinance",
     "ticker": "MSFT",
-    "volume": 40150651
+    "volume": 39368751
   },
-  "recorded_at": "2026-07-10T11:47:07.618054+00:00",
+  "recorded_at": "2026-07-22T01:49:57.328533+00:00",
   "status": "ok"
 }

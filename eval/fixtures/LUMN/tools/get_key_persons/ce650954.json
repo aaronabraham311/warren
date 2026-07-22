@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "controlling_holder_identified": false,
-    "data_age_hours": 4595,
+    "data_age_hours": 4873,
     "persons": [
       {
         "name": "Ms. Kathleen E. Johnson",
@@ -69,6 +69,6 @@
     "source_notes": [],
     "ticker": "LUMN"
   },
-  "recorded_at": "2026-07-10T11:47:00.342721+00:00",
+  "recorded_at": "2026-07-22T01:49:50.191359+00:00",
   "status": "ok"
 }

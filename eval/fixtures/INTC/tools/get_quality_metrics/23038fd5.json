@@ -1,6 +1,6 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "cash_conversion_series": [
       18.5356,
       0.8347,
@@ -9,7 +9,7 @@
     ],
     "cash_conversion_ttm": 18.5356,
     "consecutive_profit_years": 0,
-    "data_age_hours": 4691,
+    "data_age_hours": 4969,
     "gross_margin_pct": 34.7662,
     "gross_margin_series": [
       34.7662,
@@ -31,6 +31,6 @@
     "source": "yfinance",
     "ticker": "INTC"
   },
-  "recorded_at": "2026-07-10T11:46:50.251311+00:00",
+  "recorded_at": "2026-07-22T01:49:44.917710+00:00",
   "status": "ok"
 }

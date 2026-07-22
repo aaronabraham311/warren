@@ -1,13 +1,83 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "insider_ownership_pct": 0.102,
+    "as_of": "2026-07-21",
+    "insider_ownership_pct": 0.103,
     "insider_sentiment": "bearish",
-    "institutional_ownership_pct": 79.24,
-    "net_shares_bought": -1901773,
+    "institutional_ownership_pct": 79.908,
+    "net_shares_bought": -1266336,
     "net_value_bought": null,
     "ticker": "META",
     "transactions": [
+      {
+        "name": "Olivan Javier",
+        "shares": 81925,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 82099,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 82413,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 6900,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 1802,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 6900,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 9498,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 9578,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 9954,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
+      {
+        "name": "Olivan Javier",
+        "shares": 10770,
+        "transaction_date": "2026-07-06",
+        "transaction_type": "sell",
+        "value": null
+      },
       {
         "name": "KIMMITT ROBERT M",
         "shares": 3443,
@@ -1162,192 +1232,10 @@
         "transaction_date": "2026-04-27",
         "transaction_type": "sell",
         "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 86413,
-        "transaction_date": "2026-04-20",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 7802,
-        "transaction_date": "2026-04-20",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 2429,
-        "transaction_date": "2026-04-20",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 7802,
-        "transaction_date": "2026-04-20",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 9631,
-        "transaction_date": "2026-04-20",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "KIMMITT ROBERT M",
-        "shares": 3847,
-        "transaction_date": "2026-04-15",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 86821,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 86910,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 86970,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 87120,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 87242,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 87445,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 87613,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 87801,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 7884,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 2486,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 7884,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 10557,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 10713,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 10872,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 11153,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 11334,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 11517,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 12033,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 12175,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
-      },
-      {
-        "name": "Olivan Javier",
-        "shares": 12822,
-        "transaction_date": "2026-04-13",
-        "transaction_type": "sell",
-        "value": null
       }
     ],
     "window_days": 90
   },
-  "recorded_at": "2026-07-10T11:47:04.828058+00:00",
+  "recorded_at": "2026-07-22T01:49:54.585191+00:00",
   "status": "ok"
 }

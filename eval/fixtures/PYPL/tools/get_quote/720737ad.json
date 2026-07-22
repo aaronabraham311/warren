@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10T11:47:24.381467Z",
-    "current_price": 45.32,
+    "as_of": "2026-07-22T01:50:12.179011Z",
+    "current_price": 55.85,
     "data_age_hours": 0,
-    "day_change_pct": 0.26,
-    "previous_close": 45.2,
+    "day_change_pct": -1.46,
+    "previous_close": 56.68,
     "source": "yfinance",
     "ticker": "PYPL",
-    "volume": 15249995
+    "volume": 17057256
   },
-  "recorded_at": "2026-07-10T11:47:24.382904+00:00",
+  "recorded_at": "2026-07-22T01:50:12.180259+00:00",
   "status": "ok"
 }

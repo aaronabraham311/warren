@@ -1,8 +1,8 @@
 {
   "data": {
-    "as_of": "2026-07-10",
+    "as_of": "2026-07-21",
     "controlling_holder_identified": false,
-    "data_age_hours": 6875,
+    "data_age_hours": 7153,
     "persons": [
       {
         "name": "Mr. Timothy D. Cook",
@@ -69,6 +69,6 @@
     "source_notes": [],
     "ticker": "AAPL"
   },
-  "recorded_at": "2026-07-10T11:46:27.676716+00:00",
+  "recorded_at": "2026-07-22T01:49:24.276977+00:00",
   "status": "ok"
 }

@@ -1,19 +1,19 @@
 {
   "data": {
-    "as_of": "2026-07-10",
-    "data_age_hours": 0,
-    "debt_to_equity": null,
-    "fcf_ttm_usd": null,
-    "gross_margin_pct": null,
-    "net_margin_pct": null,
-    "operating_margin_pct": null,
-    "pb_ratio": 5.9391,
-    "pe_ratio": 21.6892,
-    "roe_pct": 33.22,
-    "sector": null,
-    "source": "finnhub",
+    "as_of": "2026-07-21",
+    "data_age_hours": 4873,
+    "debt_to_equity": 35.608,
+    "fcf_ttm_usd": 25558249472,
+    "gross_margin_pct": 81.941,
+    "net_margin_pct": 32.837,
+    "operating_margin_pct": 40.617,
+    "pb_ratio": 6.7054462,
+    "pe_ratio": 23.471016,
+    "roe_pct": 32.93,
+    "sector": "Communication Services",
+    "source": "yfinance",
     "ticker": "META"
   },
-  "recorded_at": "2026-07-10T11:47:03.336678+00:00",
+  "recorded_at": "2026-07-22T01:49:53.314836+00:00",
   "status": "ok"
 }

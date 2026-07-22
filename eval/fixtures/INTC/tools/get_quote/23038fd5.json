@@ -1,14 +1,14 @@
 {
   "data": {
-    "as_of": "2026-07-10T11:46:48.934666Z",
-    "current_price": 112.54,
+    "as_of": "2026-07-22T01:49:43.951411Z",
+    "current_price": 105.45,
     "data_age_hours": 0,
-    "day_change_pct": -0.08,
-    "previous_close": 112.63,
+    "day_change_pct": 8.1,
+    "previous_close": 97.55,
     "source": "yfinance",
     "ticker": "INTC",
-    "volume": 134678222
+    "volume": 134171183
   },
-  "recorded_at": "2026-07-10T11:46:48.936263+00:00",
+  "recorded_at": "2026-07-22T01:49:43.952646+00:00",
   "status": "ok"
 }
