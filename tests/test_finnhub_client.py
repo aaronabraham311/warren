@@ -144,7 +144,49 @@ def test_get_basic_financials_maps_fields(
     assert result.pe_ratio == pytest.approx(28.5)
     assert result.pb_ratio == pytest.approx(45.2)
     assert result.roe_pct == pytest.approx(150.0)
+    # Margins map directly (Finnhub already reports percentages).
+    assert result.gross_margin_pct == pytest.approx(46.2)
+    assert result.operating_margin_pct == pytest.approx(30.1)
+    assert result.net_margin_pct == pytest.approx(25.3)
+    # Debt-to-equity is a raw ratio upstream; scaled x100 to yfinance's percent-form.
+    assert result.debt_to_equity == pytest.approx(187.0)
     assert result.source == "finnhub"
+
+
+def test_get_basic_financials_falls_back_to_annual_margins_and_debt(
+    finnhub_conn: sqlite3.Connection,
+) -> None:
+    mock = MagicMock()
+    mock.company_basic_financials.return_value = {
+        "metric": {
+            "peTTM": 10.0,
+            "grossMarginAnnual": 40.0,
+            "operatingMarginAnnual": 20.0,
+            "netProfitMarginAnnual": 12.0,
+            "totalDebt/totalEquityAnnual": 0.5,
+        }
+    }
+    client = _make_client(finnhub_conn, mock)
+
+    result = client.get_basic_financials("AAPL")
+    assert isinstance(result, FinnhubFinancials)
+    assert result.gross_margin_pct == pytest.approx(40.0)
+    assert result.operating_margin_pct == pytest.approx(20.0)
+    assert result.net_margin_pct == pytest.approx(12.0)
+    assert result.debt_to_equity == pytest.approx(50.0)
+
+
+def test_get_basic_financials_missing_margins_stay_none(finnhub_conn: sqlite3.Connection) -> None:
+    mock = MagicMock()
+    mock.company_basic_financials.return_value = {"metric": {"peTTM": 10.0}}
+    client = _make_client(finnhub_conn, mock)
+
+    result = client.get_basic_financials("AAPL")
+    assert isinstance(result, FinnhubFinancials)
+    assert result.gross_margin_pct is None
+    assert result.operating_margin_pct is None
+    assert result.net_margin_pct is None
+    assert result.debt_to_equity is None
 
 
 def test_get_basic_financials_caches_result(

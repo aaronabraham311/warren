@@ -1,5 +1,13 @@
 {
-  "metric": { "peTTM": 28.5, "pbQuarterly": 45.2, "roeTTM": 150.0 },
+  "metric": {
+    "peTTM": 28.5,
+    "pbQuarterly": 45.2,
+    "roeTTM": 150.0,
+    "grossMarginTTM": 46.2,
+    "operatingMarginTTM": 30.1,
+    "netProfitMarginTTM": 25.3,
+    "totalDebt/totalEquityQuarterly": 1.87
+  },
   "metricType": "all",
   "symbol": "AAPL"
 }

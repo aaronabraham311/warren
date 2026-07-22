@@ -48,6 +48,10 @@ class FinnhubFinancials(BaseModel):
     pe_ratio: float | None
     pb_ratio: float | None
     roe_pct: float | None
+    debt_to_equity: float | None = None
+    gross_margin_pct: float | None = None
+    operating_margin_pct: float | None = None
+    net_margin_pct: float | None = None
     # Field names deliberately mirror FundamentalsData (yfinance) so comparison
     # logic can treat the two as structurally equivalent.
     source: Literal["finnhub"] = "finnhub"
@@ -79,6 +83,14 @@ def _as_float(v: object) -> float | None:
     if isinstance(v, (int, float)) and not isinstance(v, bool):
         return float(v)
     return None
+
+
+def _de_to_pct(v: object) -> float | None:
+    """Finnhub reports debt-to-equity as a raw ratio (e.g. 1.87); yfinance's
+    ``debtToEquity`` is percent-form (e.g. 187.0). Scale by 100 so the projected
+    ``FundamentalsData.debt_to_equity`` keeps a single, consistent convention."""
+    f = _as_float(v)
+    return f * 100 if f is not None else None
 
 
 def _as_str(v: object) -> str:
@@ -261,6 +273,20 @@ class FinnhubClient:
             pe_ratio=_as_float(metric.get("peTTM")),
             pb_ratio=_as_float(metric.get("pbQuarterly") or metric.get("pbAnnual")),
             roe_pct=_as_float(metric.get("roeTTM")),
+            # Finnhub margins are already percentages — map directly (no x100).
+            gross_margin_pct=_as_float(
+                metric.get("grossMarginTTM") or metric.get("grossMarginAnnual")
+            ),
+            operating_margin_pct=_as_float(
+                metric.get("operatingMarginTTM") or metric.get("operatingMarginAnnual")
+            ),
+            net_margin_pct=_as_float(
+                metric.get("netProfitMarginTTM") or metric.get("netProfitMarginAnnual")
+            ),
+            debt_to_equity=_de_to_pct(
+                metric.get("totalDebt/totalEquityQuarterly")
+                or metric.get("totalDebt/totalEquityAnnual")
+            ),
             source="finnhub",
         )
 
