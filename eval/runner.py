@@ -18,6 +18,8 @@ ticker to produce a guaranteed failure grounded in nothing but ``not_found`` err
 
 import argparse
 import json
+import os
+import sqlite3
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -29,8 +31,10 @@ from agent.budget import Budget, RunContext
 from agent.loop import analyze_ticker
 from agent.persona import DefaultPersona
 from agent.routing import HardcodedSonnetRouting
+from data_sources.cache import CacheStore
 from eval.golden_set import EvalExample, load_all_examples
 from eval.grader import EvalGrade, failed_grade, grade_analysis
+from eval.judge import SonnetThesisJudge, ThesisJudge
 from eval.tool_fixtures import FIXTURES_DIR, FixtureToolRunner, has_tool_fixtures
 
 load_dotenv()  # must precede storage.engine import so WARREN_DB applies before engine creation
@@ -64,6 +68,7 @@ def _grade_one(
     routing_policy: HardcodedSonnetRouting,
     client: anthropic.Anthropic,
     fixtures_root: Path,
+    judge: ThesisJudge | None = None,
 ) -> EvalGrade:
     if not has_tool_fixtures(example.ticker, fixtures_root):
         logger.log("ticker_skipped", ticker=example.ticker, reason="fixture_missing")
@@ -105,7 +110,7 @@ def _grade_one(
         iterations=run_context.iterations,
         termination=result.termination_reason,
     )
-    return grade_analysis(result, example)
+    return grade_analysis(result, example, judge)
 
 
 def _print_summary(grades: list[EvalGrade]) -> None:
@@ -130,8 +135,14 @@ def run_eval(
     client: anthropic.Anthropic | None = None,
     eval_run_id: str | None = None,
     fixtures_root: Path = FIXTURES_DIR,
+    judge: ThesisJudge | None = None,
 ) -> list[EvalGrade]:
-    """Replay the agent over *examples* against fixtures, grade, persist, and summarise."""
+    """Replay the agent over *examples* against fixtures, grade, persist, and summarise.
+
+    *judge* is injected (not built here) so the harness stays deterministic and offline in
+    tests — the CLI ``main()`` supplies the live Sonnet 5 judge; ``judge=None`` grades
+    ``thesis_must_mention`` by substring, unchanged.
+    """
     if examples is None:
         examples = load_all_examples()
     if client is None:
@@ -156,7 +167,7 @@ def run_eval(
     grades: list[EvalGrade] = []
     for example in examples:
         grade = _grade_one(
-            example, run_id, budget, logger, persona, routing_policy, client, fixtures_root
+            example, run_id, budget, logger, persona, routing_policy, client, fixtures_root, judge
         )
         grades.append(grade)
         write_eval_run(
@@ -218,7 +229,17 @@ def main() -> None:
         parser.error("nothing to do: pass --golden-set")
 
     migrate()
-    grades = run_eval(output_path=args.output, eval_run_id=args.eval_run_id)
+    # Semantic thesis grading, pinned to Sonnet 5, with verdicts cached in $WARREN_DB so
+    # re-runs are stable and free. Built here (not in run_eval) so tests stay offline.
+    client = anthropic.Anthropic()
+    cache = CacheStore(sqlite3.connect(os.environ.get("WARREN_DB", "warren.db")))
+    judge = SonnetThesisJudge(client, cache)
+    grades = run_eval(
+        output_path=args.output,
+        client=client,
+        eval_run_id=args.eval_run_id,
+        judge=judge,
+    )
     if any(not g.passed for g in grades):
         sys.exit(1)
 

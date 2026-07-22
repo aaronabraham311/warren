@@ -28,6 +28,7 @@ from pydantic import BaseModel
 
 from agent.models import AnalysisOutput, LynchBuffettSignals
 from eval.golden_set import EvalExample, SignalsExpectation
+from eval.judge import ThesisJudge
 
 Severity = Literal["must", "should"]
 
@@ -117,7 +118,19 @@ def _signal_count_checks(
     return checks
 
 
-def grade_analysis(result: AnalysisOutput, example: EvalExample) -> EvalGrade:
+def grade_analysis(
+    result: AnalysisOutput,
+    example: EvalExample,
+    judge: ThesisJudge | None = None,
+) -> EvalGrade:
+    """Grade *result* against *example*.
+
+    When *judge* is supplied, each ``thesis_must_mention`` expectation is graded
+    semantically (does the thesis reason about the topic, in any phrasing) rather than by
+    substring match. Every other check family stays deterministic, and ``judge=None``
+    preserves the exact substring behavior — the grader's default and the path all unit
+    tests exercise.
+    """
     expectations = example.expectations
     thesis_lower = result.thesis.lower()
     excerpt = result.thesis[:_THESIS_EXCERPT_CHARS]
@@ -135,10 +148,26 @@ def grade_analysis(result: AnalysisOutput, example: EvalExample) -> EvalGrade:
     )
 
     for mention in expectations.thesis_must_mention:
+        check_name = f"thesis_mentions_{_slug('_or_'.join(mention.any_of[:2]))}"
+        if judge is not None:
+            # Semantic grading: does the thesis reason about the topic in any phrasing?
+            verdict = judge.judge(
+                thesis=result.thesis, concept=mention.any_of, ticker=example.ticker
+            )
+            checks.append(
+                CheckResult(
+                    check_name=check_name,
+                    passed=verdict.passes,
+                    expected=f"engages topic {mention.any_of}",
+                    actual=verdict.reasoning,
+                    severity="must",
+                )
+            )
+            continue
         found = [kw for kw in mention.any_of if kw.lower() in thesis_lower]
         checks.append(
             CheckResult(
-                check_name=f"thesis_mentions_{_slug('_or_'.join(mention.any_of[:2]))}",
+                check_name=check_name,
                 passed=bool(found),
                 expected=f"any of {mention.any_of}",
                 actual=f"found {found}" if found else f"none present; thesis={excerpt!r}",

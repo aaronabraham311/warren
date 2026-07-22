@@ -70,6 +70,7 @@ module = [
     "agent.tools.watchlists",
     "eval.golden_set",
     "eval.grader",
+    "eval.judge",
     "data_sources.gdelt_client",
     "data_sources.ofac_client",
     "data_sources.yfinance_client",
