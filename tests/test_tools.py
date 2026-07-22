@@ -24,7 +24,11 @@ from agent.tools.capital_allocation import (
 )
 from agent.tools.filings import ReadFilingInput, ReadFilingTool
 from agent.tools.financial_strength import GetFinancialStrengthInput, GetFinancialStrengthTool
-from agent.tools.fundamentals import GetFundamentalsInput, GetFundamentalsTool
+from agent.tools.fundamentals import (
+    _STALE_FUNDAMENTALS_H,
+    GetFundamentalsInput,
+    GetFundamentalsTool,
+)
 from agent.tools.growth import GetGrowthMetricsInput, GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextInput, GetHoldingContextTool, HoldingContext
 from agent.tools.insider import GetInsiderActivityInput, GetInsiderActivityTool, InsiderActivity
@@ -311,8 +315,35 @@ def test_get_fundamentals_fresh_does_not_fall_back(monkeypatch: pytest.MonkeyPat
     assert fh.financials_calls == 0
 
 
+def test_get_fundamentals_fiscal_normal_age_stays_yfinance(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # yfinance fundamentals age off lastFiscalYearEnd, so a current fetch is still
+    # ~months old (e.g. ~10mo since the last annual filing). That is NOT stale — the
+    # tool must keep yfinance's full 9-field payload, not downgrade to Finnhub's basics.
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, age=7000))  # ~10 months
+    fh = _FakeFinnhub(
+        financials=FinnhubFinancials(
+            ticker="AAPL", as_of=date.today(), pe_ratio=20.0, pb_ratio=3.0, roe_pct=15.0
+        )
+    )
+    monkeypatch.setattr("agent.tools.fundamentals.yfinance_client", lambda: yf)
+    monkeypatch.setattr("agent.tools.fundamentals.finnhub_client", lambda: fh)
+    result = GetFundamentalsTool().run(GetFundamentalsInput(ticker="AAPL"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, FundamentalsData)
+    assert result.data.source == "yfinance"
+    assert fh.financials_calls == 0
+    # the six fields the Finnhub fallback would null out must survive
+    assert result.data.debt_to_equity is not None
+    assert result.data.fcf_ttm_usd is not None
+    assert result.data.gross_margin_pct is not None
+    assert result.data.operating_margin_pct is not None
+    assert result.data.net_margin_pct is not None
+
+
 def test_get_fundamentals_stale_falls_back_to_finnhub(monkeypatch: pytest.MonkeyPatch) -> None:
-    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, age=1000))  # stale
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, age=_STALE_FUNDAMENTALS_H + 1))  # stale
     fh = _FakeFinnhub(
         financials=FinnhubFinancials(
             ticker="AAPL", as_of=date.today(), pe_ratio=20.0, pb_ratio=3.0, roe_pct=15.0
@@ -330,7 +361,7 @@ def test_get_fundamentals_stale_falls_back_to_finnhub(monkeypatch: pytest.Monkey
 def test_get_fundamentals_stale_without_finnhub_returns_yfinance(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, age=1000))
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, age=_STALE_FUNDAMENTALS_H + 1))
     monkeypatch.setattr("agent.tools.fundamentals.yfinance_client", lambda: yf)
     monkeypatch.setattr("agent.tools.fundamentals.finnhub_client", lambda: None)
     result = GetFundamentalsTool().run(GetFundamentalsInput(ticker="AAPL"), _ctx())
