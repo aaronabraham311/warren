@@ -82,9 +82,10 @@ eval/
 
 dashboard/        # Streamlit read-only dashboard — one exception: Today's "Run now" button (see below)
   app.py          # Multi-page entrypoint — `streamlit run dashboard/app.py`; st.navigation + set_page_config
-  data.py         # Pure data access over the ORM + JSONL logs (no Streamlit) — get_latest_run, get_analyses_for_run (§9.Q3 sort), search_analyses (History filters), read_reasoning_trace, cooldown_suppressed_count, previous_recommendation, MONTHLY_WARNING_THRESHOLD_USD
+  data.py         # Pure data access over the ORM + JSONL logs (no Streamlit) — get_latest_run, get_analyses_for_run (§9.Q3 sort), search_analyses (History filters), read_reasoning_trace, cooldown_suppressed_count, previous_recommendation, MONTHLY_WARNING_THRESHOLD_USD; Eval page: eval_run_summaries (per-run pass rate + version join), load_eval_grades (parse check_results JSON → {ticker: {check: EvalCheckResult}}), diff_eval_runs (structured fix/regression diff)
   pages/today.py  # Today page: run-metadata header (incl. cooldown-suppressed count + budget/status banners) + holdings/discovery cards (prior-call delta) + sidebar "Run now" button (`subprocess.run(["python", "-m", "agent.run"])`, the one deliberate exception to the read-only rule — a human-clicked dev convenience, not an automated write path)
   pages/history.py  # History page: sidebar filters (ticker/recommendation/date/confidence) → searchable recommendation archive
+  pages/eval.py   # Eval page: pass-rate-by-prompt-version chart (altair line + dataframe) + side-by-side diff of any two eval runs (net-change banner + per-ticker expanders, green=fix / red=regression, with expected/actual)
   components/analysis_card.py  # render_analysis_card (optional prompt_version label) / render_reasoning_trace; reused by Today + History
   seed_demo.py    # Dev tool: `python -m dashboard.seed_demo` seeds a demo run + history runs (prompt versions) + JSONL trace for a dashboard walkthrough
 

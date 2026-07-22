@@ -14,11 +14,12 @@ import os
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
+from typing import Literal
 
 from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
-from storage.models import Analysis, PromptVersion, Run, ToolCall
+from storage.models import Analysis, EvalRun, PromptVersion, Run, ToolCall
 
 # Event kinds from RunLogger that make up a ticker's reasoning trace.
 _TRACE_EVENTS = {"tool_call", "llm_call"}
@@ -280,3 +281,207 @@ def monthly_cost(session: Session, *, months: int = 6) -> list[MonthlyCost]:
         for month, total_cost in session.execute(stmt)
         if month is not None
     ]
+
+
+# --------------------------------------------------------------------------- #
+# Eval page — pass-rate summaries + run-to-run diff
+# --------------------------------------------------------------------------- #
+
+
+@dataclass
+class EvalRunSummary:
+    """One eval run's aggregate pass rate — a point on the trend chart / a table row.
+
+    `passed`/`total` count `eval_runs` rows for the run (one row per golden-set example);
+    `passed` is the number whose `must` checks all held (`EvalRun.passed`). `version_tag`
+    is joined through `runs → prompt_versions`, or None when the run has no linked version.
+    """
+
+    run_id: str
+    started_at: datetime | None
+    version_tag: str | None
+    total: int
+    passed: int
+
+    @property
+    def pass_rate(self) -> float:
+        """Fraction of examples that passed, or 0.0 for an empty run (no division by zero)."""
+        return self.passed / self.total if self.total else 0.0
+
+
+def eval_run_summaries(session: Session, *, limit: int = 20) -> list[EvalRunSummary]:
+    """The most recent eval runs, newest first, with per-run pass counts and version tag.
+
+    Groups `eval_runs` by `run_id` (each row is one graded example), joins `runs` for the
+    start time and `prompt_versions` for the tag. `passed` sums the boolean `passed` column
+    via a CASE so a NULL grade counts as not-passed rather than poisoning the sum.
+    """
+    passed_sum = func.sum(case((EvalRun.passed.is_(True), 1), else_=0))
+    stmt = (
+        select(
+            EvalRun.run_id,
+            Run.started_at,
+            PromptVersion.version_tag,
+            func.count().label("total"),
+            passed_sum.label("passed"),
+        )
+        .join(Run, EvalRun.run_id == Run.id)
+        .outerjoin(PromptVersion, Run.prompt_version_id == PromptVersion.id)
+        .group_by(EvalRun.run_id)
+        .order_by(Run.started_at.desc())
+        .limit(limit)
+    )
+    return [
+        EvalRunSummary(
+            run_id=run_id,
+            started_at=started_at,
+            version_tag=version_tag,
+            total=total or 0,
+            passed=passed or 0,
+        )
+        for run_id, started_at, version_tag, total, passed in session.execute(stmt)
+    ]
+
+
+@dataclass
+class EvalCheckResult:
+    """One parsed `check_results` entry — mirrors `eval.grader.CheckResult` on disk.
+
+    Stored as JSON in `EvalRun.check_results`; carries the expected/actual envelope so the
+    diff view can show *why* a check failed, not just that it flipped.
+    """
+
+    check_name: str
+    passed: bool
+    expected: str
+    actual: str
+    severity: str
+
+
+def load_eval_grades(session: Session, run_id: str) -> dict[str, dict[str, EvalCheckResult]]:
+    """`{ticker: {check_name: EvalCheckResult}}` for one eval run.
+
+    `EvalRun.check_results` is a JSON *string* (Text column), so it is parsed here. A row with
+    a missing/empty payload contributes an empty check map for its ticker rather than raising.
+    """
+    rows = session.execute(
+        select(EvalRun.example_ticker, EvalRun.check_results).where(EvalRun.run_id == run_id)
+    ).all()
+    grades: dict[str, dict[str, EvalCheckResult]] = {}
+    for ticker, check_results in rows:
+        if ticker is None:
+            continue
+        checks = json.loads(check_results) if check_results else []
+        grades[ticker] = {
+            c["check_name"]: EvalCheckResult(
+                check_name=c["check_name"],
+                passed=c["passed"],
+                expected=c.get("expected", ""),
+                actual=c.get("actual", ""),
+                severity=c.get("severity", ""),
+            )
+            for c in checks
+        }
+    return grades
+
+
+ChangeKind = Literal["fix", "regression", "other"]
+
+
+@dataclass
+class CheckChange:
+    """A single check whose pass/fail state differs between baseline and current runs.
+
+    `old`/`new` are the check's `passed` value in each run, or None when the check is absent
+    from that run (a check added/removed between runs, or a ticker present in only one).
+    """
+
+    check_name: str
+    old: bool | None
+    new: bool | None
+    expected: str
+    actual: str
+
+    @property
+    def kind(self) -> ChangeKind:
+        """`fix` for a False→True flip, `regression` for True→False, else `other`.
+
+        None-involving transitions (a check that appeared or vanished) are `other`: they are
+        shown for inspection but not counted as fixes/regressions, keeping the net summary honest.
+        """
+        if self.old is False and self.new is True:
+            return "fix"
+        if self.old is True and self.new is False:
+            return "regression"
+        return "other"
+
+
+@dataclass
+class TickerDiff:
+    """The changed checks for one ticker (unchanged checks are dropped)."""
+
+    ticker: str
+    changes: list[CheckChange]
+
+
+@dataclass
+class EvalRunDiff:
+    """A baseline→current diff: per-ticker changes plus fix/regression totals.
+
+    `fixes`/`regressions` count `CheckChange`s of the matching `kind` across every ticker, so
+    the net-change banner and the per-ticker detail are always derived from the same set.
+    """
+
+    baseline_run_id: str
+    current_run_id: str
+    ticker_diffs: list[TickerDiff]
+    fixes: int
+    regressions: int
+
+
+def diff_eval_runs(
+    baseline_run_id: str,
+    current_run_id: str,
+    grades_a: dict[str, dict[str, EvalCheckResult]],
+    grades_b: dict[str, dict[str, EvalCheckResult]],
+) -> EvalRunDiff:
+    """Diff two runs' grade maps (from `load_eval_grades`) into per-ticker changed checks.
+
+    For each ticker across both runs, a check is a change when its `passed` value differs
+    (a check missing from one side compares as None). Tickers with no changed checks are
+    omitted entirely, so the diff view shows only what moved.
+    """
+    ticker_diffs: list[TickerDiff] = []
+    fixes = regressions = 0
+    for ticker in sorted(set(grades_a) | set(grades_b)):
+        a = grades_a.get(ticker, {})
+        b = grades_b.get(ticker, {})
+        changes: list[CheckChange] = []
+        for check_name in sorted(set(a) | set(b)):
+            old = a[check_name].passed if check_name in a else None
+            new = b[check_name].passed if check_name in b else None
+            if old == new:
+                continue
+            # Prefer the current run's envelope for detail; fall back to the baseline's.
+            detail = b.get(check_name) or a.get(check_name)
+            change = CheckChange(
+                check_name=check_name,
+                old=old,
+                new=new,
+                expected=detail.expected if detail else "",
+                actual=detail.actual if detail else "",
+            )
+            changes.append(change)
+            if change.kind == "fix":
+                fixes += 1
+            elif change.kind == "regression":
+                regressions += 1
+        if changes:
+            ticker_diffs.append(TickerDiff(ticker=ticker, changes=changes))
+    return EvalRunDiff(
+        baseline_run_id=baseline_run_id,
+        current_run_id=current_run_id,
+        ticker_diffs=ticker_diffs,
+        fixes=fixes,
+        regressions=regressions,
+    )
