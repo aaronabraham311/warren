@@ -71,6 +71,7 @@ eval/
   tool_fixtures.py # FixtureToolRunner (agent.loop.ToolRunner) — serves recorded ToolResults; record_tool_result()
   examples/       # Hand-curated golden expectations, one YAML per ticker (Tech Spec §6.2)
     {ticker}.yaml # e.g. aapl.yaml, brk_b.yaml — dotted tickers use an underscore stem
+  analysis/       # CLI helpers for debugging golden-set runs (see /eval skill for the full rundown)
   fixtures/
     README.md     # The two fixture kinds + the quarterly rotation policy
     __init__.py   # CLIENT-level: load_fixture(ticker, client, method, name=) + record_fixtures()
@@ -98,6 +99,10 @@ tests/
   test_{yfinance,edgar,finnhub,gdelt}_client.py
   test_adverse_media.py
   test_screening.py
+  test_evals/     # All eval/ package tests, grouped
+    test_grader.py, test_judge.py, test_recorder.py, test_runner.py, test_tool_fixtures.py
+    test_analysis/  # eval/analysis/ CLI tests, one file per script
+      test_dump_theses.py, test_diff_runs.py, test_flakiness.py, test_trace_tools.py, test_failures.py
 
 data/
   portfolio.csv   # ticker, shares, cost_basis, purchase_date
