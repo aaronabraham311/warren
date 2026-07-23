@@ -176,7 +176,13 @@ def grade_analysis(
         )
 
     for forbidden in expectations.thesis_must_not_mention:
-        present = forbidden.lower() in thesis_lower
+        haystack = thesis_lower
+        if forbidden.lower() == "risk-free":
+            # "risk-free rate" is standard DCF vocabulary (the discount-rate anchor), not the
+            # overconfidence hype this guard targets ("guaranteed", "can't lose", "no downside").
+            # Strip the collocation so a legitimate discount-rate mention doesn't trip the check.
+            haystack = haystack.replace("risk-free rate", "").replace("risk free rate", "")
+        present = forbidden.lower() in haystack
         checks.append(
             CheckResult(
                 check_name=f"thesis_not_mention_{_slug(forbidden)}",

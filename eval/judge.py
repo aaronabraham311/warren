@@ -33,12 +33,19 @@ _VERDICT_TTL_HOURS = 90 * 24
 
 _JUDGE_MODEL = SONNET_5
 
+# Bumped whenever the judge's grading semantics change, so verdicts cached under an older
+# prompt are not reused. v2: align the judge with the golden set's any-of semantics.
+_JUDGE_PROMPT_VERSION = "v2"
+
 _SYSTEM = (
-    "You grade an equity-analysis thesis against a single expected topic. Decide whether "
-    "the thesis substantively engages that topic for the given company. Judge the idea, "
-    "not the vocabulary: a thesis that reasons about the concept in different words passes; "
-    "a passing mention of the exact keyword with no real engagement does not. Be strict but "
-    "fair, and record your verdict with the record_verdict tool."
+    "You grade an equity-analysis thesis against an expected topic that is defined by a set of "
+    "acceptable framings (an any-of list). The expectation is SATISFIED if the thesis "
+    "substantively engages AT LEAST ONE of those framings for the given company — it need not "
+    "engage all of them, nor the broader narrative that connects them. Judge the idea, not the "
+    "vocabulary: reasoning about any one framing in different words passes; a bare keyword drop "
+    "with no real engagement does not. Do not demand more than one framing, or a specific angle "
+    "the list does not require. Be strict about substance but faithful to the any-of semantics, "
+    "and record your verdict with the record_verdict tool."
 )
 
 _VERDICT_TOOL: anthropic.types.ToolParam = {
@@ -67,12 +74,14 @@ class JudgeVerdict(BaseModel):
 
 
 def _prompt(thesis: str, concept: list[str], ticker: str) -> str:
-    topic = " / ".join(concept)
+    alternatives = "\n".join(f"  - {framing}" for framing in concept)
     return (
         f"Company: {ticker}\n"
-        f"Expected topic (any phrasing of): {topic}\n\n"
+        f"Expected topic — satisfied by substantively engaging ANY ONE of these framings:\n"
+        f"{alternatives}\n\n"
         f"Thesis:\n{thesis}\n\n"
-        f"Does the thesis substantively reason about the expected topic for {ticker}?"
+        f"Does the thesis substantively reason about at least one of the framings above "
+        f"for {ticker}? Engaging a single framing is enough; do not require the others."
     )
 
 
@@ -97,7 +106,7 @@ class SonnetThesisJudge:
         self._model = model
 
     def judge(self, *, thesis: str, concept: list[str], ticker: str) -> JudgeVerdict:
-        key = make_key("eval_judge", self._model, thesis, "|".join(concept))
+        key = make_key("eval_judge", _JUDGE_PROMPT_VERSION, self._model, thesis, "|".join(concept))
         if self._cache is not None:
             cached = self._cache.get(key)
             if cached is not None:
