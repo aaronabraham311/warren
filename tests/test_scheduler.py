@@ -23,12 +23,11 @@ def test_install_cron_exists() -> None:
     assert (SCRIPTS_DIR / "install_cron.sh").exists()
 
 
-def test_plist_template_has_no_plaintext_api_keys() -> None:
-    """Template must never contain real or injected key values — only placeholders."""
+def test_plist_template_has_no_api_keys() -> None:
+    """Template must carry no key material at all — agent/run.py reads .env directly."""
     content = PLIST_TEMPLATE.read_text()
-    # The placeholder strings written by sed before PlistBuddy replaces them
-    assert "PLACEHOLDER_ANTHROPIC_API_KEY" in content
-    assert "PLACEHOLDER_FINNHUB_API_KEY" in content
+    assert "EnvironmentVariables" not in content
+    assert "API_KEY" not in content
     # No pattern that looks like a real key (sk-ant- prefix or long hex/base64 strings)
     assert "sk-ant-" not in content
 

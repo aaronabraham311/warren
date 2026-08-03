@@ -89,7 +89,8 @@ Warren can run autonomously at 2 AM via the OS scheduler. The process is short-l
 ### macOS (launchd)
 
 ```bash
-# Install — reads API keys from .env and injects them via PlistBuddy (never stored in the template)
+# Install — validates .env has ANTHROPIC_API_KEY; the agent reads .env itself at
+# startup, so no keys are copied into the plist or the launchd environment
 bash scripts/install_scheduler.sh
 
 # Verify the job is registered
@@ -109,7 +110,9 @@ bash scripts/uninstall_scheduler.sh
 ### Linux (cron)
 
 ```bash
-# Install — reads API keys from .env and injects them into the cron entry
+# Install — validates .env has ANTHROPIC_API_KEY; the agent reads .env itself at
+# startup, so no keys go into the crontab line. Runs are flock-guarded so a slow
+# run never overlaps the next night's trigger.
 bash scripts/install_cron.sh
 
 # Verify the entry

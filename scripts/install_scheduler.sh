@@ -35,15 +35,14 @@ fi
 mkdir -p "$HOME/Library/LaunchAgents"
 mkdir -p "$PROJECT_DIR/logs"
 
-# Substitute path placeholders; API keys are injected separately via PlistBuddy
-# so they never appear in the template file.
+# No API keys go into the plist: agent/run.py's load_dotenv() reads $PROJECT_DIR/.env
+# directly (resolved from agent/run.py's own path, not cwd or the launchd environment),
+# so nothing needs to be injected here. This also avoids leaving a second plaintext
+# copy of the keys sitting in ~/Library/LaunchAgents.
 sed \
   -e "s|/path/to/warren|$PROJECT_DIR|g" \
   -e "s|/path/to/.venv/bin/python|$VENV_PYTHON|g" \
   "$PLIST_TEMPLATE" > "$PLIST_DEST"
-
-/usr/libexec/PlistBuddy -c "Set :EnvironmentVariables:ANTHROPIC_API_KEY $ANTHROPIC_API_KEY" "$PLIST_DEST"
-/usr/libexec/PlistBuddy -c "Set :EnvironmentVariables:FINNHUB_API_KEY ${FINNHUB_API_KEY:-}" "$PLIST_DEST"
 
 launchctl load "$PLIST_DEST"
 echo "Warren scheduler installed. Next run: tonight at 2 AM."
