@@ -255,7 +255,10 @@ def analyze_ticker(
             persona.system_prompt,
             portfolio_context,
             messages,
-            4096,
+            # A structured analysis (4–6 thesis bullets + Lynch/Buffett signals + risks +
+            # data-quality notes) can exceed 4096 output tokens for verbose names (e.g. a
+            # conglomerate). 4096 truncated the final JSON → stop_reason="max_tokens" → crash.
+            8192,
             run_context,
             ticker,
             temperature,
