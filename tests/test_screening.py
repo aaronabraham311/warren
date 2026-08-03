@@ -1,251 +1,216 @@
-"""Tests for agent.screening — Haiku PASS/FAIL screening pass."""
+"""Tests for agent.screening — deterministic, data-grounded quantitative screen."""
 
 from __future__ import annotations
 
+from datetime import date
 from unittest.mock import MagicMock, patch
-
-import anthropic
-import pytest
 
 from agent.screening import (
     DEFAULT_SCREEN_CRITERIA,
     ScreeningResult,
-    _run_sequential_screening,
+    _fundamentals_checks,
+    _growth_checks,
     run_screening_pass,
-    screening_prompt,
+    screen_ticker,
 )
+from data_sources.errors import DataSourceError
+from data_sources.yfinance_client import FundamentalsData, GrowthData
 
 # ---------------------------------------------------------------------------
-# Helpers
+# Builders + fake client
 # ---------------------------------------------------------------------------
 
-SYSTEM = "You are a test persona."
-UNIVERSE = ["AAPL", "MSFT", "GOOG"]
+# Default builders produce a name that clears all five criteria comfortably.
 
 
-def _text_message(text: str) -> anthropic.types.Message:
-    return anthropic.types.Message(
-        id="msg_01",
-        type="message",
-        role="assistant",
-        content=[anthropic.types.TextBlock(type="text", text=text)],
-        model="claude-haiku-4-5-20251001",
-        stop_reason="end_turn",
-        stop_sequence=None,
-        usage=anthropic.types.Usage(input_tokens=5, output_tokens=1),
+def _fundamentals(
+    ticker: str = "AAPL",
+    pe: float | None = 20.0,
+    roe_pct: float | None = 20.0,
+    de: float | None = 50.0,
+) -> FundamentalsData:
+    return FundamentalsData(
+        ticker=ticker,
+        as_of=date.today(),
+        pe_ratio=pe,
+        pb_ratio=None,
+        roe_pct=roe_pct,
+        debt_to_equity=de,
+        fcf_ttm_usd=None,
+        gross_margin_pct=None,
+        operating_margin_pct=None,
+        net_margin_pct=None,
+        sector=None,
+        data_age_hours=1,
+        source="yfinance",
     )
 
 
-def _make_batch_result_item(ticker: str, verdict: str) -> MagicMock:
-    item = MagicMock()
-    item.custom_id = f"screen-{ticker}"
-    item.result.type = "succeeded"
-    text_block = anthropic.types.TextBlock(type="text", text=verdict)
-    item.result.message.content = [text_block]
-    return item
+def _growth(
+    ticker: str = "AAPL",
+    peg: float | None = 1.0,
+    rev_cagr: float | None = 0.10,
+) -> GrowthData:
+    return GrowthData(
+        ticker=ticker,
+        as_of=date.today(),
+        revenue_cagr_3y=rev_cagr,
+        earnings_cagr_3y=None,
+        peg_ratio=peg,
+        data_age_hours=1,
+    )
+
+
+class _FakeYF:
+    """Stand-in for YFinanceClient that serves canned per-ticker payloads."""
+
+    def __init__(
+        self,
+        fundamentals: dict[str, FundamentalsData | DataSourceError],
+        growth: dict[str, GrowthData | DataSourceError],
+    ) -> None:
+        self._f = fundamentals
+        self._g = growth
+        self.growth_calls: list[str] = []
+
+    def get_fundamentals(self, ticker: str) -> FundamentalsData | DataSourceError:
+        return self._f[ticker]
+
+    def get_growth_metrics(self, ticker: str) -> GrowthData | DataSourceError:
+        self.growth_calls.append(ticker)
+        return self._g[ticker]
+
+
+def _error() -> DataSourceError:
+    return DataSourceError(error_code="not_found", message="no data")
 
 
 # ---------------------------------------------------------------------------
-# screening_prompt
+# Criterion checks — units and positivity guards
 # ---------------------------------------------------------------------------
 
 
-def test_screening_prompt_contains_ticker() -> None:
-    prompt = screening_prompt("MSFT", DEFAULT_SCREEN_CRITERIA)
-    assert "MSFT" in prompt
+def test_fundamentals_checks_all_pass() -> None:
+    assert _fundamentals_checks(_fundamentals(), DEFAULT_SCREEN_CRITERIA) == [True, True, True]
 
 
-def test_screening_prompt_contains_criteria_values() -> None:
-    criteria = {
-        "pe_max": 25.0,
-        "peg_max": 1.2,
-        "roe_min": 0.15,
-        "de_max": 0.8,
-        "rev_growth_min": 0.08,
-    }
-    prompt = screening_prompt("NVDA", criteria)
-    assert "25" in prompt
-    assert "1.2" in prompt
-    assert "0.15" in prompt
+def test_pe_boundary_and_negative_guard() -> None:
+    c = DEFAULT_SCREEN_CRITERIA
+    assert _fundamentals_checks(_fundamentals(pe=30.0), c)[0] is True  # boundary inclusive
+    assert _fundamentals_checks(_fundamentals(pe=30.01), c)[0] is False
+    assert _fundamentals_checks(_fundamentals(pe=-5.0), c)[0] is False  # loss-maker
 
 
-def test_screening_prompt_ends_with_pass_fail() -> None:
-    prompt = screening_prompt("AAPL", DEFAULT_SCREEN_CRITERIA)
-    assert "PASS or FAIL" in prompt
+def test_roe_percentage_vs_fraction_units() -> None:
+    """roe_pct is a percentage (12.0); criteria roe_min is a fraction (0.12)."""
+    c = DEFAULT_SCREEN_CRITERIA
+    assert _fundamentals_checks(_fundamentals(roe_pct=12.0), c)[1] is True  # exactly 12%
+    assert _fundamentals_checks(_fundamentals(roe_pct=11.99), c)[1] is False
+
+
+def test_debt_to_equity_percentage_units_and_negative_guard() -> None:
+    """yfinance D/E is a percentage (100.0 == 1.0x); de_max is a ratio."""
+    c = DEFAULT_SCREEN_CRITERIA
+    assert _fundamentals_checks(_fundamentals(de=100.0), c)[2] is True  # 1.0x boundary
+    assert _fundamentals_checks(_fundamentals(de=100.01), c)[2] is False
+    assert _fundamentals_checks(_fundamentals(de=-10.0), c)[2] is False  # negative equity
+
+
+def test_missing_fundamentals_metrics_are_omitted() -> None:
+    checks = _fundamentals_checks(_fundamentals(pe=None, roe_pct=None), DEFAULT_SCREEN_CRITERIA)
+    assert checks == [True]  # only D/E present
+    assert _fundamentals_checks(None, DEFAULT_SCREEN_CRITERIA) == []
+
+
+def test_growth_checks_units_and_guards() -> None:
+    c = DEFAULT_SCREEN_CRITERIA
+    assert _growth_checks(_growth(peg=1.5, rev_cagr=0.05), c) == [True, True]  # boundaries
+    assert _growth_checks(_growth(peg=1.6), c)[0] is False
+    assert _growth_checks(_growth(peg=-1.0), c)[0] is False  # negative PEG
+    assert _growth_checks(_growth(rev_cagr=0.04), c)[1] is False
+    assert _growth_checks(None, c) == []
 
 
 # ---------------------------------------------------------------------------
-# Sequential path
+# screen_ticker — pass logic, missing-data policy, short-circuit
 # ---------------------------------------------------------------------------
 
 
-def test_sequential_pass_and_fail(monkeypatch: pytest.MonkeyPatch) -> None:
-    """MSFT returns PASS; AAPL and GOOG return FAIL."""
-    responses = {
-        "AAPL": _text_message("FAIL"),
-        "MSFT": _text_message("PASS"),
-        "GOOG": _text_message("FAIL"),
-    }
-
-    def _create(**kwargs: object) -> anthropic.types.Message:
-        prompt_text = str(kwargs.get("messages", ""))
-        for ticker, msg in responses.items():
-            if ticker in prompt_text:
-                return msg
-        return _text_message("FAIL")
-
-    mock_client = MagicMock(spec=anthropic.Anthropic)
-    mock_client.messages.create.side_effect = _create
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        result = _run_sequential_screening(UNIVERSE, SYSTEM, DEFAULT_SCREEN_CRITERIA)
-
-    assert result.candidates == ["MSFT"]
-    assert abs(result.pass_rate - 1 / 3) < 1e-9
-    assert result.batch_id is None
+def test_screen_ticker_all_pass() -> None:
+    yf = _FakeYF({"AAPL": _fundamentals()}, {"AAPL": _growth()})
+    assert screen_ticker("AAPL", yf, DEFAULT_SCREEN_CRITERIA) is True  # type: ignore[arg-type]
 
 
-def test_run_screening_pass_sequential_returns_nonempty(monkeypatch: pytest.MonkeyPatch) -> None:
-    mock_client = MagicMock(spec=anthropic.Anthropic)
-    mock_client.messages.create.return_value = _text_message("PASS")
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        result = run_screening_pass(UNIVERSE, SYSTEM, use_batch_api=False)
-
-    assert len(result.candidates) > 0
-    assert result.batch_id is None
+def test_fundamentals_failure_short_circuits_growth_fetch() -> None:
+    """A failed fundamentals metric means the ticker can't pass — skip the heavy growth call."""
+    yf = _FakeYF({"AAPL": _fundamentals(pe=45.0)}, {"AAPL": _growth()})
+    assert screen_ticker("AAPL", yf, DEFAULT_SCREEN_CRITERIA) is False  # type: ignore[arg-type]
+    assert yf.growth_calls == []  # growth never fetched
 
 
-def test_sequential_empty_universe() -> None:
-    with patch("agent.screening.anthropic.Anthropic"):
-        result = _run_sequential_screening([], SYSTEM, DEFAULT_SCREEN_CRITERIA)
+def test_below_min_criteria_present_fails() -> None:
+    """Only one metric present (P/E) — not enough evidence to surface the name."""
+    yf = _FakeYF(
+        {"AAPL": _fundamentals(roe_pct=None, de=None)},
+        {"AAPL": _growth(peg=None, rev_cagr=None)},
+    )
+    assert screen_ticker("AAPL", yf, DEFAULT_SCREEN_CRITERIA) is False  # type: ignore[arg-type]
 
+
+def test_exactly_three_present_passes() -> None:
+    """Three fundamentals present + passing, growth entirely missing → passes."""
+    yf = _FakeYF(
+        {"AAPL": _fundamentals()},
+        {"AAPL": _growth(peg=None, rev_cagr=None)},
+    )
+    assert screen_ticker("AAPL", yf, DEFAULT_SCREEN_CRITERIA) is True  # type: ignore[arg-type]
+
+
+def test_datasource_error_treated_as_missing() -> None:
+    """A fundamentals fetch error is missing data (no failure) → growth still fetched, but
+    two present criteria is below the minimum, so the ticker does not pass."""
+    yf = _FakeYF({"AAPL": _error()}, {"AAPL": _growth()})
+    assert screen_ticker("AAPL", yf, DEFAULT_SCREEN_CRITERIA) is False  # type: ignore[arg-type]
+    assert yf.growth_calls == ["AAPL"]  # no fundamentals failure → growth fetched
+
+
+# ---------------------------------------------------------------------------
+# run_screening_pass
+# ---------------------------------------------------------------------------
+
+
+def test_run_screening_candidates_and_pass_rate() -> None:
+    yf = _FakeYF(
+        {"A": _fundamentals(), "B": _fundamentals(), "C": _fundamentals(pe=99.0)},
+        {"A": _growth(), "B": _growth(), "C": _growth()},
+    )
+    result = run_screening_pass(["A", "B", "C"], client=yf)  # type: ignore[arg-type]
+    assert result.candidates == ["A", "B"]
+    assert abs(result.pass_rate - 2 / 3) < 1e-9
+
+
+def test_run_screening_empty_universe() -> None:
+    yf = _FakeYF({}, {})
+    result = run_screening_pass([], client=yf)  # type: ignore[arg-type]
     assert result.candidates == []
     assert result.pass_rate == 0.0
+    assert isinstance(result, ScreeningResult)
 
 
-def test_sequential_case_insensitive_pass(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Haiku might respond 'pass' in lowercase — should still be accepted."""
-    mock_client = MagicMock(spec=anthropic.Anthropic)
-    mock_client.messages.create.return_value = _text_message("pass")
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        result = _run_sequential_screening(["AAPL"], SYSTEM, DEFAULT_SCREEN_CRITERIA)
-
+def test_run_screening_uses_singleton_when_no_client() -> None:
+    yf = _FakeYF({"AAPL": _fundamentals()}, {"AAPL": _growth()})
+    with patch("agent.screening.yfinance_client", return_value=yf):
+        result = run_screening_pass(["AAPL"])
     assert result.candidates == ["AAPL"]
 
 
-# ---------------------------------------------------------------------------
-# Batch path
-# ---------------------------------------------------------------------------
-
-
-def _make_mock_batch_client(
-    batch_id: str,
-    statuses: list[str],
-    items: list[MagicMock],
-) -> MagicMock:
-    """Build a mock Anthropic client whose batch API returns canned data."""
-    mock_client = MagicMock(spec=anthropic.Anthropic)
-
-    mock_batch = MagicMock()
-    mock_batch.id = batch_id
-    mock_client.messages.batches.create.return_value = mock_batch
-
-    retrieve_responses = []
-    for s in statuses:
-        r = MagicMock()
-        r.processing_status = s
-        retrieve_responses.append(r)
-    mock_client.messages.batches.retrieve.side_effect = retrieve_responses
-
-    mock_client.messages.batches.results.return_value = iter(items)
-    return mock_client
-
-
-def test_batch_path_returns_candidates() -> None:
-    items = [
-        _make_batch_result_item("AAPL", "FAIL"),
-        _make_batch_result_item("MSFT", "PASS"),
-        _make_batch_result_item("GOOG", "FAIL"),
-    ]
-    mock_client = _make_mock_batch_client("batch_abc", ["ended"], items)
-    sleep_calls: list[float] = []
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        result = run_screening_pass(UNIVERSE, SYSTEM, use_batch_api=True, _sleep=sleep_calls.append)
-
-    assert result.candidates == ["MSFT"]
-    assert result.batch_id == "batch_abc"
-    assert len(sleep_calls) == 0  # status was "ended" immediately
-
-
-def test_batch_polls_until_ended() -> None:
-    items = [_make_batch_result_item("AAPL", "PASS")]
-    mock_client = _make_mock_batch_client(
-        "batch_xyz", ["in_progress", "in_progress", "ended"], items
-    )
-    sleep_calls: list[float] = []
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        run_screening_pass(["AAPL"], SYSTEM, use_batch_api=True, _sleep=sleep_calls.append)
-
-    assert len(sleep_calls) == 2
-
-
-def test_batch_skips_errored_items() -> None:
-    errored = MagicMock()
-    errored.custom_id = "screen-ERR"
-    errored.result.type = "errored"
-
-    items = [
-        _make_batch_result_item("MSFT", "PASS"),
-        errored,
-    ]
-    mock_client = _make_mock_batch_client("batch_1", ["ended"], items)
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        result = run_screening_pass(
-            ["MSFT", "ERR"], SYSTEM, use_batch_api=True, _sleep=lambda _: None
-        )
-
-    assert result.candidates == ["MSFT"]
-    assert "ERR" not in result.candidates
-
-
-def test_batch_pass_rate() -> None:
-    items = [
-        _make_batch_result_item("A", "PASS"),
-        _make_batch_result_item("B", "PASS"),
-        _make_batch_result_item("C", "FAIL"),
-        _make_batch_result_item("D", "FAIL"),
-    ]
-    mock_client = _make_mock_batch_client("batch_2", ["ended"], items)
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        result = run_screening_pass(
-            ["A", "B", "C", "D"], SYSTEM, use_batch_api=True, _sleep=lambda _: None
-        )
-
-    assert abs(result.pass_rate - 0.5) < 1e-9
-
-
-# ---------------------------------------------------------------------------
-# Phase event logging
-# ---------------------------------------------------------------------------
-
-
-def test_phase_events_emitted_sequential(monkeypatch: pytest.MonkeyPatch) -> None:
-    mock_client = MagicMock(spec=anthropic.Anthropic)
-    mock_client.messages.create.return_value = _text_message("PASS")
-
+def test_phase_events_emitted() -> None:
+    yf = _FakeYF({"AAPL": _fundamentals()}, {"AAPL": _growth()})
     logged: list[tuple[str, dict[str, object]]] = []
-
     mock_logger = MagicMock()
     mock_logger.log.side_effect = lambda event, **kw: logged.append((event, kw))
 
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        run_screening_pass(["AAPL"], SYSTEM, use_batch_api=False, logger=mock_logger)
+    run_screening_pass(["AAPL"], logger=mock_logger, client=yf)  # type: ignore[arg-type]
 
     events = [e for e, _ in logged]
     assert "phase_started" in events
@@ -254,63 +219,21 @@ def test_phase_events_emitted_sequential(monkeypatch: pytest.MonkeyPatch) -> Non
     started_kw = next(kw for e, kw in logged if e == "phase_started")
     assert started_kw["phase"] == "screening"
     assert started_kw["universe_size"] == 1
-    assert started_kw["model"] == "claude-haiku-4-5-20251001"
-    assert started_kw["use_batch_api"] is False
+    assert started_kw["method"] == "quantitative"
 
     completed_kw = next(kw for e, kw in logged if e == "phase_completed")
-    assert completed_kw["phase"] == "screening"
-    assert "candidates_surfaced" in completed_kw
+    assert completed_kw["candidates_surfaced"] == ["AAPL"]
     assert "pass_rate" in completed_kw
-    assert "batch_id" in completed_kw
-
-
-def test_phase_events_emitted_batch() -> None:
-    items = [_make_batch_result_item("AAPL", "PASS")]
-    mock_client = _make_mock_batch_client("batch_log", ["ended"], items)
-
-    logged: list[tuple[str, dict[str, object]]] = []
-    mock_logger = MagicMock()
-    mock_logger.log.side_effect = lambda event, **kw: logged.append((event, kw))
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        run_screening_pass(
-            ["AAPL"], SYSTEM, use_batch_api=True, logger=mock_logger, _sleep=lambda _: None
-        )
-
-    started_kw = next(kw for e, kw in logged if e == "phase_started")
-    assert started_kw["use_batch_api"] is True
-
-    completed_kw = next(kw for e, kw in logged if e == "phase_completed")
-    assert completed_kw["batch_id"] == "batch_log"
 
 
 def test_no_logger_does_not_crash() -> None:
-    mock_client = MagicMock(spec=anthropic.Anthropic)
-    mock_client.messages.create.return_value = _text_message("FAIL")
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        result = run_screening_pass(["AAPL"], SYSTEM, use_batch_api=False, logger=None)
-
+    yf = _FakeYF({"AAPL": _fundamentals(pe=99.0)}, {"AAPL": _growth()})
+    result = run_screening_pass(["AAPL"], logger=None, client=yf)  # type: ignore[arg-type]
     assert isinstance(result, ScreeningResult)
 
 
-# ---------------------------------------------------------------------------
-# Cooldown — verified at the caller level (screening is DB-free)
-# ---------------------------------------------------------------------------
-
-
 def test_screening_accepts_pre_filtered_universe() -> None:
-    """Verify that passing a cooldown-filtered list is all that's needed.
-
-    The screening module must not touch any DB or cooldown state itself.
-    Passing a filtered list (e.g. ["MSFT"]) is sufficient for isolation.
-    """
-    mock_client = MagicMock(spec=anthropic.Anthropic)
-    mock_client.messages.create.return_value = _text_message("PASS")
-
-    with patch("agent.screening.anthropic.Anthropic", return_value=mock_client):
-        # Only MSFT is passed — AAPL was suppressed by cooldown upstream
-        result = run_screening_pass(["MSFT"], SYSTEM, use_batch_api=False)
-
+    """Screening must not touch the DB or cooldown state — a filtered list is all it needs."""
+    yf = _FakeYF({"MSFT": _fundamentals()}, {"MSFT": _growth()})
+    result = run_screening_pass(["MSFT"], client=yf)  # type: ignore[arg-type]
     assert result.candidates == ["MSFT"]
-    assert mock_client.messages.create.call_count == 1

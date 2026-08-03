@@ -1,10 +1,18 @@
-"""Haiku-powered screening pass — cheap PASS/FAIL filter over the full universe.
+"""Deterministic quantitative screening pass — a data-grounded filter over the universe.
 
-Runs five quantitative thresholds via claude-haiku-4-5-20251001 to surface 3–5
-discovery candidates per night. Two execution paths:
+Fetches real fundamentals and growth metrics for each ticker and applies five
+numeric thresholds in code (no LLM). This replaces the earlier Haiku PASS/FAIL
+screen, which was asked to judge quantitative criteria *without being given any
+numbers* and consequently failed essentially everything (0 candidates / 506).
 
-  use_batch_api=True  — Anthropic Batch API (50% cost discount, async, ~5 min)
-  use_batch_api=False — sequential synchronous calls (immediate, for local dev)
+Grounding the screen in fetched data also removes the per-run Haiku batch cost,
+and makes the pass a pure, reproducible function of the source data.
+
+Missing-data policy: only criteria with available data are evaluated. A ticker
+passes when nothing present is violated **and** at least ``MIN_CRITERIA_PRESENT``
+of the five criteria had data — strict enough not to surface a name on no
+evidence, lenient enough to tolerate yfinance's frequent gaps (e.g. a missing
+PEG ratio) without wiping out the candidate pool.
 
 Cooldown suppression is the caller's responsibility: filter the universe with
 ``agent.cooldown.filter_universe_for_cooldown`` *before* passing it here.
@@ -12,24 +20,22 @@ Cooldown suppression is the caller's responsibility: filter the universe with
 
 from __future__ import annotations
 
-import time
-from collections.abc import Callable
 from dataclasses import dataclass
 
-import anthropic
-from anthropic.types import TextBlock
-
+from agent.tools._clients import yfinance_client
+from data_sources.yfinance_client import FundamentalsData, GrowthData, YFinanceClient
 from storage.logger import RunLogger
 
-SCREENING_MODEL = "claude-haiku-4-5-20251001"
-_BATCH_POLL_INTERVAL = 30.0
+# At least this many of the five criteria must have data for a ticker to be
+# eligible — otherwise a name with one lucky metric could sneak through.
+MIN_CRITERIA_PRESENT = 3
 
 DEFAULT_SCREEN_CRITERIA: dict[str, float] = {
     "pe_max": 30.0,
     "peg_max": 1.5,
-    "roe_min": 0.12,
-    "de_max": 1.0,
-    "rev_growth_min": 0.05,
+    "roe_min": 0.12,  # fraction: 0.12 == 12%
+    "de_max": 1.0,  # ratio: 1.0 == 100% debt-to-equity
+    "rev_growth_min": 0.05,  # fraction: 0.05 == 5% 3Y revenue CAGR
 }
 
 
@@ -37,128 +43,94 @@ DEFAULT_SCREEN_CRITERIA: dict[str, float] = {
 class ScreeningResult:
     candidates: list[str]
     pass_rate: float
-    batch_id: str | None  # None for the sequential path
 
 
-def screening_prompt(ticker: str, criteria: dict[str, float]) -> str:
-    return (
-        f"You are doing a quick quantitative screen on {ticker}. "
-        "Based on available data, does this stock pass the following criteria?\n\n"
-        "Criteria:\n"
-        f"- P/E ratio ≤ {criteria.get('pe_max', 30)}\n"
-        f"- PEG ratio ≤ {criteria.get('peg_max', 1.5)}\n"
-        f"- ROE ≥ {criteria.get('roe_min', 0.12)} (12%)\n"
-        f"- Debt/equity ≤ {criteria.get('de_max', 1.0)}\n"
-        f"- Revenue growth (3Y CAGR) ≥ {criteria.get('rev_growth_min', 0.05)} (5%)\n\n"
-        "Respond with exactly one word: PASS or FAIL."
-    )
+def _fundamentals_checks(
+    fundamentals: FundamentalsData | None, criteria: dict[str, float]
+) -> list[bool]:
+    """Pass/fail for each *present* fundamentals-sourced criterion (P/E, ROE, D/E)."""
+    if fundamentals is None:
+        return []
+    checks: list[bool] = []
+    if fundamentals.pe_ratio is not None:
+        # A negative P/E (loss-maker) must not pass a value screen, so guard positivity.
+        checks.append(0 < fundamentals.pe_ratio <= criteria["pe_max"])
+    if fundamentals.roe_pct is not None:
+        # roe_pct is a percentage (15.0 == 15%); roe_min is a fraction (0.12 == 12%).
+        checks.append(fundamentals.roe_pct >= criteria["roe_min"] * 100)
+    if fundamentals.debt_to_equity is not None:
+        # yfinance debtToEquity is a percentage (154.0 == 1.54x); de_max is a ratio.
+        # Negative equity (negative D/E) is a red flag, so require a non-negative value.
+        checks.append(0 <= fundamentals.debt_to_equity <= criteria["de_max"] * 100)
+    return checks
+
+
+def _growth_checks(growth: GrowthData | None, criteria: dict[str, float]) -> list[bool]:
+    """Pass/fail for each *present* growth-sourced criterion (PEG, 3Y revenue CAGR)."""
+    if growth is None:
+        return []
+    checks: list[bool] = []
+    if growth.peg_ratio is not None:
+        # A negative PEG (negative earnings or growth) is not a value signal.
+        checks.append(0 < growth.peg_ratio <= criteria["peg_max"])
+    if growth.revenue_cagr_3y is not None:
+        checks.append(growth.revenue_cagr_3y >= criteria["rev_growth_min"])
+    return checks
+
+
+def screen_ticker(ticker: str, client: YFinanceClient, criteria: dict[str, float]) -> bool:
+    """Return True if ``ticker`` clears the screen given live fundamentals + growth data."""
+    f = client.get_fundamentals(ticker)
+    fundamentals = f if isinstance(f, FundamentalsData) else None
+    fund_checks = _fundamentals_checks(fundamentals, criteria)
+
+    # A present fundamentals metric that already fails means the ticker can never
+    # pass (we require *all* present criteria to pass). Skip the expensive growth
+    # fetch — get_growth_metrics pulls full financial statements — in that case.
+    if any(not c for c in fund_checks):
+        return False
+
+    g = client.get_growth_metrics(ticker)
+    growth = g if isinstance(g, GrowthData) else None
+    checks = fund_checks + _growth_checks(growth, criteria)
+
+    return len(checks) >= MIN_CRITERIA_PRESENT and all(checks)
 
 
 def run_screening_pass(
     universe: list[str],
-    system_prompt: str,
     criteria: dict[str, float] | None = None,
-    use_batch_api: bool = True,
     logger: RunLogger | None = None,
-    _sleep: Callable[[float], None] | None = None,
+    client: YFinanceClient | None = None,
 ) -> ScreeningResult:
-    """Screen the universe and return tickers that passed.
+    """Screen the universe and return tickers that clear all available criteria.
 
     Args:
         universe: Tickers to screen (cooldown-filtered by the caller).
-        system_prompt: The persona system prompt — passed verbatim to Haiku.
         criteria: Threshold overrides; defaults to DEFAULT_SCREEN_CRITERIA.
-        use_batch_api: True → Batch API (async); False → sequential (immediate).
         logger: Optional RunLogger; emits phase_started / phase_completed events.
-        _sleep: Test seam for the batch-polling sleep (defaults to time.sleep).
+        client: YFinanceClient override (defaults to the shared singleton).
     """
     effective_criteria = criteria if criteria is not None else DEFAULT_SCREEN_CRITERIA
-    sleep_fn = _sleep if _sleep is not None else time.sleep
+    yf = client if client is not None else yfinance_client()
 
     if logger is not None:
         logger.log(
             "phase_started",
             phase="screening",
             universe_size=len(universe),
-            model=SCREENING_MODEL,
-            use_batch_api=use_batch_api,
+            method="quantitative",
         )
 
-    if use_batch_api:
-        result = _run_batch_screening(universe, system_prompt, effective_criteria, sleep_fn)
-    else:
-        result = _run_sequential_screening(universe, system_prompt, effective_criteria)
+    candidates = [t for t in universe if screen_ticker(t, yf, effective_criteria)]
+    pass_rate = len(candidates) / len(universe) if universe else 0.0
 
     if logger is not None:
         logger.log(
             "phase_completed",
             phase="screening",
-            candidates_surfaced=result.candidates,
-            pass_rate=result.pass_rate,
-            batch_id=result.batch_id,
+            candidates_surfaced=candidates,
+            pass_rate=pass_rate,
         )
 
-    return result
-
-
-def _run_batch_screening(
-    universe: list[str],
-    system_prompt: str,
-    criteria: dict[str, float],
-    sleep_fn: Callable[[float], None],
-) -> ScreeningResult:
-    client = anthropic.Anthropic()
-    batch = client.messages.batches.create(
-        requests=[
-            {
-                "custom_id": f"screen-{ticker}",
-                "params": {
-                    "model": SCREENING_MODEL,
-                    "max_tokens": 10,
-                    "system": system_prompt,
-                    "messages": [{"role": "user", "content": screening_prompt(ticker, criteria)}],
-                },
-            }
-            for ticker in universe
-        ]
-    )
-
-    while True:
-        status = client.messages.batches.retrieve(batch.id)
-        if status.processing_status == "ended":
-            break
-        sleep_fn(_BATCH_POLL_INTERVAL)
-
-    candidates: list[str] = []
-    for item in client.messages.batches.results(batch.id):
-        if item.result.type != "succeeded":
-            continue
-        content = item.result.message.content
-        if content and isinstance(content[0], TextBlock) and "PASS" in content[0].text.upper():
-            candidates.append(item.custom_id.removeprefix("screen-"))
-
-    pass_rate = len(candidates) / len(universe) if universe else 0.0
-    return ScreeningResult(candidates=candidates, pass_rate=pass_rate, batch_id=batch.id)
-
-
-def _run_sequential_screening(
-    universe: list[str],
-    system_prompt: str,
-    criteria: dict[str, float],
-) -> ScreeningResult:
-    client = anthropic.Anthropic()
-    candidates: list[str] = []
-
-    for ticker in universe:
-        response = client.messages.create(
-            model=SCREENING_MODEL,
-            max_tokens=10,
-            system=system_prompt,
-            messages=[{"role": "user", "content": screening_prompt(ticker, criteria)}],
-        )
-        if response.content and isinstance(response.content[0], TextBlock):
-            if "PASS" in response.content[0].text.upper():
-                candidates.append(ticker)
-
-    pass_rate = len(candidates) / len(universe) if universe else 0.0
-    return ScreeningResult(candidates=candidates, pass_rate=pass_rate, batch_id=None)
+    return ScreeningResult(candidates=candidates, pass_rate=pass_rate)
