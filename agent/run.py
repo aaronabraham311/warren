@@ -199,11 +199,6 @@ def main() -> None:
         default="default",
         help="Analysis persona: 'default' (Lynch/Buffett) or 'dirt' (deep-value DIRT methodology)",
     )
-    parser.add_argument(
-        "--no-batch",
-        action="store_true",
-        help="Use sequential (non-batch) screening — immediate results, no 50%% discount",
-    )
     args = parser.parse_args()
 
     migrate()
@@ -252,12 +247,7 @@ def main() -> None:
             suppressed_tickers=cooldown_result.suppressed,
         )
 
-        screening = run_screening_pass(
-            cooldown_result.active,
-            persona.system_prompt,
-            use_batch_api=not args.no_batch,
-            logger=logger,
-        )
+        screening = run_screening_pass(cooldown_result.active, logger=logger)
         candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]
         print(
             f"Screening surfaced {len(screening.candidates)} candidates; "

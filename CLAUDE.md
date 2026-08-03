@@ -19,7 +19,7 @@ agent/
   cooldown.py     # Discovery cooldown — filter_universe_for_cooldown(), has_material_event(), set_cooldown(), get_cooldown_entry(), clear_cooldown(); 7-day dedup with material-news override
   portfolio.py    # load_portfolio/load_watchlist (validated) + sync_*_to_db snapshots
   universe.py     # get_current_universe(session, watchlist) → sorted S&P 500 ∪ watchlist for the Haiku screening prefix. Weekly-refreshed (UniverseSnapshot single-row table); SP500Client fetch with data/sp500.csv fallback. Deterministic sort keeps the cache prefix byte-stable.
-  screening.py    # run_screening_pass(universe, system_prompt, ...) → ScreeningResult — Haiku PASS/FAIL filter over the universe. Batch API path (async, 50% discount) and sequential path (immediate, for local dev). Cooldown filtering is the caller's responsibility.
+  screening.py    # run_screening_pass(universe, ...) → ScreeningResult — deterministic, data-grounded quantitative filter (P/E, PEG, ROE, D/E, 3Y rev CAGR) over the universe via the yfinance client; no LLM. Missing metrics are omitted; a ticker passes with 0 violations and ≥ MIN_CRITERIA_PRESENT (3) present. Heavy get_growth_metrics fetch is skipped when a fundamentals metric already fails. Cooldown filtering is the caller's responsibility.
   loop.py         # Main agentic loop — sends messages, handles tool calls
   persona.py      # System prompt / persona definition
   routing.py      # RoutingPolicy Protocol + strategy objects: PhaseBasedRouting (screen→Haiku, deep→Sonnet, synthesize→Opus via DefaultOpusTrigger's 3 independent §4.2 conditions) and HardcodedSonnetRouting (eval baseline). Swappable into analyze_ticker() with zero loop changes.
@@ -200,7 +200,6 @@ load; refresh quarterly.
 uv sync                        # install / sync deps
 python -m agent.run AAPL       # single ticker deep analysis
 python -m agent.run            # nightly mode: screen universe → deep-analyse top 3 candidates
-python -m agent.run --no-batch # nightly mode with sequential (non-batch) screening
 ruff check .                   # lint
 ruff format .                  # format
 mypy .                         # type check
