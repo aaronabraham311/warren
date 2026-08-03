@@ -29,13 +29,5 @@
 
   <key>StandardErrorPath</key>
   <string>/path/to/warren/logs/launchd_stderr.log</string>
-
-  <key>EnvironmentVariables</key>
-  <dict>
-    <key>ANTHROPIC_API_KEY</key>
-    <string>PLACEHOLDER_ANTHROPIC_API_KEY</string>
-    <key>FINNHUB_API_KEY</key>
-    <string>PLACEHOLDER_FINNHUB_API_KEY</string>
-  </dict>
 </dict>
 </plist>
