@@ -24,6 +24,7 @@ from pydantic import BaseModel, TypeAdapter
 
 from data_sources.cache import CacheStore, make_key
 from data_sources.errors import DataSourceError
+from data_sources.symbols import to_finnhub_symbol
 
 _T = TypeVar("_T")
 
@@ -184,7 +185,8 @@ class FinnhubClient:
     # ── get_news ───────────────────────────────────────────────────────────
 
     def get_news(self, ticker: str, days: int = 7) -> list[NewsItem] | DataSourceError:
-        key = make_key("finnhub_news", ticker.upper(), str(days))
+        symbol = to_finnhub_symbol(ticker)
+        key = make_key("finnhub_news", symbol, str(days))
         cached = self._cache.get(key)
         if cached is not None:
             return list(_NEWS_ADAPTER.validate_json(cached))
@@ -194,7 +196,7 @@ class FinnhubClient:
         try:
             raw = self._with_retry(
                 lambda: self.client.company_news(
-                    ticker.upper(),
+                    symbol,
                     _from=from_date.isoformat(),
                     to=to_date.isoformat(),
                 )
@@ -235,19 +237,18 @@ class FinnhubClient:
     # ── get_basic_financials ───────────────────────────────────────────────
 
     def get_basic_financials(self, ticker: str) -> FinnhubFinancials | DataSourceError:
-        key = make_key("finnhub_financials", ticker.upper())
+        symbol = to_finnhub_symbol(ticker)
+        key = make_key("finnhub_financials", symbol)
         cached = self._cache.get(key)
         if cached is not None:
             return FinnhubFinancials.model_validate_json(cached)
 
         try:
-            raw = self._with_retry(
-                lambda: self.client.company_basic_financials(ticker.upper(), "all")
-            )
-            result = self._parse_financials(ticker, raw)
+            raw = self._with_retry(lambda: self.client.company_basic_financials(symbol, "all"))
+            result = self._parse_financials(symbol, raw)
         except _NotFoundError:
             return DataSourceError(
-                error_code="not_found", message=f"No Finnhub financials for {ticker.upper()}"
+                error_code="not_found", message=f"No Finnhub financials for {symbol}"
             )
         except finnhub.FinnhubRequestException as exc:
             return DataSourceError(error_code="network", message=str(exc))
@@ -295,7 +296,8 @@ class FinnhubClient:
     def get_insider_transactions(
         self, ticker: str, days: int = 90
     ) -> list[FinnhubInsiderTransaction] | DataSourceError:
-        key = make_key("finnhub_insider", ticker.upper(), str(days))
+        symbol = to_finnhub_symbol(ticker)
+        key = make_key("finnhub_insider", symbol, str(days))
         cached = self._cache.get(key)
         if cached is not None:
             return list(_INSIDER_ADAPTER.validate_json(cached))
@@ -305,7 +307,7 @@ class FinnhubClient:
         try:
             raw = self._with_retry(
                 lambda: self.client.stock_insider_transactions(
-                    ticker.upper(),
+                    symbol,
                     from_date.isoformat(),
                     to_date.isoformat(),
                 )

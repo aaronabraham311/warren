@@ -153,6 +153,32 @@ def test_get_basic_financials_maps_fields(
     assert result.source == "finnhub"
 
 
+def test_get_basic_financials_passes_canonical_symbol(
+    finnhub_conn: sqlite3.Connection,
+) -> None:
+    # The symbol handed to the upstream boundary must be the shared canonical form
+    # (uppercased, dots preserved) — not an inline .upper() that could drift.
+    mock = MagicMock()
+    mock.company_basic_financials.return_value = {"metric": {"peTTM": 10.0}}
+    client = _make_client(finnhub_conn, mock)
+
+    client.get_basic_financials("dir.mi")
+
+    mock.company_basic_financials.assert_called_once_with("DIR.MI", "all")
+
+
+def test_get_news_passes_canonical_symbol(
+    finnhub_conn: sqlite3.Connection, finnhub_fixture: dict[str, object]
+) -> None:
+    mock = MagicMock()
+    mock.company_news.return_value = finnhub_fixture["news"]
+    client = _make_client(finnhub_conn, mock)
+
+    client.get_news("brk.b", days=7)
+
+    assert mock.company_news.call_args.args[0] == "BRK.B"
+
+
 def test_get_basic_financials_falls_back_to_annual_margins_and_debt(
     finnhub_conn: sqlite3.Connection,
 ) -> None:
