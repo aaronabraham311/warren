@@ -2,7 +2,14 @@ from typing import get_args, get_protocol_members
 
 import anthropic
 
-from agent.models import HAIKU_4_5, OPUS_4_7, SONNET_4_6, AnalysisOutput, LynchBuffettSignals
+from agent.models import (
+    HAIKU_4_5,
+    OPUS_4_7,
+    SONNET_4_6,
+    AnalysisOutput,
+    DirtSignals,
+    LynchBuffettSignals,
+)
 from agent.routing import (
     SYNTHESIS_PHASE_MARKER,
     DefaultOpusTrigger,
@@ -19,6 +26,7 @@ def _analysis(
     confidence: float = 0.8,
     lynch_signals: list[str] | None = None,
     buffett_signals: list[str] | None = None,
+    dirt_signals: DirtSignals | None = None,
 ) -> AnalysisOutput:
     return AnalysisOutput(
         ticker="AAPL",
@@ -29,6 +37,7 @@ def _analysis(
         lynch_signals=LynchBuffettSignals(pros=lynch_signals or [], cons=[]),
         buffett_signals=LynchBuffettSignals(pros=buffett_signals or [], cons=[]),
         key_risks=["risk"],
+        dirt_signals=dirt_signals,
     )
 
 
@@ -106,6 +115,55 @@ def test_opus_condition_sell_alone() -> None:
     # A single confident sell; conditions 1 and 2 are false.
     analyses = [_analysis(recommendation="sell", confidence=0.9)]
     assert DefaultOpusTrigger().should_fire(analyses) is True
+
+
+# ── DIRT / deep-value condition 4 ───────────────────────────────────────────────
+def test_opus_condition_dirt_aggregator_discrepancy_alone() -> None:
+    # Benign on conditions 1–3 (confident hold, balanced/empty signals, no sell), but
+    # source verification flagged aggregator-vs-filing discrepancies → contested cheap call.
+    analyses = [
+        _analysis(
+            recommendation="hold",
+            confidence=0.9,
+            dirt_signals=DirtSignals(aggregator_discrepancies_found=True),
+        )
+    ]
+    assert DefaultOpusTrigger().should_fire(analyses) is True
+
+
+def test_opus_condition_dirt_cheap_but_fragile_alone() -> None:
+    # Deep NCAV discount paired with a non-net-cash balance sheet = value-trap shape.
+    analyses = [
+        _analysis(
+            recommendation="hold",
+            confidence=0.9,
+            dirt_signals=DirtSignals(ncav_discount_pct=45.0, net_cash_positive=False),
+        )
+    ]
+    assert DefaultOpusTrigger().should_fire(analyses) is True
+
+
+def test_opus_condition_dirt_benign_does_not_fire() -> None:
+    # A clean deep-value setup: cheap and net-cash-positive, no discrepancies → no fire.
+    analyses = [
+        _analysis(
+            recommendation="hold",
+            confidence=0.9,
+            dirt_signals=DirtSignals(
+                ncav_discount_pct=45.0,
+                net_cash_positive=True,
+                aggregator_discrepancies_found=False,
+            ),
+        )
+    ]
+    assert DefaultOpusTrigger().should_fire(analyses) is False
+
+
+def test_opus_condition_dirt_none_is_noop() -> None:
+    # Default persona: dirt_signals is None. A confident, balanced hold must not fire —
+    # proving condition 4 leaves default-persona routing unchanged.
+    analyses = [_analysis(recommendation="hold", confidence=0.9)]
+    assert DefaultOpusTrigger().should_fire(analyses) is False
 
 
 # ── Acceptance criterion 6: RoutingPolicy is a Protocol, not an ABC ─────────────

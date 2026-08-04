@@ -468,6 +468,24 @@ def test_read_filing_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result.error_code == "not_found"
 
 
+def test_read_filing_non_us_ticker_degrades_to_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
+    # A non-US name (Milan .MI) has no SEC/EDGAR presence — the client returns not_found
+    # as data, and the tool maps it to a clean ToolResultError rather than raising.
+    monkeypatch.setattr(
+        "agent.tools.filings.edgar_client",
+        lambda: _FakeEdgar(DataSourceError(error_code="not_found", message="unknown ticker")),
+    )
+    monkeypatch.setattr(
+        "agent.tools.filings.yfinance_client",
+        lambda: _FakeYF(fundamentals=lambda t: DataSourceError("not_found", "no data")),
+    )
+    result = ReadFilingTool().run(
+        ReadFilingInput(ticker="DIR.MI", filing_type="10-K", section="business"), _ctx()
+    )
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+
+
 def test_read_filing_translate_plumbed_through(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _FakeEdgar(_filing_section()))
     monkeypatch.setattr(
@@ -936,11 +954,18 @@ def test_screen_universe_r2k_network_error_falls_back_to_static(
     assert result.data.tickers == ["AAPL"]
 
 
-def test_dirt_persona_limitation_note_matches_screen_result() -> None:
+def test_dirt_persona_note_diverges_from_screen_tool_note() -> None:
+    # G9 globalized the DIRT persona's universe note (US small-caps + Milan/Madrid/Warsaw)
+    # while the screen_universe TOOL deliberately stays US-only (Russell 2000). The two
+    # surfaces are now intentionally decoupled: the screen tool's US-only note must NOT be a
+    # substring of the globalized DIRT prompt, and the DIRT prompt names the non-US exchanges.
     from agent.persona import DIRT_SYSTEM_PROMPT
     from agent.tools.screen import _UNIVERSE_LIMITATION_NOTE
 
-    assert _UNIVERSE_LIMITATION_NOTE in DIRT_SYSTEM_PROMPT
+    assert _UNIVERSE_LIMITATION_NOTE not in DIRT_SYSTEM_PROMPT
+    assert "US-only" in _UNIVERSE_LIMITATION_NOTE
+    assert "US-only" not in DIRT_SYSTEM_PROMPT
+    assert "Euronext Growth Milan" in DIRT_SYSTEM_PROMPT
 
 
 # ── get_holding_context ───────────────────────────────────────────────────────

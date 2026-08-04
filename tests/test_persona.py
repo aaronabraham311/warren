@@ -209,6 +209,33 @@ def test_dirt_prompt_universe_limitation_note() -> None:
     assert "universe-limitation note" in DIRT_SYSTEM_PROMPT or "DIRT universe" in DIRT_SYSTEM_PROMPT
 
 
+def test_dirt_prompt_universe_note_is_global_not_us_only() -> None:
+    # The globalized note must no longer claim a US-only universe...
+    assert "US-only" not in DIRT_SYSTEM_PROMPT
+    # ...and must name the three non-US exchanges in the slice.
+    assert "Euronext Growth Milan" in DIRT_SYSTEM_PROMPT
+    assert "Bolsa de Madrid" in DIRT_SYSTEM_PROMPT
+    assert "GPW Warsaw" in DIRT_SYSTEM_PROMPT
+    for suffix in [".MI", ".MC", ".WA"]:
+        assert suffix in DIRT_SYSTEM_PROMPT
+
+
+def test_dirt_prompt_market_cap_gates_are_usd_normalized() -> None:
+    assert "USD-normalized" in DIRT_SYSTEM_PROMPT
+    # The $2B and $5B gates are annotated as USD.
+    assert "$2B (USD-normalized)" in DIRT_SYSTEM_PROMPT
+    assert "$5B (USD-normalized)" in DIRT_SYSTEM_PROMPT
+
+
+def test_dirt_prompt_sec_filing_graceful_degradation() -> None:
+    prompt_lower = DIRT_SYSTEM_PROMPT.lower()
+    # Non-US names lack SEC/EDGAR filings — degrade to news + fundamentals.
+    assert "degrade gracefully" in prompt_lower
+    assert "get_news" in DIRT_SYSTEM_PROMPT
+    assert "fundamentals" in prompt_lower
+    assert "sec_degradation" in DIRT_SYSTEM_PROMPT
+
+
 def test_dirt_prompt_has_json_output_schema() -> None:
     assert '"recommendation"' in DIRT_SYSTEM_PROMPT
     assert '"dirt_signals"' in DIRT_SYSTEM_PROMPT
