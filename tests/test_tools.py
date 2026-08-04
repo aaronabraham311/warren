@@ -1789,3 +1789,18 @@ def test_get_key_persons_yf_error_returns_tool_error(monkeypatch: pytest.MonkeyP
     result = GetKeyPersonsTool().run(GetKeyPersonsInput(ticker="AAPL"), _ctx())
     assert isinstance(result, ToolResultError)
     assert result.error_code == "not_found"
+
+
+@pytest.mark.parametrize("ticker", ["DIR.MI", "CIRSA.MC", "KPL.WA", "AAPL", "BRK.B"])
+def test_tool_input_schema_accepts_suffix_tickers(ticker: str) -> None:
+    # The shared TICKER_PATTERN (data_sources.symbols) backs every tool input's ticker
+    # field via agent.tools.base; gem-hunt needs the loop to call tools with exchange
+    # suffixes without input-schema validation rejecting them.
+    assert GetQuoteInput(ticker=ticker).ticker == ticker
+
+
+def test_tool_input_schema_rejects_garbage_ticker() -> None:
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError):
+        GetQuoteInput(ticker="not-a-ticker")
