@@ -20,6 +20,7 @@ Cooldown suppression is the caller's responsibility: filter the universe with
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 
 from agent.tools._clients import yfinance_client
@@ -29,6 +30,12 @@ from storage.logger import RunLogger
 # At least this many of the five criteria must have data for a ticker to be
 # eligible — otherwise a name with one lucky metric could sneak through.
 MIN_CRITERIA_PRESENT = 3
+
+# Hard ceiling on how many tickers a single screening pass will fetch. The gem-hunt
+# global universe is low-thousands of names; this bounds per-run cost/latency and is a
+# no-op for the ~500-name S&P 500 universe. The universe is truncated deterministically
+# (it arrives sorted), so the cap never introduces run-to-run nondeterminism.
+MAX_UNIVERSE_SIZE = 4000
 
 DEFAULT_SCREEN_CRITERIA: dict[str, float] = {
     "pe_max": 30.0,
@@ -102,17 +109,24 @@ def run_screening_pass(
     criteria: dict[str, float] | None = None,
     logger: RunLogger | None = None,
     client: YFinanceClient | None = None,
+    max_workers: int | None = None,
 ) -> ScreeningResult:
     """Screen the universe and return tickers that clear all available criteria.
 
     Args:
-        universe: Tickers to screen (cooldown-filtered by the caller).
+        universe: Tickers to screen (cooldown-filtered by the caller). Truncated to
+            ``MAX_UNIVERSE_SIZE`` — deterministically, since it arrives sorted.
         criteria: Threshold overrides; defaults to DEFAULT_SCREEN_CRITERIA.
         logger: Optional RunLogger; emits phase_started / phase_completed events.
         client: YFinanceClient override (defaults to the shared singleton).
+        max_workers: When ``None`` (default) the screen runs sequentially — the
+            original, deterministic path. When ``> 1`` the per-ticker fetches run on a
+            ``ThreadPoolExecutor``; results are still emitted in universe order, so the
+            surfaced candidates are identical regardless of worker count.
     """
     effective_criteria = criteria if criteria is not None else DEFAULT_SCREEN_CRITERIA
     yf = client if client is not None else yfinance_client()
+    universe = universe[:MAX_UNIVERSE_SIZE]
 
     if logger is not None:
         logger.log(
@@ -122,7 +136,16 @@ def run_screening_pass(
             method="quantitative",
         )
 
-    candidates = [t for t in universe if screen_ticker(t, yf, effective_criteria)]
+    if max_workers is not None and max_workers > 1 and universe:
+        # ThreadPoolExecutor.map preserves input order, so zipping back against the
+        # (sorted) universe keeps the candidate list deterministic across worker counts.
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            passed = list(
+                executor.map(lambda t: screen_ticker(t, yf, effective_criteria), universe)
+            )
+        candidates = [t for t, ok in zip(universe, passed, strict=True) if ok]
+    else:
+        candidates = [t for t in universe if screen_ticker(t, yf, effective_criteria)]
     pass_rate = len(candidates) / len(universe) if universe else 0.0
 
     if logger is not None:
