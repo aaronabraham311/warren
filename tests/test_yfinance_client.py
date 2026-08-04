@@ -1106,6 +1106,225 @@ def test_get_valuation_multiples_missing_cash_fields(yf_conn: sqlite3.Connection
     assert result.net_cash_positive is False
 
 
+# ── FX currency normalization (G4) ────────────────────────────────────────────
+
+
+def _fx_dispatch(
+    equity_info: dict[str, object],
+    fx_rates: dict[str, float] | None = None,
+    fx_fails: bool = False,
+) -> object:
+    """Build a yf.Ticker side_effect that serves equity .info for the security
+    symbol and an FX fast_info for ``<BASE>USD=X`` spot-rate lookups."""
+    rates = fx_rates or {}
+
+    def side_effect(symbol: str) -> MagicMock:
+        if symbol.endswith("=X"):
+            t = MagicMock()
+            if fx_fails:
+                # No fast_info price and empty .info → get_fx_rate → DataSourceError.
+                t.fast_info.last_price = None
+                t.info = {}
+            else:
+                base = symbol[:3]
+                t.fast_info.last_price = rates.get(base)
+                t.info = {"regularMarketPrice": rates.get(base)}
+            return t
+        t = MagicMock()
+        t.info = equity_info
+        return t
+
+    return side_effect
+
+
+def _milan_info(currency: str = "EUR") -> dict[str, object]:
+    return {
+        "regularMarketPrice": 12.0,
+        "currency": currency,
+        "financialCurrency": currency,
+        "marketCap": 1_000_000_000,  # native (EUR)
+        "totalCash": 200_000_000,
+        "totalDebt": 50_000_000,  # net cash native = +150M
+        "currentAssets": 400_000_000,
+        "totalLiab": 100_000_000,
+        "lastFiscalYearEnd": 1696032000,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+    }
+
+
+def test_valuation_milan_eur_normalized_to_usd(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        side_effect=_fx_dispatch(_milan_info("EUR"), fx_rates={"EUR": 1.10}),
+    ):
+        result = client.get_valuation_multiples("DIR.MI")
+
+    assert isinstance(result, ValuationData)
+    assert result.currency == "EUR"
+    assert result.market_cap_native == 1_000_000_000
+    # 1B EUR × 1.10 = 1.1B USD
+    assert result.market_cap_usd == 1_100_000_000
+    # net cash 150M EUR × 1.10 = 165M USD
+    assert result.net_cash_usd == 165_000_000
+    assert result.net_cash_positive is True
+
+
+def test_valuation_warsaw_pln_normalized_to_usd(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    info: dict[str, object] = {
+        "regularMarketPrice": 40.0,
+        "currency": "PLN",
+        "financialCurrency": "PLN",
+        "marketCap": 1_000_000_000,  # native (PLN)
+        "totalCash": 100_000_000,
+        "totalDebt": 40_000_000,  # net cash native = +60M PLN
+        "currentAssets": 300_000_000,
+        "totalLiab": 100_000_000,
+        "lastFiscalYearEnd": 1696032000,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+    }
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        side_effect=_fx_dispatch(info, fx_rates={"PLN": 0.25}),
+    ):
+        result = client.get_valuation_multiples("KPL.WA")
+
+    assert isinstance(result, ValuationData)
+    assert result.currency == "PLN"
+    assert result.market_cap_native == 1_000_000_000
+    # 1B PLN × 0.25 = 250M USD
+    assert result.market_cap_usd == 250_000_000
+    # 60M PLN × 0.25 = 15M USD
+    assert result.net_cash_usd == 15_000_000
+
+
+def test_valuation_usd_name_unchanged(yf_conn: sqlite3.Connection) -> None:
+    """Regression: a USD name's _usd fields are untouched (rate 1.0)."""
+    client = _make_client(yf_conn)
+    info: dict[str, object] = {
+        "regularMarketPrice": 50.0,
+        "currency": "USD",
+        "financialCurrency": "USD",
+        "marketCap": 5_000_000_000,
+        "totalCash": 300_000_000,
+        "totalDebt": 100_000_000,
+        "currentAssets": 500_000_000,
+        "totalLiab": 300_000_000,
+        "lastFiscalYearEnd": 1696032000,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+    }
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        side_effect=_fx_dispatch(info, fx_rates={"EUR": 1.10}),
+    ):
+        result = client.get_valuation_multiples("USTEST")
+
+    assert isinstance(result, ValuationData)
+    assert result.currency == "USD"
+    assert result.market_cap_usd == 5_000_000_000
+    assert result.market_cap_native == 5_000_000_000
+    assert result.net_cash_usd == 200_000_000
+
+
+def test_valuation_fx_fetch_failure_falls_back_to_committed_rate(
+    yf_conn: sqlite3.Connection,
+) -> None:
+    from data_sources.fx import FALLBACK_FX_RATES
+
+    client = _make_client(yf_conn)
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        side_effect=_fx_dispatch(_milan_info("EUR"), fx_fails=True),
+    ):
+        result = client.get_valuation_multiples("DIR.MI")
+
+    assert isinstance(result, ValuationData)
+    expected = int(1_000_000_000 * FALLBACK_FX_RATES["EUR"])
+    assert result.currency == "EUR"
+    assert result.market_cap_usd == expected
+
+
+def test_get_fx_rate_usd_is_identity(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    # No network needed — USD short-circuits to 1.0.
+    assert client.get_fx_rate("USD") == 1.0
+
+
+def test_get_fx_rate_unsupported_currency_returns_error(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    result = client.get_fx_rate("JPY")
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "not_found"
+
+
+def test_get_fx_rate_fetches_and_caches(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    call_count = [0]
+
+    def side_effect(symbol: str) -> MagicMock:
+        call_count[0] += 1
+        t = MagicMock()
+        t.fast_info.last_price = 1.09
+        return t
+
+    with patch("data_sources.yfinance_client.yf.Ticker", side_effect=side_effect):
+        first = client.get_fx_rate("EUR")
+        second = client.get_fx_rate("EUR")
+
+    assert first == pytest.approx(1.09)
+    assert second == pytest.approx(1.09)
+    assert call_count[0] == 1, "second call should be a cache hit"
+
+
+def test_fundamentals_fcf_normalized_to_usd(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    info: dict[str, object] = {
+        "regularMarketPrice": 12.0,
+        "currentPrice": 12.0,
+        "financialCurrency": "EUR",
+        "freeCashflow": 100_000_000,  # EUR
+        "trailingPE": 8.0,
+        "priceToBook": 0.9,
+        "lastFiscalYearEnd": 1696032000,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+    }
+    with patch(
+        "data_sources.yfinance_client.yf.Ticker",
+        side_effect=_fx_dispatch(info, fx_rates={"EUR": 1.10}),
+    ):
+        result = client.get_fundamentals("DIR.MI")
+
+    assert isinstance(result, FundamentalsData)
+    assert result.currency == "EUR"
+    # 100M EUR × 1.10 = 110M USD
+    assert result.fcf_ttm_usd == 110_000_000
+
+
+def test_price_carries_currency_label(yf_conn: sqlite3.Connection) -> None:
+    client = _make_client(yf_conn)
+    t = MagicMock()
+    t.fast_info.last_price = 12.0
+    t.fast_info.previous_close = 11.5
+    t.fast_info.three_month_average_volume = 1_000_000
+    t.fast_info.currency = "EUR"
+    with patch("data_sources.yfinance_client.yf.Ticker", return_value=t):
+        result = client.get_price("DIR.MI")
+
+    assert isinstance(result, PriceData)
+    assert result.currency == "EUR"
+    # Price itself stays native (not a _usd field) — not converted.
+    assert result.current_price == pytest.approx(12.0)
+
+
 # ── get_key_persons ───────────────────────────────────────────────────────────
 
 
