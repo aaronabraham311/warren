@@ -1,0 +1,53 @@
+ticker: KPL.WA
+notes: |
+  A GPW Warsaw deep-value gem — the third DIRT example, chosen to cover the .WA slice of the
+  gem-hunt universe. A net-cash, consistently profitable small-cap trading below NCAV with a
+  single-digit EV/EBIT and effectively no sell-side coverage: the archetypal coverage-gap
+  mispricing the DIRT methodology is built to find. The net-cash balance sheet is the key
+  distinction from a value trap — the cash provides a floor and removes bankruptcy risk, so a
+  cheap multiple is a mispricing rather than a discount the market is right to apply.
+
+  `buy` is preferred here given net cash below the operating value, with `hold` allowed on a
+  control-discount or catalyst-timing view. `sell` is out of the envelope. The eval pins the
+  DIRT path: EV/EBIT and NCAV surfaced, the value-trap / balance-sheet risk named even though
+  the answer leans buy (deep-value discipline requires stating it), and the G9 universe note
+  present in data_quality_notes.
+last_curated: 2026-08-04
+persona: dirt
+
+expectations:
+  recommendation:
+    allowed: [buy, hold]
+    preferred: buy
+
+  thesis_must_mention:
+    - any_of: [EV/EBIT, acquirer's multiple, ev/ebit, cheap, undervalued]
+    - any_of: [NCAV, net current asset, net cash, asset value, price-to-ncav]
+    - any_of: [profitable, free cash flow, cash conversion, underfollowed, coverage gap, net-cash]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  key_risks:
+    must_include_one_of:
+      - value trap
+      - liquidity
+      - small-cap
+      - control
+      - catalyst
+      - coverage
+      - balance sheet
+      - illiquid
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true
+
+  deep_value:
+    require_ev_ebit: true
+    require_ncav: true
+    require_value_trap_risk: true
+    require_universe_note: true

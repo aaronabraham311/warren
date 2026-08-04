@@ -1,0 +1,57 @@
+ticker: DIR.MI
+notes: |
+  A genuine deep-value gem on Euronext Growth Milan — the file that exercises the DIRT
+  (deep-value) analysis path end-to-end, and the counterweight to LUMN's value trap. This is
+  a small, underfollowed, financially sound business: it screens cheap on the Acquirer's
+  Multiple (EV/EBIT near 6x), trades close to net current asset value, and carries net cash
+  rather than the double-digit net debt that makes LUMN's low multiple a levered claim on a
+  shrinking base. The operating business has strung together consecutive profitable years and
+  converts earnings to free cash flow, so the cheapness is a coverage-gap mispricing, not the
+  market correctly pricing structural decline.
+
+  Because this is a real gem and not a trap, `buy` is inside the envelope — but `hold` remains
+  defensible on a lack-of-control or catalyst-timing view, so both are allowed. What the eval
+  actually pins is the DIRT methodology: the thesis must surface the cheapness measures
+  (EV/EBIT and NCAV), it must still name the value-trap / balance-sheet-fragility risk that
+  every deep-value name carries even when the answer is buy, and it must emit the G9 universe
+  note into data_quality_notes. `sell` is excluded — nothing here supports a deterioration or
+  broken-thesis catalyst.
+last_curated: 2026-08-04
+persona: dirt
+
+expectations:
+  recommendation:
+    allowed: [buy, hold]
+    preferred: buy
+
+  thesis_must_mention:
+    - any_of: [EV/EBIT, acquirer's multiple, ev/ebit, cheap, undervalued]
+    - any_of: [NCAV, net current asset, net cash, asset value, book value]
+    - any_of: [consecutive, profitable, free cash flow, cash conversion, coverage gap, underfollowed]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  key_risks:
+    must_include_one_of:
+      - value trap
+      - liquidity
+      - small-cap
+      - coverage
+      - control
+      - catalyst
+      - balance sheet
+      - illiquid
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true
+
+  deep_value:
+    require_ev_ebit: true
+    require_ncav: true
+    require_value_trap_risk: true
+    require_universe_note: true

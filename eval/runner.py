@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 
 from agent.budget import Budget, RunContext
 from agent.loop import analyze_ticker
-from agent.persona import DefaultPersona
+from agent.persona import DefaultPersona, DirtPersona
 from agent.routing import HardcodedSonnetRouting
 from data_sources.cache import CacheStore
 from eval.golden_set import EvalExample, load_all_examples
@@ -59,12 +59,22 @@ def _new_eval_run_id() -> str:
     return f"eval-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')}"
 
 
+def resolve_persona(example: EvalExample) -> DefaultPersona | DirtPersona:
+    """Pick the persona an example replays under.
+
+    Mirrors ``agent.run.resolve_persona``: ``persona: dirt`` examples exercise the
+    deep-value ``DirtPersona``; everything else (the default, unset) stays on
+    ``DefaultPersona`` — so existing golden files are unchanged.
+    """
+    return DirtPersona() if example.persona == "dirt" else DefaultPersona()
+
+
 def _grade_one(
     example: EvalExample,
     run_id: str,
     budget: Budget,
     logger: RunLogger,
-    persona: DefaultPersona,
+    persona: DefaultPersona | DirtPersona,
     routing_policy: HardcodedSonnetRouting,
     client: anthropic.Anthropic,
     fixtures_root: Path,
@@ -148,11 +158,12 @@ def run_eval(
     if client is None:
         client = anthropic.Anthropic()
 
-    persona = DefaultPersona()
     routing_policy = HardcodedSonnetRouting()
+    # The run-level prompt version is keyed to the default persona; a DIRT example resolves
+    # its own persona per-example below (an eval sweep can now mix personas).
     prompt_version_id = ensure_prompt_version(
         version_tag="v1",
-        persona_system_prompt=persona.system_prompt,
+        persona_system_prompt=DefaultPersona().system_prompt,
         routing_policy_name=type(routing_policy).__name__,
     )
 
@@ -166,6 +177,7 @@ def run_eval(
 
     grades: list[EvalGrade] = []
     for example in examples:
+        persona = resolve_persona(example)
         grade = _grade_one(
             example, run_id, budget, logger, persona, routing_policy, client, fixtures_root, judge
         )

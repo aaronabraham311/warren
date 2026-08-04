@@ -1,0 +1,27 @@
+{
+  "data": {
+    "acquirers_multiple": 7.2,
+    "as_of": "2026-08-01",
+    "currency": "EUR",
+    "data_age_hours": 48,
+    "dividend_yield_pct": 2.5,
+    "earnings_yield": 0.10989010989010989,
+    "enterprise_value": 180000000,
+    "ev_to_ebit": 7.2,
+    "ev_to_ebitda": 5.760000000000001,
+    "fcf_yield": 0.11,
+    "is_net_net": true,
+    "market_cap_native": 210000000,
+    "market_cap_usd": 210000000,
+    "ncav": 250000000,
+    "ncav_to_market_cap": 1.0526315789473684,
+    "net_cash_positive": false,
+    "net_cash_usd": -40000000,
+    "p_tangible_book": 0.9,
+    "price_to_ncav": 0.95,
+    "source": "yfinance",
+    "ticker": "CIRSA.MC"
+  },
+  "recorded_at": "2026-08-04T14:10:03.660640+00:00",
+  "status": "ok"
+}

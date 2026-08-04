@@ -34,6 +34,7 @@ from data_sources.symbols import TICKER_PATTERN
 EXAMPLES_DIR = Path(__file__).parent / "examples"
 
 Recommendation = Literal["buy", "sell", "hold"]
+Persona = Literal["default", "dirt"]
 
 
 class _Strict(BaseModel):
@@ -81,6 +82,20 @@ class NumericalGrounding(_Strict):
     no_hallucinated_format: bool = True
 
 
+class DeepValueExpectation(_Strict):
+    """Deep-value (DIRT) check toggles — each fires the matching grader check when true.
+
+    Present only on ``persona: dirt`` examples; every check it configures is a ``must`` (a
+    DIRT thesis that never surfaces EV/EBIT, NCAV, value-trap risk, or the universe note is a
+    regression in the deep-value path, not a stylistic drift).
+    """
+
+    require_ev_ebit: bool = False
+    require_ncav: bool = False
+    require_value_trap_risk: bool = False
+    require_universe_note: bool = False
+
+
 class EvalExpectations(_Strict):
     recommendation: RecommendationExpectation
     thesis_must_mention: list[ThesisMention] = []
@@ -89,6 +104,7 @@ class EvalExpectations(_Strict):
     lynch_signals: SignalsExpectation = SignalsExpectation()
     key_risks: KeyRisksExpectation = KeyRisksExpectation()
     numerical_grounding: NumericalGrounding = NumericalGrounding()
+    deep_value: DeepValueExpectation | None = None
 
 
 class EvalExample(_Strict):
@@ -97,6 +113,7 @@ class EvalExample(_Strict):
     ticker: str = Field(pattern=TICKER_PATTERN)
     notes: str = Field(min_length=1)
     last_curated: date
+    persona: Persona = "default"
     expectations: EvalExpectations
 
 
