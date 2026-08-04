@@ -50,6 +50,7 @@ def _make_parser() -> argparse.ArgumentParser:
     parser.add_argument("ticker", nargs="?", default="AAPL")
     parser.add_argument("--skip-ticker-validation", action="store_true")
     parser.add_argument("--persona", choices=["default", "dirt"], default="default")
+    parser.add_argument("--gem-hunt", action="store_true")
     return parser
 
 
@@ -61,3 +62,40 @@ def test_run_cli_accepts_ticker() -> None:
 def test_run_cli_default_ticker() -> None:
     args = _make_parser().parse_args([])
     assert args.ticker == "AAPL"
+
+
+def test_run_cli_gem_hunt_flag_defaults_off() -> None:
+    args = _make_parser().parse_args([])
+    assert args.gem_hunt is False
+
+
+def test_run_cli_accepts_gem_hunt() -> None:
+    args = _make_parser().parse_args(["--gem-hunt"])
+    assert args.gem_hunt is True
+
+
+def test_run_cli_gem_hunt_composes_with_skip_ticker_validation() -> None:
+    args = _make_parser().parse_args(["--gem-hunt", "--skip-ticker-validation"])
+    assert args.gem_hunt is True
+    assert args.skip_ticker_validation is True
+
+
+def test_resolve_persona_gem_hunt_forces_dirt() -> None:
+    from agent.persona import DirtPersona
+    from agent.run import resolve_persona
+
+    assert isinstance(resolve_persona("default", gem_hunt=True), DirtPersona)
+
+
+def test_resolve_persona_default_when_no_gem_hunt() -> None:
+    from agent.persona import DefaultPersona
+    from agent.run import resolve_persona
+
+    assert isinstance(resolve_persona("default", gem_hunt=False), DefaultPersona)
+
+
+def test_resolve_persona_explicit_dirt_still_works() -> None:
+    from agent.persona import DirtPersona
+    from agent.run import resolve_persona
+
+    assert isinstance(resolve_persona("dirt", gem_hunt=False), DirtPersona)
