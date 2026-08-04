@@ -15,6 +15,7 @@ from agent.tools.quality import GetQualityMetricsTool
 from agent.tools.quote import GetQuoteTool
 from agent.tools.screen import ScreenUniverseTool
 from agent.tools.valuation import GetValuationMultiplesTool
+from agent.tools.valuation_history import GetValuationHistoryTool
 from agent.tools.watchlists import ScreenWatchlistsTool
 
 TOOL_REGISTRY: dict[str, Tool] = {
@@ -27,6 +28,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "screen_universe": ScreenUniverseTool(),
     "get_holding_context": GetHoldingContextTool(),
     "get_valuation_multiples": GetValuationMultiplesTool(),
+    "get_valuation_history": GetValuationHistoryTool(),
     "get_quality_metrics": GetQualityMetricsTool(),
     "get_insider_activity": GetInsiderActivityTool(),
     "get_peer_comparison": GetPeerComparisonTool(),

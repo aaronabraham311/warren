@@ -47,6 +47,10 @@ from agent.tools.quality import GetQualityMetricsInput, GetQualityMetricsTool
 from agent.tools.quote import GetQuoteInput, GetQuoteTool
 from agent.tools.screen import ScreenResult, ScreenUniverseInput, ScreenUniverseTool
 from agent.tools.valuation import GetValuationMultiplesInput, GetValuationMultiplesTool
+from agent.tools.valuation_history import (
+    GetValuationHistoryInput,
+    GetValuationHistoryTool,
+)
 from data_sources.edgar_client import FilingSection, SC13Holder
 from data_sources.errors import DataSourceError
 from data_sources.finnhub_client import FinnhubFinancials, FinnhubInsiderTransaction, NewsItem
@@ -66,6 +70,7 @@ from data_sources.yfinance_client import (
     PriceData,
     QualityData,
     ValuationData,
+    ValuationHistory,
 )
 from storage.logger import RunLogger
 
@@ -137,7 +142,9 @@ class _FakeYF:
         capital_allocation: CapitalAllocation | DataSourceError | None = None,
         key_persons: KeyPersonsRaw | DataSourceError | None = None,
         russell2000: list[str] | DataSourceError | None = None,
+        valuation_history: ValuationHistory | DataSourceError | Exception | None = None,
     ) -> None:
+        self._valuation_history = valuation_history
         self._price = price
         self._fundamentals = fundamentals
         self._valuation = valuation
@@ -201,6 +208,12 @@ class _FakeYF:
             return []
         return self._russell2000
 
+    def get_valuation_history(self, ticker: str) -> ValuationHistory | DataSourceError:
+        if isinstance(self._valuation_history, Exception):
+            raise self._valuation_history
+        assert self._valuation_history is not None
+        return self._valuation_history
+
 
 class _FakeFinnhub:
     def __init__(
@@ -234,7 +247,7 @@ class _FakeFinnhub:
 # ── Registry / definitions (AC #1, AC #3 offline portion) ─────────────────────
 
 
-def test_registry_has_all_seventeen_tools() -> None:
+def test_registry_has_all_eighteen_tools() -> None:
     assert set(TOOL_REGISTRY) == {
         "get_quote",
         "get_fundamentals",
@@ -244,6 +257,7 @@ def test_registry_has_all_seventeen_tools() -> None:
         "screen_universe",
         "get_holding_context",
         "get_valuation_multiples",
+        "get_valuation_history",
         "get_quality_metrics",
         "get_insider_activity",
         "get_peer_comparison",
@@ -1875,3 +1889,59 @@ def test_tool_input_schema_rejects_garbage_ticker() -> None:
 
     with pytest.raises(ValidationError):
         GetQuoteInput(ticker="not-a-ticker")
+
+
+# ── get_valuation_history (G8) ────────────────────────────────────────────────
+
+
+def _valuation_history(ticker: str = "KPL.WA") -> ValuationHistory:
+    return ValuationHistory(
+        ticker=ticker,
+        as_of=date.today(),
+        years_covered=4,
+        current_pe=6.0,
+        current_pb=1.0,
+        pe_percentile=0.0,
+        pb_percentile=0.0,
+        pb_min=1.0,
+        pb_vs_10y_low=1.0,
+        pe_series=[6.0, 8.0, 10.0, 12.0],
+        pb_series=[1.0, 2.0, 3.0, 4.0],
+        fiscal_years=[2024, 2023, 2022, 2021],
+        data_age_hours=100,
+    )
+
+
+def test_get_valuation_history_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(
+        "agent.tools.valuation_history.yfinance_client",
+        lambda: _FakeYF(valuation_history=_valuation_history()),
+    )
+    result = GetValuationHistoryTool().run(GetValuationHistoryInput(ticker="KPL.WA"), _ctx())
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ValuationHistory)
+    assert result.data.pb_percentile == 0.0
+    assert result.data.pb_vs_10y_low == 1.0
+
+
+def test_get_valuation_history_maps_data_source_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    err = DataSourceError(error_code="not_found", message="no data")
+    monkeypatch.setattr(
+        "agent.tools.valuation_history.yfinance_client",
+        lambda: _FakeYF(valuation_history=err),
+    )
+    result = GetValuationHistoryTool().run(GetValuationHistoryInput(ticker="KPL.WA"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "not_found"
+
+
+def test_get_valuation_history_catches_unexpected_exception(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "agent.tools.valuation_history.yfinance_client",
+        lambda: _FakeYF(valuation_history=RuntimeError("boom")),
+    )
+    result = GetValuationHistoryTool().run(GetValuationHistoryInput(ticker="KPL.WA"), _ctx())
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "unknown"

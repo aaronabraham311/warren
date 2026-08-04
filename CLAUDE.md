@@ -36,6 +36,7 @@ agent/
     screen.py     # screen_universe    → portfolio∪watchlist filtered on fundamentals → ScreenResult
     holdings.py   # get_holding_context→ portfolio.csv + get_price → HoldingContext
     valuation.py  # get_valuation_multiples → YFinanceClient.get_valuation_multiples → ValuationData
+    valuation_history.py  # get_valuation_history → YFinanceClient.get_valuation_history → ValuationHistory (P/E & P/B vs own listed history; pe_percentile/pb_percentile [LOW=cheap] + pb_vs_10y_low — the "cheapest multiple in its listed life" gem signal; first .history() fetch in the client)
     quality.py    # get_quality_metrics → YFinanceClient.get_quality_metrics → QualityData (ROIC, ROA, gross-margin stability, cash conversion)
     insider.py    # get_insider_activity → FinnhubClient.get_insider_transactions + YFinanceClient.get_ownership → InsiderActivity
     peers.py      # get_peer_comparison → fundamentals+valuation per peer → PeerComparison (rank/percentile)

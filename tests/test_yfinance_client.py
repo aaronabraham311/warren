@@ -1466,3 +1466,137 @@ def test_get_russell2000_tickers_network_error_returns_datasource_error(
         result = client.get_russell2000_tickers()
     assert isinstance(result, DataSourceError)
     assert result.error_code == "network"
+
+
+# ── get_valuation_history (G8): valuation-vs-own-history percentiles ───────────
+
+
+class _FakeHistoryDF:
+    """Minimal ascending price frame: ``.index`` of datetimes + ``["Close"]`` list."""
+
+    def __init__(self, rows: list[tuple[object, float]]) -> None:
+        self.index = [dt for dt, _ in rows]
+        self._close = [c for _, c in rows]
+
+    def __getitem__(self, key: str) -> list[float]:
+        assert key == "Close"
+        return self._close
+
+
+def _mock_ticker_for_valuation_history(
+    *,
+    fiscal_years: list[int],
+    net_income: list[int],
+    total_assets: list[int],
+    total_liabilities: list[int],
+    shares: list[int],
+    closes: list[tuple[object, float]],
+    history_error: Exception | None = None,
+) -> MagicMock:
+    t = MagicMock()
+    t.info = {
+        "lastFiscalYearEnd": 1_700_000_000,
+        "regularMarketPrice": 100.0,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+        "d": 4,
+    }
+    t.financials = _make_stmt_df_mock({"fiscal_years": fiscal_years, "Net Income": net_income})
+    t.balance_sheet = _make_stmt_df_mock(
+        {
+            "fiscal_years": fiscal_years,
+            "Total Assets": total_assets,
+            "Total Liabilities Net Minority Interest": total_liabilities,
+            "Share Issued": shares,
+        }
+    )
+    t.cashflow = _make_stmt_df_mock({"fiscal_years": fiscal_years})
+    if history_error is not None:
+        t.history.side_effect = history_error
+    else:
+        t.history.return_value = _FakeHistoryDF(closes)
+    return t
+
+
+def test_get_valuation_history_percentile_at_own_low(yf_conn: sqlite3.Connection) -> None:
+    from datetime import date as _date
+
+    client = _make_client(yf_conn)
+    # 4 fiscal years, newest-first. BVPS = 10 and EPS = 1 every year (equity 1000 /
+    # 100 shares; net income 100 / 100 shares). Prices per year: 2024→10 (latest),
+    # 2023→20, 2022→30, 2021→40 ⇒ P/B series [1, 2, 3, 4] with the CURRENT year at the
+    # historical low.
+    ticker = _mock_ticker_for_valuation_history(
+        fiscal_years=[2024, 2023, 2022, 2021],
+        net_income=[100, 100, 100, 100],
+        total_assets=[1000, 1000, 1000, 1000],
+        total_liabilities=[0, 0, 0, 0],
+        shares=[100, 100, 100, 100],
+        closes=[
+            (_date(2021, 6, 1), 40.0),
+            (_date(2022, 6, 1), 30.0),
+            (_date(2023, 6, 1), 20.0),
+            (_date(2024, 6, 1), 10.0),
+        ],
+    )
+    with patch("data_sources.yfinance_client.yf.Ticker", return_value=ticker):
+        result = client.get_valuation_history("KPL.WA")
+
+    from data_sources.yfinance_client import ValuationHistory
+
+    assert isinstance(result, ValuationHistory)
+    assert result.pb_series == [1.0, 2.0, 3.0, 4.0]
+    assert result.current_pb == 1.0
+    assert result.pb_percentile == 0.0  # cheapest in its own history
+    assert result.pb_min == 1.0
+    assert result.pb_vs_10y_low == 1.0
+    assert result.years_covered == 4
+
+
+def test_get_valuation_history_short_history_yields_none(yf_conn: sqlite3.Connection) -> None:
+    from datetime import date as _date
+
+    client = _make_client(yf_conn)
+    # Only one usable fiscal year ⇒ percentile fields must be None, no crash.
+    ticker = _mock_ticker_for_valuation_history(
+        fiscal_years=[2024],
+        net_income=[100],
+        total_assets=[1000],
+        total_liabilities=[0],
+        shares=[100],
+        closes=[(_date(2024, 6, 1), 10.0)],
+    )
+    with patch("data_sources.yfinance_client.yf.Ticker", return_value=ticker):
+        result = client.get_valuation_history("KPL.WA")
+
+    from data_sources.yfinance_client import ValuationHistory
+
+    assert isinstance(result, ValuationHistory)
+    assert result.years_covered == 1
+    assert result.pb_percentile is None
+    assert result.pe_percentile is None
+    assert result.pb_vs_10y_low is None
+    assert result.current_pb == 1.0  # still exposed
+
+
+def test_get_valuation_history_fetch_failure_returns_datasource_error(
+    yf_conn: sqlite3.Connection,
+) -> None:
+    from datetime import date as _date
+
+    client = _make_client(yf_conn)
+    ticker = _mock_ticker_for_valuation_history(
+        fiscal_years=[2024, 2023],
+        net_income=[100, 100],
+        total_assets=[1000, 1000],
+        total_liabilities=[0, 0],
+        shares=[100, 100],
+        closes=[(_date(2024, 6, 1), 10.0)],
+        history_error=ConnectionError("history timeout"),
+    )
+    with patch("data_sources.yfinance_client.yf.Ticker", return_value=ticker):
+        result = client.get_valuation_history("KPL.WA")
+
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "network"
