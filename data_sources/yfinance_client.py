@@ -14,13 +14,19 @@ from pydantic import BaseModel
 
 from data_sources.cache import CacheStore, make_key
 from data_sources.errors import DataSourceError
+from data_sources.symbols import to_yahoo_symbol
 
 _T = TypeVar("_T")
 
 
 def _yf_symbol(ticker: str) -> str:
-    """Yahoo spells share classes with a dash: ``BRK.B`` → ``BRK-B``."""
-    return ticker.replace(".", "-")
+    """Map a canonical ``TICKER.SUFFIX`` ticker to Yahoo's symbol spelling.
+
+    Delegates to the shared :func:`data_sources.symbols.to_yahoo_symbol`, which
+    dashes US share classes (``BRK.B`` → ``BRK-B``) but preserves exchange
+    suffixes (``DIR.MI`` → ``DIR.MI``).
+    """
+    return to_yahoo_symbol(ticker)
 
 
 # ── Legacy dataclass + function kept for backward compatibility ───────────────
