@@ -24,7 +24,7 @@ from agent.portfolio import (
 from agent.routing import PhaseBasedRouting
 from agent.screening import run_screening_pass
 from agent.tools._clients import yfinance_client
-from agent.universe import get_current_universe
+from agent.universe import get_current_universe, get_gem_hunt_universe
 from data_sources.yfinance_client import PriceData
 
 load_dotenv()  # must precede storage.engine import so WARREN_DB is applied before engine creation
@@ -44,6 +44,8 @@ _LOG_DIR = Path("logs/runs")
 _PORTFOLIO_FILE = Path("data/portfolio.csv")
 _WATCHLIST_FILE = Path("data/watchlist.csv")
 _MAX_SCREEN_CANDIDATES = 3
+# Gem-hunt screens a low-thousands global universe; fan the per-ticker fetches out.
+_GEM_HUNT_SCREEN_WORKERS = 8
 
 
 def _build_portfolio_context(portfolio_file: Path) -> str:
@@ -259,9 +261,8 @@ def main() -> None:
         watchlist_tickers = [e.ticker for e in watchlist]
         with get_session() as session:
             if gem_hunt:
-                # TODO(G5): global 3-exchange universe — replace with the global fetch.
-                # G1 scaffold: falls through to the existing S&P 500 ∪ watchlist universe.
-                universe = get_current_universe(session, watchlist_tickers)
+                # Global 3-exchange universe (Milan ∪ Madrid ∪ Warsaw ∪ watchlist).
+                universe = get_gem_hunt_universe(session, watchlist_tickers)
             else:
                 universe = get_current_universe(session, watchlist_tickers)
             cooldown_result = filter_universe_for_cooldown(universe, session, recent_news={})
@@ -273,8 +274,11 @@ def main() -> None:
 
         if gem_hunt:
             # TODO(G6): deep-value screen criteria — swap in the deep-value screen here.
-            # G1 scaffold: falls through to the existing GARP screening pass.
-            screening = run_screening_pass(cooldown_result.active, logger=logger)
+            # G1 scaffold: falls through to the existing GARP screening pass, but over
+            # the (larger) global universe with bounded-concurrency fetches.
+            screening = run_screening_pass(
+                cooldown_result.active, logger=logger, max_workers=_GEM_HUNT_SCREEN_WORKERS
+            )
             # TODO(G6): value-score ranking before top-N — rank candidates by value score.
             # G1 scaffold: keeps the existing screening order.
             candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]

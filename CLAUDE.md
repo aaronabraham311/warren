@@ -18,7 +18,7 @@ agent/
   run.py          # CLI entrypoint: python -m agent.run [TICKER] [--skip-ticker-validation]
   cooldown.py     # Discovery cooldown — filter_universe_for_cooldown(), has_material_event(), set_cooldown(), get_cooldown_entry(), clear_cooldown(); 7-day dedup with material-news override
   portfolio.py    # load_portfolio/load_watchlist (validated) + sync_*_to_db snapshots
-  universe.py     # get_current_universe(session, watchlist) → sorted S&P 500 ∪ watchlist for the Haiku screening prefix. Weekly-refreshed (UniverseSnapshot single-row table); SP500Client fetch with data/sp500.csv fallback. Deterministic sort keeps the cache prefix byte-stable.
+  universe.py     # get_current_universe(session, watchlist) → sorted S&P 500 ∪ watchlist; get_gem_hunt_universe(session, watchlist, fetchers=) → sorted Milan∪Madrid∪Warsaw∪watchlist. Weekly-refreshed via UniverseSnapshot (per-`kind` row: "sp500" | "gem_hunt"); SP500Client/ExchangeClient fetch with data/*.csv fallback. Weekly cadence just avoids a re-scrape — the universe never enters an LLM prompt (screening is deterministic Python).
   screening.py    # run_screening_pass(universe, ...) → ScreeningResult — deterministic, data-grounded quantitative filter (P/E, PEG, ROE, D/E, 3Y rev CAGR) over the universe via the yfinance client; no LLM. Missing metrics are omitted; a ticker passes with 0 violations and ≥ MIN_CRITERIA_PRESENT (3) present. Heavy get_growth_metrics fetch is skipped when a fundamentals metric already fails. Cooldown filtering is the caller's responsibility.
   loop.py         # Main agentic loop — sends messages, handles tool calls
   persona.py      # System prompt / persona definition
@@ -55,6 +55,7 @@ data_sources/
   gdelt_client.py      # GDELTClient — GDELT DOC 2.0 ArtList adverse news (keyless, 7d cache). Note: ArtList does not return tone/themes in the response; tone<-2 is a server-side filter only.
   ofac_client.py       # OFACClient — OFAC SDN free public API (no key), 7-day cache; US sanctions only
   sp500_client.py      # SP500Client — keyless Wikipedia scrape of S&P 500 constituents → list[str] | DataSourceError (no cache; the UniverseSnapshot table is the weekly cache)
+  exchange_client.py   # ExchangeClient — keyless Wikipedia scrape of Milan/Madrid/Warsaw constituents (ExchangeSpec per exchange; Yahoo suffix .MI/.MC/.WA) → list[str] | DataSourceError; best-effort, always falls back to data/{milan,madrid,warsaw}.csv
 
 storage/
   models.py       # ORM models (Base + all table classes + indexes) — no I/O
@@ -108,6 +109,9 @@ data/
   portfolio.csv   # ticker, shares, cost_basis, purchase_date
   watchlist.csv   # ticker, notes
   sp500.csv       # bootstrap S&P 500 constituents — fallback for agent/universe.py when the live Wikipedia fetch fails
+  milan.csv       # Euronext Growth Milan (.MI) constituents — gem-hunt fallback (incl. DIR.MI)
+  madrid.csv      # Bolsa de Madrid (.MC) constituents — gem-hunt fallback (incl. CIRSA.MC)
+  warsaw.csv      # GPW Warsaw (.WA) constituents — gem-hunt fallback (incl. KPL.WA)
 
 main.py           # Thin wrapper: delegates to agent.run.main
 agent/eval.py     # Entrypoint shim: `python -m agent.eval` → eval.runner.main

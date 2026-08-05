@@ -237,3 +237,20 @@ def test_screening_accepts_pre_filtered_universe() -> None:
     yf = _FakeYF({"MSFT": _fundamentals()}, {"MSFT": _growth()})
     result = run_screening_pass(["MSFT"], client=yf)  # type: ignore[arg-type]
     assert result.candidates == ["MSFT"]
+
+
+def test_concurrent_screening_matches_sequential() -> None:
+    """max_workers>1 must return the SAME candidates in the SAME order as sequential."""
+    # A mixed universe (some pass, some fail) in a deliberately non-sorted order.
+    universe = ["D", "A", "C", "B", "E"]
+    passing = {"A", "C", "E"}
+    yf = _FakeYF(
+        {t: _fundamentals(pe=20.0 if t in passing else 99.0) for t in universe},
+        {t: _growth() for t in universe},
+    )
+
+    seq = run_screening_pass(universe, client=yf)  # type: ignore[arg-type]
+    conc = run_screening_pass(universe, client=yf, max_workers=4)  # type: ignore[arg-type]
+
+    assert seq.candidates == conc.candidates == ["A", "C", "E"]  # order preserved
+    assert seq.pass_rate == conc.pass_rate

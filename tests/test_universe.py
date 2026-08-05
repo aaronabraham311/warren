@@ -113,7 +113,7 @@ def test_no_redundant_fetch_within_the_week(db_session: Session) -> None:
 def test_stale_snapshot_triggers_refresh(db_session: Session) -> None:
     # Seed an 8-day-old snapshot directly (older than REFRESH_INTERVAL_DAYS=7).
     stale = date.today() - timedelta(days=8)
-    db_session.add(UniverseSnapshot(id=1, tickers_json='["OLD"]', refreshed_at=stale))
+    db_session.add(UniverseSnapshot(kind="sp500", tickers_json='["OLD"]', refreshed_at=stale))
     db_session.commit()
 
     fetch, calls = _counting_fetcher(["MSFT", "AAPL"])
@@ -155,6 +155,117 @@ def test_same_inputs_are_byte_identical(db_session: Session) -> None:
 
 def test_save_snapshot_stores_sorted_json(db_session: Session) -> None:
     universe.save_snapshot(db_session, ["MSFT", "AAPL", "AAPL"])
-    row = db_session.get(UniverseSnapshot, 1)
+    row = db_session.get(UniverseSnapshot, "sp500")
     assert row is not None
     assert row.tickers_json == '["AAPL", "MSFT"]'  # sorted + deduped
+
+
+# ── ExchangeClient.parse ──────────────────────────────────────────────────────
+
+_EXCHANGE_HTML = """
+<html><body>
+<table class="wikitable sortable">
+  <tr><th>Company</th><th>Ticker</th></tr>
+  <tr><td>DiaSorin</td><td>DIA</td></tr>
+  <tr><td>Ferrari</td><td>RACE</td></tr>
+  <tr><td>Some Gem</td><td>DIR.MI</td></tr>
+</table>
+</body></html>
+"""
+
+
+def test_exchange_client_parses_and_suffixes(monkeypatch: pytest.MonkeyPatch) -> None:
+    from data_sources.exchange_client import MILAN, ExchangeClient
+
+    client = ExchangeClient(MILAN)
+    monkeypatch.setattr(client, "_session", _FakeSession(text=_EXCHANGE_HTML))
+    result = client.get_constituents()
+    # Suffix appended where missing; left intact where already present.
+    assert result == ["DIA.MI", "RACE.MI", "DIR.MI"]
+
+
+def test_exchange_client_network_failure_returns_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    from data_sources.exchange_client import WARSAW, ExchangeClient
+
+    client = ExchangeClient(WARSAW)
+    monkeypatch.setattr(client, "_session", _FakeSession(exc=requests.ConnectionError("boom")))
+    result = client.get_constituents()
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "network"
+
+
+# ── gem-hunt universe orchestration ───────────────────────────────────────────
+
+
+def _exchange_fetchers(
+    payloads: dict[str, list[str]],
+) -> tuple[dict[str, universe.ConstituentFetcher], dict[str, int]]:
+    """Per-exchange counting fetchers returning the given payloads."""
+    calls: dict[str, int] = {k: 0 for k in payloads}
+
+    def make(key: str, tickers: list[str]) -> universe.ConstituentFetcher:
+        def fetch() -> list[str]:
+            calls[key] += 1
+            return tickers
+
+        return fetch
+
+    return {k: make(k, v) for k, v in payloads.items()}, calls
+
+
+def test_gem_hunt_universe_unions_exchanges_and_watchlist(db_session: Session) -> None:
+    fetchers, _ = _exchange_fetchers(
+        {"milan": ["DIR.MI", "RACE.MI"], "madrid": ["CIRSA.MC"], "warsaw": ["KPL.WA"]}
+    )
+    result = universe.get_gem_hunt_universe(
+        db_session, watchlist=["ZZZZ", "RACE.MI"], fetchers=fetchers
+    )
+    assert result == sorted({"DIR.MI", "RACE.MI", "CIRSA.MC", "KPL.WA", "ZZZZ"})
+    # The three known gems the G10 canary depends on are present.
+    assert {"DIR.MI", "CIRSA.MC", "KPL.WA"}.issubset(result)
+
+
+def test_gem_hunt_fetch_failure_falls_back_to_csv(db_session: Session) -> None:
+    def failing() -> DataSourceError:
+        return DataSourceError(error_code="network", message="down")
+
+    fetchers: dict[str, universe.ConstituentFetcher] = {
+        "milan": failing,
+        "madrid": failing,
+        "warsaw": failing,
+    }
+    result = universe.get_gem_hunt_universe(db_session, watchlist=[], fetchers=fetchers)
+    # All three CSV fallbacks loaded, including the required gems.
+    assert {"DIR.MI", "CIRSA.MC", "KPL.WA"}.issubset(result)
+
+
+def test_gem_hunt_snapshot_is_reused_within_the_week(db_session: Session) -> None:
+    fetchers, calls = _exchange_fetchers(
+        {"milan": ["DIR.MI"], "madrid": ["CIRSA.MC"], "warsaw": ["KPL.WA"]}
+    )
+
+    first = universe.get_gem_hunt_universe(db_session, watchlist=[], fetchers=fetchers)
+    second = universe.get_gem_hunt_universe(db_session, watchlist=[], fetchers=fetchers)
+
+    assert first == second
+    assert calls == {"milan": 1, "madrid": 1, "warsaw": 1}  # second served from snapshot
+    # The gem_hunt snapshot is a distinct row; the sp500 snapshot is untouched.
+    assert universe.load_snapshot(db_session, kind="gem_hunt") is not None
+    assert universe.load_snapshot(db_session, kind="sp500") is None
+
+
+def test_sp500_and_gem_hunt_snapshots_coexist(db_session: Session) -> None:
+    """Regression: the two universe kinds are independent rows, not one shared slot."""
+    sp_fetch, _ = _counting_fetcher(["MSFT", "AAPL"])
+    universe.get_current_universe(db_session, watchlist=[], fetcher=sp_fetch)
+
+    gem_fetchers, _ = _exchange_fetchers(
+        {"milan": ["DIR.MI"], "madrid": ["CIRSA.MC"], "warsaw": ["KPL.WA"]}
+    )
+    universe.get_gem_hunt_universe(db_session, watchlist=[], fetchers=gem_fetchers)
+
+    sp = universe.load_snapshot(db_session, kind="sp500")
+    gem = universe.load_snapshot(db_session, kind="gem_hunt")
+    assert sp is not None and gem is not None
+    assert set(sp.tickers) == {"MSFT", "AAPL"}
+    assert set(gem.tickers) == {"DIR.MI", "CIRSA.MC", "KPL.WA"}

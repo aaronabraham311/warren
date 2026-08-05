@@ -4,7 +4,6 @@ from typing import Literal, NotRequired, TypedDict
 from sqlalchemy import (
     JSON,
     Boolean,
-    CheckConstraint,
     Date,
     DateTime,
     Float,
@@ -144,18 +143,20 @@ class EvalRun(Base):
 
 
 class UniverseSnapshot(Base):
-    """Single-row snapshot of the sorted screening universe (S&P 500 list).
+    """Weekly-refreshed snapshot of a sorted screening universe, keyed by ``kind``.
 
-    The ``CHECK (id = 1)`` constraint plus upsert-on-id keeps at most one row, so the
-    table holds the latest weekly-refreshed list with its ``refreshed_at`` date — no
-    cleanup job needed. ``tickers_json`` is a sorted JSON array for deterministic,
-    byte-stable embedding in the Haiku screening prompt prefix.
+    One row per universe kind (``"sp500"`` for the default nightly US universe,
+    ``"gem_hunt"`` for the global 3-exchange universe). ``kind`` is the primary key,
+    so an upsert-on-``kind`` keeps at most one row per kind — no cleanup job needed.
+    ``tickers_json`` is a sorted JSON array; the weekly cadence exists purely to avoid
+    a re-scrape of the constituent source, not for any prompt-prefix reason (the
+    universe never enters an LLM prompt — screening is deterministic per-ticker Python
+    in ``agent.screening``).
     """
 
     __tablename__ = "universe_snapshots"
-    __table_args__ = (CheckConstraint("id = 1", name="ck_universe_single_row"),)
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    kind: Mapped[str] = mapped_column(Text, primary_key=True)
     tickers_json: Mapped[str] = mapped_column(Text, nullable=False)
     refreshed_at: Mapped[date] = mapped_column(Date, nullable=False)
 
