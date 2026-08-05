@@ -54,7 +54,10 @@ def _make_analysis(
     recommendation: str = "hold",
     confidence: float = 0.5,
     data_quality_notes: list[str] | None = None,
+    dirt_decision: dict[str, object] | None = None,
 ) -> Analysis:
+    outcome = None if dirt_decision is None else dirt_decision.get("outcome")
+    weighted_irr = None if dirt_decision is None else dirt_decision.get("probability_weighted_irr")
     return Analysis(
         run_id=run_id,
         ticker=ticker,
@@ -66,7 +69,70 @@ def _make_analysis(
         buffett_signals=["wide moat"],
         key_risks=["valuation"],
         data_quality_notes=data_quality_notes or [],
+        dirt_decision=dirt_decision,
+        decision_outcome=outcome if isinstance(outcome, str) else None,
+        probability_weighted_irr=(
+            float(weighted_irr)
+            if isinstance(weighted_irr, (int, float)) and not isinstance(weighted_irr, bool)
+            else None
+        ),
     )
+
+
+def _decision(outcome: str = "buy", weighted_irr: float = 0.27) -> dict[str, object]:
+    return {
+        "valuation_date": "2026-06-29",
+        "currency": "USD",
+        "current_price": 50.0,
+        "horizon_years": 2,
+        "hurdle_irr": 0.2,
+        "probability_weighted_irr": weighted_irr,
+        "hurdle_cleared": weighted_irr >= 0.2,
+        "required_entry_price": 56.25,
+        "outcome": outcome,
+        "outcome_reason": "Cited return and catalyst support the outcome",
+        "scenarios": [
+            {
+                "case": case,
+                "probability": probability,
+                "terminal_price": terminal,
+                "terminal_date": "2028-06-29",
+                "total_dividends": 4.0,
+                "total_return": total_return,
+                "irr": irr,
+            }
+            for case, probability, terminal, total_return, irr in [
+                ("bear", 0.25, 42.0, -0.08, -0.04),
+                ("base", 0.5, 75.0, 0.58, 0.26),
+                ("bull", 0.25, 105.0, 1.18, 0.48),
+            ]
+        ],
+        "downside_floor": {
+            "basis": "tangible_book",
+            "gross": 48.0,
+            "adjusted": 40.8,
+            "coverage": 0.816,
+            "confidence": "medium",
+            "adjustments": ["Exclude goodwill"],
+        },
+        "catalysts": [
+            {
+                "description": "Board-authorized tender",
+                "category": "capital_return",
+                "evidence_strength": "contractual",
+                "expected_by": "2027-03-31",
+                "source_ref": "filing:tender",
+            }
+        ],
+        "failure_thesis": "The tender is withdrawn and asset coverage falls.",
+        "entry_conditions": [{"description": "Price at or below hurdle", "threshold": 56.25}],
+        "blocking_unknowns": ["Final tender size"],
+        "monitoring_metrics": [
+            {"metric": "tangible_book_per_share", "failure_threshold": 40.0},
+            {"metric": "tender_completion_pct", "warning_threshold": 25.0},
+        ],
+        "calculation_version": "dce_irr_v1",
+    }
 
 
 # --------------------------------------------------------------------------- #
@@ -106,6 +172,23 @@ def test_sort_order_non_hold_before_hold_then_confidence_desc(db_session: Sessio
     ordered = [a.ticker for a in get_analyses_for_run(db_session, "run-1")]
     # Non-hold first (by confidence desc), then holds (by confidence desc).
     assert ordered == ["BUYHI", "SELLMID", "BUYLO", "HOLDHI", "HOLDLO"]
+
+
+def test_today_sort_prioritizes_decision_outcome_then_weighted_irr(db_session: Session) -> None:
+    db_session.add(_make_run())
+    db_session.add_all(
+        [
+            _make_analysis("run-1", "LEGACY", recommendation="buy", confidence=0.99),
+            _make_analysis("run-1", "PASS", dirt_decision=_decision("pass", 0.40)),
+            _make_analysis("run-1", "WATCH", dirt_decision=_decision("watchlist", 0.45)),
+            _make_analysis("run-1", "BUYLO", dirt_decision=_decision("buy", 0.22)),
+            _make_analysis("run-1", "BUYHI", dirt_decision=_decision("buy", 0.35)),
+        ]
+    )
+    db_session.commit()
+
+    ordered = [analysis.ticker for analysis in get_analyses_for_run(db_session, "run-1")]
+    assert ordered == ["BUYHI", "BUYLO", "WATCH", "PASS", "LEGACY"]
 
 
 def test_run_duration_seconds() -> None:
@@ -233,6 +316,44 @@ def test_apptest_renders_cards_without_error(today_env: SimpleNamespace) -> None
     assert any("Discovery Candidates (1)" in h for h in headers)
 
 
+def test_apptest_renders_dirt_decision_badge_and_contract(today_env: SimpleNamespace) -> None:
+    _seed(
+        today_env.engine,
+        [
+            _make_analysis(
+                "run-1",
+                "DIRT",
+                analysis_type="discovery",
+                recommendation="buy",
+                confidence=0.9,
+                dirt_decision=_decision(),
+            )
+        ],
+    )
+
+    at = AppTest.from_file(_TODAY_PAGE).run()
+
+    assert not at.exception
+    card = next(expander for expander in at.expander if "DIRT" in expander.label)
+    assert "BUY" in card.label
+    metrics = {metric.label: metric.value for metric in at.metric}
+    assert metrics["Weighted IRR"] == "27.0%"
+    assert metrics["Hurdle"] == "20.0%"
+    markdown = " ".join(item.value for item in at.markdown)
+    for expected in [
+        "DIRT decision contract",
+        "Scenarios",
+        "Downside floor",
+        "Catalysts",
+        "Failure thesis",
+        "Entry conditions",
+        "Blocking unknowns",
+        "Monitoring",
+    ]:
+        assert expected in markdown
+    assert len(at.table) == 1
+
+
 def test_apptest_auto_expands_high_confidence_action(today_env: SimpleNamespace) -> None:
     _seed(
         today_env.engine,
@@ -308,9 +429,19 @@ def test_seed_demo_writes_run_analyses_and_full_trace(tmp_path: Path) -> None:
         run = get_latest_run(session)
         assert run is not None
         analyses = get_analyses_for_run(session, run.id)
-    assert len(analyses) == 6
+        run_tool_calls = run.num_tool_calls
+    assert len(analyses) == 9
     # Non-hold recommendations sort ahead of holds (the §9.Q3 ordering the page relies on).
     assert analyses[0].recommendation != "hold"
+    decisions = {row.decision_outcome: row for row in analyses if row.dirt_decision is not None}
+    assert set(decisions) == {"buy", "watchlist", "pass"}
+    assert decisions["buy"].probability_weighted_irr is not None
+    assert decisions["buy"].probability_weighted_irr >= 0.20
+    assert decisions["watchlist"].probability_weighted_irr == pytest.approx(0.17, abs=0.02)
+    pass_decision = decisions["pass"].dirt_decision
+    assert pass_decision is not None
+    assert "structural" in str(pass_decision["outcome_reason"]).lower()
+    assert run_tool_calls == sum(row.tool_calls_made or 0 for row in analyses)
 
     trace = read_reasoning_trace(run.id, "AAPL", base_dir=logs_dir)
     tool_events = [e for e in trace if e["event"] == "tool_call"]
@@ -318,6 +449,11 @@ def test_seed_demo_writes_run_analyses_and_full_trace(tmp_path: Path) -> None:
     # Every demo tool call carries args and an output payload — the whole point of the change.
     assert all("input" in e and "output" in e for e in tool_events)
     assert any(e["event"] == "llm_call" for e in trace)
+    dirt_trace = read_reasoning_trace(run.id, "DIR.MI", base_dir=logs_dir)
+    decision_event = next(
+        event for event in dirt_trace if event.get("tool") == "model_dirt_scenarios"
+    )
+    assert json.loads(str(decision_event["output"])) == decisions["buy"].dirt_decision
 
 
 def test_apptest_data_quality_badge_in_label(today_env: SimpleNamespace) -> None:

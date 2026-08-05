@@ -42,11 +42,22 @@ def get_analyses_for_run(session: Session, run_id: str) -> list[Analysis]:
     the top of the page.
     """
     hold_last = case((Analysis.recommendation == "hold", 1), else_=0)
+    decision_order = case(
+        (Analysis.decision_outcome == "buy", 0),
+        (Analysis.decision_outcome == "watchlist", 1),
+        (Analysis.decision_outcome == "pass", 2),
+        else_=3,
+    )
     return list(
         session.scalars(
             select(Analysis)
             .where(Analysis.run_id == run_id)
-            .order_by(hold_last.asc(), Analysis.confidence.desc())
+            .order_by(
+                decision_order.asc(),
+                Analysis.probability_weighted_irr.desc().nullslast(),
+                hold_last.asc(),
+                Analysis.confidence.desc(),
+            )
         )
     )
 
@@ -88,14 +99,18 @@ def search_analyses(
     date_to: date | None = None,
     conf_min: float = 0.0,
     conf_max: float = 1.0,
+    decision_outcomes: list[str] | None = None,
+    weighted_irr_min: float | None = None,
+    weighted_irr_max: float | None = None,
     limit: int = 500,
 ) -> list[AnalysisSearchResult]:
-    """Filtered, newest-first search across every analysis for the History page.
+    """Filter analyses and rank decisions buy/watchlist/pass, then weighted IRR.
 
     Each active filter narrows the query: `ticker` is a case-insensitive `LIKE` substring
     match, `recommendations` an `IN` set, `date_from`/`date_to` bound the calendar day of
-    `created_at`, and `conf_min`/`conf_max` bound confidence. Results are ordered newest
-    first and capped at `limit` (the `idx_analyses_ticker_created` index keeps this fast).
+    `created_at`, and confidence/outcome/IRR bounds narrow results. Decision outcomes sort
+    buy, watchlist, pass, then legacy rows; weighted IRR breaks ties before recency. Results
+    are capped at `limit` (the ticker/date index keeps broad history queries bounded).
     The prompt version tag is joined in via `runs → prompt_versions`.
     """
     stmt = (
@@ -111,9 +126,25 @@ def search_analyses(
         stmt = stmt.where(func.date(Analysis.created_at) >= str(date_from))
     if date_to is not None:
         stmt = stmt.where(func.date(Analysis.created_at) <= str(date_to))
+    if decision_outcomes:
+        stmt = stmt.where(Analysis.decision_outcome.in_(decision_outcomes))
+    if weighted_irr_min is not None:
+        stmt = stmt.where(Analysis.probability_weighted_irr >= weighted_irr_min)
+    if weighted_irr_max is not None:
+        stmt = stmt.where(Analysis.probability_weighted_irr <= weighted_irr_max)
+    outcome_order = case(
+        (Analysis.decision_outcome == "buy", 0),
+        (Analysis.decision_outcome == "watchlist", 1),
+        (Analysis.decision_outcome == "pass", 2),
+        else_=3,
+    )
     stmt = (
         stmt.where(Analysis.confidence.between(conf_min, conf_max))
-        .order_by(Analysis.created_at.desc())
+        .order_by(
+            outcome_order.asc(),
+            Analysis.probability_weighted_irr.desc().nullslast(),
+            Analysis.created_at.desc(),
+        )
         .limit(limit)
     )
     return [

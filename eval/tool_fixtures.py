@@ -37,11 +37,11 @@ from pydantic import BaseModel
 
 from agent.budget import RunContext
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
+from agent.tools.dirt_scenarios import ModelDirtScenariosInput, model_dirt_scenarios
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 STALE_AFTER = timedelta(days=90)
-_PURE_REPLAY_TOOLS = {"model_dirt_scenarios"}
 
 
 def tool_input_hash(tool_input: dict[str, object]) -> str:
@@ -84,15 +84,26 @@ class FixtureToolRunner:
     served: dict[str, ToolResultOk] = field(default_factory=dict)
 
     def run(self, tool: Tool, tool_input: BaseModel, ctx: RunContext) -> ToolResult:
-        # The scenario model is deterministic arithmetic over the supplied payload and
-        # performs no I/O. Recompute it so evals can grade novel model-authored scenarios;
-        # every data-backed tool remains fixture-only below.
-        if tool.name in _PURE_REPLAY_TOOLS:
-            result = tool.run(tool_input, ctx)
-            if isinstance(result, ToolResultOk):
-                result = result.model_copy(update={"cached": True})
-                self.served[tool.name] = result
-            return result
+        # Recompute the one deterministic arithmetic contract directly through its pure
+        # function. Deliberately do not dispatch Tool.run(): fixture replay's guarantee that
+        # it never invokes a live tool remains load-bearing for every Tool implementation.
+        if tool.name == "model_dirt_scenarios":
+            if not isinstance(tool_input, ModelDirtScenariosInput):
+                return ToolResultError(
+                    error_code="parse",
+                    message="model_dirt_scenarios received an unexpected input schema",
+                    retryable=False,
+                )
+            try:
+                pure_result = ToolResultOk(data=model_dirt_scenarios(tool_input), cached=True)
+            except ValueError as exc:
+                return ToolResultError(
+                    error_code="parse",
+                    message=f"invalid DIRT decision contract: {exc}",
+                    retryable=False,
+                )
+            self.served[tool.name] = pure_result
+            return pure_result
         raw_input: dict[str, object] = tool_input.model_dump(mode="json")
         path = tool_fixture_path(self.ticker, tool.name, raw_input, self.root)
         if not path.exists():

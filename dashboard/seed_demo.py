@@ -20,12 +20,14 @@ import argparse
 import json
 import os
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from sqlalchemy import create_engine, delete
 from sqlalchemy.orm import Session
 
+from agent.models import DirtDecisionContract, DirtDownsideFloorAssumption, DirtScenarioAssumption
+from agent.tools.dirt_scenarios import ModelDirtScenariosInput, model_dirt_scenarios
 from storage.models import Analysis, Base, PromptVersion, Run
 
 RUN_ID = "demo-run"
@@ -59,6 +61,152 @@ class _DemoTicker:
     price: float
     pe: float
     peg: float | None
+    dirt_signals: dict[str, object] | None = None
+    dirt_decision: dict[str, object] | None = None
+
+
+def _demo_decision(
+    outcome: str,
+    terminal_prices: tuple[float, float, float],
+    *,
+    outcome_reason: str,
+) -> dict[str, object]:
+    valuation_date = _START.date()
+    terminal_date = date(2028, 6, 29)
+    scenarios = []
+    for case, probability, price in zip(
+        ("bear", "base", "bull"), (0.25, 0.50, 0.25), terminal_prices, strict=True
+    ):
+        scenarios.append(
+            {
+                "case": case,
+                "probability": probability,
+                "assumption": f"{case.title()} operating and valuation case",
+                "rationale": "Demo assumptions tied to the latest annual filing",
+                "terminal_price": price,
+                "terminal_date": terminal_date,
+                "cash_flows": [
+                    {
+                        "date": date(2027, 6, 29),
+                        "amount": 5.0,
+                        "kind": "dividend",
+                        "source_ref": "demo:annual-report:p42",
+                    },
+                    {
+                        "date": terminal_date,
+                        "amount": price,
+                        "kind": "terminal_sale",
+                        "source_ref": "demo:scenario",
+                    },
+                ],
+            }
+        )
+    entry_conditions = (
+        [
+            {
+                "description": "Enter when price reaches the computed hurdle price",
+                "metric": "share_price",
+                "operator": "lte",
+                "threshold": 82.0,
+                "currency": "USD",
+                "source_ref": "demo:quote",
+            }
+        ]
+        if outcome == "watchlist"
+        else []
+    )
+    inp = ModelDirtScenariosInput.model_validate(
+        {
+            "valuation_date": valuation_date,
+            "currency": "USD",
+            "current_price": 100.0,
+            "horizon_years": 2,
+            "scenarios": scenarios,
+            "downside_floor": {
+                "basis": "tangible_book",
+                "gross": 90.0,
+                "haircut": 0.20,
+                "source_ref": "demo:annual-report:p18",
+                "as_of": date(2025, 12, 31),
+                "adjustments": ["Exclude goodwill"],
+                "confidence": "medium",
+            },
+            "catalysts": [
+                {
+                    "description": "Board-authorized capital return",
+                    "category": "capital_return",
+                    "evidence_strength": "contractual",
+                    "expected_by": date(2027, 6, 30),
+                    "source_ref": "demo:announcement:1",
+                    "failure_condition": "Authorization is withdrawn",
+                }
+            ],
+            "failure_thesis": "Asset coverage erodes or the capital return is withdrawn",
+            "outcome": outcome,
+            "outcome_reason": outcome_reason,
+            "entry_conditions": entry_conditions,
+            "blocking_unknowns": (
+                ["Controller blocks minority realization"] if outcome == "pass" else []
+            ),
+            "monitoring_metrics": (
+                [
+                    {
+                        "metric": "tangible_book_per_share",
+                        "failure_threshold": 70.0,
+                        "cadence": "quarterly",
+                        "source_ref": "demo:annual-report:p18",
+                        "rationale": "Protects the downside floor",
+                    },
+                    {
+                        "metric": "capital_return_completion_pct",
+                        "warning_threshold": 25.0,
+                        "cadence": "event",
+                        "source_ref": "demo:announcement:1",
+                        "rationale": "Tracks the discount-closing mechanism",
+                    },
+                ]
+                if outcome == "buy"
+                else []
+            ),
+        }
+    )
+    return model_dirt_scenarios(inp).model_dump(mode="json")
+
+
+def _decision_tool_input(decision_payload: dict[str, object]) -> dict[str, object]:
+    """Recover the exact pure-tool input represented by a seeded decision contract."""
+    decision = DirtDecisionContract.model_validate(decision_payload)
+    return ModelDirtScenariosInput(
+        valuation_date=decision.valuation_date,
+        currency=decision.currency,
+        current_price=decision.current_price,
+        horizon_years=decision.horizon_years,
+        scenarios=[
+            DirtScenarioAssumption.model_validate(scenario.model_dump())
+            for scenario in decision.scenarios
+        ],
+        downside_floor=DirtDownsideFloorAssumption.model_validate(
+            decision.downside_floor.model_dump()
+        ),
+        catalysts=decision.catalysts,
+        failure_thesis=decision.failure_thesis,
+        outcome=decision.outcome,
+        outcome_reason=decision.outcome_reason,
+        entry_conditions=decision.entry_conditions,
+        blocking_unknowns=decision.blocking_unknowns,
+        monitoring_metrics=decision.monitoring_metrics,
+    ).model_dump(mode="json")
+
+
+_BUY_DECISION = _demo_decision(
+    "buy", (85.0, 160.0, 235.0), outcome_reason="Return clears the hurdle with a cited catalyst"
+)
+_WATCH_DECISION = _demo_decision(
+    "watchlist", (75.0, 135.0, 195.0), outcome_reason="Expected return is near 17%, below hurdle"
+)
+_PASS_DECISION = _demo_decision(
+    "pass", (85.0, 160.0, 235.0), outcome_reason="Structural control trap blocks realization"
+)
 
 
 _DEMO: list[_DemoTicker] = [
@@ -151,6 +299,55 @@ _DEMO: list[_DemoTicker] = [
         22.4,
         1.4,
     ),
+    _DemoTicker(
+        "DIR.MI",
+        "discovery",
+        "buy",
+        0.84,
+        "DIR clears the 20% probability-weighted hurdle with a cited capital return.",
+        ["Asset play"],
+        ["Downside floor"],
+        ["Catalyst execution"],
+        [],
+        100.0,
+        5.2,
+        None,
+        {"ev_ebit": 5.2, "closability_status": "supported"},
+        _BUY_DECISION,
+    ),
+    _DemoTicker(
+        "KPL.WA",
+        "discovery",
+        "hold",
+        0.72,
+        "KPL is a watchlist candidate near 17% expected IRR; wait for the hurdle entry price.",
+        ["Asset play"],
+        ["Net cash"],
+        ["Entry-price discipline"],
+        [],
+        100.0,
+        6.1,
+        None,
+        {"ev_ebit": 6.1, "closability_status": "unknown"},
+        _WATCH_DECISION,
+    ),
+    _DemoTicker(
+        "FRO.MI",
+        "discovery",
+        "hold",
+        0.88,
+        "FRO is a pass despite optical upside because a structural control trap "
+        "blocks realization.",
+        ["Asset play"],
+        [],
+        ["Structural control trap"],
+        [],
+        100.0,
+        4.4,
+        None,
+        {"ev_ebit": 4.4, "closability_status": "constrained"},
+        _PASS_DECISION,
+    ),
 ]
 
 
@@ -158,6 +355,10 @@ _DEMO_BY_TICKER = {d.ticker: d for d in _DEMO}
 
 
 def _analysis(d: _DemoTicker) -> Analysis:
+    outcome = None if d.dirt_decision is None else d.dirt_decision.get("outcome")
+    weighted_irr = (
+        None if d.dirt_decision is None else d.dirt_decision.get("probability_weighted_irr")
+    )
     return Analysis(
         run_id=RUN_ID,
         ticker=d.ticker,
@@ -169,8 +370,14 @@ def _analysis(d: _DemoTicker) -> Analysis:
         buffett_signals=d.buffett_signals,
         key_risks=d.key_risks,
         data_quality_notes=d.data_quality_notes,
-        tool_calls_made=2,
+        tool_calls_made=2 + (1 if d.dirt_decision is not None else 0),
         tokens_used=21_000,
+        dirt_signals=d.dirt_signals,
+        dirt_decision=d.dirt_decision,
+        decision_outcome=outcome if isinstance(outcome, str) else None,
+        probability_weighted_irr=(
+            float(weighted_irr) if isinstance(weighted_irr, (int, float)) else None
+        ),
         created_at=_START,
     )
 
@@ -309,6 +516,20 @@ def _trace_events() -> list[dict[str, object]]:
                 ),
             }
         )
+        if d.dirt_decision is not None:
+            events.append(
+                {
+                    "run_id": RUN_ID,
+                    "event": "tool_call",
+                    "ticker": d.ticker,
+                    "tool": "model_dirt_scenarios",
+                    "input": _decision_tool_input(d.dirt_decision),
+                    "status": "ok",
+                    "cached": True,
+                    "latency_ms": 1,
+                    "output": json.dumps(d.dirt_decision),
+                }
+            )
         events.append(
             {
                 "run_id": RUN_ID,
@@ -320,7 +541,21 @@ def _trace_events() -> list[dict[str, object]]:
                 "cost_usd": 0.058 + i * 0.004,
             }
         )
-        events.append({"run_id": RUN_ID, "event": "ticker_completed", "ticker": d.ticker})
+        events.append(
+            {
+                "run_id": RUN_ID,
+                "event": "ticker_completed",
+                "ticker": d.ticker,
+                "decision_outcome": (
+                    None if d.dirt_decision is None else d.dirt_decision.get("outcome")
+                ),
+                "probability_weighted_irr": (
+                    None
+                    if d.dirt_decision is None
+                    else d.dirt_decision.get("probability_weighted_irr")
+                ),
+            }
+        )
     return events
 
 
@@ -339,7 +574,7 @@ def seed_demo(db_path: str, logs_dir: str) -> None:
         total_input_tokens=148_200,
         total_output_tokens=12_840,
         total_cost_usd=0.6431,
-        num_tool_calls=len(_DEMO) * 2,
+        num_tool_calls=sum(2 + (1 if d.dirt_decision is not None else 0) for d in _DEMO),
     )
     all_run_ids = [RUN_ID, *(h.run_id for h in _HISTORY)]
     with Session(engine) as session:

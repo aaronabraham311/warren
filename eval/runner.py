@@ -29,6 +29,7 @@ from dotenv import load_dotenv
 
 from agent.budget import Budget, RunContext
 from agent.loop import analyze_ticker
+from agent.models import DirtDecisionContract
 from agent.persona import DefaultPersona, DirtPersona
 from agent.routing import HardcodedSonnetRouting
 from data_sources.cache import CacheStore
@@ -128,7 +129,19 @@ def _grade_one(
         if forensic_result is not None and isinstance(forensic_result.data, ForensicEvidenceBundle)
         else None
     )
-    return grade_analysis(result, example, judge, forensic_evidence)
+    decision_result = fixture_runner.served.get("model_dirt_scenarios")
+    served_dirt_decision = (
+        decision_result.data
+        if decision_result is not None and isinstance(decision_result.data, DirtDecisionContract)
+        else None
+    )
+    return grade_analysis(
+        result,
+        example,
+        judge,
+        forensic_evidence,
+        served_dirt_decision,
+    )
 
 
 def _print_summary(grades: list[EvalGrade]) -> None:
