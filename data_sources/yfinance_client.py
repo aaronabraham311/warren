@@ -733,9 +733,9 @@ class YFinanceClient:
             income_by_year = {row.fiscal_year: row for row in history.income_statement}
             balance_by_year = {row.fiscal_year: row for row in history.balance_sheet}
             common_years = sorted(set(income_by_year) & set(balance_by_year), reverse=True)
-            if common_years:
-                income_row = income_by_year[common_years[0]]
-                balance_row = balance_by_year[common_years[0]]
+            for year in common_years:
+                income_row = income_by_year[year]
+                balance_row = balance_by_year[year]
                 statement_ebit = (
                     income_row.ebit if income_row.ebit is not None else income_row.operating_income
                 )
@@ -765,6 +765,7 @@ class YFinanceClient:
                             enterprise_value_value = int(derived_ev_usd / trading_rate)
                         ev_to_ebit = round(derived_ev_usd / ebit_usd, 2)
                         ev_source = "statements"
+                        break
         ev_to_ebitda = round(ev_f / ebitda, 2) if ev_f and ebitda and ebitda > 0 else None
         fcf_yield = round(float(fcf) / ev_f * 100, 4) if fcf and ev_f and ev_f > 0 else None
         earnings_yield = (

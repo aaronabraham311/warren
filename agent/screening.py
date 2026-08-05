@@ -218,16 +218,6 @@ def _value_valuation_checks(valuation: ValuationData | None, criteria: Criteria)
     return checks
 
 
-def _value_quality_checks(quality: QualityData | None, criteria: Criteria) -> list[bool]:
-    """Pass/fail for the present quality-sourced value criterion (consecutive profit years)."""
-    if quality is None:
-        return []
-    checks: list[bool] = []
-    if "min_consecutive_profit_years" in criteria and quality.consecutive_profit_years is not None:
-        checks.append(quality.consecutive_profit_years >= criteria["min_consecutive_profit_years"])
-    return checks
-
-
 def _clamp(value: float) -> float:
     return max(0.0, min(1.0, value))
 
@@ -288,7 +278,7 @@ def _source_error(stage: ScreenStage, error: DataSourceError) -> TickerScore:
             stage=stage,
             error_code=error.error_code,
             message=error.message,
-            retryable=error.error_code == "network",
+            retryable=error.error_code in {"network", "rate_limit"},
         ),
     )
 

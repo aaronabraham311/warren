@@ -1098,15 +1098,17 @@ def test_valuation_derives_ev_from_statements_when_vendor_ev_missing(
         "b": 2,
         "c": 3,
     }
-    ticker.financials = _make_stmt_df_mock({"fiscal_years": [2025], "EBIT": [10_000_000]})
+    ticker.financials = _make_stmt_df_mock(
+        {"fiscal_years": [2025, 2024], "EBIT": [None, 10_000_000]}
+    )
     ticker.balance_sheet = _make_stmt_df_mock(
         {
-            "fiscal_years": [2025],
-            "Total Debt": [30_000_000],
-            "Cash And Cash Equivalents": [5_000_000],
+            "fiscal_years": [2025, 2024],
+            "Total Debt": [30_000_000, 30_000_000],
+            "Cash And Cash Equivalents": [5_000_000, 5_000_000],
         }
     )
-    ticker.cashflow = _make_stmt_df_mock({"fiscal_years": [2025]})
+    ticker.cashflow = _make_stmt_df_mock({"fiscal_years": [2025, 2024]})
 
     def dispatch(symbol: str) -> MagicMock:
         if symbol == "EURUSD=X":

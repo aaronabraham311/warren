@@ -487,6 +487,16 @@ def test_value_screen_preserves_source_errors() -> None:
     assert out.error is not None and out.error.retryable is True
 
 
+def test_value_screen_marks_rate_limits_retryable() -> None:
+    err = DataSourceError(error_code="rate_limit", message="slow down")
+    yf = _FakeValueYF({"GEM": err}, {"GEM": _valuation()}, {"GEM": _quality()})
+
+    out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+
+    assert out.disposition == "source_error"
+    assert out.error is not None and out.error.retryable is True
+
+
 def test_sparse_outcome_is_returned_and_written_to_jsonl(tmp_path: Path) -> None:
     yf = _FakeValueYF(
         {"GEM": _value_fundamentals(pb=0.8)},
@@ -512,14 +522,13 @@ def test_sparse_outcome_is_returned_and_written_to_jsonl(tmp_path: Path) -> None
 
 
 def test_run_screening_ranks_best_value_first() -> None:
-    """rank=True sorts passing candidates cheapest-first (combined EV/EBIT + NCAV discount)."""
-    # X: ev 5, ncav_disc 0.5 → 4.5 | Z: ev 6, ncav_disc 0.1 → 5.9 | Y: ev 8, ncav_disc 2.0 → 6.0
+    """rank=True sorts passing candidates by the bounded composite value loss."""
     universe = ["Y", "X", "Z"]  # deliberately non-sorted, non-best-first
     fundamentals = {t: _value_fundamentals(ticker=t) for t in universe}
     valuation = {
-        "X": _valuation(ticker="X", ev_ebit=5.0, ncav_to_mc=0.5),
-        "Y": _valuation(ticker="Y", ev_ebit=8.0, ncav_to_mc=2.0),
-        "Z": _valuation(ticker="Z", ev_ebit=6.0, ncav_to_mc=0.1),
+        "X": _valuation(ticker="X", ev_ebit=6.0, price_to_ncav=0.3),
+        "Y": _valuation(ticker="Y", ev_ebit=6.0, price_to_ncav=1.4),
+        "Z": _valuation(ticker="Z", ev_ebit=6.0, price_to_ncav=0.8),
     }
     quality = {t: _quality(ticker=t) for t in universe}
     yf = _FakeValueYF(fundamentals, valuation, quality)
