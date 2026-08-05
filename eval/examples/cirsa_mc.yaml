@@ -1,0 +1,53 @@
+ticker: CIRSA.MC
+notes: |
+  A Bolsa de Madrid deep-value gem. Like DIR.MI it is a cheap, financially sound, lightly
+  covered name — cheap on EV/EBIT and near NCAV — but it carries modest leverage rather than
+  net cash, so the value-trap / balance-sheet question is more live and the control-discount
+  concern is real (a concentrated ownership register is common in these Continental micro-caps).
+  That still leaves it inside the gem envelope rather than LUMN's trap: earnings are positive
+  and recurring, and cash generation covers the debt service comfortably.
+
+  `buy` and `hold` are both allowed — `hold` is the honest answer if the leverage or a
+  controlling holder caps the realizable discount, `buy` if the cheapness plus cash generation
+  wins out. The DIRT checks are what the eval pins: EV/EBIT and NCAV must be surfaced, the
+  value-trap / balance-sheet risk must be named explicitly (leverage makes this mandatory here),
+  and the universe note must appear in data_quality_notes.
+last_curated: 2026-08-04
+persona: dirt
+
+expectations:
+  recommendation:
+    allowed: [buy, hold]
+    preferred: hold
+
+  thesis_must_mention:
+    - any_of: [EV/EBIT, acquirer's multiple, ev/ebit, cheap, undervalued]
+    - any_of: [NCAV, net current asset, asset value, book value, price-to-ncav]
+    - any_of: [free cash flow, cash conversion, profitable, interest coverage, underfollowed, coverage gap]
+
+  thesis_must_not_mention:
+    - "guaranteed"
+    - "can't lose"
+    - "risk-free"
+    - "no downside"
+
+  key_risks:
+    must_include_one_of:
+      - value trap
+      - leverage
+      - debt
+      - liquidity
+      - control
+      - catalyst
+      - balance sheet
+      - coverage
+
+  numerical_grounding:
+    min_specific_numbers: 3
+    no_hallucinated_format: true
+
+  deep_value:
+    require_ev_ebit: true
+    require_ncav: true
+    require_value_trap_risk: true
+    require_universe_note: true

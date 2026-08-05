@@ -1,0 +1,23 @@
+{
+  "data": {
+    "analyst_count": 2,
+    "as_of": "2026-08-01",
+    "avg_volume_3m": 50000,
+    "currency": "EUR",
+    "data_age_hours": 48,
+    "debt_to_equity": 0.3,
+    "fcf_ttm_usd": 30000000,
+    "float_shares": 20000000,
+    "gross_margin_pct": 38.0,
+    "net_margin_pct": 9.0,
+    "operating_margin_pct": 14.0,
+    "pb_ratio": 0.9,
+    "pe_ratio": 9.1,
+    "roe_pct": 12.5,
+    "sector": "Industrials",
+    "source": "yfinance",
+    "ticker": "CIRSA.MC"
+  },
+  "recorded_at": "2026-08-04T14:10:03.660496+00:00",
+  "status": "ok"
+}

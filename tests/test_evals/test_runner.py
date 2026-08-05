@@ -10,6 +10,8 @@ from sqlalchemy import select
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 
+from agent.models import AnalysisOutput, LynchBuffettSignals
+from agent.persona import DefaultPersona, DirtPersona
 from agent.tools.base import ToolResultOk
 from data_sources.yfinance_client import PriceData
 from eval.golden_set import (
@@ -19,7 +21,7 @@ from eval.golden_set import (
     RecommendationExpectation,
 )
 from eval.grader import EvalGrade
-from eval.runner import run_eval
+from eval.runner import resolve_persona, run_eval
 from eval.tool_fixtures import record_tool_result
 from storage.models import EvalRun, Run
 from tests.conftest import make_end_turn, make_tool_use
@@ -37,11 +39,12 @@ _ANALYSIS_JSON = """{
 }"""
 
 
-def _example(ticker: str) -> EvalExample:
+def _example(ticker: str, persona: str = "default") -> EvalExample:
     return EvalExample(
         ticker=ticker,
         notes="test",
         last_curated=date(2026, 1, 1),
+        persona=persona,
         expectations=EvalExpectations(
             recommendation=RecommendationExpectation(allowed=["hold", "buy"]),
             numerical_grounding=NumericalGrounding(min_specific_numbers=3),
@@ -268,3 +271,64 @@ def test_identical_mocked_runs_produce_identical_grades(
     ]
 
     assert grades[0][0].model_dump() == grades[1][0].model_dump()
+
+
+def test_resolve_persona_maps_the_persona_field() -> None:
+    assert isinstance(resolve_persona(_example("AAPL")), DefaultPersona)
+    assert isinstance(resolve_persona(_example("AAPL", persona="dirt")), DirtPersona)
+
+
+def _capture_persona(monkeypatch: pytest.MonkeyPatch) -> dict[str, object]:
+    """Replace analyze_ticker with a spy that records the persona it was handed."""
+    captured: dict[str, object] = {}
+
+    def _spy(**kwargs: object) -> AnalysisOutput:
+        captured["persona"] = kwargs["persona"]
+        return AnalysisOutput(
+            ticker="AAPL",
+            analysis_type="discovery",
+            recommendation="hold",
+            confidence=0.5,
+            thesis="Trades at 6.1x EV/EBIT with 0.8x NCAV; steady 12% ROE.",
+            lynch_signals=LynchBuffettSignals(pros=[], cons=[]),
+            buffett_signals=LynchBuffettSignals(pros=[], cons=[]),
+            key_risks=["value trap risk"],
+        )
+
+    monkeypatch.setattr("eval.runner.analyze_ticker", _spy)
+    return captured
+
+
+def test_dirt_example_replays_under_dirt_persona(
+    db_engine: Engine,
+    fixtures_root: Path,
+    log_dir: Path,
+    mock_claude: MockClaude,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A `persona: dirt` example must reach analyze_ticker under DirtPersona."""
+    captured = _capture_persona(monkeypatch)
+    run_eval(
+        examples=[_example("AAPL", persona="dirt")],
+        client=mock_claude([]),
+        eval_run_id="eval-fixed",
+        fixtures_root=fixtures_root,
+    )
+    assert isinstance(captured["persona"], DirtPersona)
+
+
+def test_default_example_still_replays_under_default_persona(
+    db_engine: Engine,
+    fixtures_root: Path,
+    log_dir: Path,
+    mock_claude: MockClaude,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured = _capture_persona(monkeypatch)
+    run_eval(
+        examples=[_example("AAPL")],
+        client=mock_claude([]),
+        eval_run_id="eval-fixed",
+        fixtures_root=fixtures_root,
+    )
+    assert isinstance(captured["persona"], DefaultPersona)

@@ -1,7 +1,8 @@
 from datetime import date
 
-from agent.models import AnalysisOutput, LynchBuffettSignals
+from agent.models import AnalysisOutput, DirtSignals, LynchBuffettSignals
 from eval.golden_set import (
+    DeepValueExpectation,
     EvalExample,
     EvalExpectations,
     KeyRisksExpectation,
@@ -10,8 +11,9 @@ from eval.golden_set import (
     SignalCount,
     SignalsExpectation,
     ThesisMention,
+    load_eval_example,
 )
-from eval.grader import failed_grade, grade_analysis
+from eval.grader import _UNIVERSE_NOTE_SUBSTRING, failed_grade, grade_analysis
 from eval.judge import JudgeVerdict
 
 
@@ -200,6 +202,134 @@ def test_failed_grade_is_a_single_must_failure() -> None:
     assert [c.check_name for c in grade.checks] == ["fixture_missing"]
     assert grade.checks[0].severity == "must"
     assert grade.overall_notes == "skipped"
+
+
+_UNIVERSE_NOTE = (
+    "DIRT universe: US small-caps (Russell 2000) plus Euronext Growth Milan (.MI), "
+    "Bolsa de Madrid (.MC), and GPW Warsaw (.WA); market-cap gates are USD-normalized; "
+    "aggregator reliability still degrades for micro-caps (sub-$300M USD), and non-US names "
+    "often lack SEC/EDGAR filings."
+)
+
+
+def _dirt_analysis(
+    dirt_signals: DirtSignals | None = None,
+    key_risks: list[str] | None = None,
+    data_quality_notes: list[str] | None = None,
+    thesis: str = "Cheap at 6.1x EV/EBIT, trades at 0.8x NCAV with net cash of 55M.",
+) -> AnalysisOutput:
+    return AnalysisOutput(
+        ticker="DIR.MI",
+        analysis_type="discovery",
+        recommendation="buy",
+        confidence=0.6,
+        thesis=thesis,
+        lynch_signals=LynchBuffettSignals(pros=[], cons=[]),
+        buffett_signals=LynchBuffettSignals(pros=[], cons=[]),
+        key_risks=key_risks or ["value trap risk if earnings roll over"],
+        data_quality_notes=data_quality_notes or [_UNIVERSE_NOTE],
+        dirt_signals=dirt_signals
+        if dirt_signals is not None
+        else DirtSignals(ev_ebit=6.1, price_to_ncav=0.8, ncav_discount_pct=20.0),
+    )
+
+
+def _dirt_example() -> EvalExample:
+    return EvalExample(
+        ticker="DIR.MI",
+        notes="deep-value gem",
+        last_curated=date(2026, 1, 1),
+        persona="dirt",
+        expectations=EvalExpectations(
+            recommendation=RecommendationExpectation(allowed=["buy", "hold"]),
+            numerical_grounding=NumericalGrounding(min_specific_numbers=0),
+            deep_value=DeepValueExpectation(
+                require_ev_ebit=True,
+                require_ncav=True,
+                require_value_trap_risk=True,
+                require_universe_note=True,
+            ),
+        ),
+    )
+
+
+_DIRT_CHECKS = {
+    "ev_ebit_present",
+    "ncav_cited",
+    "value_trap_risk_surfaced",
+    "universe_note_present",
+}
+
+
+def test_deep_value_checks_pass_when_all_present() -> None:
+    grade = grade_analysis(_dirt_analysis(), _dirt_example())
+    dirt = [c for c in grade.checks if c.check_name in _DIRT_CHECKS]
+    assert {c.check_name for c in dirt} == _DIRT_CHECKS
+    assert all(c.passed and c.severity == "must" for c in dirt)
+    assert grade.passed, grade.overall_notes
+
+
+def test_ev_ebit_check_fails_when_absent_from_signals_and_thesis() -> None:
+    analysis = _dirt_analysis(
+        dirt_signals=DirtSignals(ev_ebit=None, price_to_ncav=0.8),
+        thesis="A cheap, profitable small-cap trading below its net current asset value.",
+    )
+    grade = grade_analysis(analysis, _dirt_example())
+    check = next(c for c in grade.checks if c.check_name == "ev_ebit_present")
+    assert not check.passed
+    assert not grade.passed
+
+
+def test_ncav_check_fails_when_absent_from_signals_and_thesis() -> None:
+    analysis = _dirt_analysis(
+        dirt_signals=DirtSignals(ev_ebit=6.1, price_to_ncav=None, ncav_discount_pct=None),
+        thesis="Cheap at 6.1x EV/EBIT with a clean balance sheet and net cash.",
+    )
+    grade = grade_analysis(analysis, _dirt_example())
+    check = next(c for c in grade.checks if c.check_name == "ncav_cited")
+    assert not check.passed
+    assert not grade.passed
+
+
+def test_value_trap_check_fails_when_no_such_risk_surfaced() -> None:
+    analysis = _dirt_analysis(key_risks=["FX translation drag on reported revenue"])
+    analysis.thesis = "Cheap at 6.1x EV/EBIT, trades at 0.8x NCAV; earnings are steady."
+    grade = grade_analysis(analysis, _dirt_example())
+    check = next(c for c in grade.checks if c.check_name == "value_trap_risk_surfaced")
+    assert not check.passed
+    assert not grade.passed
+
+
+def test_universe_note_check_fails_when_missing() -> None:
+    analysis = _dirt_analysis(data_quality_notes=["some other note"])
+    grade = grade_analysis(analysis, _dirt_example())
+    check = next(c for c in grade.checks if c.check_name == "universe_note_present")
+    assert not check.passed
+    assert not grade.passed
+
+
+def test_deep_value_checks_omitted_for_default_examples() -> None:
+    """No deep_value block → none of the DIRT checks are emitted (back-compat)."""
+    grade = grade_analysis(_analysis(), _example())
+    assert not any(
+        c.check_name
+        in {"ev_ebit_present", "ncav_cited", "value_trap_risk_surfaced", "universe_note_present"}
+        for c in grade.checks
+    )
+
+
+def test_universe_note_substring_matches_the_g9_verbatim_note() -> None:
+    assert _UNIVERSE_NOTE_SUBSTRING in _UNIVERSE_NOTE
+
+
+def test_gem_yamls_load_and_validate_as_dirt() -> None:
+    from eval.golden_set import EXAMPLES_DIR
+
+    for stem in ("dir_mi", "cirsa_mc", "kpl_wa"):
+        example = load_eval_example(EXAMPLES_DIR / f"{stem}.yaml")
+        assert example.persona == "dirt"
+        assert example.expectations.deep_value is not None
+        assert example.expectations.deep_value.require_universe_note
 
 
 def test_grades_the_real_golden_set_examples() -> None:

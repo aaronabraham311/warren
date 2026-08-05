@@ -27,7 +27,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 from agent.models import AnalysisOutput, LynchBuffettSignals
-from eval.golden_set import EvalExample, SignalsExpectation
+from eval.golden_set import DeepValueExpectation, EvalExample, SignalsExpectation
 from eval.judge import ThesisJudge
 
 Severity = Literal["must", "should"]
@@ -36,6 +36,14 @@ Severity = Literal["must", "should"]
 _NUMBER_RE = re.compile(r"\d+\.?\d*%?")
 
 _THESIS_EXCERPT_CHARS = 100
+
+# A stable substring of the G9 DIRT universe-limitation note emitted into
+# data_quality_notes (see DIRT_SYSTEM_PROMPT in agent/persona.py). Substring, not the full
+# string, so wording tweaks elsewhere in the note don't spuriously fail the check.
+_UNIVERSE_NOTE_SUBSTRING = "DIRT universe: US small-caps (Russell 2000)"
+
+# Terms that count as surfacing a value-trap / balance-sheet-fragility concern.
+_VALUE_TRAP_TERMS = ("value trap", "value-trap", "balance sheet", "balance-sheet", "fragil")
 
 
 class CheckResult(BaseModel):
@@ -115,6 +123,79 @@ def _signal_count_checks(
                 severity="should",
             )
         )
+    return checks
+
+
+def _deep_value_checks(
+    result: AnalysisOutput,
+    expectation: DeepValueExpectation,
+    thesis_lower: str,
+) -> list[CheckResult]:
+    """Deep-value (DIRT) check family — one ``must`` check per configured toggle.
+
+    Each check is satisfied from the structured ``dirt_signals`` block and/or the thesis
+    text, so a model that reasons about the concept in prose still passes even when it did
+    not populate the corresponding numeric field.
+    """
+    checks: list[CheckResult] = []
+    dirt = result.dirt_signals
+
+    if expectation.require_ev_ebit:
+        found = (dirt is not None and dirt.ev_ebit is not None) or "ev/ebit" in thesis_lower
+        checks.append(
+            CheckResult(
+                check_name="ev_ebit_present",
+                passed=found,
+                expected="dirt_signals.ev_ebit populated or EV/EBIT cited in thesis",
+                actual=f"ev_ebit={None if dirt is None else dirt.ev_ebit}",
+                severity="must",
+            )
+        )
+
+    if expectation.require_ncav:
+        found = (
+            dirt is not None
+            and (dirt.price_to_ncav is not None or dirt.ncav_discount_pct is not None)
+        ) or "ncav" in thesis_lower
+        checks.append(
+            CheckResult(
+                check_name="ncav_cited",
+                passed=found,
+                expected="dirt_signals price_to_ncav/ncav_discount_pct populated or NCAV in thesis",
+                actual=(
+                    "no NCAV signal or mention"
+                    if dirt is None
+                    else f"price_to_ncav={dirt.price_to_ncav}, discount={dirt.ncav_discount_pct}"
+                ),
+                severity="must",
+            )
+        )
+
+    if expectation.require_value_trap_risk:
+        blob = (" ".join(result.key_risks) + " " + result.thesis).lower()
+        hits = [t for t in _VALUE_TRAP_TERMS if t in blob]
+        checks.append(
+            CheckResult(
+                check_name="value_trap_risk_surfaced",
+                passed=bool(hits),
+                expected=f"key_risks/thesis raise a value-trap concern (any of {list(_VALUE_TRAP_TERMS)})",  # noqa: E501
+                actual=f"found {hits}" if hits else f"none present in {result.key_risks}",
+                severity="must",
+            )
+        )
+
+    if expectation.require_universe_note:
+        notes_blob = " ".join(result.data_quality_notes)
+        checks.append(
+            CheckResult(
+                check_name="universe_note_present",
+                passed=_UNIVERSE_NOTE_SUBSTRING in notes_blob,
+                expected=f"data_quality_notes contains {_UNIVERSE_NOTE_SUBSTRING!r}",
+                actual="present" if _UNIVERSE_NOTE_SUBSTRING in notes_blob else "absent",
+                severity="must",
+            )
+        )
+
     return checks
 
 
@@ -221,5 +302,8 @@ def grade_analysis(
             severity="must",
         )
     )
+
+    if expectations.deep_value is not None:
+        checks += _deep_value_checks(result, expectations.deep_value, thesis_lower)
 
     return _finalize(example.ticker, checks)

@@ -1,0 +1,15 @@
+{
+  "data": {
+    "as_of": "2026-08-01T00:00:00Z",
+    "currency": "PLN",
+    "current_price": 31.5,
+    "data_age_hours": 2,
+    "day_change_pct": 1.0,
+    "previous_close": 31.185,
+    "source": "yfinance",
+    "ticker": "KPL.WA",
+    "volume": 45000
+  },
+  "recorded_at": "2026-08-04T14:10:03.660847+00:00",
+  "status": "ok"
+}

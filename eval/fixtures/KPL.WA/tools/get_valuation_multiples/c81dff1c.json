@@ -1,0 +1,27 @@
+{
+  "data": {
+    "acquirers_multiple": 5.4,
+    "as_of": "2026-08-01",
+    "currency": "PLN",
+    "data_age_hours": 48,
+    "dividend_yield_pct": 2.5,
+    "earnings_yield": 0.1388888888888889,
+    "enterprise_value": 180000000,
+    "ev_to_ebit": 5.4,
+    "ev_to_ebitda": 4.32,
+    "fcf_yield": 0.11,
+    "is_net_net": true,
+    "market_cap_native": 210000000,
+    "market_cap_usd": 210000000,
+    "ncav": 250000000,
+    "ncav_to_market_cap": 1.3513513513513513,
+    "net_cash_positive": true,
+    "net_cash_usd": 90000000,
+    "p_tangible_book": 0.6,
+    "price_to_ncav": 0.74,
+    "source": "yfinance",
+    "ticker": "KPL.WA"
+  },
+  "recorded_at": "2026-08-04T14:10:03.661093+00:00",
+  "status": "ok"
+}
