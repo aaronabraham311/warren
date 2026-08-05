@@ -1,0 +1,35 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 2.8013,
+    "current_pe": 31.4164,
+    "data_age_hours": 5221,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022
+    ],
+    "pb_min": null,
+    "pb_percentile": null,
+    "pb_series": [
+      2.8013,
+      null,
+      null,
+      null
+    ],
+    "pb_vs_10y_low": null,
+    "pe_percentile": null,
+    "pe_series": [
+      31.4164,
+      null,
+      null,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "CIRSA.MC",
+    "years_covered": 1
+  },
+  "recorded_at": "2026-08-05T13:56:35.556048+00:00",
+  "status": "ok"
+}

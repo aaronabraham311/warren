@@ -1,0 +1,38 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 1.9552,
+    "current_pe": null,
+    "data_age_hours": 0,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022,
+      2021
+    ],
+    "pb_min": 1.2422,
+    "pb_percentile": 33.33,
+    "pb_series": [
+      1.9552,
+      13.1481,
+      1.2422,
+      2.2086,
+      null
+    ],
+    "pb_vs_10y_low": 1.574,
+    "pe_percentile": null,
+    "pe_series": [
+      null,
+      null,
+      5.5349,
+      7.7764,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "CHP.WA",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:57:06.716316+00:00",
+  "status": "ok"
+}

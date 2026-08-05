@@ -1,0 +1,38 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 6.9568,
+    "current_pe": 24.9976,
+    "data_age_hours": 5221,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022,
+      2021
+    ],
+    "pb_min": 2.4805,
+    "pb_percentile": 66.67,
+    "pb_series": [
+      6.9568,
+      8.0853,
+      5.8668,
+      2.4805,
+      null
+    ],
+    "pb_vs_10y_low": 2.8046,
+    "pe_percentile": 100.0,
+    "pe_series": [
+      24.9976,
+      23.6797,
+      22.9833,
+      13.441,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "META",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:56:42.401826+00:00",
+  "status": "ok"
+}

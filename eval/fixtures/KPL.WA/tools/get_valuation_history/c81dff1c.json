@@ -1,0 +1,38 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 1.0864,
+    "current_pe": 4.9149,
+    "data_age_hours": 5221,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022,
+      2021
+    ],
+    "pb_min": 1.0511,
+    "pb_percentile": 66.67,
+    "pb_series": [
+      1.0864,
+      1.3807,
+      1.0832,
+      1.0511,
+      null
+    ],
+    "pb_vs_10y_low": 1.0336,
+    "pe_percentile": 33.33,
+    "pe_series": [
+      4.9149,
+      6.1688,
+      5.0748,
+      4.5009,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "KPL.WA",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:56:40.471399+00:00",
+  "status": "ok"
+}

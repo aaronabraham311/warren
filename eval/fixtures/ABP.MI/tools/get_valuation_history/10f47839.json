@@ -1,0 +1,35 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": null,
+    "current_pe": null,
+    "data_age_hours": 9637,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022
+    ],
+    "pb_min": null,
+    "pb_percentile": null,
+    "pb_series": [
+      null,
+      2.1345,
+      1.8981,
+      2.0708
+    ],
+    "pb_vs_10y_low": null,
+    "pe_percentile": null,
+    "pe_series": [
+      null,
+      14.37,
+      11.261,
+      11.6459
+    ],
+    "source": "yfinance",
+    "ticker": "ABP.MI",
+    "years_covered": 3
+  },
+  "recorded_at": "2026-08-05T13:57:04.721587+00:00",
+  "status": "ok"
+}

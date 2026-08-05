@@ -1,0 +1,38 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 61.6733,
+    "current_pe": 40.5978,
+    "data_age_hours": 7501,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022,
+      2021
+    ],
+    "pb_min": 40.1989,
+    "pb_percentile": 66.67,
+    "pb_series": [
+      61.6733,
+      66.0494,
+      47.6353,
+      40.1989,
+      null
+    ],
+    "pb_vs_10y_low": 1.5342,
+    "pe_percentile": 100.0,
+    "pe_series": [
+      40.5978,
+      40.1288,
+      30.5206,
+      20.4098,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "AAPL",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:56:33.718953+00:00",
+  "status": "ok"
+}

@@ -1,0 +1,38 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 4.1666,
+    "current_pe": 19.928,
+    "data_age_hours": 1597,
+    "fiscal_years": [
+      2026,
+      2025,
+      2024,
+      2023,
+      2022
+    ],
+    "pb_min": 4.1666,
+    "pb_percentile": 0.0,
+    "pb_series": [
+      4.1666,
+      7.0073,
+      7.5821,
+      11.2332,
+      null
+    ],
+    "pb_vs_10y_low": 1.0,
+    "pe_percentile": 33.33,
+    "pe_series": [
+      19.928,
+      28.7628,
+      19.1947,
+      31.0276,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "NKE",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:56:44.802992+00:00",
+  "status": "ok"
+}

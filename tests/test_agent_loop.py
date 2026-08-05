@@ -22,10 +22,11 @@ from agent.loop import (
     analyze_ticker,
 )
 from agent.models import AnalysisOutput, DirtSignals, LynchBuffettSignals
-from agent.persona import DefaultPersona
+from agent.persona import DefaultPersona, DirtPersona
 from agent.routing import HardcodedSonnetRouting
 from agent.tools.base import ErrorCode, ToolResult, ToolResultError, ToolResultOk
 from agent.tools.quote import GetQuoteInput, GetQuoteTool
+from agent.tools.valuation_history import GetValuationHistoryInput
 from data_sources.yfinance_client import PriceData
 from storage.engine import upsert_analysis, write_run_end, write_run_start
 from storage.logger import RunLogger
@@ -535,6 +536,34 @@ def _wal_tool_events(logger: RunLogger) -> list[dict[str, object]]:
         for line in logger.path.read_text().splitlines()
         if json.loads(line).get("event") == "tool_call"
     ]
+
+
+def test_dirt_valuation_history_call_is_recorded_in_wal(
+    mock_claude: MagicMock, tmp_path: Path
+) -> None:
+    """The G15 persona path can execute the required own-history tool and audit it."""
+    mock_tool = MagicMock()
+    mock_tool.input_schema = GetValuationHistoryInput
+    mock_tool.run.return_value = _ok_result()
+    logger = RunLogger("run-dirt-history", tmp_path)
+    mock_claude(
+        [
+            make_tool_use("get_valuation_history", {"ticker": "KPL.WA"}),
+            make_end_turn(VALID_ANALYSIS_JSON),
+        ]
+    )
+
+    with patch("agent.loop.TOOL_REGISTRY", {"get_valuation_history": mock_tool}):
+        analyze_ticker(
+            "KPL.WA",
+            DirtPersona(),
+            HardcodedSonnetRouting(),
+            _ctx("run-dirt-history", logger=logger),
+        )
+
+    events = _wal_tool_events(logger)
+    assert [event["tool"] for event in events] == ["get_valuation_history"]
+    assert events[0]["ticker"] == "KPL.WA"
 
 
 def test_wal_retry_count_recorded(mock_claude: MagicMock, tmp_path: Path) -> None:

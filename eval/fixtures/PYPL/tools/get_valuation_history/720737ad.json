@@ -1,0 +1,35 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 3.9022,
+    "current_pe": 15.1046,
+    "data_age_hours": 5221,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022
+    ],
+    "pb_min": 3.809,
+    "pb_percentile": 33.33,
+    "pb_series": [
+      3.9022,
+      5.5121,
+      3.809,
+      4.5589
+    ],
+    "pb_vs_10y_low": 1.0245,
+    "pe_percentile": 0.0,
+    "pe_series": [
+      15.1046,
+      27.1379,
+      18.8843,
+      38.2086
+    ],
+    "source": "yfinance",
+    "ticker": "PYPL",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:56:46.999403+00:00",
+  "status": "ok"
+}

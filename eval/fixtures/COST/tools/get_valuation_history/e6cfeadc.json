@@ -1,0 +1,38 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 14.2898,
+    "current_pe": 51.4569,
+    "data_age_hours": 8149,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022,
+      2021
+    ],
+    "pb_min": 9.3522,
+    "pb_percentile": 66.67,
+    "pb_series": [
+      14.2898,
+      17.024,
+      11.4855,
+      9.3522,
+      null
+    ],
+    "pb_vs_10y_low": 1.528,
+    "pe_percentile": 66.67,
+    "pe_series": [
+      51.4569,
+      54.5867,
+      45.7411,
+      33.0416,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "COST",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:56:36.671155+00:00",
+  "status": "ok"
+}

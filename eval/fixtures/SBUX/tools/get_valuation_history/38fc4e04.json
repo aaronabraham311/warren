@@ -1,0 +1,38 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": null,
+    "current_pe": 64.4635,
+    "data_age_hours": 7477,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022,
+      2021
+    ],
+    "pb_min": null,
+    "pb_percentile": null,
+    "pb_series": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "pb_vs_10y_low": null,
+    "pe_percentile": 100.0,
+    "pe_series": [
+      64.4635,
+      26.4638,
+      24.9429,
+      31.8728,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "SBUX",
+    "years_covered": 0
+  },
+  "recorded_at": "2026-08-05T13:56:48.214446+00:00",
+  "status": "ok"
+}
