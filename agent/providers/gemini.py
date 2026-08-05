@@ -92,11 +92,16 @@ class GeminiProvider:
             normalized_usage = Usage()
         else:
             cache_read = usage.total_cached_tokens or 0
+            thought_tokens = usage.total_thought_tokens or 0
             normalized_usage = Usage(
                 input_tokens=max(0, (usage.total_input_tokens or 0) - cache_read),
-                output_tokens=usage.total_output_tokens or 0,
+                # Gemini reports generated response tokens and internal thought
+                # tokens as separate billable output categories. Normalize the
+                # parent output total to include both so cost accounting and the
+                # reasoning-subset invariant remain provider-neutral.
+                output_tokens=(usage.total_output_tokens or 0) + thought_tokens,
                 cache_read_tokens=cache_read,
-                reasoning_tokens=usage.total_thought_tokens or 0,
+                reasoning_tokens=thought_tokens,
                 tool_use_tokens=usage.total_tool_use_tokens or 0,
                 total_tokens=usage.total_tokens or 0,
                 raw=cast(JSONObject, usage.model_dump(mode="json", exclude_none=True)),

@@ -30,7 +30,7 @@ def test_gemini_replays_signed_steps_and_partitions_cached_input() -> None:
             total_output_tokens=80,
             total_thought_tokens=30,
             total_tool_use_tokens=20,
-            total_tokens=1080,
+            total_tokens=1110,
         ),
     )
     client.interactions.create.return_value = interaction
@@ -51,6 +51,7 @@ def test_gemini_replays_signed_steps_and_partitions_cached_input() -> None:
 
     assert response.usage.input_tokens == 300
     assert response.usage.cache_read_tokens == 700
+    assert response.usage.output_tokens == 110
     assert response.usage.reasoning_tokens == 30
     assert response.usage.tool_use_tokens == 20
     assert response.replay[0]["signature"] == "signed-thought"
