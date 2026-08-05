@@ -14,16 +14,17 @@ from pydantic import BaseModel, SkipValidation
 
 from data_sources.errors import DataSourceError
 
+# Re-exported (redundant alias marks the intentional re-export) so the ~15 tool input
+# schemas that already do `from agent.tools.base import TICKER_PATTERN` inherit the single
+# shared pattern. It admits both US share classes (BRK.B) and the exchange suffixes gem-hunt
+# mode needs (DIR.MI, CIRSA.MC, KPL.WA); data sources normalise the suffix via
+# `to_yahoo_symbol`. Single source of truth: `data_sources.symbols.TICKER_PATTERN`.
+from data_sources.symbols import TICKER_PATTERN as TICKER_PATTERN
+
 if TYPE_CHECKING:
     from agent.budget import RunContext
 
 ErrorCode = Literal["rate_limit", "not_found", "stale_data", "network", "unknown"]
-
-# Shared by every tool input's `ticker` field. The optional dotted suffix admits share
-# classes like BRK.B — a golden-set ticker. Matches eval.golden_set.EvalExample.ticker.
-# Data sources spell the suffix differently (Yahoo and SEC want BRK-B); the clients
-# normalise it.
-TICKER_PATTERN = r"^[A-Z]{1,5}(\.[A-Z])?$"
 
 
 class ToolResultOk(BaseModel):

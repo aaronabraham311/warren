@@ -29,6 +29,8 @@ from typing import Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from data_sources.symbols import TICKER_PATTERN
+
 EXAMPLES_DIR = Path(__file__).parent / "examples"
 
 Recommendation = Literal["buy", "sell", "hold"]
@@ -92,7 +94,7 @@ class EvalExpectations(_Strict):
 class EvalExample(_Strict):
     """One curated ticker expectation file."""
 
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}(\.[A-Z])?$")
+    ticker: str = Field(pattern=TICKER_PATTERN)
     notes: str = Field(min_length=1)
     last_curated: date
     expectations: EvalExpectations

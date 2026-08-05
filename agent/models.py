@@ -5,6 +5,8 @@ from typing import Final, Literal, TypedDict
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from data_sources.symbols import TICKER_PATTERN
+
 # ── Model identifiers ────────────────────────────────────────────────────────
 # Marked Final so mypy infers literal types (e.g. Literal["claude-haiku-4-5-20251001"]),
 # letting agent/routing.py return them where the ModelID Literal is expected.
@@ -104,7 +106,7 @@ TerminationReason = Literal[
 class AnalysisOutput(BaseModel):
     model_config = ConfigDict(frozen=False)
 
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}([.-][A-Z])?$")
+    ticker: str = Field(pattern=TICKER_PATTERN)
     analysis_type: Literal["holding", "discovery"]
     recommendation: Literal["buy", "sell", "hold"]
     confidence: float = Field(ge=0.0, le=1.0)

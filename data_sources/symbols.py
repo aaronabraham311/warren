@@ -24,6 +24,17 @@ explicit, extensible allow-list of known exchange suffixes.
 # slice covers Milan (MI), Madrid (MC), and Warsaw (WA).
 KNOWN_EXCHANGE_SUFFIXES: frozenset[str] = frozenset({"MI", "MC", "WA"})
 
+# The single canonical ticker-format regex, shared by every pydantic model that
+# validates a ticker (agent.models.AnalysisOutput, agent.portfolio.Holding /
+# WatchlistEntry, eval.golden_set.EvalExample). Keeping one source of truth stops
+# the three regexes from drifting apart and rejecting valid non-US symbols.
+#
+# Base: 1–5 uppercase letters, plus an OPTIONAL ``.``/``-`` suffix of 1–2 letters.
+# This accepts both US share classes (``BRK.B``, ``BRK-B``) and the slice's
+# exchange suffixes (``DIR.MI`` Milan, ``CIRSA.MC`` Madrid, ``KPL.WA`` Warsaw).
+# Deliberately permissive — validation must not reject valid foreign symbols.
+TICKER_PATTERN: str = r"^[A-Z]{1,5}([.-][A-Z]{1,2})?$"
+
 
 def canonical_symbol(ticker: str) -> str:
     """Normalise any caller input to the canonical form: uppercased, trimmed,

@@ -17,7 +17,9 @@ from pydantic import ValidationError
 from eval.golden_set import (
     EXAMPLES_DIR,
     EvalExample,
+    EvalExpectations,
     RecommendationExpectation,
+    _stem_for,
     load_all_examples,
     load_eval_example,
 )
@@ -54,6 +56,31 @@ def test_example_validates(path: Path) -> None:
 
 def test_at_least_thirteen_examples(examples: list[EvalExample]) -> None:
     assert len(examples) >= 13
+
+
+# ── G3: suffix tickers validate and round-trip their filename stem ────────────────
+
+
+@pytest.mark.parametrize(
+    ("ticker", "stem"),
+    [("DIR.MI", "dir_mi"), ("CIRSA.MC", "cirsa_mc"), ("KPL.WA", "kpl_wa"), ("BRK.B", "brk_b")],
+)
+def test_suffix_ticker_stem(ticker: str, stem: str) -> None:
+    assert _stem_for(ticker) == stem
+
+
+@pytest.mark.parametrize("ticker", ["DIR.MI", "CIRSA.MC", "KPL.WA"])
+def test_eval_example_accepts_suffix_ticker(ticker: str) -> None:
+    example = EvalExample(
+        ticker=ticker,
+        notes="curated",
+        last_curated=date(2026, 1, 1),
+        expectations=EvalExpectations(
+            recommendation=RecommendationExpectation(allowed=["hold"]),
+        ),
+    )
+    assert example.ticker == ticker
+    assert _stem_for(example.ticker) == ticker.replace(".", "_").lower()
 
 
 def test_load_all_examples_is_sorted_by_filename(examples: list[EvalExample]) -> None:

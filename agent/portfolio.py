@@ -21,6 +21,7 @@ from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
 from agent.tools._clients import yfinance_client
+from data_sources.symbols import TICKER_PATTERN
 from data_sources.yfinance_client import PriceData
 from storage.models import Holding as HoldingRow
 from storage.models import Watchlist as WatchlistRow
@@ -34,14 +35,14 @@ class PortfolioError(ValueError):
 
 
 class Holding(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}$")
+    ticker: str = Field(pattern=TICKER_PATTERN)
     shares: float = Field(gt=0)
     cost_basis: float = Field(gt=0)
     purchase_date: date
 
 
 class WatchlistEntry(BaseModel):
-    ticker: str = Field(pattern=r"^[A-Z]{1,5}$")
+    ticker: str = Field(pattern=TICKER_PATTERN)
     notes: str = ""
 
 

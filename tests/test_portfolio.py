@@ -50,6 +50,19 @@ def test_invalid_ticker_pattern_lists_all_bad_tickers(tmp_path: Path) -> None:
     assert "TOOLONG" in msg
 
 
+@pytest.mark.parametrize("ticker", ["DIR.MI", "CIRSA.MC", "KPL.WA", "BRK.B", "AAPL"])
+def test_holding_and_watchlist_accept_suffix_tickers(tmp_path: Path, ticker: str) -> None:
+    # Non-US exchange suffixes and US share classes must pass validation. Ticker
+    # existence is stubbed offline via the injectable validator.
+    csv = _write(
+        tmp_path / "p.csv",
+        f"ticker,shares,cost_basis,purchase_date\n{ticker},10,150.00,2023-01-15\n",
+    )
+    holdings = load_portfolio(csv, validator=lambda _t: True)
+    assert holdings[0].ticker == ticker
+    assert WatchlistEntry(ticker=ticker).ticker == ticker
+
+
 def test_duplicate_tickers_raises_with_list(tmp_path: Path) -> None:
     csv = _write(
         tmp_path / "p.csv",
