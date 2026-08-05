@@ -7,10 +7,21 @@ from collections.abc import Sequence
 from datetime import date, datetime
 from enum import StrEnum
 from typing import Protocol
+from urllib.parse import urlsplit
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from data_sources.errors import DataSourceError
+
+
+def _validate_http_url(value: str) -> str:
+    """Reject non-web and credential-bearing URLs at the source-neutral boundary."""
+    parsed = urlsplit(value)
+    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+        raise ValueError("filing URLs must use HTTP(S) and include a hostname")
+    if parsed.username is not None or parsed.password is not None:
+        raise ValueError("filing URLs must not contain credentials")
+    return value
 
 
 class SourceSystem(StrEnum):
@@ -113,6 +124,11 @@ class DocumentRef(BaseModel):
     etag: str | None = None
     last_modified: str | None = None
 
+    @field_validator("landing_page_url", "direct_document_url")
+    @classmethod
+    def validate_urls(cls, value: str) -> str:
+        return _validate_http_url(value)
+
     @model_validator(mode="after")
     def filing_id_matches_source_identity(self) -> DocumentRef:
         if self.source_system is not SourceSystem.EDGAR and not self.issuer.isin:
@@ -142,6 +158,11 @@ class PageCitation(BaseModel):
     page_number: int = Field(ge=1)
     source_url: str
 
+    @field_validator("source_url")
+    @classmethod
+    def validate_source_url(cls, value: str) -> str:
+        return _validate_http_url(value)
+
 
 class DocumentText(BaseModel):
     """Extracted filing text with page-preserving provenance."""
@@ -167,6 +188,7 @@ class DocumentText(BaseModel):
 
     @model_validator(mode="after")
     def validate_page_contract(self) -> DocumentText:
+        _validate_http_url(self.source_url)
         page_numbers = [page.page_number for page in self.pages]
         if page_numbers != list(range(1, self.page_count + 1)):
             raise ValueError("original pages must be complete, ordered, and 1-based")
@@ -215,6 +237,21 @@ class FilingsArchive(BaseModel):
 
     @model_validator(mode="after")
     def validate_archive_contract(self) -> FilingsArchive:
+        archive_identity = (
+            self.issuer.canonical_ticker,
+            self.issuer.venue,
+            self.issuer.isin,
+        )
+        if any(
+            (
+                filing.issuer.canonical_ticker,
+                filing.issuer.venue,
+                filing.issuer.isin,
+            )
+            != archive_identity
+            for filing in self.filings
+        ):
+            raise ValueError("every filing must belong to the archive issuer")
         dates = [filing.publication_date for filing in self.filings]
         if dates != sorted(dates, reverse=True):
             raise ValueError("filings must be ordered newest first")
@@ -299,8 +336,12 @@ class FilingSection(BaseModel):
 
     @model_validator(mode="after")
     def require_source_url(self) -> FilingSection:
-        if not self.source_url:
-            raise ValueError("source_url is required")
+        _validate_http_url(self.source_url)
+        for citation in self.page_citations:
+            if self.filing_id is not None and citation.filing_id != self.filing_id:
+                raise ValueError("citation filing_id must match the section filing_id")
+            if citation.source_url != self.source_url:
+                raise ValueError("citation source_url must match the section source_url")
         return self
 
     @property

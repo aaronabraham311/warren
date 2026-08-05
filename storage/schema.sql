@@ -127,7 +127,12 @@ CREATE TABLE IF NOT EXISTS filing_manifests (
   artifact_key TEXT NOT NULL,
   supersedes_checksum TEXT,
   created_at TIMESTAMP NOT NULL,
-  PRIMARY KEY (filing_id, checksum)
+  PRIMARY KEY (filing_id, checksum),
+  CONSTRAINT ck_filing_manifests_checksum_length CHECK (length(checksum) = 64),
+  CONSTRAINT ck_filing_manifests_byte_length CHECK (byte_length >= 0),
+  CONSTRAINT fk_filing_manifests_supersedes
+    FOREIGN KEY (filing_id, supersedes_checksum)
+    REFERENCES filing_manifests(filing_id, checksum)
 );
 
 -- Performance indexes (Tech Spec §7.5)

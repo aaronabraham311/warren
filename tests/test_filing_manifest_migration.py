@@ -42,8 +42,18 @@ def test_filing_manifest_migration_round_trip(
             "'idx_filing_manifests_document_versions')"
         ).all()
         index_sql: dict[str, str] = {str(row[0]): str(row[1]) for row in index_rows}
+    check_names = {item["name"] for item in upgraded.get_check_constraints("filing_manifests")}
+    foreign_keys = upgraded.get_foreign_keys("filing_manifests")
     assert "issuer_isin, retrieved_at DESC" in index_sql["idx_filing_manifests_issuer_date"]
     assert "filing_id, retrieved_at DESC" in index_sql["idx_filing_manifests_document_versions"]
+    assert check_names == {
+        "ck_filing_manifests_byte_length",
+        "ck_filing_manifests_checksum_length",
+    }
+    assert any(
+        foreign_key["constrained_columns"] == ["filing_id", "supersedes_checksum"]
+        for foreign_key in foreign_keys
+    )
 
     command.downgrade(config, _PREVIOUS_REVISION)
     assert "filing_manifests" not in inspect(engine).get_table_names()

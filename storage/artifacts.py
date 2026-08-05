@@ -87,13 +87,18 @@ class ArtifactStore:
         )
 
     def read(self, artifact: StoredArtifact) -> bytes:
-        """Read an artifact after checking both its safe key and checksum."""
+        """Read an artifact after checking its safe key, checksum, and recorded size."""
         expected_key = self.relative_key(artifact.sha256, artifact.mime_type)
         if artifact.relative_key != expected_key:
             raise ArtifactIntegrityError("Artifact key does not match checksum and MIME type")
         path = self.root / expected_key
-        self._verify(path, artifact.sha256)
-        return path.read_bytes()
+        content = self._verify(path, artifact.sha256)
+        if len(content) != artifact.byte_length:
+            raise ArtifactIntegrityError(
+                "Artifact byte length mismatch: "
+                f"expected {artifact.byte_length}, got {len(content)}"
+            )
+        return content
 
     @classmethod
     def relative_key(cls, checksum: str, mime_type: str) -> str:
@@ -102,11 +107,13 @@ class ArtifactStore:
         return (Path(checksum[:2]) / f"{checksum}{cls._extension(mime_type)}").as_posix()
 
     @staticmethod
-    def _verify(path: Path, expected_checksum: str) -> None:
+    def _verify(path: Path, expected_checksum: str) -> bytes:
         if not path.is_file():
             raise ArtifactIntegrityError(f"Artifact is missing: {path}")
-        actual = hashlib.sha256(path.read_bytes()).hexdigest()
+        content = path.read_bytes()
+        actual = hashlib.sha256(content).hexdigest()
         if actual != expected_checksum:
             raise ArtifactIntegrityError(
                 f"Artifact checksum mismatch for {path}: expected {expected_checksum}, got {actual}"
             )
+        return content

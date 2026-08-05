@@ -4,10 +4,12 @@ from typing import Literal, NotRequired, TypedDict
 from sqlalchemy import (
     JSON,
     Boolean,
+    CheckConstraint,
     Date,
     DateTime,
     Float,
     ForeignKey,
+    ForeignKeyConstraint,
     Index,
     Integer,
     Text,
@@ -188,6 +190,15 @@ class FilingManifest(Base):
     """
 
     __tablename__ = "filing_manifests"
+    __table_args__ = (
+        CheckConstraint("length(checksum) = 64", name="ck_filing_manifests_checksum_length"),
+        CheckConstraint("byte_length >= 0", name="ck_filing_manifests_byte_length"),
+        ForeignKeyConstraint(
+            ["filing_id", "supersedes_checksum"],
+            ["filing_manifests.filing_id", "filing_manifests.checksum"],
+            name="fk_filing_manifests_supersedes",
+        ),
+    )
 
     filing_id: Mapped[str] = mapped_column(Text, primary_key=True)
     checksum: Mapped[str] = mapped_column(Text, primary_key=True)

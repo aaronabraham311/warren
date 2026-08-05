@@ -214,6 +214,38 @@ def test_filings_archive_rejects_coverage_that_excludes_results() -> None:
         )
 
 
+def test_filings_archive_rejects_a_mixed_issuer() -> None:
+    filing = _document_ref(direct_url="https://issuer.example/report.pdf")
+    mixed_payload = filing.model_dump()
+    mixed_payload["issuer"] = {
+        **filing.issuer.model_dump(),
+        "canonical_ticker": "OTHER.MI",
+    }
+    mixed_payload["filing_id"] = stable_filing_id(
+        filing.source_system,
+        filing.issuer.venue,
+        filing.issuer.isin or "",
+        filing.upstream_id,
+    )
+    mixed = DocumentRef.model_validate(mixed_payload)
+
+    with pytest.raises(ValidationError, match="archive issuer"):
+        FilingsArchive(
+            issuer=filing.issuer,
+            filings=[mixed],
+            coverage_start=filing.publication_date,
+            coverage_end=filing.publication_date,
+            pages_exhausted=True,
+            fetched_at=datetime(2026, 8, 5, tzinfo=timezone.utc),
+        )
+
+
+def test_document_ref_rejects_non_web_and_credential_urls() -> None:
+    for url in ("file:///etc/passwd", "https://user:secret@example.test/report.pdf"):
+        with pytest.raises(ValidationError, match="filing URLs"):
+            _document_ref(direct_url=url)
+
+
 def test_filing_section_accepts_old_edgar_url_fixture() -> None:
     section = FilingSection.model_validate(
         {
@@ -242,3 +274,28 @@ def test_filing_section_accepts_old_edgar_url_fixture() -> None:
             source_url=section.source_url,
         )
     ]
+
+
+def test_filing_section_rejects_citation_from_another_source() -> None:
+    payload = {
+        "ticker": "AAPL",
+        "filing_type": "10-K",
+        "section": "business",
+        "fiscal_year": 2025,
+        "filing_date": "2025-11-01",
+        "text": "Phones",
+        "word_count": 1,
+        "truncated": False,
+        "source_url": "https://www.sec.gov/Archives/report.htm",
+        "filing_id": "filing_expected",
+        "page_citations": [
+            {
+                "filing_id": "filing_other",
+                "page_number": 2,
+                "source_url": "https://example.test/other.pdf",
+            }
+        ],
+    }
+
+    with pytest.raises(ValidationError, match="citation filing_id"):
+        FilingSection.model_validate(payload)

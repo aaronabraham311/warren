@@ -58,6 +58,20 @@ def test_artifact_store_detects_on_disk_corruption(tmp_path: Path) -> None:
         store.read(artifact)
 
 
+def test_artifact_store_detects_recorded_size_mismatch(tmp_path: Path) -> None:
+    store = ArtifactStore(tmp_path)
+    artifact = store.put(b"evidence", mime_type="text/plain")
+    wrong_size = StoredArtifact(
+        sha256=artifact.sha256,
+        relative_key=artifact.relative_key,
+        byte_length=artifact.byte_length + 1,
+        mime_type=artifact.mime_type,
+    )
+
+    with pytest.raises(ArtifactIntegrityError, match="byte length mismatch"):
+        store.read(wrong_size)
+
+
 def test_manifest_preserves_versions_and_deduplicated_artifact(
     db_session: Session, tmp_path: Path
 ) -> None:

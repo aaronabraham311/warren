@@ -43,6 +43,13 @@ def upgrade() -> None:
         sa.Column("artifact_key", sa.Text(), nullable=False),
         sa.Column("supersedes_checksum", sa.Text(), nullable=True),
         sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+        sa.CheckConstraint("length(checksum) = 64", name="ck_filing_manifests_checksum_length"),
+        sa.CheckConstraint("byte_length >= 0", name="ck_filing_manifests_byte_length"),
+        sa.ForeignKeyConstraint(
+            ["filing_id", "supersedes_checksum"],
+            ["filing_manifests.filing_id", "filing_manifests.checksum"],
+            name="fk_filing_manifests_supersedes",
+        ),
         sa.PrimaryKeyConstraint("filing_id", "checksum"),
     )
     op.create_index("idx_filing_manifests_checksum", "filing_manifests", ["checksum"], unique=False)
