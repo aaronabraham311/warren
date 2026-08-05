@@ -392,8 +392,9 @@ class BMEGrowthFilingsSource:
         expected_more = expected_page + 1 < total_pages
         if has_more is not expected_more:
             raise ValueError("BME hasMoreResults contradicts totalResults/pageSize")
-        if len(records) > page_size:
-            raise ValueError("BME archive page contains more rows than pageSize")
+        expected_records = min(page_size, total_results - expected_page * page_size)
+        if len(records) != expected_records:
+            raise ValueError("BME archive page row count contradicts pagination metadata")
         for record in records:
             if record.get("companyKey") != expected_company_key:
                 raise ValueError("BME filing record changed issuer companyKey")

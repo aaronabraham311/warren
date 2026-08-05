@@ -99,6 +99,7 @@ class BorsaItalianaFilingsSource:
         fetched_at: datetime | None = None
         page_number = 1
         exhausted = False
+        seen_filing_ids: set[str] = set()
 
         while True:
             if page_number > self.MAX_PAGES:
@@ -118,21 +119,18 @@ class BorsaItalianaFilingsSource:
             if not page_filings and next_page is not None:
                 return self._error("parse", "Borsa archive page has pagination but no filing rows")
 
-            oldest_on_page: date | None = None
             matching_on_page: list[DocumentRef] = []
             for filing in page_filings:
                 observed_dates.append(filing.publication_date)
-                oldest_on_page = (
-                    filing.publication_date
-                    if oldest_on_page is None
-                    else min(oldest_on_page, filing.publication_date)
-                )
                 if to_date is not None and filing.publication_date > to_date:
                     continue
                 if from_date is not None and filing.publication_date < from_date:
                     continue
                 if selected_kinds is not None and filing.document_kind not in selected_kinds:
                     continue
+                if filing.filing_id in seen_filing_ids:
+                    continue
+                seen_filing_ids.add(filing.filing_id)
                 matching_on_page.append(filing)
 
             remaining = limit - len(filings)
@@ -150,15 +148,11 @@ class BorsaItalianaFilingsSource:
                 return self._error("parse", "Borsa archive pagination did not advance")
             if next_page > self.MAX_PAGES:
                 return self._error("parse", "Borsa archive exceeded the hard page limit")
-            if from_date is not None and oldest_on_page is not None and oldest_on_page < from_date:
-                warnings.append("Pagination stopped after passing the requested start date.")
-                break
             page_number = next_page
 
         if fetched_at is None:
             raise AssertionError("at least one archive page is always fetched")
         filings.sort(key=lambda item: item.publication_date, reverse=True)
-        filings = list({item.filing_id: item for item in filings}.values())
         coverage_start = min(observed_dates) if observed_dates else None
         coverage_end = max(observed_dates) if observed_dates else None
         if from_date is not None and coverage_start is not None and from_date < coverage_start:

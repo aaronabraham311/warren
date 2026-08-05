@@ -43,6 +43,7 @@ class RegionalHttpClient:
         timeout: tuple[float, float] = (5.0, 20.0),
         max_attempts: int = 3,
         max_redirects: int = 3,
+        max_response_bytes: int = 5_000_000,
         min_interval_seconds: float = 0.25,
         _sleep: Callable[[float], None] = time.sleep,
         _monotonic: Callable[[], float] = time.monotonic,
@@ -53,6 +54,8 @@ class RegionalHttpClient:
             raise ValueError("max_attempts must be positive")
         if max_redirects < 0:
             raise ValueError("max_redirects cannot be negative")
+        if max_response_bytes < 1:
+            raise ValueError("max_response_bytes must be positive")
         self._source = source
         self._allowed_hosts = frozenset(host.lower() for host in allowed_hosts)
         self._cache = CacheStore(db_conn) if db_conn is not None else None
@@ -60,6 +63,7 @@ class RegionalHttpClient:
         self._timeout = timeout
         self._max_attempts = max_attempts
         self._max_redirects = max_redirects
+        self._max_response_bytes = max_response_bytes
         self._min_interval = min_interval_seconds
         self._sleep = _sleep
         self._monotonic = _monotonic
@@ -120,9 +124,12 @@ class RegionalHttpClient:
                 code = "not_found" if response.status_code == 404 else "network"
                 return self._error(code, f"official archive returned HTTP {response.status_code}")
 
+            response_text = self._read_bounded_text(response)
+            if isinstance(response_text, DataSourceError):
+                return response_text
             document = HttpDocument(
                 url=str(response.url or request_url),
-                text=response.text,
+                text=response_text,
                 fetched_at=datetime.now(timezone.utc),
                 etag=response.headers.get("ETag"),
                 last_modified=response.headers.get("Last-Modified"),
@@ -150,6 +157,7 @@ class RegionalHttpClient:
                 params=current_params,
                 timeout=self._timeout,
                 allow_redirects=False,
+                stream=True,
             )
             response_url = str(response.url or current_url)
             response_url_error = self._validate_url(response_url)
@@ -174,6 +182,24 @@ class RegionalHttpClient:
             # params can duplicate or alter its query string.
             current_params = None
         raise AssertionError("bounded redirect loop always returns")
+
+    def _read_bounded_text(self, response: requests.Response) -> str | DataSourceError:
+        declared = response.headers.get("Content-Length")
+        if declared is not None:
+            try:
+                if int(declared) > self._max_response_bytes:
+                    return self._error("parse", "official archive response exceeded size limit")
+            except ValueError:
+                return self._error("parse", "official archive returned invalid Content-Length")
+        content = bytearray()
+        for chunk in response.iter_content(chunk_size=64 * 1024):
+            if not chunk:
+                continue
+            content.extend(chunk)
+            if len(content) > self._max_response_bytes:
+                return self._error("parse", "official archive response exceeded size limit")
+        encoding = response.encoding or "utf-8"
+        return bytes(content).decode(encoding, errors="replace")
 
     def validate_url(self, url: str) -> DataSourceError | None:
         """Validate a discovered landing or attachment URL against the host policy."""

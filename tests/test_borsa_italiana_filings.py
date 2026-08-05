@@ -148,6 +148,34 @@ def test_parses_recorded_official_html_and_follows_next_page(db_session: Session
     assert any("no structured attachment" in warning for warning in result.warnings)
 
 
+def test_out_of_order_old_row_does_not_stop_pagination(db_session: Session) -> None:
+    identity = _identity(db_session)
+    http = _FixtureHttp(["documents_page_1.html", "documents_page_2.html"])
+    original = http.get_text
+
+    def out_of_order(
+        url: str,
+        *,
+        params: Mapping[str, str] | None = None,
+        cache_ttl_hours: float = 6.0,
+    ) -> HttpDocument | DataSourceError:
+        document = original(url, params=params, cache_ttl_hours=cache_ttl_hours)
+        assert isinstance(document, HttpDocument)
+        if params == {"isin": identity.isin, "page": "1"}:
+            return HttpDocument(
+                **{**document.__dict__, "text": document.text.replace("13/04/2026", "13/04/2023")}
+            )
+        return document
+
+    http.get_text = out_of_order  # type: ignore[method-assign]
+
+    result = _source(db_session, http).list_filings(identity, from_date=date(2024, 1, 1))
+
+    assert isinstance(result, FilingsArchive)
+    assert len(http.calls) == 2
+    assert any(item.publication_date == date(2024, 6, 19) for item in result.filings)
+
+
 def test_filters_real_html_kinds_and_dates_across_pages(db_session: Session) -> None:
     identity = _identity(db_session)
     http = _FixtureHttp(["documents_page_1.html", "documents_page_2.html"])

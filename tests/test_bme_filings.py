@@ -326,6 +326,21 @@ def test_bme_rejects_never_ending_or_excessive_pagination(db_session: Session) -
     assert "hard page limit" in result.message
 
 
+def test_bme_rejects_short_page_that_claims_more_results(db_session: Session) -> None:
+    responses = _responses()
+    raw = responses[BMEGrowthFilingsSource.DOCUMENTS_URL][0]
+    assert isinstance(raw, str)
+    payload = json.loads(raw)
+    payload["data"] = payload["data"][:1]
+    responses[BMEGrowthFilingsSource.DOCUMENTS_URL][0] = json.dumps(payload)
+    source, _ = _source(db_session, responses)
+
+    result = source.list_filings(_identity())
+
+    assert isinstance(result, DataSourceError)
+    assert "row count" in result.message
+
+
 def test_bme_rejects_non_document_archive_relative_path(db_session: Session) -> None:
     responses = _responses()
     raw = responses[BMEGrowthFilingsSource.DOCUMENTS_URL][0]

@@ -1,6 +1,7 @@
 """Offline tests for the common regional filing HTTP boundary."""
 
 import sqlite3
+from io import BytesIO
 from unittest.mock import MagicMock
 
 import requests
@@ -21,6 +22,7 @@ def _response(
     response.status_code = status
     response.url = url
     response._content = text.encode()
+    response.raw = BytesIO(response._content)
     response.headers.update(headers or {})
     return response
 
@@ -60,6 +62,40 @@ def test_timeout_retries_then_returns_typed_network_error() -> None:
     assert result.error_code == "network"
     assert result.stage == "discovery"
     assert session.get.call_count == 3
+
+
+def test_declared_oversized_response_is_rejected() -> None:
+    session = MagicMock(spec=requests.Session)
+    session.get.return_value = _response(headers={"Content-Length": "6"})
+    client = RegionalHttpClient(
+        source=SourceSystem.EBI,
+        allowed_hosts=frozenset({"newconnect.pl"}),
+        session=session,
+        max_response_bytes=5,
+        min_interval_seconds=0,
+    )
+
+    result = client.get_text("https://newconnect.pl/announcements")
+
+    assert isinstance(result, DataSourceError)
+    assert "size limit" in result.message
+
+
+def test_chunked_oversized_response_is_rejected() -> None:
+    session = MagicMock(spec=requests.Session)
+    session.get.return_value = _response(text="123456")
+    client = RegionalHttpClient(
+        source=SourceSystem.EBI,
+        allowed_hosts=frozenset({"newconnect.pl"}),
+        session=session,
+        max_response_bytes=5,
+        min_interval_seconds=0,
+    )
+
+    result = client.get_text("https://newconnect.pl/announcements")
+
+    assert isinstance(result, DataSourceError)
+    assert "size limit" in result.message
 
 
 def test_rate_limit_retries_and_honors_bounded_retry_after() -> None:
