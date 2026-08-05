@@ -24,7 +24,7 @@ expectations:
     - any_of: [EV/EBIT, acquirer's multiple, ev/ebit, cheap, undervalued]
     - any_of: [NCAV, net current asset, net cash, asset value, price-to-ncav]
     - any_of: [profitable, free cash flow, cash conversion, underfollowed, coverage gap, net-cash]
-    - any_of: [own history, historical P/B, valuation percentile, historical low, cheapest in its listed life]
+    - any_of: [4-year, four-year, available history]
 
   thesis_must_not_mention:
     - "guaranteed"
