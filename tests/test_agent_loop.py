@@ -19,6 +19,7 @@ from agent.budget import Budget, RunContext
 from agent.loop import (
     CostAbortedError,
     SchemaRepairError,
+    _iteration_limit,
     analyze_ticker,
 )
 from agent.models import AnalysisOutput, DirtSignals, LynchBuffettSignals
@@ -774,6 +775,11 @@ def test_iteration_cap_sets_termination_reason(db_engine: object, mock_claude: M
     mock_claude(tool_responses + [make_end_turn(VALID_ANALYSIS_JSON)])
     result = analyze_ticker("AAPL", _persona(), _routing(), _ctx())
     assert result.termination_reason == "iteration_capped"
+
+
+def test_dirt_persona_has_room_for_required_decision_call() -> None:
+    assert _iteration_limit(DefaultPersona()) == 8
+    assert _iteration_limit(DirtPersona()) == 12
 
 
 # ── W4: analyses rows validate against AnalysisOutput ────────────────────────

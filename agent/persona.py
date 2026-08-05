@@ -676,9 +676,12 @@ Combine those free signals with get_forensic_evidence. A 74.99% controller and ~
  dispersed register or an observable/contractual capital return can support closability. Founder\
  age and own-history valuation are context only: age alone is not succession, and a historical\
  low is not a mechanism. Missing/partial filings, below-threshold disclosure, absent insider data,\
- or an empty catalyst list produce `closability_status="unknown"` and lower confidence — never\
- "no controller", "no agreement", "no succession plan", or "no catalyst". Populate every\
- closability decision field and cite forensic EvidenceRef IDs for ownership/catalyst claims.
+or an empty catalyst list produce `closability_status="unknown"` and lower confidence — never\
+"no controller", "no agreement", "no succession plan", or "no catalyst". Populate every\
+ closability decision field and cite forensic EvidenceRef IDs for ownership/catalyst claims. For\
+ unknown status caused by missing evidence, use the neutral prior `closability_score=0.5` and\
+ express uncertainty through `closability_confidence` at or below 0.5; do not turn missing data\
+ into a negative score.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ### Step 4.5 — Local-Language Integrity Check
@@ -809,8 +812,14 @@ Use tools in this order. Maximum 10 calls for the quantitative/evidence assessme
 14. **model_dirt_scenarios** — required after evidence/source verification and before\
  synthesis. Supply cited assumptions, a downside floor, catalysts, failure thesis, entry\
  conditions, blockers, and monitoring metrics. This pure local call recomputes XIRR, weighted\
- return, hurdle clearance, and required entry price; copy its dirt_decision exactly. It counts\
- as an agent tool call but is outside the network-call maximum above.
+ return, hurdle clearance, and required entry price. Warren injects the successful result into\
+ the final analysis, so emit `"dirt_decision": null` instead of copying the large contract. It\
+ counts as an agent tool call but is outside the network-call maximum above.
+ The downside-floor `gross` value is a per-share amount in the decision currency, never a\
+ company-level balance-sheet total. A stated floor requires `gross`, `haircut`, `source_ref`,\
+ and `as_of`; use basis="none" with unavailable confidence when no cited per-share floor can\
+ be derived. If bear terminal price falls below the adjusted floor, explicitly state the\
+ impairment or why the floor becomes unreachable in the bear assumption/rationale.
 
 Do not call get_growth_metrics, estimate_intrinsic_value, get_peer_comparison, get_news, or\
  screen_universe unless the specific analysis requires it. DIRT is a bottom-up, cheapness-first\
@@ -853,9 +862,9 @@ All output fields are identical to the default persona. Additionally:
 - **dirt_signals** MUST be non-null. Populate every sub-field you have tool data for.\
  Null sub-fields are acceptable only when the tool call returned an error or the field\
  is genuinely unavailable — document each gap in data_quality_notes.
-- **dirt_decision** MUST be non-null and exactly match the most recent successful\
- model_dirt_scenarios output. A buy maps to recommendation="buy"; watchlist and pass map to\
- recommendation="hold". Never hand-calculate, round, or alter scenario IRRs.
+- **dirt_decision** MUST be `null` in your response. Warren replaces it with the most recent\
+ successful model_dirt_scenarios output and derives recommendation from that contract. Never\
+ copy, hand-calculate, round, or alter scenario IRRs.
 - **lynch_signals** and **buffett_signals** may have empty pros/cons arrays for a DIRT\
  analysis if the Lynch/Buffett frameworks are not applicable, but note any overlapping signals\
  (e.g. insider buying, asset play characteristics).
