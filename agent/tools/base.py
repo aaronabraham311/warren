@@ -8,6 +8,7 @@ carries a structured ``error_code`` the agent can reason about ("yfinance return
 """
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Literal
 
 from pydantic import BaseModel, SkipValidation
@@ -48,6 +49,20 @@ class ToolResultError(BaseModel):
 ToolResult = ToolResultOk | ToolResultError
 
 
+@dataclass(frozen=True)
+class ToolDefinition:
+    """Provider-neutral tool declaration.
+
+    Provider adapters own the small wire-format differences (for example,
+    Anthropic's ``input_schema`` versus the flat ``parameters`` used by the
+    OpenAI Responses and Gemini Interactions APIs).
+    """
+
+    name: str
+    description: str
+    parameters: dict[str, object]
+
+
 # DataSourceError uses a narrower vocabulary ("not_found"/"network"/"parse", plus a
 # forward-compatible "rate_limit"); map it onto the agent-facing ErrorCode + retryable.
 _DATA_SOURCE_ERROR_MAP: dict[str, tuple[ErrorCode, bool]] = {
@@ -79,7 +94,15 @@ class Tool(ABC):
     @abstractmethod
     def run(self, tool_input: BaseModel, ctx: "RunContext") -> ToolResult: ...
 
+    def to_definition(self) -> ToolDefinition:
+        return ToolDefinition(
+            name=self.name,
+            description=self.description,
+            parameters=self.input_schema.model_json_schema(),
+        )
+
     def to_api_dict(self) -> dict[str, object]:
+        """Return the legacy Anthropic declaration used by the current loop."""
         return {
             "name": self.name,
             "description": self.description,

@@ -1,5 +1,5 @@
 from agent.tools.adverse_media import GetAdverseMediaTool
-from agent.tools.base import Tool
+from agent.tools.base import Tool, ToolDefinition
 from agent.tools.capital_allocation import GetCapitalAllocationTool
 from agent.tools.dirt_scenarios import ModelDirtScenariosTool
 from agent.tools.filings import ReadFilingTool
@@ -43,4 +43,9 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "screen_watchlists": ScreenWatchlistsTool(),
 }
 
+# Keep the long-standing Anthropic-shaped public value stable for caching and
+# existing callers. Provider-aware code consumes the canonical declarations.
 TOOL_DEFINITIONS: list[dict[str, object]] = [t.to_api_dict() for t in TOOL_REGISTRY.values()]
+PROVIDER_TOOL_DEFINITIONS: list[ToolDefinition] = [
+    t.to_definition() for t in TOOL_REGISTRY.values()
+]

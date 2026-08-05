@@ -1,9 +1,8 @@
 from collections.abc import Callable, Sequence
 from typing import Literal, Protocol, runtime_checkable
 
-import anthropic
-
 from agent.models import HAIKU_4_5, OPUS_4_7, SONNET_4_6, DirtSignals, LynchBuffettSignals
+from agent.providers.base import Message, TextBlock
 
 # The set of models the routing layer may select. Kept in sync with agent.models
 # by tests/test_routing.py (a drift guard asserts get_args(ModelID) matches the
@@ -29,7 +28,7 @@ class RoutingPolicy(Protocol):
     def select(
         self,
         iteration: int,
-        messages: list[anthropic.types.MessageParam],
+        messages: list[Message],
         ticker: str | None,
     ) -> ModelID: ...
 
@@ -140,7 +139,7 @@ class PhaseBasedRouting:
     def select(
         self,
         iteration: int,
-        messages: list[anthropic.types.MessageParam],
+        messages: list[Message],
         ticker: str | None,
     ) -> ModelID:
         phase = self._detect_phase(messages, ticker)
@@ -150,9 +149,7 @@ class PhaseBasedRouting:
             return OPUS_4_7
         return SONNET_4_6
 
-    def _detect_phase(
-        self, messages: list[anthropic.types.MessageParam], ticker: str | None
-    ) -> Phase:
+    def _detect_phase(self, messages: list[Message], ticker: str | None) -> Phase:
         # No specific ticker → a screening pass over the universe.
         if ticker is None:
             return "screen"
@@ -163,13 +160,13 @@ class PhaseBasedRouting:
         return "deep"
 
 
-def _has_synthesis_marker(messages: list[anthropic.types.MessageParam]) -> bool:
+def _has_synthesis_marker(messages: list[Message]) -> bool:
     for message in messages:
-        if message.get("role") != "user":
+        if message.role != "user":
             continue
-        content = message.get("content")
-        if isinstance(content, str) and SYNTHESIS_PHASE_MARKER in content:
-            return True
+        for block in message.blocks:
+            if isinstance(block, TextBlock) and SYNTHESIS_PHASE_MARKER in block.text:
+                return True
     return False
 
 
@@ -179,7 +176,7 @@ class HardcodedSonnetRouting:
     def select(
         self,
         iteration: int,
-        messages: list[anthropic.types.MessageParam],
+        messages: list[Message],
         ticker: str | None,
     ) -> ModelID:
         return SONNET_4_6

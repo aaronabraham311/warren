@@ -1,7 +1,5 @@
 from typing import get_args, get_protocol_members
 
-import anthropic
-
 from agent.models import (
     HAIKU_4_5,
     OPUS_4_7,
@@ -10,6 +8,7 @@ from agent.models import (
     DirtSignals,
     LynchBuffettSignals,
 )
+from agent.providers.base import Message
 from agent.routing import (
     SYNTHESIS_PHASE_MARKER,
     DefaultOpusTrigger,
@@ -41,8 +40,8 @@ def _analysis(
     )
 
 
-def _synthesis_messages() -> list[anthropic.types.MessageParam]:
-    return [{"role": "user", "content": f"{SYNTHESIS_PHASE_MARKER} produce final synthesis"}]
+def _synthesis_messages() -> list[Message]:
+    return [Message.text("user", f"{SYNTHESIS_PHASE_MARKER} produce final synthesis")]
 
 
 # ── Acceptance criterion 1: screen phase → Haiku ────────────────────────────────

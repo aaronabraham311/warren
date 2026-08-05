@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 from agent.budget import RunContext
 from agent.tools._clients import yfinance_client
@@ -63,8 +63,28 @@ _ALL_KNOWN: frozenset[str] = (
 )
 
 
+class ScreenCriteria(BaseModel):
+    """Closed map of supported filters so strict JSON-schema APIs can validate it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    pe_ratio_max: float | None = None
+    pb_ratio_max: float | None = None
+    roe_min: float | None = None
+    de_max: float | None = None
+    max_ev_ebit: float | None = None
+    max_price_to_ncav: float | None = None
+    min_market_cap_usd: float | None = None
+    max_market_cap_usd: float | None = None
+    min_dividend_yield_pct: float | None = None
+    require_net_cash: float | None = None
+    min_consecutive_profit_years: float | None = None
+    max_analyst_coverage: float | None = None
+    require_zero_analyst_coverage: float | None = None
+
+
 class ScreenUniverseInput(BaseModel):
-    criteria: dict[str, float] = Field(
+    criteria: ScreenCriteria = Field(
         description=(
             "Quantitative filters, all of which must pass. Supported keys:\n"
             "  Fundamentals: pe_ratio_max, pb_ratio_max, roe_min (percent), de_max.\n"
@@ -79,13 +99,6 @@ class ScreenUniverseInput(BaseModel):
             "Unknown keys are rejected."
         )
     )
-
-    @model_validator(mode="after")
-    def _known_criteria(self) -> "ScreenUniverseInput":
-        unknown = set(self.criteria) - _ALL_KNOWN
-        if unknown:
-            raise ValueError(f"Unknown screening criteria: {sorted(unknown)}")
-        return self
 
 
 class ScreenResult(BaseModel):
@@ -190,7 +203,7 @@ class ScreenUniverseTool(Tool):
 
     def run(self, tool_input: BaseModel, ctx: RunContext) -> ToolResult:
         assert isinstance(tool_input, ScreenUniverseInput)
-        criteria = tool_input.criteria
+        criteria = tool_input.criteria.model_dump(exclude_none=True)
 
         need_fundamentals = bool(
             set(criteria)
