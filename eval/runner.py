@@ -32,6 +32,7 @@ from agent.loop import analyze_ticker
 from agent.persona import DefaultPersona, DirtPersona
 from agent.routing import HardcodedSonnetRouting
 from data_sources.cache import CacheStore
+from data_sources.forensics import ForensicEvidenceBundle
 from eval.golden_set import EvalExample, load_all_examples
 from eval.grader import EvalGrade, failed_grade, grade_analysis
 from eval.judge import SonnetThesisJudge, ThesisJudge
@@ -93,6 +94,7 @@ def _grade_one(
     logger.log("ticker_started", ticker=example.ticker, phase="deep")
     run_context = RunContext(run_id=run_id, budget=budget, logger=logger)
     try:
+        fixture_runner = FixtureToolRunner(example.ticker, fixtures_root)
         result = analyze_ticker(
             ticker=example.ticker,
             persona=persona,
@@ -100,7 +102,7 @@ def _grade_one(
             run_context=run_context,
             client=client,
             temperature=_EVAL_TEMPERATURE,
-            tool_runner=FixtureToolRunner(example.ticker, fixtures_root),
+            tool_runner=fixture_runner,
         )
     except Exception as exc:  # noqa: BLE001 — one bad ticker must not abort the sweep
         logger.log("ticker_failed", ticker=example.ticker, error=str(exc))
@@ -120,7 +122,13 @@ def _grade_one(
         iterations=run_context.iterations,
         termination=result.termination_reason,
     )
-    return grade_analysis(result, example, judge)
+    forensic_result = fixture_runner.served.get("get_forensic_evidence")
+    forensic_evidence = (
+        forensic_result.data
+        if forensic_result is not None and isinstance(forensic_result.data, ForensicEvidenceBundle)
+        else None
+    )
+    return grade_analysis(result, example, judge, forensic_evidence)
 
 
 def _print_summary(grades: list[EvalGrade]) -> None:

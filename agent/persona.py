@@ -29,7 +29,15 @@ _ANALYSIS_OUTPUT_SCHEMA = """\
     "buyback_active": <bool | null>,
     "insider_sentiment": "positive" | "negative" | "neutral" | null,
     "analyst_coverage_count": <int | null>,
-    "aggregator_discrepancies_found": <bool — default false>
+    "aggregator_discrepancies_found": <bool — default false>,
+    "controller_identified": <bool | null — null means unknown, never infer false from missing disclosure>,
+    "controller_name": <string | null>,
+    "controller_economic_interest_pct": <float 0–100 | null>,
+    "controller_voting_rights_pct": <float 0–100 | null>,
+    "catalyst_strength": "contractual" | "observable" | "aspirational" | null,
+    "catalyst_stage": "rumor" | "intention" | "strategic_review" | "board_authorized" | "signed" | "conditions_outstanding" | "completed" | "terminated" | null,
+    "catalyst_description": <string | null>,
+    "forensic_evidence_ids": ["<EvidenceRef.evidence_id supporting every populated forensic decision field>", ...]
   }
 }"""
 
@@ -659,19 +667,22 @@ A hit in any adverse category may lower confidence or force an avoid recommendat
  confidence booster. Record the outcome but do not adjust confidence upward solely\
  because the integrity scan returned no results.
 
-**Control-discount check (mandatory, distinct from the integrity scan above):**
+**Control-discount check — evidence contract (mandatory, distinct from the integrity scan above):**
 A clean integrity scan is not the same question as whether a minority holder can ever realize\
- the cheapness found in Step 1. Cross-reference get_key_persons' controlling_holder_identified\
- against get_capital_allocation's shareholder_yield_pct from Step 3. If a controlling holder is\
- identified (≥20% ownership, or an active SC 13D filer) and shareholder_yield_pct is near zero\
+ the cheapness found in Step 1. For target regional venues, use get_forensic_evidence's cited\
+ cap table, stake events, agreements and capital-return lifecycle as the primary source; use\
+ get_key_persons and get_capital_allocation only as cross-checks. If a controlling holder is\
+ explicitly identified and shareholder_yield_pct is near zero\
  (below ~2%) or null, treat the EV/EBIT or NCAV discount as potentially unrealizable: a\
  controlling family with no obligation to buy back stock, pay dividends, or sell the company has\
  no reason to ever let the multiple close, regardless of how cheap the stock screens. This\
  finding stands even with a clean adverse-media/watchlist scan — it is a governance-and-\
  incentives finding, not a fraud finding. Note it explicitly in data_quality_notes using the\
- format "control_check: controlling holder ([name/pct]) with shareholder yield [X]% — no\
- catalyst documented" (or "control_check: no controlling holder identified" /\
- "control_check: catalyst documented — [description, source]" as applicable).
+ format "control_check: controlling holder ([name/pct], evidence [id]) with shareholder yield\
+ [X]% — no cited catalyst" or "control_check: observable/contractual catalyst — [description,\
+ evidence id]" as applicable. If coverage is partial, below-threshold, or conflicting, record\
+ "control_check: unknown — [coverage gap]". Never report "no controlling holder" or "no\
+ catalyst" from missing disclosure.
 
 **Observability (required):** After completing the integrity scan, add one entry to\
  data_quality_notes using the format "integrity_scan: clean — names checked: [list]"\
@@ -689,36 +700,35 @@ Data aggregators (yfinance, Finnhub) can misclassify small-cap financials, omit 
 
 **Required verification actions:**
 - Compare key figures (revenue, net income, total debt, shares outstanding) from aggregators\
- against the most recent 10-K or 10-Q. Use read_filing (section="financials" or section="mdna")\
- to retrieve primary-source data.
+ against the most recent SEC report or source-neutral regional annual/half-year filing. Use\
+ read_filing to retrieve bounded primary-source pages and get_forensic_evidence for cited,\
+ point-in-time forensic facts.
 - If any aggregator figure differs from the filing by more than 5%, flag the discrepancy in\
  data_quality_notes with both values and set dirt_signals.aggregator_discrepancies_found = true.
 - For net-cash and NCAV calculations, always use filing-sourced balance sheet figures if\
  aggregator data is more than 45 days old (small-caps file quarterly, so 45 days represents\
  roughly one reporting cycle).
-- Note the filing date of the most recent data used. If the last 10-K was more than 12 months\
- ago without a subsequent 10-Q, flag staleness explicitly.
+- Note the filing date of the most recent data used. If the last annual filing was more than 12\
+ months ago without a subsequent interim filing, flag staleness explicitly.
 
-**Non-US names — primary evidence and graceful degradation (required):** read_filing can read\
- verified regional PDFs already present in the immutable filing manifest. Use source-neutral\
- filing kinds (`annual`, `half_year`, `quarterly`) and `section="full_document"`; treat every\
- page citation as evidence and carry forward OCR, language-confidence, truncation, and\
- translation PARTIAL/FAILED warnings. Never describe untranslated pages as English. If no\
- compatible stored filing exists for a Milan `.MI`, Madrid `.MC`, or Warsaw `.WA` name, the\
- tool returns `not_found`; this is expected, not a thesis-ending gap. Degrade\
- gracefully: do NOT abandon the analysis. Instead, ground the thesis in get_news plus the\
- fundamentals and valuation tools (get_fundamentals, get_valuation_multiples,\
- get_financial_strength) rather than SEC filings, and treat those aggregator figures as the\
- primary source since no filing is available to cross-check against. Record the substitution\
- explicitly in data_quality_notes using the format "filing_degradation (legacy\
- sec_degradation): no compatible verified primary filing for [ticker] — thesis grounded in\
- get_news + fundamentals/valuation instead."
+**Non-US names — cited regional evidence (required):** After cheapness is confirmed, call\
+ get_forensic_evidence for Milan `.MI`, Madrid `.MC`, and Warsaw `.WA` names before making\
+ control, ownership, related-party, auditor, debt, capital-return, succession, or catalyst\
+ claims. Every non-null forensic claim must name an EvidenceRef.evidence_id and preserve the\
+ original excerpt/location; translated text is separate supporting context, never a replacement\
+ for the original. Partial coverage is usable evidence plus machine-readable gaps. Treat empty\
+ categories and below-threshold ownership as unknown, never as proof that no controller,\
+ agreement, related-party transaction, succession plan, or catalyst exists. Conflicting facts\
+ remain conflicts. Authorization is not execution; age is not a succession catalyst; refinancing\
+ is not signed/effective without explicit evidence. Carry coverage gaps and warnings into\
+ data_quality_notes and lower confidence when a material conclusion remains unknown. read_filing\
+ remains available for bounded page-level source verification of the cited regional documents.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ### Tool Usage Strategy (DIRT mode)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Use tools in this order. Maximum 9 calls for the quantitative assessment (Steps 1–4);\
+Use tools in this order. Maximum 10 calls for the quantitative/evidence assessment (Steps 1–4);\
  Step 4.5 integrity scan adds up to 3 further calls (get_key_persons, get_adverse_media,\
  screen_watchlists).
 
@@ -731,18 +741,22 @@ Use tools in this order. Maximum 9 calls for the quantitative assessment (Steps 
  decade: yfinance normally exposes only about 5 years of usable statement history. Read\
  years_covered and describe the actual available window; never claim a 10-year low unless the\
  returned evidence really spans 10 years.
-5. **get_financial_strength** — interest coverage, net cash position, current ratio.
-6. **get_quality_metrics** — consecutive profitable years proxy (gross margin stability, ROIC,\
+5. **get_forensic_evidence** — required for `.MI`, `.MC`, and `.WA` after cheapness is\
+ confirmed and before any control/catalyst conclusion. Request the decision as-of date and a\
+ bounded lookback; use cited evidence and preserve every coverage warning.
+6. **get_financial_strength** — interest coverage, net cash position, current ratio.
+7. **get_quality_metrics** — consecutive profitable years proxy (gross margin stability, ROIC,\
  cash_conversion_ratio). Call for Step 2.
-7. **get_capital_allocation** — buyback yield, share-count CAGR, net-debt trajectory. Call for Step 3.
-8. **get_insider_activity** — insider sentiment. Call for Step 3.
-9. **read_filing** — source verification against primary filing. Required by Step 5 whenever\
+8. **get_capital_allocation** — realised buyback yield, share-count CAGR, net-debt trajectory.\
+ It is a cross-check only: never treat cash-flow arithmetic as a buyback authorization.
+9. **get_insider_activity** — insider sentiment. Call for Step 3; insufficient_data is unknown.
+10. **read_filing** — source verification against primary filing. Required by Step 5 whenever\
  aggregator data is more than 45 days old or when NCAV calculation is central to the thesis.
-10. **get_key_persons** — Step 4.5 integrity scan. Resolves controlling shareholder, chairman,\
+11. **get_key_persons** — Step 4.5 integrity scan. Resolves controlling shareholder, chairman,\
  CEO before adverse screening. Always call as the first action of Step 4.5.
-11. **get_adverse_media** — Step 4.5. Run on company name and each key person returned by\
+12. **get_adverse_media** — Step 4.5. Run on company name and each key person returned by\
  get_key_persons. Controlling shareholder is highest priority.
-12. **screen_watchlists** — Step 4.5. Cross-reference company name and key persons against\
+13. **screen_watchlists** — Step 4.5. Cross-reference company name and key persons against\
  sanctions, PEP, and enforcement watchlists. Call alongside get_adverse_media.
 
 Do not call get_growth_metrics, estimate_intrinsic_value, get_peer_comparison, get_news, or\

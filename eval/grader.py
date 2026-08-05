@@ -27,6 +27,7 @@ from typing import Literal
 from pydantic import BaseModel
 
 from agent.models import AnalysisOutput, LynchBuffettSignals
+from data_sources.forensics import ForensicEvidenceBundle
 from eval.golden_set import DeepValueExpectation, EvalExample, SignalsExpectation
 from eval.judge import ThesisJudge
 
@@ -130,6 +131,7 @@ def _deep_value_checks(
     result: AnalysisOutput,
     expectation: DeepValueExpectation,
     thesis_lower: str,
+    forensic_evidence: ForensicEvidenceBundle | None = None,
 ) -> list[CheckResult]:
     """Deep-value (DIRT) check family — one ``must`` check per configured toggle.
 
@@ -196,6 +198,81 @@ def _deep_value_checks(
             )
         )
 
+    if expectation.require_forensic_citations:
+        claim_types: list[str] = []
+        if dirt is not None and (
+            dirt.controller_identified is not None
+            or dirt.controller_name is not None
+            or dirt.controller_economic_interest_pct is not None
+            or dirt.controller_voting_rights_pct is not None
+        ):
+            claim_types.append("ownership")
+        if dirt is not None and dirt.buyback_active is not None:
+            claim_types.append("buyback")
+        if dirt is not None and (
+            dirt.catalyst_strength is not None
+            or dirt.catalyst_stage is not None
+            or dirt.catalyst_description is not None
+        ):
+            claim_types.append("catalyst")
+        if "related-party" in thesis_lower or "related party" in thesis_lower:
+            claim_types.append("related_party")
+        evidence_ids = set(() if dirt is None else dirt.forensic_evidence_ids)
+        category_ids: dict[str, set[str]] = {
+            "ownership": set(),
+            "buyback": set(),
+            "catalyst": set(),
+            "related_party": set(),
+        }
+        if forensic_evidence is not None:
+            category_ids["ownership"] = {
+                ref.evidence_id
+                for fact in (
+                    *forensic_evidence.cap_table,
+                    *forensic_evidence.stake_events,
+                    *forensic_evidence.agreements,
+                )
+                for ref in fact.evidence_refs
+            }
+            category_ids["buyback"] = {
+                ref.evidence_id
+                for fact in forensic_evidence.capital_returns
+                for ref in fact.evidence_refs
+            }
+            category_ids["catalyst"] = {
+                ref.evidence_id
+                for fact in forensic_evidence.catalysts
+                for ref in fact.evidence_refs
+            }
+            category_ids["related_party"] = {
+                ref.evidence_id
+                for fact in forensic_evidence.related_party_transactions
+                for ref in fact.evidence_refs
+            }
+        untraced = [
+            claim for claim in claim_types if not evidence_ids.intersection(category_ids[claim])
+        ]
+        unknown_ids = evidence_ids - set().union(*category_ids.values())
+        traced = not claim_types or (
+            forensic_evidence is not None and not untraced and not unknown_ids
+        )
+        checks.append(
+            CheckResult(
+                check_name="forensic_claims_cited",
+                passed=traced,
+                expected=(
+                    "ownership, related-party, buyback and catalyst claims carry "
+                    "dirt_signals.forensic_evidence_ids"
+                ),
+                actual=(
+                    f"claims={claim_types}, untraced={untraced}, unknown_ids={sorted(unknown_ids)}"
+                    if claim_types
+                    else "no forensic claims made"
+                ),
+                severity="must",
+            )
+        )
+
     return checks
 
 
@@ -203,6 +280,7 @@ def grade_analysis(
     result: AnalysisOutput,
     example: EvalExample,
     judge: ThesisJudge | None = None,
+    forensic_evidence: ForensicEvidenceBundle | None = None,
 ) -> EvalGrade:
     """Grade *result* against *example*.
 
@@ -304,6 +382,11 @@ def grade_analysis(
     )
 
     if expectations.deep_value is not None:
-        checks += _deep_value_checks(result, expectations.deep_value, thesis_lower)
+        checks += _deep_value_checks(
+            result,
+            expectations.deep_value,
+            thesis_lower,
+            forensic_evidence,
+        )
 
     return _finalize(example.ticker, checks)

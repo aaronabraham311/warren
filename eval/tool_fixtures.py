@@ -80,6 +80,7 @@ class FixtureToolRunner:
     ticker: str
     root: Path = FIXTURES_DIR
     misses: list[FixtureMiss] = field(default_factory=list)
+    served: dict[str, ToolResultOk] = field(default_factory=dict)
 
     def run(self, tool: Tool, tool_input: BaseModel, ctx: RunContext) -> ToolResult:
         raw_input: dict[str, object] = tool_input.model_dump(mode="json")
@@ -96,7 +97,10 @@ class FixtureToolRunner:
             )
         payload: dict[str, object] = json.loads(path.read_text())
         warn_if_stale(payload, path)
-        return _deserialize(payload, tool)
+        result = _deserialize(payload, tool)
+        if isinstance(result, ToolResultOk):
+            self.served[tool.name] = result
+        return result
 
 
 def warn_if_stale(payload: dict[str, object], path: Path) -> None:

@@ -3,6 +3,7 @@ from agent.tools.base import Tool
 from agent.tools.capital_allocation import GetCapitalAllocationTool
 from agent.tools.filings import ReadFilingTool
 from agent.tools.financial_strength import GetFinancialStrengthTool
+from agent.tools.forensics import GetForensicEvidenceTool
 from agent.tools.fundamentals import GetFundamentalsTool
 from agent.tools.growth import GetGrowthMetricsTool
 from agent.tools.holdings import GetHoldingContextTool
@@ -33,6 +34,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "get_insider_activity": GetInsiderActivityTool(),
     "get_peer_comparison": GetPeerComparisonTool(),
     "get_financial_strength": GetFinancialStrengthTool(),
+    "get_forensic_evidence": GetForensicEvidenceTool(),
     "estimate_intrinsic_value": EstimateIntrinsicValueTool(),
     "get_capital_allocation": GetCapitalAllocationTool(),
     "get_key_persons": GetKeyPersonsTool(),

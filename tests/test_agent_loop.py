@@ -658,6 +658,14 @@ def test_dirt_signals_round_trips() -> None:
         insider_sentiment="positive",
         analyst_coverage_count=2,
         aggregator_discrepancies_found=False,
+        controller_identified=True,
+        controller_name="Founding Family S.p.A.",
+        controller_economic_interest_pct=74.99,
+        controller_voting_rights_pct=74.99,
+        catalyst_strength="observable",
+        catalyst_stage="board_authorized",
+        catalyst_description="Board-authorized dividend",
+        forensic_evidence_ids=["ev-cap-1", "ev-dividend-2"],
     )
     output = AnalysisOutput(
         ticker="BARC",
@@ -681,6 +689,12 @@ def test_dirt_signals_round_trips() -> None:
     assert reparsed.dirt_signals.insider_sentiment == "positive"
     assert reparsed.dirt_signals.analyst_coverage_count == 2
     assert reparsed.dirt_signals.aggregator_discrepancies_found is False
+    assert reparsed.dirt_signals.controller_identified is True
+    assert reparsed.dirt_signals.controller_name == "Founding Family S.p.A."
+    assert reparsed.dirt_signals.controller_economic_interest_pct == 74.99
+    assert reparsed.dirt_signals.catalyst_strength == "observable"
+    assert reparsed.dirt_signals.catalyst_stage == "board_authorized"
+    assert reparsed.dirt_signals.forensic_evidence_ids == ["ev-cap-1", "ev-dividend-2"]
 
 
 def test_dirt_signals_aggregator_discrepancies_defaults_false() -> None:

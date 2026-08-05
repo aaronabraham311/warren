@@ -91,6 +91,28 @@ class DirtSignals(BaseModel):
     insider_sentiment: Literal["positive", "negative", "neutral"] | None = None
     analyst_coverage_count: int | None = None
     aggregator_discrepancies_found: bool = False
+    # Compact decision fields from get_forensic_evidence. The full cited bundle stays
+    # in the tool trace/snapshot; these fields must be backed by forensic_evidence_ids.
+    controller_identified: bool | None = None
+    controller_name: str | None = None
+    controller_economic_interest_pct: float | None = Field(default=None, ge=0.0, le=100.0)
+    controller_voting_rights_pct: float | None = Field(default=None, ge=0.0, le=100.0)
+    catalyst_strength: Literal["contractual", "observable", "aspirational"] | None = None
+    catalyst_stage: (
+        Literal[
+            "rumor",
+            "intention",
+            "strategic_review",
+            "board_authorized",
+            "signed",
+            "conditions_outstanding",
+            "completed",
+            "terminated",
+        ]
+        | None
+    ) = None
+    catalyst_description: str | None = None
+    forensic_evidence_ids: list[str] = Field(default_factory=list)
 
 
 TerminationReason = Literal[
