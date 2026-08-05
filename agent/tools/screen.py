@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from agent.budget import RunContext
 from agent.tools._clients import yfinance_client
@@ -30,7 +30,9 @@ _FUNDAMENTALS_CRITERIA: dict[str, tuple[str, str]] = {
 _VALUATION_CRITERIA: dict[str, tuple[str, str]] = {
     "max_ev_ebit": ("ev_to_ebit", "<="),
     "max_price_to_ncav": ("price_to_ncav", "<="),
+    "min_market_cap_usd": ("market_cap_usd", ">="),
     "max_market_cap_usd": ("market_cap_usd", "<="),
+    "min_dividend_yield_pct": ("dividend_yield_pct", ">="),
 }
 
 _QUALITY_CRITERIA: dict[str, tuple[str, str]] = {
@@ -66,16 +68,24 @@ class ScreenUniverseInput(BaseModel):
         description=(
             "Quantitative filters, all of which must pass. Supported keys:\n"
             "  Fundamentals: pe_ratio_max, pb_ratio_max, roe_min (percent), de_max.\n"
-            "  Valuation:    max_ev_ebit, max_price_to_ncav, max_market_cap_usd (USD).\n"
+            "  Valuation:    max_ev_ebit, max_price_to_ncav, min_market_cap_usd,\n"
+            "                max_market_cap_usd (both USD), min_dividend_yield_pct.\n"
             "  Quality:      require_net_cash (1 = require net-cash balance sheet),\n"
             "                min_consecutive_profit_years.\n"
             "  Overlooked:   max_analyst_coverage (max sell-side analysts covering the name),\n"
             "                require_zero_analyst_coverage (1 = require exactly 0 analysts;\n"
             "                sugar for max_analyst_coverage=0). Names with unknown coverage\n"
             "                are excluded — an uncovered name must be demonstrably uncovered.\n"
-            "Unknown keys are silently ignored."
+            "Unknown keys are rejected."
         )
     )
+
+    @model_validator(mode="after")
+    def _known_criteria(self) -> "ScreenUniverseInput":
+        unknown = set(self.criteria) - _ALL_KNOWN
+        if unknown:
+            raise ValueError(f"Unknown screening criteria: {sorted(unknown)}")
+        return self
 
 
 class ScreenResult(BaseModel):
@@ -169,7 +179,8 @@ class ScreenUniverseTool(Tool):
         "quantitative fundamental and deep-value filters. "
         "Returns the tickers that pass every filter. "
         "Supports fundamentals (pe_ratio_max, pb_ratio_max, roe_min, de_max), "
-        "valuation (max_ev_ebit, max_price_to_ncav, max_market_cap_usd), "
+        "valuation (max_ev_ebit, max_price_to_ncav, min_market_cap_usd, "
+        "max_market_cap_usd, min_dividend_yield_pct), "
         "quality (require_net_cash, min_consecutive_profit_years), and "
         "'overlooked' analyst-coverage (max_analyst_coverage, require_zero_analyst_coverage) "
         "criteria. Names with unknown analyst coverage are excluded by the coverage gates."

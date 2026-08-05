@@ -149,6 +149,8 @@ class ValuationData(BaseModel):
     currency: str | None = None
     data_age_hours: int
     source: Literal["yfinance"] = "yfinance"
+    enterprise_value_usd: int | None = None
+    enterprise_value_source: Literal["vendor", "statements", "unavailable"] = "unavailable"
 
 
 class ValuationHistory(BaseModel):
@@ -690,7 +692,8 @@ class YFinanceClient:
         return result
 
     def _fetch_valuation_multiples(self, ticker: str) -> ValuationData:
-        info: dict[str, object] = yf.Ticker(_yf_symbol(ticker)).info
+        ticker_obj = yf.Ticker(_yf_symbol(ticker))
+        info: dict[str, object] = ticker_obj.info
         if not isinstance(info, dict) or len(info) <= 5:
             raise _NotFoundError(ticker)
         if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
@@ -714,8 +717,54 @@ class YFinanceClient:
         total_liab = _as_int(info.get("totalLiab"))
         tangible_bv = _as_float(info.get("tangibleBookValue"))
 
+        ev_usd_f = to_usd(ev, trading_currency, trading_rate)
+        ev_source: Literal["vendor", "statements", "unavailable"] = (
+            "vendor" if ev_usd_f is not None else "unavailable"
+        )
+        enterprise_value_value = ev
         ev_f = float(ev) if ev is not None else None
         ev_to_ebit = round(ev_f / op_income, 2) if ev_f and op_income and op_income > 0 else None
+
+        # Junior-market `.info` often omits enterpriseValue/operatingIncome even when
+        # statement frames exist. Derive currency-aligned EV/EBIT from the newest year
+        # shared by the income statement and balance sheet.
+        if ev_to_ebit is None and mkt_cap is not None:
+            history = self._financials_from_cache_or_build(ticker_obj, ticker)
+            income_by_year = {row.fiscal_year: row for row in history.income_statement}
+            balance_by_year = {row.fiscal_year: row for row in history.balance_sheet}
+            common_years = sorted(set(income_by_year) & set(balance_by_year), reverse=True)
+            if common_years:
+                income_row = income_by_year[common_years[0]]
+                balance_row = balance_by_year[common_years[0]]
+                statement_ebit = (
+                    income_row.ebit if income_row.ebit is not None else income_row.operating_income
+                )
+                statement_debt = (
+                    balance_row.total_debt
+                    if balance_row.total_debt is not None
+                    else balance_row.long_term_debt
+                )
+                statement_cash = balance_row.cash_and_equivalents
+                market_cap_usd_value = to_usd(mkt_cap, trading_currency, trading_rate)
+                debt_usd = to_usd(statement_debt, financial_currency, financial_rate)
+                cash_usd = to_usd(statement_cash, financial_currency, financial_rate)
+                ebit_usd = to_usd(statement_ebit, financial_currency, financial_rate)
+                if (
+                    market_cap_usd_value is not None
+                    and debt_usd is not None
+                    and cash_usd is not None
+                    and ebit_usd is not None
+                    and ebit_usd > 0
+                ):
+                    derived_ev_usd = market_cap_usd_value + debt_usd - cash_usd
+                    if derived_ev_usd > 0:
+                        ev_usd_f = derived_ev_usd
+                        if trading_rate > 0:
+                            # ``enterprise_value`` is the legacy native field and its
+                            # companion ``currency`` is the listing/trading currency.
+                            enterprise_value_value = int(derived_ev_usd / trading_rate)
+                        ev_to_ebit = round(derived_ev_usd / ebit_usd, 2)
+                        ev_source = "statements"
         ev_to_ebitda = round(ev_f / ebitda, 2) if ev_f and ebitda and ebitda > 0 else None
         fcf_yield = round(float(fcf) / ev_f * 100, 4) if fcf and ev_f and ev_f > 0 else None
         earnings_yield = (
@@ -757,7 +806,7 @@ class YFinanceClient:
         return ValuationData(
             ticker=ticker.upper(),
             as_of=date.today(),
-            enterprise_value=ev,
+            enterprise_value=enterprise_value_value,
             ev_to_ebit=ev_to_ebit,
             ev_to_ebitda=ev_to_ebitda,
             acquirers_multiple=ev_to_ebit,
@@ -777,6 +826,8 @@ class YFinanceClient:
             dividend_yield_pct=_as_float(info.get("dividendYield")),
             currency=trading_currency,
             data_age_hours=_fiscal_age_hours(info),
+            enterprise_value_usd=int(ev_usd_f) if ev_usd_f is not None else None,
+            enterprise_value_source=ev_source,
         )
 
     # ── get_quality_metrics ───────────────────────────────────────────────────
@@ -997,7 +1048,7 @@ class YFinanceClient:
         if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
             raise _NotFoundError(ticker)
 
-        hist = self._build_financials(t, ticker)
+        hist = self._financials_from_cache_or_build(t, ticker)
         roic_series = self._compute_roic_series(hist)
         roic_vals = [v for v in roic_series if v is not None]
         roic_mean = round(sum(roic_vals) / len(roic_vals), 4) if roic_vals else None
@@ -1334,6 +1385,16 @@ class YFinanceClient:
             cash_flow=cash,
             data_age_hours=_fiscal_age_hours(info),
         )
+
+    def _financials_from_cache_or_build(self, ticker_obj: object, ticker: str) -> FinancialsHistory:
+        """Reuse statement frames across valuation fallback and quality screening."""
+        key = make_key("yf_financials", ticker)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return FinancialsHistory.model_validate_json(cached)
+        history = self._build_financials(ticker_obj, ticker)
+        self._cache.set(key, history.model_dump_json(), self._ttl_fundamentals)
+        return history
 
     @staticmethod
     def _safe_attr(ticker_obj: object, attr: str) -> object:

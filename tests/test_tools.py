@@ -612,16 +612,9 @@ def test_screen_universe_excludes_missing_metric(monkeypatch: pytest.MonkeyPatch
     assert result.data.tickers == []
 
 
-def test_screen_universe_unknown_key_ignored(monkeypatch: pytest.MonkeyPatch) -> None:
-    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, pe=12.0))
-    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
-    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
-    result = ScreenUniverseTool().run(
-        ScreenUniverseInput(criteria={"totally_unknown_key": 999, "pe_ratio_max": 15}), _ctx()
-    )
-    assert isinstance(result, ToolResultOk)
-    assert isinstance(result.data, ScreenResult)
-    assert result.data.tickers == ["AAPL"]
+def test_screen_universe_unknown_key_rejected() -> None:
+    with pytest.raises(ValueError, match="totally_unknown_key"):
+        ScreenUniverseInput(criteria={"totally_unknown_key": 999, "pe_ratio_max": 15})
 
 
 def test_screen_universe_max_analyst_coverage_filters(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -809,6 +802,31 @@ def test_screen_universe_max_market_cap_usd(monkeypatch: pytest.MonkeyPatch) -> 
     assert isinstance(result, ToolResultOk)
     assert isinstance(result.data, ScreenResult)
     assert result.data.tickers == ["AAPL"]
+
+
+def test_screen_universe_min_market_cap_and_dividend(monkeypatch: pytest.MonkeyPatch) -> None:
+    passing = _valuation_for_screen(market_cap_usd=50_000_000)
+    passing.dividend_yield_pct = 2.0
+    shell = _valuation_for_screen(market_cap_usd=2_000_000)
+    shell.dividend_yield_pct = 2.0
+    no_dividend = _valuation_for_screen(market_cap_usd=50_000_000)
+    no_dividend.dividend_yield_pct = 0.0
+    valuation_by = {"PASS": passing, "SHELL": shell, "NODIV": no_dividend}
+    yf = _FakeYF(
+        fundamentals=lambda t: _fundamentals(t),
+        valuation=lambda t: valuation_by[t],
+    )
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: list(valuation_by))
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(
+            criteria={"min_market_cap_usd": 5_400_000, "min_dividend_yield_pct": 1.0}
+        ),
+        _ctx(),
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["PASS"]
 
 
 def test_screen_universe_require_net_cash_passes(monkeypatch: pytest.MonkeyPatch) -> None:

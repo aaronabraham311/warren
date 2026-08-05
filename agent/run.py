@@ -294,7 +294,13 @@ def main() -> None:
                 screen_fn=screen_ticker_value,
                 rank=True,
             )
-            candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]
+            candidates = screening.surfaced[:_MAX_SCREEN_CANDIDATES]
+            print(
+                "Gem screen: "
+                f"{len(screening.candidates)} confirmed, "
+                f"{len(screening.needs_deeper_fetch)} need deeper fetch, "
+                f"{len(screening.source_errors)} source errors"
+            )
         else:
             screening = run_screening_pass(cooldown_result.active, logger=logger)
             candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]
