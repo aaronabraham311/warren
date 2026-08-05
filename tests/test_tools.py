@@ -96,6 +96,7 @@ def _fundamentals(
     age: int = 1,
     gross_margin: float | None = 40.0,
     sector: str | None = None,
+    analyst_count: int | None = None,
 ) -> FundamentalsData:
     return FundamentalsData(
         ticker=ticker,
@@ -109,6 +110,7 @@ def _fundamentals(
         operating_margin_pct=30.0,
         net_margin_pct=25.0,
         sector=sector,
+        analyst_count=analyst_count,
         data_age_hours=age,
         source="yfinance",
     )
@@ -590,18 +592,62 @@ def test_screen_universe_unknown_key_ignored(monkeypatch: pytest.MonkeyPatch) ->
     assert result.data.tickers == ["AAPL"]
 
 
-def test_screen_universe_require_zero_analyst_coverage_ignored(
+def test_screen_universe_max_analyst_coverage_filters(monkeypatch: pytest.MonkeyPatch) -> None:
+    counts = {"UNCOV": 1, "COVERED": 25, "ZERO": 0}
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, analyst_count=counts[t]))
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["UNCOV", "COVERED", "ZERO"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(criteria={"max_analyst_coverage": 3}), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    # 1 and 0 are <= 3 and pass; 25 is filtered OUT.
+    assert result.data.tickers == ["UNCOV", "ZERO"]
+
+
+def test_screen_universe_max_analyst_coverage_none_excludes(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, pe=12.0))
-    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["AAPL"])
+    # Unknown coverage (None) must NOT silently pass a coverage gate.
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, analyst_count=None))
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["UNKNOWN"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(criteria={"max_analyst_coverage": 3}), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == []
+
+
+def test_screen_universe_require_zero_analyst_coverage(monkeypatch: pytest.MonkeyPatch) -> None:
+    counts = {"ZERO": 0, "ONE": 1, "UNKNOWN": None}
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, analyst_count=counts[t]))
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["ZERO", "ONE", "UNKNOWN"])
     monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
     result = ScreenUniverseTool().run(
         ScreenUniverseInput(criteria={"require_zero_analyst_coverage": 1}), _ctx()
     )
     assert isinstance(result, ToolResultOk)
     assert isinstance(result.data, ScreenResult)
-    assert result.data.tickers == ["AAPL"]
+    # Only a demonstrably-zero-coverage name passes; 1 analyst and unknown both fail.
+    assert result.data.tickers == ["ZERO"]
+
+
+def test_screen_universe_require_zero_analyst_coverage_zero_threshold_ignored(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # threshold 0 disables the gate (mirrors require_net_cash=0).
+    yf = _FakeYF(fundamentals=lambda t: _fundamentals(t, analyst_count=42))
+    monkeypatch.setattr("agent.tools.screen._universe", lambda: ["COVERED"])
+    monkeypatch.setattr("agent.tools.screen.yfinance_client", lambda: yf)
+    result = ScreenUniverseTool().run(
+        ScreenUniverseInput(criteria={"require_zero_analyst_coverage": 0}), _ctx()
+    )
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, ScreenResult)
+    assert result.data.tickers == ["COVERED"]
 
 
 def _valuation_for_screen(

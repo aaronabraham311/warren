@@ -98,6 +98,14 @@ class FundamentalsData(BaseModel):
     net_margin_pct: float | None
     sector: str | None
     data_age_hours: int
+    # "Overlooked" signals (G7) — a genuine gem is cheap *because* it's uncovered.
+    # float_shares: freely-tradeable share count (yfinance ``floatShares``).
+    # avg_volume_3m: trailing 3-month average daily volume (yfinance ``averageVolume``).
+    # analyst_count: sell-side analysts covering the name (``numberOfAnalystOpinions``);
+    #   None ⇒ unknown coverage (NOT the same as zero — see screen.py None-handling).
+    float_shares: int | None = None
+    avg_volume_3m: int | None = None
+    analyst_count: int | None = None
     # Native statement currency (yfinance ``financialCurrency``); None ⇒ unknown/USD.
     # ``fcf_ttm_usd`` is normalized to USD from this currency at populate time.
     currency: str | None = None
@@ -573,6 +581,9 @@ class YFinanceClient:
             operating_margin_pct=_as_pct(info.get("operatingMargins")),
             net_margin_pct=_as_pct(info.get("profitMargins")),
             sector=sector,
+            float_shares=_as_int(info.get("floatShares")),
+            avg_volume_3m=_as_int(info.get("averageVolume")),
+            analyst_count=_as_int(info.get("numberOfAnalystOpinions")),
             currency=currency,
             data_age_hours=_fiscal_age_hours(info),
             source="yfinance",

@@ -40,16 +40,24 @@ _QUALITY_CRITERIA: dict[str, tuple[str, str]] = {
 # Boolean criterion: threshold > 0 → require net_cash_positive == True.
 _BOOLEAN_QUALITY_CRITERIA: frozenset[str] = frozenset({"require_net_cash"})
 
-# Unreliable / aspirational: coverage count is typically missing (not zero) for
-# truly uncovered names, so this criterion cannot be reliably implemented.
-_UNSUPPORTED_CRITERIA: frozenset[str] = frozenset({"require_zero_analyst_coverage"})
+# "Overlooked" analyst-coverage criteria (G7) — read FundamentalsData.analyst_count.
+# max_analyst_coverage: numeric threshold — pass iff analyst_count <= N.
+_ANALYST_CRITERIA: dict[str, tuple[str, str]] = {
+    "max_analyst_coverage": ("analyst_count", "<="),
+}
+# Boolean sugar: require_zero_analyst_coverage > 0 → analyst_count must be exactly 0
+# (equivalent to max_analyst_coverage == 0). Unknown coverage (analyst_count is None)
+# is treated as "not proven uncovered" and FAILS the gate — an uncovered name should be
+# demonstrably uncovered, never let through on missing data.
+_BOOLEAN_ANALYST_CRITERIA: frozenset[str] = frozenset({"require_zero_analyst_coverage"})
 
 _ALL_KNOWN: frozenset[str] = (
     frozenset(_FUNDAMENTALS_CRITERIA)
     | frozenset(_VALUATION_CRITERIA)
     | frozenset(_QUALITY_CRITERIA)
     | _BOOLEAN_QUALITY_CRITERIA
-    | _UNSUPPORTED_CRITERIA
+    | frozenset(_ANALYST_CRITERIA)
+    | _BOOLEAN_ANALYST_CRITERIA
 )
 
 
@@ -61,7 +69,10 @@ class ScreenUniverseInput(BaseModel):
             "  Valuation:    max_ev_ebit, max_price_to_ncav, max_market_cap_usd (USD).\n"
             "  Quality:      require_net_cash (1 = require net-cash balance sheet),\n"
             "                min_consecutive_profit_years.\n"
-            "  Unsupported (silently ignored — unreliable data): require_zero_analyst_coverage.\n"
+            "  Overlooked:   max_analyst_coverage (max sell-side analysts covering the name),\n"
+            "                require_zero_analyst_coverage (1 = require exactly 0 analysts;\n"
+            "                sugar for max_analyst_coverage=0). Names with unknown coverage\n"
+            "                are excluded — an uncovered name must be demonstrably uncovered.\n"
             "Unknown keys are silently ignored."
         )
     )
@@ -130,6 +141,17 @@ def _passes(
             if threshold > 0:
                 if valuation is None or not valuation.net_cash_positive:
                     return False
+        elif key in _ANALYST_CRITERIA:
+            if fundamentals is None:
+                return False
+            attr, op = _ANALYST_CRITERIA[key]
+            if not _check_numeric(fundamentals, attr, op, threshold):
+                return False
+        elif key in _BOOLEAN_ANALYST_CRITERIA:
+            # require_zero_analyst_coverage is sugar for max_analyst_coverage == 0.
+            # None coverage (unknown) fails via _check_numeric's non-numeric guard.
+            if threshold > 0 and not _check_numeric(fundamentals, "analyst_count", "<=", 0):
+                return False
         elif key in _QUALITY_CRITERIA:
             if quality is None:
                 return False
@@ -147,11 +169,10 @@ class ScreenUniverseTool(Tool):
         "quantitative fundamental and deep-value filters. "
         "Returns the tickers that pass every filter. "
         "Supports fundamentals (pe_ratio_max, pb_ratio_max, roe_min, de_max), "
-        "valuation (max_ev_ebit, max_price_to_ncav, max_market_cap_usd), and "
-        "quality (require_net_cash, min_consecutive_profit_years) criteria. "
-        "Note: require_zero_analyst_coverage is not implemented — analyst-coverage "
-        "counts are missing rather than zero for truly uncovered names, making this "
-        "criterion unreliable; pass it and it will be silently ignored."
+        "valuation (max_ev_ebit, max_price_to_ncav, max_market_cap_usd), "
+        "quality (require_net_cash, min_consecutive_profit_years), and "
+        "'overlooked' analyst-coverage (max_analyst_coverage, require_zero_analyst_coverage) "
+        "criteria. Names with unknown analyst coverage are excluded by the coverage gates."
     )
     input_schema = ScreenUniverseInput
     output_schema = ScreenResult
@@ -160,6 +181,14 @@ class ScreenUniverseTool(Tool):
         assert isinstance(tool_input, ScreenUniverseInput)
         criteria = tool_input.criteria
 
+        need_fundamentals = bool(
+            set(criteria)
+            & (
+                frozenset(_FUNDAMENTALS_CRITERIA)
+                | frozenset(_ANALYST_CRITERIA)
+                | _BOOLEAN_ANALYST_CRITERIA
+            )
+        )
         need_valuation = bool(
             set(criteria) & (frozenset(_VALUATION_CRITERIA) | _BOOLEAN_QUALITY_CRITERIA)
         )
@@ -173,7 +202,7 @@ class ScreenUniverseTool(Tool):
                 valuation: ValuationData | None = None
                 quality: QualityData | None = None
 
-                if set(criteria) & frozenset(_FUNDAMENTALS_CRITERIA):
+                if need_fundamentals:
                     raw = yfinance_client().get_fundamentals(ticker)
                     if isinstance(raw, FundamentalsData):
                         fundamentals = raw

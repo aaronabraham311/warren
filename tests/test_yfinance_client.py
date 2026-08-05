@@ -205,6 +205,10 @@ def test_get_fundamentals_returns_valid_data(yf_conn: sqlite3.Connection) -> Non
     assert result.fcf_ttm_usd == 90_000_000_000
     assert result.operating_margin_pct is not None
     assert result.net_margin_pct is not None
+    # G7 "overlooked" signals parsed from .info
+    assert result.float_shares == 15_000_000_000
+    assert result.avg_volume_3m == 55_000_000
+    assert result.analyst_count == 34
     assert result.data_age_hours >= 0
     assert result.source == "yfinance"
 

@@ -1,13 +1,16 @@
 {
-  "trailingPE": 28.5,
-  "priceToBook": 45.2,
-  "returnOnEquity": 1.47,
-  "debtToEquity": 150.5,
-  "freeCashflow": 90000000000,
-  "operatingMargins": 0.301,
-  "profitMargins": 0.253,
-  "lastFiscalYearEnd": 1696032000,
-  "regularMarketPrice": 182.5,
+  "averageVolume": 55000000,
   "currentPrice": 182.5,
-  "pegRatio": 2.3
+  "debtToEquity": 150.5,
+  "floatShares": 15000000000,
+  "freeCashflow": 90000000000,
+  "lastFiscalYearEnd": 1696032000,
+  "numberOfAnalystOpinions": 34,
+  "operatingMargins": 0.301,
+  "pegRatio": 2.3,
+  "priceToBook": 45.2,
+  "profitMargins": 0.253,
+  "regularMarketPrice": 182.5,
+  "returnOnEquity": 1.47,
+  "trailingPE": 28.5
 }
