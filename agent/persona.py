@@ -47,6 +47,26 @@ _ANALYSIS_OUTPUT_SCHEMA = """\
     "closability_score": <float 0–1 | null — higher means more closable>,
     "closability_confidence": <float 0–1 | null>,
     "closability_reasons": ["<specific actor/ability/incentive, catalyst and coverage reasons>", ...]
+  },
+  "dirt_decision": null | {
+    "valuation_date": "<YYYY-MM-DD>",
+    "currency": "<three-letter ISO currency>",
+    "current_price": <float > 0>,
+    "horizon_years": 2 | 3,
+    "hurdle_irr": 0.20,
+    "scenarios": ["<exactly one bear, base, and bull scenario returned by model_dirt_scenarios>"],
+    "probability_weighted_irr": "<copy the computed tool value>",
+    "hurdle_cleared": "<copy the computed tool value>",
+    "downside_floor": "<cited floor object returned by model_dirt_scenarios>",
+    "catalysts": ["<cited catalyst object returned by model_dirt_scenarios>", ...],
+    "failure_thesis": "<specific falsifiable thesis failure>",
+    "outcome": "buy" | "watchlist" | "pass",
+    "outcome_reason": "<concise reason>",
+    "required_entry_price": "<copy the computed tool value>",
+    "entry_conditions": ["<typed entry condition>", ...],
+    "blocking_unknowns": ["<material unresolved fact>", ...],
+    "monitoring_metrics": ["<typed metric with trigger and source>", ...],
+    "calculation_version": "dce_irr_v1"
   }
 }"""
 
@@ -786,6 +806,11 @@ Use tools in this order. Maximum 10 calls for the quantitative/evidence assessme
  get_key_persons. Controlling shareholder is highest priority.
 13. **screen_watchlists** — Step 4.5. Cross-reference company name and key persons against\
  sanctions, PEP, and enforcement watchlists. Call alongside get_adverse_media.
+14. **model_dirt_scenarios** — required after evidence/source verification and before\
+ synthesis. Supply cited assumptions, a downside floor, catalysts, failure thesis, entry\
+ conditions, blockers, and monitoring metrics. This pure local call recomputes XIRR, weighted\
+ return, hurdle clearance, and required entry price; copy its dirt_decision exactly. It counts\
+ as an agent tool call but is outside the network-call maximum above.
 
 Do not call get_growth_metrics, estimate_intrinsic_value, get_peer_comparison, get_news, or\
  screen_universe unless the specific analysis requires it. DIRT is a bottom-up, cheapness-first\
@@ -828,6 +853,9 @@ All output fields are identical to the default persona. Additionally:
 - **dirt_signals** MUST be non-null. Populate every sub-field you have tool data for.\
  Null sub-fields are acceptable only when the tool call returned an error or the field\
  is genuinely unavailable — document each gap in data_quality_notes.
+- **dirt_decision** MUST be non-null and exactly match the most recent successful\
+ model_dirt_scenarios output. A buy maps to recommendation="buy"; watchlist and pass map to\
+ recommendation="hold". Never hand-calculate, round, or alter scenario IRRs.
 - **lynch_signals** and **buffett_signals** may have empty pros/cons arrays for a DIRT\
  analysis if the Lynch/Buffett frameworks are not applicable, but note any overlapping signals\
  (e.g. insider buying, asset play characteristics).
@@ -842,12 +870,16 @@ Respond with a JSON object conforming exactly to this schema. Output ONLY the JS
 
 
 class DefaultPersona:
+    requires_dirt_decision = False
+
     @property
     def system_prompt(self) -> str:
         return SYSTEM_PROMPT
 
 
 class DirtPersona:
+    requires_dirt_decision = True
+
     @property
     def system_prompt(self) -> str:
         return DIRT_SYSTEM_PROMPT

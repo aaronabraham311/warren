@@ -1,9 +1,10 @@
 # Single source of truth for model identifiers, per-token pricing (USD), and
 # the AnalysisOutput schema shared between the loop and storage layers.
 
-from typing import Final, Literal, Self, TypedDict
+from datetime import date
+from typing import Annotated, Final, Literal, Self, TypedDict
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
 from data_sources.symbols import TICKER_PATTERN
 
@@ -165,6 +166,125 @@ class DirtSignals(BaseModel):
         return self
 
 
+NonEmptyText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+
+
+class DirtCashFlow(BaseModel):
+    date: date
+    amount: float = Field(gt=0.0)
+    kind: Literal["dividend", "terminal_sale"]
+    source_ref: NonEmptyText
+
+
+class DirtScenarioAssumption(BaseModel):
+    case: Literal["bear", "base", "bull"]
+    probability: float = Field(ge=0.0, le=1.0)
+    assumption: NonEmptyText
+    rationale: NonEmptyText
+    terminal_price: float = Field(gt=0.0)
+    terminal_date: date
+    cash_flows: list[DirtCashFlow] = Field(min_length=1)
+
+
+class DirtScenario(DirtScenarioAssumption):
+    total_dividends: float = Field(ge=0.0)
+    total_value: float = Field(gt=0.0)
+    total_return: float
+    irr: float
+
+
+class DirtDownsideFloorAssumption(BaseModel):
+    basis: Literal["ncav", "net_cash", "tangible_book", "liquidation_value", "none"]
+    gross: float | None = Field(default=None, ge=0.0)
+    haircut: float | None = Field(default=None, ge=0.0, le=1.0)
+    source_ref: NonEmptyText | None = None
+    as_of: date | None = None
+    adjustments: list[NonEmptyText] = Field(default_factory=list)
+    confidence: Literal["low", "medium", "high", "unavailable"]
+
+    @model_validator(mode="after")
+    def validate_basis_contract(self) -> "DirtDownsideFloorAssumption":
+        numeric = (self.gross, self.haircut)
+        if self.basis == "none":
+            if any(value is not None for value in numeric) or self.source_ref is not None:
+                raise ValueError("basis='none' requires gross, haircut, and source_ref to be null")
+            if self.as_of is not None:
+                raise ValueError("basis='none' requires as_of to be null")
+            if self.confidence != "unavailable":
+                raise ValueError("basis='none' requires confidence='unavailable'")
+        elif (
+            self.gross is None
+            or self.haircut is None
+            or self.source_ref is None
+            or self.as_of is None
+        ):
+            raise ValueError("a downside floor requires gross, haircut, source_ref, and as_of")
+        elif self.confidence == "unavailable":
+            raise ValueError("a stated downside floor requires an available confidence")
+        return self
+
+
+class DirtDownsideFloor(DirtDownsideFloorAssumption):
+    adjusted: float | None = Field(default=None, ge=0.0)
+    coverage: float | None = Field(default=None, ge=0.0)
+
+
+class DirtCatalyst(BaseModel):
+    description: NonEmptyText
+    category: NonEmptyText
+    evidence_strength: Literal["contractual", "observable", "aspirational"]
+    expected_by: date | None = None
+    source_ref: NonEmptyText
+    failure_condition: NonEmptyText
+
+
+class DirtEntryCondition(BaseModel):
+    description: NonEmptyText
+    metric: NonEmptyText
+    operator: Literal["lt", "lte", "eq", "gte", "gt"]
+    threshold: float
+    currency: str | None = Field(default=None, pattern=r"^[A-Z]{3}$")
+    expires_on: date | None = None
+    source_ref: NonEmptyText | None = None
+
+
+class DirtMonitoringMetric(BaseModel):
+    metric: NonEmptyText
+    current_value: float | None = None
+    warning_threshold: float | None = None
+    failure_threshold: float | None = None
+    cadence: Literal["event", "monthly", "quarterly", "semiannual", "annual"]
+    source_ref: NonEmptyText
+    rationale: NonEmptyText
+
+    @model_validator(mode="after")
+    def require_a_threshold(self) -> "DirtMonitoringMetric":
+        if self.warning_threshold is None and self.failure_threshold is None:
+            raise ValueError("a monitoring metric requires a warning or failure threshold")
+        return self
+
+
+class DirtDecisionContract(BaseModel):
+    valuation_date: date
+    currency: str = Field(pattern=r"^[A-Z]{3}$")
+    current_price: float = Field(gt=0.0)
+    horizon_years: Literal[2, 3]
+    hurdle_irr: float = Field(default=0.20, ge=0.20, le=0.20)
+    scenarios: list[DirtScenario] = Field(min_length=3, max_length=3)
+    probability_weighted_irr: float
+    hurdle_cleared: bool
+    downside_floor: DirtDownsideFloor
+    catalysts: list[DirtCatalyst] = Field(min_length=1)
+    failure_thesis: NonEmptyText
+    outcome: Literal["buy", "watchlist", "pass"]
+    outcome_reason: NonEmptyText
+    required_entry_price: float = Field(gt=0.0)
+    entry_conditions: list[DirtEntryCondition] = Field(default_factory=list)
+    blocking_unknowns: list[NonEmptyText] = Field(default_factory=list)
+    monitoring_metrics: list[DirtMonitoringMetric] = Field(default_factory=list)
+    calculation_version: Literal["dce_irr_v1"] = "dce_irr_v1"
+
+
 TerminationReason = Literal[
     "success",
     "schema_repair_success",
@@ -191,3 +311,4 @@ class AnalysisOutput(BaseModel):
     tokens_used: int = Field(ge=0, default=0)
     termination_reason: TerminationReason = "success"
     dirt_signals: DirtSignals | None = None
+    dirt_decision: DirtDecisionContract | None = None

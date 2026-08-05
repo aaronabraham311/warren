@@ -115,6 +115,16 @@ def _analyze_and_persist(
     result.analysis_type = analysis_type
     result.tool_calls_made = budget.total_tool_calls - calls_before
     result.tokens_used = (budget.total_input_tokens + budget.total_output_tokens) - tokens_before
+    dirt_signals = (
+        result.dirt_signals.model_dump(mode="json") if result.dirt_signals is not None else None
+    )
+    dirt_decision = (
+        result.dirt_decision.model_dump(mode="json") if result.dirt_decision is not None else None
+    )
+    decision_outcome = None if result.dirt_decision is None else result.dirt_decision.outcome
+    probability_weighted_irr = (
+        None if result.dirt_decision is None else result.dirt_decision.probability_weighted_irr
+    )
 
     logger.log(
         "ticker_completed",
@@ -125,6 +135,12 @@ def _analyze_and_persist(
         tokens=result.tokens_used,
         cost_usd=budget.total_cost_usd,
         termination=result.termination_reason,
+        decision_outcome=decision_outcome,
+        probability_weighted_irr=probability_weighted_irr,
+        hurdle_irr=None if result.dirt_decision is None else result.dirt_decision.hurdle_irr,
+        required_entry_price=(
+            None if result.dirt_decision is None else result.dirt_decision.required_entry_price
+        ),
     )
     upsert_analysis(
         run_id,
@@ -141,6 +157,10 @@ def _analyze_and_persist(
             tool_calls_made=result.tool_calls_made,
             tokens_used=result.tokens_used,
             termination_reason=result.termination_reason,
+            dirt_signals=dirt_signals,
+            dirt_decision=dirt_decision,
+            decision_outcome=decision_outcome,
+            probability_weighted_irr=probability_weighted_irr,
         ),
     )
     print(f"[{ticker}] {result.recommendation} ({result.confidence:.2f}): {result.thesis[:80]}")
