@@ -146,6 +146,7 @@ CREATE TABLE IF NOT EXISTS filing_manifests (
 
 CREATE TABLE IF NOT EXISTS forensic_snapshots (
   ticker TEXT NOT NULL,
+  issuer_isin TEXT NOT NULL,
   as_of DATE NOT NULL,
   lookback_start DATE NOT NULL,
   extractor_version TEXT NOT NULL,
@@ -155,7 +156,7 @@ CREATE TABLE IF NOT EXISTS forensic_snapshots (
   evidence_json JSON NOT NULL,
   coverage_json JSON NOT NULL,
   warnings_json JSON NOT NULL,
-  PRIMARY KEY (ticker, as_of, lookback_start, extractor_version, corpus_hash)
+  PRIMARY KEY (ticker, issuer_isin, venue, as_of, lookback_start, extractor_version, corpus_hash)
 );
 
 -- Performance indexes (Tech Spec §7.5)

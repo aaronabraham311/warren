@@ -237,11 +237,12 @@ class ForensicSnapshot(Base):
     __tablename__ = "forensic_snapshots"
 
     ticker: Mapped[str] = mapped_column(Text, primary_key=True)
+    issuer_isin: Mapped[str] = mapped_column(Text, primary_key=True)
     as_of: Mapped[date] = mapped_column(Date, primary_key=True)
     lookback_start: Mapped[date] = mapped_column(Date, primary_key=True)
     extractor_version: Mapped[str] = mapped_column(Text, primary_key=True)
     corpus_hash: Mapped[str] = mapped_column(Text, primary_key=True)
-    venue: Mapped[str] = mapped_column(Text, nullable=False)
+    venue: Mapped[str] = mapped_column(Text, primary_key=True)
     generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     evidence_json: Mapped[dict[str, object]] = mapped_column(JSON, nullable=False)
     coverage_json: Mapped[dict[str, object]] = mapped_column(JSON, nullable=False)

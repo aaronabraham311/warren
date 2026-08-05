@@ -1,5 +1,8 @@
 from datetime import date
 
+import pytest
+from pydantic import ValidationError
+
 from agent.models import AnalysisOutput, DirtSignals, LynchBuffettSignals
 from data_sources.forensics import (
     CatalystEvidence,
@@ -315,21 +318,13 @@ def test_universe_note_check_fails_when_missing() -> None:
 
 
 def test_forensic_claims_require_evidence_ids_when_opted_in() -> None:
-    example = _dirt_example()
-    assert example.expectations.deep_value is not None
-    example.expectations.deep_value.require_forensic_citations = True
-    analysis = _dirt_analysis(
-        dirt_signals=DirtSignals(
+    with pytest.raises(ValidationError, match="require cited evidence IDs"):
+        DirtSignals(
             ev_ebit=6.1,
             price_to_ncav=0.8,
             controller_identified=True,
             controller_name="Founding Family",
         )
-    )
-    grade = grade_analysis(analysis, example)
-    check = next(c for c in grade.checks if c.check_name == "forensic_claims_cited")
-    assert not check.passed
-    assert not grade.passed
 
 
 def test_forensic_claims_pass_with_compact_evidence_ids() -> None:
@@ -344,6 +339,7 @@ def test_forensic_claims_pass_with_compact_evidence_ids() -> None:
             controller_name="Founding Family",
             catalyst_strength="observable",
             catalyst_stage="board_authorized",
+            catalyst_description="Board-authorized asset sale",
             forensic_evidence_ids=["evidence-cap-table-1", "evidence-catalyst-2"],
         ),
         thesis="Cheap at 6.1x EV/EBIT and 0.8x NCAV with an observable catalyst.",

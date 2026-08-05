@@ -223,6 +223,31 @@ def test_related_party_service_maps_to_typed_services_without_aborting_page() ->
     assert result.related_party_transactions[0].amount == Decimal("10")
 
 
+@pytest.mark.parametrize(
+    ("language", "amount", "expected"),
+    [("en", "1,234.56", Decimal("1234.56")), ("es", "1.234,56", Decimal("1234.56"))],
+)
+def test_grouped_related_party_amounts_follow_source_locale(
+    language: str, amount: str, expected: Decimal
+) -> None:
+    document = _document(f"Related-party service with Parent SA: {amount} EUR.").model_copy(
+        update={"source_language": language}
+    )
+
+    result = extract_forensic_documents([(_manifest(), document)])
+
+    assert result.related_party_transactions[0].amount == expected
+
+
+def test_repeated_matches_receive_distinct_evidence_ids() -> None:
+    statement = "Related-party service with Parent SA: 10 EUR."
+
+    result = extract_forensic_documents([(_manifest(), _document(f"{statement} {statement}"))])
+
+    first, second = result.related_party_transactions
+    assert first.evidence_refs[0].evidence_id != second.evidence_refs[0].evidence_id
+
+
 def test_ambiguous_number_without_language_fails_closed_as_coverage_gap() -> None:
     document = _document("Buyback authorization for 100,000 shares.").model_copy(
         update={"source_language": None}

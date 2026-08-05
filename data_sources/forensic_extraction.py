@@ -175,9 +175,27 @@ def _extract_page(
     searchable = text
     language = document.source_language or manifest.source_language or "und"
     for match in _HOLDER.finditer(searchable):
+        if manifest.reporting_period_end is None:
+            output.gaps.append(
+                CoverageGap(
+                    category="cap_table",
+                    reason="extraction_failed",
+                    document_type=manifest.document_kind,
+                    year=manifest.publication_date.year if manifest.publication_date else None,
+                    detail="Holder percentage lacked an explicit measurement date.",
+                )
+            )
+            continue
         pct = _decimal(match.group("pct"), language=language, percentage=True)
         ref = _evidence(
-            manifest, document, page_number, text, translated_text, match.group(0), "holder"
+            manifest,
+            document,
+            page_number,
+            text,
+            translated_text,
+            match.group(0),
+            "holder",
+            match.start(),
         )
         output.cap_table.append(
             HolderPosition(
@@ -191,7 +209,7 @@ def _extract_page(
                     "holder_type": Decimal("0.50"),
                 },
                 holder_raw=match.group("name").strip(),
-                as_of=manifest.reporting_period_end or manifest.publication_date or date.min,
+                as_of=manifest.reporting_period_end,
                 voting_rights_pct=pct,
                 scope="voting_rights",
             )
@@ -201,7 +219,16 @@ def _extract_page(
         phrase = next((value for value in phrases if value in lower), None)
         if phrase is None:
             continue
-        ref = _evidence(manifest, document, page_number, text, translated_text, phrase, "audit")
+        ref = _evidence(
+            manifest,
+            document,
+            page_number,
+            text,
+            translated_text,
+            phrase,
+            "audit",
+            lower.find(phrase),
+        )
         output.auditor_history.append(
             AuditorEvent(
                 record_id=f"audit:{ref.evidence_id}",
@@ -218,6 +245,17 @@ def _extract_page(
         )
         break
     for match in _RPT.finditer(searchable):
+        if manifest.reporting_period_end is None:
+            output.gaps.append(
+                CoverageGap(
+                    category="related_party_transactions",
+                    reason="extraction_failed",
+                    document_type=manifest.document_kind,
+                    year=manifest.publication_date.year if manifest.publication_date else None,
+                    detail="Related-party amount lacked an explicit reporting period.",
+                )
+            )
+            continue
         kind = match.group("kind").lower()
         transaction_type = {
             "purchase": "purchases",
@@ -225,7 +263,14 @@ def _extract_page(
             "service": "services",
         }.get(kind, kind)
         ref = _evidence(
-            manifest, document, page_number, text, translated_text, match.group(0), "rpt"
+            manifest,
+            document,
+            page_number,
+            text,
+            translated_text,
+            match.group(0),
+            "rpt",
+            match.start(),
         )
         output.related_party_transactions.append(
             RelatedPartyTransaction(
@@ -239,7 +284,7 @@ def _extract_page(
                     "currency": Decimal("0.99"),
                     "scope": Decimal("0.50"),
                 },
-                period_end=manifest.reporting_period_end or manifest.publication_date or date.min,
+                period_end=manifest.reporting_period_end,
                 counterparty_raw=match.group("name").strip(),
                 transaction_type=transaction_type,
                 amount=_decimal(match.group("amount"), language=language),
@@ -248,7 +293,14 @@ def _extract_page(
         )
     for match in _DEBT.finditer(searchable):
         ref = _evidence(
-            manifest, document, page_number, text, translated_text, match.group(0), "debt"
+            manifest,
+            document,
+            page_number,
+            text,
+            translated_text,
+            match.group(0),
+            "debt",
+            match.start(),
         )
         lifecycle_date = date.fromisoformat(match.group("date"))
         status = match.group("status").lower()
@@ -275,7 +327,14 @@ def _extract_page(
         raw_state = match.group("state").lower()
         execution = raw_state in {"execution", "executed"}
         ref = _evidence(
-            manifest, document, page_number, text, translated_text, match.group(0), "return"
+            manifest,
+            document,
+            page_number,
+            text,
+            translated_text,
+            match.group(0),
+            "return",
+            match.start(),
         )
         output.capital_returns.append(
             CapitalReturnEvent(
@@ -332,7 +391,14 @@ def _extract_page(
         }.get(raw_kind, raw_kind)
         description = f"{match.group('kind')}{match.group('description')}".strip()
         ref = _evidence(
-            manifest, document, page_number, text, translated_text, match.group(0), "catalyst"
+            manifest,
+            document,
+            page_number,
+            text,
+            translated_text,
+            match.group(0),
+            "catalyst",
+            match.start(),
         )
         output.catalysts.append(
             CatalystEvidence(
@@ -360,10 +426,14 @@ def _evidence(
     translated_page: str | None,
     matched: str,
     category: str,
+    offset: int,
 ) -> EvidenceRef:
-    excerpt = _bounded_excerpt(original_page, matched)
+    excerpt = _bounded_excerpt(original_page, matched, offset)
     translated_excerpt = _matching_excerpt(translated_page, matched)
-    seed = f"{manifest.filing_id}\x1f{document.sha256}\x1f{page_number}\x1f{category}\x1f{matched}"
+    seed = (
+        f"{manifest.filing_id}\x1f{document.sha256}\x1f{page_number}\x1f"
+        f"{category}\x1f{offset}\x1f{matched}"
+    )
     return EvidenceRef(
         evidence_id=hashlib.sha256(seed.encode()).hexdigest()[:24],
         document_id=manifest.filing_id,
@@ -383,8 +453,7 @@ def _evidence(
     )
 
 
-def _bounded_excerpt(page: str, matched: str, limit: int = 600) -> str:
-    offset = page.lower().find(matched.lower())
+def _bounded_excerpt(page: str, matched: str, offset: int, limit: int = 600) -> str:
     if offset < 0:
         offset = 0
     start = max(0, offset - 120)
@@ -394,7 +463,7 @@ def _bounded_excerpt(page: str, matched: str, limit: int = 600) -> str:
 def _matching_excerpt(page: str | None, matched: str) -> str | None:
     if page is None or matched.lower() not in page.lower():
         return None
-    return _bounded_excerpt(page, matched)
+    return _bounded_excerpt(page, matched, page.lower().find(matched.lower()))
 
 
 def _decimal(value: str, *, language: str, percentage: bool = False) -> Decimal:
@@ -406,21 +475,25 @@ def _decimal(value: str, *, language: str, percentage: bool = False) -> Decimal:
         raise ValueError("numeric span contains unsupported characters")
 
     if base_language == "en":
-        if "," in normalized:
-            groups = normalized.split(",")
+        if normalized.count(".") > 1:
+            raise ValueError("ambiguous English decimal separator")
+        integer, separator, fraction = normalized.partition(".")
+        if "," in integer:
+            groups = integer.split(",")
             if not all(len(group) == 3 for group in groups[1:]):
                 raise ValueError("ambiguous English thousands separator")
-            normalized = "".join(groups)
+            integer = "".join(groups)
+        normalized = integer + (f".{fraction}" if separator else "")
     elif base_language in {"es", "it", "pl"}:
-        if "." in normalized:
-            groups = normalized.split(".")
+        if normalized.count(",") > 1:
+            raise ValueError("ambiguous regional decimal separator")
+        integer, separator, fraction = normalized.partition(",")
+        if "." in integer:
+            groups = integer.split(".")
             if not all(len(group) == 3 for group in groups[1:]):
                 raise ValueError("ambiguous regional thousands separator")
-            normalized = "".join(groups)
-        if "," in normalized:
-            if normalized.count(",") != 1:
-                raise ValueError("ambiguous regional decimal separator")
-            normalized = normalized.replace(",", ".")
+            integer = "".join(groups)
+        normalized = integer + (f".{fraction}" if separator else "")
     elif "," in normalized or "." in normalized:
         if not percentage:
             raise ValueError("numeric separator is ambiguous without source language")

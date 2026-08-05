@@ -21,6 +21,12 @@ from storage.artifacts import ArtifactIntegrityError, ArtifactStore, StoredArtif
 from storage.models import FilingManifest, ForensicSnapshot
 
 FORENSIC_EXTRACTOR_VERSION = "warren-forensics/1"
+MAX_CORPUS_MANIFESTS = 100
+MAX_DERIVED_ARTIFACT_BYTES = 2_000_000
+MAX_EXTRACTED_DOCUMENTS = 30
+MAX_EXTRACTED_PAGES = 500
+MAX_EXTRACTED_CHARACTERS = 1_000_000
+MAX_RECORDS_PER_CATEGORY = 100
 
 
 class ExtractionMethod(StrEnum):
@@ -455,6 +461,7 @@ class ForensicEvidenceClient:
                 select(FilingManifest)
                 .where(
                     FilingManifest.issuer_isin == resolved.isin,
+                    FilingManifest.venue == resolved.venue,
                     FilingManifest.publication_date.is_not(None),
                     FilingManifest.publication_date >= lookback_start,
                     FilingManifest.publication_date <= effective_as_of,
@@ -463,11 +470,16 @@ class ForensicEvidenceClient:
                     FilingManifest.retrieved_at <= available_by,
                 )
                 .order_by(
-                    FilingManifest.publication_date.asc(),
-                    FilingManifest.retrieved_at.asc(),
+                    FilingManifest.publication_date.desc(),
+                    FilingManifest.retrieved_at.desc(),
+                    FilingManifest.filing_id.asc(),
+                    FilingManifest.checksum.asc(),
                 )
+                .limit(MAX_CORPUS_MANIFESTS + 1)
             )
         )
+        corpus_truncated = len(manifests) > MAX_CORPUS_MANIFESTS
+        manifests = manifests[:MAX_CORPUS_MANIFESTS]
         effective = _effective_manifests(manifests)
         # Hash every version in the point-in-time corpus, including corrected versions.
         # Extraction uses only the effective lineage member, but the snapshot retains the
@@ -475,10 +487,12 @@ class ForensicEvidenceClient:
         corpus_hash = _corpus_hash(manifests)
         snapshot_key = (
             resolved.canonical_ticker,
+            resolved.isin,
             effective_as_of,
             lookback_start,
             FORENSIC_EXTRACTOR_VERSION,
             corpus_hash,
+            resolved.venue,
         )
         if not refresh:
             snapshot = self._session.get(ForensicSnapshot, snapshot_key)
@@ -496,7 +510,13 @@ class ForensicEvidenceClient:
         documents: list[tuple[FilingManifest, DocumentText]] = []
         gaps: list[CoverageGap] = []
         failed = 0
+        extracted_pages = 0
+        extracted_characters = 0
+        resource_truncated = corpus_truncated
         for manifest in effective:
+            if len(documents) >= MAX_EXTRACTED_DOCUMENTS:
+                resource_truncated = True
+                break
             if not manifest.extracted_text_checksum or not manifest.extracted_text_artifact_key:
                 failed += 1
                 gaps.append(
@@ -522,11 +542,13 @@ class ForensicEvidenceClient:
             artifact = StoredArtifact(
                 sha256=derived_checksum,
                 relative_key=derived_key,
-                byte_length=0,
+                byte_length=None,
                 mime_type="application/json",
             )
             try:
-                document = DocumentText.model_validate_json(self._artifacts.read(artifact))
+                document = DocumentText.model_validate_json(
+                    self._artifacts.read(artifact, max_bytes=MAX_DERIVED_ARTIFACT_BYTES)
+                )
             except (ArtifactIntegrityError, OSError, ValueError) as exc:
                 failed += 1
                 gaps.append(
@@ -541,6 +563,15 @@ class ForensicEvidenceClient:
                     )
                 )
                 continue
+            document_characters = sum(len(page.text) for page in document.pages)
+            if (
+                extracted_pages + document.page_count > MAX_EXTRACTED_PAGES
+                or extracted_characters + document_characters > MAX_EXTRACTED_CHARACTERS
+            ):
+                resource_truncated = True
+                break
+            extracted_pages += document.page_count
+            extracted_characters += document_characters
             mismatch = _document_manifest_mismatch(manifest, document)
             if mismatch is not None:
                 failed += 1
@@ -576,6 +607,19 @@ class ForensicEvidenceClient:
         from data_sources.forensic_extraction import extract_forensic_documents
 
         extracted = extract_forensic_documents(documents)
+        for category in FORENSIC_CATEGORIES:
+            records = getattr(extracted, category)
+            if len(records) > MAX_RECORDS_PER_CATEGORY:
+                setattr(extracted, category, records[:MAX_RECORDS_PER_CATEGORY])
+                resource_truncated = True
+        if resource_truncated:
+            gaps.append(
+                CoverageGap(
+                    category="all",
+                    reason="context_limit",
+                    detail="Forensic corpus or output reached a deterministic resource limit.",
+                )
+            )
         gaps.extend(extracted.gaps)
         category_status = {
             category: (CoverageState.PARTIAL if documents else CoverageState.MISSING)
@@ -625,6 +669,7 @@ class ForensicEvidenceClient:
                 documents_considered=len(effective),
                 documents_extracted=len(documents),
                 documents_failed=failed,
+                truncated=resource_truncated,
             ),
             warnings=warnings,
             sources=list(sources_by_id.values()),
@@ -632,6 +677,7 @@ class ForensicEvidenceClient:
         )
         snapshot = ForensicSnapshot(
             ticker=bundle.ticker,
+            issuer_isin=resolved.isin,
             as_of=bundle.as_of,
             lookback_start=bundle.lookback_start,
             extractor_version=bundle.extractor_version,
@@ -693,7 +739,7 @@ def _corpus_hash(manifests: list[FilingManifest]) -> str:
             "translation": item.translation_version,
             "supersedes": item.supersedes_checksum,
         }
-        for item in manifests
+        for item in sorted(manifests, key=lambda value: (value.filing_id, value.checksum))
     ]
     return hashlib.sha256(
         json.dumps(rows, sort_keys=True, separators=(",", ":")).encode("utf-8")

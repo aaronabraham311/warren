@@ -24,6 +24,7 @@ def upgrade() -> None:
     op.create_table(
         "forensic_snapshots",
         sa.Column("ticker", sa.Text(), nullable=False),
+        sa.Column("issuer_isin", sa.Text(), nullable=False),
         sa.Column("as_of", sa.Date(), nullable=False),
         sa.Column("lookback_start", sa.Date(), nullable=False),
         sa.Column("extractor_version", sa.Text(), nullable=False),
@@ -34,7 +35,13 @@ def upgrade() -> None:
         sa.Column("coverage_json", sa.JSON(), nullable=False),
         sa.Column("warnings_json", sa.JSON(), nullable=False),
         sa.PrimaryKeyConstraint(
-            "ticker", "as_of", "lookback_start", "extractor_version", "corpus_hash"
+            "ticker",
+            "issuer_isin",
+            "venue",
+            "as_of",
+            "lookback_start",
+            "extractor_version",
+            "corpus_hash",
         ),
     )
     op.create_index(

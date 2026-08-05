@@ -25,6 +25,7 @@ def test_forensic_snapshot_migration_round_trip(
     columns = {column["name"] for column in inspector.get_columns("forensic_snapshots")}
     assert columns == {
         "ticker",
+        "issuer_isin",
         "as_of",
         "lookback_start",
         "extractor_version",
@@ -36,7 +37,15 @@ def test_forensic_snapshot_migration_round_trip(
         "warnings_json",
     }
     pk = inspector.get_pk_constraint("forensic_snapshots")["constrained_columns"]
-    assert pk == ["ticker", "as_of", "lookback_start", "extractor_version", "corpus_hash"]
+    assert pk == [
+        "ticker",
+        "issuer_isin",
+        "venue",
+        "as_of",
+        "lookback_start",
+        "extractor_version",
+        "corpus_hash",
+    ]
 
     command.downgrade(config, "c4aac1e13582")
     assert "forensic_snapshots" not in inspect(engine).get_table_names()

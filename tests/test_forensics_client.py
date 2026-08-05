@@ -18,6 +18,7 @@ def _seed(
     filing_id: str,
     publication_date: date,
     text: str,
+    venue: str = "bme_growth",
 ) -> None:
     raw_checksum = ("b" if filing_id.endswith("1") else "c") * 64
     document = DocumentText(
@@ -38,7 +39,7 @@ def _seed(
             filing_id=filing_id,
             checksum=raw_checksum,
             issuer_isin="ES0105509006",
-            venue="bme_growth",
+            venue=venue,
             source_system="bme",
             upstream_id=filing_id,
             document_kind="annual",
@@ -118,3 +119,46 @@ def test_client_is_point_in_time_offline_and_snapshot_invalidates_with_corpus(
     assert isinstance(updated, ForensicEvidenceBundle)
     assert updated.corpus_hash != first.corpus_hash
     assert updated.capital_returns[0].kind == "buyback_execution"
+
+
+def test_client_excludes_same_issuer_filings_from_other_venues(
+    db_session: Session, tmp_path: Path
+) -> None:
+    db_session.add(
+        SecurityIdentityRecord(
+            venue="bme_growth",
+            isin="ES0105509006",
+            canonical_ticker="480S.MC",
+            mic="XGRO",
+            exchange_symbol="480S",
+            legal_name="SOLUCIONES CUATROOCHENTA, S.A.",
+            identity_source_url="https://example.com/security-master",
+            resolved_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+            is_active=True,
+        )
+    )
+    store = ArtifactStore(tmp_path)
+    _seed(
+        db_session,
+        store,
+        filing_id="filing_1",
+        publication_date=date(2025, 4, 30),
+        text="Accionista: Familia Uno; derechos de voto: 74,99%.",
+    )
+    _seed(
+        db_session,
+        store,
+        filing_id="filing_other_venue",
+        publication_date=date(2025, 5, 1),
+        text="Buyback execution of 10,000 shares.",
+        venue="borsa_italiana_growth",
+    )
+    db_session.flush()
+
+    result = ForensicEvidenceClient(db_session, store).get_evidence(
+        "480S.MC", as_of=date(2025, 12, 31)
+    )
+
+    assert isinstance(result, ForensicEvidenceBundle)
+    assert result.coverage.documents_extracted == 1
+    assert result.capital_returns == []
