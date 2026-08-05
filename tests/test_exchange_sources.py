@@ -82,6 +82,25 @@ def test_euronext_parses_identities_and_filters_warrants() -> None:
     }
 
 
+def test_euronext_paginates_full_pages() -> None:
+    row_a = ["", "Alpha", "IT0000000001", "AAA", ""]
+    row_b = ["", "Beta", "IT0000000002", "BBB", ""]
+    row_c = ["", "Gamma", "IT0000000003", "CCC", ""]
+    session = _Session([{"aaData": [row_a, row_b]}, {"aaData": [row_c]}])
+    source = EuronextProductDirectorySource(
+        mics="EXGM",
+        suffix=".MI",
+        venue="euronext_growth_milan",
+        page_size=2,
+    )
+
+    result = source.fetch(session)  # type: ignore[arg-type]
+
+    assert not isinstance(result, DataSourceError)
+    assert [item.canonical_ticker for item in result] == ["AAA.MI", "BBB.MI", "CCC.MI"]
+    assert [call[2]["data"]["iDisplayStart"] for call in session.calls] == ["0", "2"]  # type: ignore[index]
+
+
 def test_bme_resolves_isin_to_ticker() -> None:
     session = _Session(
         [
@@ -102,6 +121,31 @@ def test_bme_resolves_isin_to_ticker() -> None:
         "mtfSegment": "BMEGrowth",
         "ISIN": "ES0105509006",
     }
+
+
+def test_bme_rejects_missing_legal_name() -> None:
+    session = _Session([{"data": [{"isin": "ES0105509006", "name": ""}]}])
+    source = BMEGrowthSource(mtf_segment="BMEGrowth", suffix=".MC", venue="bme_growth")
+
+    result = source.fetch(session)  # type: ignore[arg-type]
+
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "parse"
+
+
+def test_bme_tolerates_one_detail_failure_above_completeness_threshold() -> None:
+    companies = [
+        {"isin": f"ES00000000{index:02d}", "name": f"Issuer {index}"} for index in range(5)
+    ]
+    details: list[object] = [{"ticker": f"T{index}"} for index in range(4)]
+    details.append(ValueError("invalid json"))
+    session = _Session([{"data": companies}, *details])
+    source = BMEGrowthSource(mtf_segment="BMEGrowth", suffix=".MC", venue="bme_growth")
+
+    result = source.fetch(session)  # type: ignore[arg-type]
+
+    assert not isinstance(result, DataSourceError)
+    assert len(result) == 4
 
 
 def test_tradingview_returns_verified_isin_backed_identities() -> None:

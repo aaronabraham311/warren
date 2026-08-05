@@ -21,35 +21,43 @@ class EuronextProductDirectorySource:
     venue: str
     exclude_name_prefix: str = "W "
     timeout: int = 15
+    page_size: int = 300
 
     URL = "https://live.euronext.com/en/pd_es/data/stocks"
 
     def fetch(self, session: requests.Session) -> list[SecurityIdentity] | DataSourceError:
         try:
-            response = session.post(
-                self.URL,
-                params={
-                    "mics": self.mics,
-                    "display_datapoints": "dp_stocks",
-                    "display_filters": "df_stocks",
-                    "display_type": "all",
-                },
-                data={
-                    "iDisplayStart": "0",
-                    "iDisplayLength": "300",
-                    "args[initialLetter]": "",
-                },
-                timeout=self.timeout,
-            )
-            response.raise_for_status()
-        except requests.RequestException as exc:
-            return DataSourceError(error_code="network", message=str(exc))
+            rows: list[object] = []
+            offset = 0
+            while True:
+                try:
+                    response = session.post(
+                        self.URL,
+                        params={
+                            "mics": self.mics,
+                            "display_datapoints": "dp_stocks",
+                            "display_filters": "df_stocks",
+                            "display_type": "all",
+                        },
+                        data={
+                            "iDisplayStart": str(offset),
+                            "iDisplayLength": str(self.page_size),
+                            "args[initialLetter]": "",
+                        },
+                        timeout=self.timeout,
+                    )
+                    response.raise_for_status()
+                except requests.RequestException as exc:
+                    return DataSourceError(error_code="network", message=str(exc))
+                payload = response.json()
+                page = payload.get("aaData") if isinstance(payload, dict) else None
+                if not isinstance(page, list):
+                    raise ValueError("Euronext response has no aaData list")
+                rows.extend(page)
+                if len(page) < self.page_size:
+                    break
+                offset += self.page_size
 
-        try:
-            payload = response.json()
-            rows = payload.get("aaData") if isinstance(payload, dict) else None
-            if not isinstance(rows, list):
-                raise ValueError("Euronext response has no aaData list")
             resolved_at = datetime.now(timezone.utc)
             identities: list[SecurityIdentity] = []
             for row in rows:

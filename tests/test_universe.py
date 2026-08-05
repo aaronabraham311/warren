@@ -353,3 +353,42 @@ def test_missing_isin_is_not_persisted(db_session: Session) -> None:
     db_session.commit()
 
     assert db_session.scalar(select(SecurityIdentityRecord.venue)) is None
+
+
+def test_successful_refresh_retires_missing_venue_identity(db_session: Session) -> None:
+    old = SecurityIdentity(
+        canonical_ticker="OLD.MI",
+        venue="euronext_growth_milan",
+        mic="EXGM",
+        exchange_symbol="OLD",
+        isin="IT0000000001",
+        legal_name="Old Issuer",
+        identity_source_url="https://example.test/old",
+        resolved_at=datetime(2026, 8, 1, tzinfo=timezone.utc),
+    )
+    current = SecurityIdentity(
+        canonical_ticker="NEW.MI",
+        venue="euronext_growth_milan",
+        mic="EXGM",
+        exchange_symbol="NEW",
+        isin="IT0000000002",
+        legal_name="New Issuer",
+        identity_source_url="https://example.test/new",
+        resolved_at=datetime(2026, 8, 5, tzinfo=timezone.utc),
+    )
+    universe.save_security_identities(db_session, [old])
+    fetchers: dict[str, universe.ConstituentFetcher] = {
+        "milan": lambda: [current],
+        "madrid": lambda: ["TEST.MC"],
+        "warsaw": lambda: ["TEST.WA"],
+    }
+
+    universe.get_gem_hunt_universe(db_session, watchlist=[], fetchers=fetchers)
+
+    rows = db_session.scalars(
+        select(SecurityIdentityRecord).order_by(SecurityIdentityRecord.isin)
+    ).all()
+    assert [(row.isin, row.is_active) for row in rows] == [
+        ("IT0000000001", False),
+        ("IT0000000002", True),
+    ]

@@ -180,7 +180,8 @@ def fetch_exchange_list(key: str, fetcher: ConstituentFetcher | None = None) -> 
 def save_security_identities(session: Session, identities: list[SecurityIdentity]) -> None:
     """Upsert verified identities without committing the surrounding refresh."""
     for identity in identities:
-        if identity.isin is None or identity.legal_name is None:
+        legal_name = (identity.legal_name or "").strip()
+        if identity.isin is None or not legal_name:
             continue
         key = (identity.venue, identity.isin)
         row = session.get(SecurityIdentityRecord, key)
@@ -209,7 +210,7 @@ def save_security_identities(session: Session, identities: list[SecurityIdentity
                 canonical_ticker=identity.canonical_ticker,
                 mic=identity.mic,
                 exchange_symbol=identity.exchange_symbol,
-                legal_name=identity.legal_name,
+                legal_name=legal_name,
                 identity_source_url=identity.identity_source_url,
                 resolved_at=identity.resolved_at,
                 is_active=True,
@@ -220,10 +221,28 @@ def save_security_identities(session: Session, identities: list[SecurityIdentity
             row.canonical_ticker = identity.canonical_ticker
             row.mic = identity.mic
             row.exchange_symbol = identity.exchange_symbol
-            row.legal_name = identity.legal_name
+            row.legal_name = legal_name
             row.identity_source_url = identity.identity_source_url
             row.resolved_at = identity.resolved_at
             row.is_active = True
+            row.superseded_by_isin = None
+
+
+def deactivate_missing_security_identities(
+    session: Session, *, venue: str, active_isins: set[str]
+) -> None:
+    """Retire identities omitted from a successful, authoritative venue refresh."""
+    rows = session.scalars(
+        select(SecurityIdentityRecord).where(
+            and_(
+                SecurityIdentityRecord.venue == venue,
+                SecurityIdentityRecord.is_active.is_(True),
+            )
+        )
+    ).all()
+    for row in rows:
+        if row.isin not in active_isins:
+            row.is_active = False
             row.superseded_by_isin = None
 
 
@@ -265,6 +284,15 @@ def get_gem_hunt_universe(
             venue_tickers, venue_identities = _partition_exchange_payload(key, payload)
             constituents += venue_tickers
             identities += venue_identities
+            if not isinstance(payload, DataSourceError) and venue_identities:
+                venue = venue_identities[0].venue
+                deactivate_missing_security_identities(
+                    session,
+                    venue=venue,
+                    active_isins={
+                        identity.isin for identity in venue_identities if identity.isin is not None
+                    },
+                )
         save_security_identities(session, identities)
         save_snapshot(session, constituents, kind="gem_hunt")
     else:

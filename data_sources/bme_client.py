@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from math import ceil
 
 import requests
 
@@ -22,6 +23,7 @@ class BMEGrowthSource:
 
     LIST_URL = "https://apiweb.bolsasymercados.es/Market/v1/EQ/ListedCompanies"
     DETAILS_URL = "https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo"
+    MIN_DETAIL_COMPLETENESS = 0.8
 
     def _get_json(
         self,
@@ -76,18 +78,18 @@ class BMEGrowthSource:
                 company_key = company.get("companyKey")
                 if not isinstance(isin, str) or not isin:
                     raise ValueError("BME company is missing an ISIN")
+                if not isinstance(legal_name, str) or not legal_name.strip():
+                    raise ValueError("BME company is missing a legal name")
                 details = self._get_json(
                     session,
                     self.DETAILS_URL,
                     params={**common, "ISIN": isin},
                 )
                 if isinstance(details, DataSourceError):
-                    return details
+                    continue
                 ticker = details.get("ticker") if isinstance(details, dict) else None
                 if not isinstance(ticker, str) or not ticker:
-                    raise ValueError(f"BME did not resolve ticker for {isin}")
-                if legal_name is not None and not isinstance(legal_name, str):
-                    raise ValueError("BME legal name must be a string")
+                    continue
                 canonical = ticker.upper()
                 if not canonical.endswith(self.suffix.upper()):
                     canonical = f"{canonical}{self.suffix}"
@@ -104,15 +106,19 @@ class BMEGrowthSource:
                         mic=None,
                         exchange_symbol=ticker.upper(),
                         isin=isin.upper(),
-                        legal_name=legal_name,
+                        legal_name=legal_name.strip(),
                         identity_source_url=self.DETAILS_URL,
                         resolved_at=resolved_at,
                         aliases=(ticker.upper(),),
                         source_ids=source_ids,
                     )
                 )
-            if not identities:
-                raise ValueError("BME response yielded no equity identities")
+            required = max(1, ceil(len(companies) * self.MIN_DETAIL_COMPLETENESS))
+            if len(identities) < required:
+                raise ValueError(
+                    "BME ticker resolution was incomplete: "
+                    f"resolved {len(identities)} of {len(companies)} companies"
+                )
             return identities
         except (TypeError, ValueError) as exc:
             return DataSourceError(error_code="parse", message=str(exc))
