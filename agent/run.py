@@ -180,6 +180,17 @@ def _run_tickers(
     return status, error_msg
 
 
+def resolve_persona(persona_arg: str, gem_hunt: bool) -> DefaultPersona | DirtPersona:
+    """Resolve the analysis persona from the CLI args.
+
+    Gem-hunt mode always implies the DIRT (deep-value) persona, overriding
+    ``--persona``. Otherwise the explicit ``--persona`` choice is honoured.
+    """
+    if gem_hunt or persona_arg == "dirt":
+        return DirtPersona()
+    return DefaultPersona()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Warren stock analysis agent")
     parser.add_argument(
@@ -199,15 +210,22 @@ def main() -> None:
         default="default",
         help="Analysis persona: 'default' (Lynch/Buffett) or 'dirt' (deep-value DIRT methodology)",
     )
+    parser.add_argument(
+        "--gem-hunt",
+        action="store_true",
+        help=(
+            "Opt-in nightly gem-hunt mode: global 3-exchange universe + deep-value screen + "
+            "DIRT persona as one switch. The default US GARP nightly is untouched. Forces the "
+            "DIRT persona regardless of --persona. Early runs may need --skip-ticker-validation."
+        ),
+    )
     args = parser.parse_args()
 
     migrate()
     reconcile_orphans(_LOG_DIR)  # self-heal any run left "running" by a previous crash
     _sync_input_data(args.skip_ticker_validation)
 
-    persona: DefaultPersona | DirtPersona = (
-        DirtPersona() if args.persona == "dirt" else DefaultPersona()
-    )
+    persona: DefaultPersona | DirtPersona = resolve_persona(args.persona, args.gem_hunt)
     routing_policy = PhaseBasedRouting()
 
     prompt_version_id = ensure_prompt_version(
@@ -237,9 +255,15 @@ def main() -> None:
         ]
     else:
         # Nightly mode: screen S&P 500 union watchlist, then analyse holdings + top candidates
+        gem_hunt = args.gem_hunt
         watchlist_tickers = [e.ticker for e in watchlist]
         with get_session() as session:
-            universe = get_current_universe(session, watchlist_tickers)
+            if gem_hunt:
+                # TODO(G5): global 3-exchange universe — replace with the global fetch.
+                # G1 scaffold: falls through to the existing S&P 500 ∪ watchlist universe.
+                universe = get_current_universe(session, watchlist_tickers)
+            else:
+                universe = get_current_universe(session, watchlist_tickers)
             cooldown_result = filter_universe_for_cooldown(universe, session, recent_news={})
         logger.log(
             "discovery_cooldown_applied",
@@ -247,8 +271,16 @@ def main() -> None:
             suppressed_tickers=cooldown_result.suppressed,
         )
 
-        screening = run_screening_pass(cooldown_result.active, logger=logger)
-        candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]
+        if gem_hunt:
+            # TODO(G6): deep-value screen criteria — swap in the deep-value screen here.
+            # G1 scaffold: falls through to the existing GARP screening pass.
+            screening = run_screening_pass(cooldown_result.active, logger=logger)
+            # TODO(G6): value-score ranking before top-N — rank candidates by value score.
+            # G1 scaffold: keeps the existing screening order.
+            candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]
+        else:
+            screening = run_screening_pass(cooldown_result.active, logger=logger)
+            candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]
         print(
             f"Screening surfaced {len(screening.candidates)} candidates; "
             f"analysing top {len(candidates)}: {candidates}"
