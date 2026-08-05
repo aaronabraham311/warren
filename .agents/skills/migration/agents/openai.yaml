@@ -1,0 +1,6 @@
+interface:
+  display_name: "Warren migrations"
+  short_description: "Review safe SQLite schema changes"
+  default_prompt: "Use $migration to review or create a Warren SQLite migration."
+policy:
+  allow_implicit_invocation: true
