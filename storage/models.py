@@ -178,6 +178,39 @@ class SecurityIdentityRecord(Base):
     superseded_by_isin: Mapped[str | None] = mapped_column(Text)
 
 
+class FilingManifest(Base):
+    """One immutable version of a discovered primary-filing artifact.
+
+    ``filing_id`` is the source-stable document identity; ``checksum`` makes versions
+    append-only when an upstream URL changes. Identical checksums may be referenced by
+    multiple filing IDs so mirrored announcements deduplicate in ArtifactStore without
+    losing discovery provenance.
+    """
+
+    __tablename__ = "filing_manifests"
+
+    filing_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    checksum: Mapped[str] = mapped_column(Text, primary_key=True)
+    issuer_isin: Mapped[str | None] = mapped_column(Text)
+    venue: Mapped[str] = mapped_column(Text, nullable=False)
+    source_system: Mapped[str] = mapped_column(Text, nullable=False)
+    landing_page_url: Mapped[str | None] = mapped_column(Text)
+    direct_document_url: Mapped[str] = mapped_column(Text, nullable=False)
+    mime_type: Mapped[str] = mapped_column(Text, nullable=False)
+    byte_length: Mapped[int] = mapped_column(Integer, nullable=False)
+    retrieved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    etag: Mapped[str | None] = mapped_column(Text)
+    last_modified: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(Text, nullable=False)
+    source_language: Mapped[str | None] = mapped_column(Text)
+    parser_version: Mapped[str | None] = mapped_column(Text)
+    extraction_version: Mapped[str | None] = mapped_column(Text)
+    translation_version: Mapped[str | None] = mapped_column(Text)
+    artifact_key: Mapped[str] = mapped_column(Text, nullable=False)
+    supersedes_checksum: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
 class DiscoveryCooldown(Base):
     __tablename__ = "discovery_cooldown"
 
@@ -198,3 +231,14 @@ Index(
 )
 Index("idx_eval_runs_run", EvalRun.run_id)
 Index("idx_security_identities_isin", SecurityIdentityRecord.isin)
+Index("idx_filing_manifests_checksum", FilingManifest.checksum)
+Index(
+    "idx_filing_manifests_issuer_date",
+    FilingManifest.issuer_isin,
+    FilingManifest.retrieved_at.desc(),
+)
+Index(
+    "idx_filing_manifests_document_versions",
+    FilingManifest.filing_id,
+    FilingManifest.retrieved_at.desc(),
+)

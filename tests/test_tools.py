@@ -454,7 +454,8 @@ class _FakeEdgar:
 
 
 def test_read_filing_ok(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _FakeEdgar(_filing_section()))
+    section = _filing_section().model_copy(update={"source_language": "en"})
+    monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _FakeEdgar(section))
     monkeypatch.setattr(
         "agent.tools.filings.yfinance_client",
         lambda: _FakeYF(fundamentals=lambda t: DataSourceError("not_found", "no data")),
@@ -464,6 +465,7 @@ def test_read_filing_ok(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     assert isinstance(result, ToolResultOk)
     assert isinstance(result.data, FilingSection)
+    assert result.data.source_language == "en"
 
 
 def test_read_filing_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -480,6 +482,55 @@ def test_read_filing_maps_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
     )
     assert isinstance(result, ToolResultError)
     assert result.error_code == "not_found"
+
+
+def test_read_filing_propagates_source_stage_and_retryability(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "agent.tools.filings.edgar_client",
+        lambda: _FakeEdgar(
+            DataSourceError(
+                error_code="rate_limit",
+                message="slow down",
+                stage="download",
+                source="edgar",
+            )
+        ),
+    )
+    result = ReadFilingTool().run(
+        ReadFilingInput(ticker="AAPL", filing_type="10-K", section="business"), _ctx()
+    )
+
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "rate_limit"
+    assert result.retryable is True
+    assert result.stage == "download"
+    assert result.source == "edgar"
+
+
+def test_read_filing_preserves_non_retryable_parse_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "agent.tools.filings.edgar_client",
+        lambda: _FakeEdgar(
+            DataSourceError(
+                error_code="parse",
+                message="bad document",
+                stage="extract",
+                source="edgar",
+            )
+        ),
+    )
+    result = ReadFilingTool().run(
+        ReadFilingInput(ticker="AAPL", filing_type="10-K", section="business"), _ctx()
+    )
+
+    assert isinstance(result, ToolResultError)
+    assert result.error_code == "parse"
+    assert result.retryable is False
+    assert result.stage == "extract"
 
 
 def test_read_filing_non_us_ticker_degrades_to_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -1894,12 +1945,21 @@ def test_get_key_persons_yf_error_returns_tool_error(monkeypatch: pytest.MonkeyP
     assert result.error_code == "not_found"
 
 
-@pytest.mark.parametrize("ticker", ["DIR.MI", "CIRSA.MC", "KPL.WA", "AAPL", "BRK.B"])
+@pytest.mark.parametrize(
+    "ticker",
+    ["DIR.MI", "CIRSA.MC", "KPL.WA", "480S.MC", "4MB.WA", "WAMI28.MI", "AAPL", "BRK.B"],
+)
 def test_tool_input_schema_accepts_suffix_tickers(ticker: str) -> None:
     # The shared TICKER_PATTERN (data_sources.symbols) backs every tool input's ticker
     # field via agent.tools.base; gem-hunt needs the loop to call tools with exchange
     # suffixes without input-schema validation rejecting them.
     assert GetQuoteInput(ticker=ticker).ticker == ticker
+
+
+@pytest.mark.parametrize("ticker", ["480S.MC", "4MB.WA", "WAMI28.MI"])
+def test_read_filing_input_accepts_g12_alphanumeric_symbols(ticker: str) -> None:
+    request = ReadFilingInput(ticker=ticker, filing_type="10-K", section="business")
+    assert request.ticker == ticker
 
 
 def test_tool_input_schema_rejects_garbage_ticker() -> None:

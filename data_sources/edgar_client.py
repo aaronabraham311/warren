@@ -10,10 +10,16 @@ from typing import Literal
 
 import requests
 from bs4 import BeautifulSoup
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from data_sources.cache import CacheStore, make_key
-from data_sources.errors import DataSourceError
+from data_sources.errors import DataSourceError, ErrorStage
+from data_sources.filing_models import (
+    ExtractionMethod,
+    SourceSystem,
+    stable_filing_id,
+)
+from data_sources.filing_models import FilingSection as FilingSection
 
 FilingType = Literal["10-K", "10-Q", "8-K", "DEF 14A"]
 
@@ -81,22 +87,6 @@ class SC13Holder(BaseModel):
     filing_date: date
 
 
-class FilingSection(BaseModel):
-    ticker: str
-    filing_type: str
-    section: str
-    fiscal_year: int
-    filing_date: date
-    text: str  # truncated to MAX_CHARS if necessary
-    word_count: int  # of the returned text (after truncation)
-    truncated: bool  # True when original exceeded MAX_CHARS
-    edgar_url: str  # direct URL to the source document
-    translate: bool = False
-    source_language: str | None = None
-    key_figures_extracted: list[str] = Field(default_factory=list)
-    aggregator_discrepancy_note: str | None = None
-
-
 # ── Internal sentinels (mapped to DataSourceError before returning) ───────────
 
 
@@ -105,6 +95,10 @@ class _NotFoundError(Exception):
 
 
 class _NetworkError(Exception):
+    pass
+
+
+class _RateLimitError(Exception):
     pass
 
 
@@ -180,20 +174,37 @@ class EDGARClient:
         if cached is not None:
             return FilingSection.model_validate_json(cached)
 
+        stage: ErrorStage = "identity"
         try:
             cik = self._resolve_cik(ticker)
+            stage = "discovery"
             filing = self._select_filing(cik, filing_type, fiscal_year)
+            stage = "download"
             html = self._get(filing.url).text
+            stage = "extract"
             raw_text = self._extract_section(html, section, filing_type)
         except _NotFoundError as exc:
-            return DataSourceError(error_code="not_found", message=str(exc))
+            return DataSourceError(
+                error_code="not_found", message=str(exc), stage=stage, source=SourceSystem.EDGAR
+            )
         except _NetworkError as exc:
-            return DataSourceError(error_code="network", message=str(exc))
+            return DataSourceError(
+                error_code="network", message=str(exc), stage=stage, source=SourceSystem.EDGAR
+            )
+        except _RateLimitError as exc:
+            return DataSourceError(
+                error_code="rate_limit",
+                message=str(exc),
+                stage=stage,
+                source=SourceSystem.EDGAR,
+            )
         # _ParseError plus the stdlib exceptions raised while interpreting EDGAR
         # responses (a non-JSON 200 body, a malformed/missing field, a bad date).
         # The client's contract is to return DataSourceError, never raise to callers.
         except (_ParseError, json.JSONDecodeError, ValueError, KeyError, AttributeError) as exc:
-            return DataSourceError(error_code="parse", message=str(exc))
+            return DataSourceError(
+                error_code="parse", message=str(exc), stage=stage, source=SourceSystem.EDGAR
+            )
 
         text = raw_text[:MAX_CHARS]
         result = FilingSection(
@@ -205,7 +216,12 @@ class EDGARClient:
             text=text,
             word_count=len(text.split()),
             truncated=len(raw_text) > MAX_CHARS,
-            edgar_url=filing.url,
+            source_url=filing.url,
+            filing_id=stable_filing_id(SourceSystem.EDGAR, "SEC", ticker, filing.accession),
+            venue="SEC",
+            source_system=SourceSystem.EDGAR,
+            source_language="en",
+            extraction_method=ExtractionMethod.HTML,
             key_figures_extracted=_FIGURE_RE.findall(raw_text)[:20],
         )
         self._cache.set(key, result.model_dump_json(), TTL_HOURS[filing_type])
@@ -220,15 +236,30 @@ class EDGARClient:
             if isinstance(raw, list):
                 return [SC13Holder.model_validate(h) for h in raw]
 
+        stage: ErrorStage = "identity"
         try:
             cik = self._resolve_cik(ticker)
+            stage = "discovery"
             holders = self._fetch_sc13_holders(cik)
         except _NotFoundError as exc:
-            return DataSourceError(error_code="not_found", message=str(exc))
+            return DataSourceError(
+                error_code="not_found", message=str(exc), stage=stage, source=SourceSystem.EDGAR
+            )
         except _NetworkError as exc:
-            return DataSourceError(error_code="network", message=str(exc))
+            return DataSourceError(
+                error_code="network", message=str(exc), stage=stage, source=SourceSystem.EDGAR
+            )
+        except _RateLimitError as exc:
+            return DataSourceError(
+                error_code="rate_limit",
+                message=str(exc),
+                stage=stage,
+                source=SourceSystem.EDGAR,
+            )
         except (_ParseError, json.JSONDecodeError, ValueError, KeyError, AttributeError) as exc:
-            return DataSourceError(error_code="parse", message=str(exc))
+            return DataSourceError(
+                error_code="parse", message=str(exc), stage=stage, source=SourceSystem.EDGAR
+            )
 
         self._cache.set(
             key,
@@ -305,6 +336,8 @@ class EDGARClient:
             raise _NetworkError(f"request failed for {url}: {exc}") from exc
         # Stay at ≤10 req/sec per EDGAR fair-use policy. No backoff: errors surface now.
         self._sleep(0.1)
+        if resp.status_code == 429:
+            raise _RateLimitError(f"HTTP 429 for {url}")
         if resp.status_code != 200:
             raise _NetworkError(f"HTTP {resp.status_code} for {url}")
         return resp
