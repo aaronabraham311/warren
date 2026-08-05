@@ -85,6 +85,7 @@ def _mock_ticker_for_key_persons(fixture: dict[str, object]) -> MagicMock:
         "regularMarketPrice": fixture.get("regularMarketPrice"),
         "currentPrice": fixture.get("currentPrice"),
         "lastFiscalYearEnd": fixture.get("lastFiscalYearEnd"),
+        "sharesOutstanding": fixture.get("sharesOutstanding"),
         "companyOfficers": fixture.get("companyOfficers", []),
         "a": 1,
         "b": 2,
@@ -280,11 +281,18 @@ def _inject_clients(
 ) -> None:
     """Monkeypatch the tool-layer singletons with fixture-backed mocks."""
     yf_mock = MagicMock(spec=YFinanceClient)
+    shares_outstanding_raw = yf_fixture.get("sharesOutstanding")
+    shares_outstanding = (
+        int(shares_outstanding_raw)
+        if isinstance(shares_outstanding_raw, (int, float))
+        else 15_000_000_000
+    )
     raw = KeyPersonsRaw(
         ticker="AAPL",
         as_of=date.today(),
         officers=_officers_from_fixture(yf_fixture),
         institutional_holders=_ih_from_fixture(yf_fixture),
+        shares_outstanding=shares_outstanding,
         data_age_hours=0,
     )
     yf_mock.get_key_persons.return_value = raw
@@ -343,6 +351,7 @@ def test_tool_controlling_holder_identified(monkeypatch: pytest.MonkeyPatch) -> 
                 "Value": 1500000000,
             }
         ],
+        "sharesOutstanding": 100000000,
     }
     _inject_clients(monkeypatch, yf_fix, None)
 
@@ -355,6 +364,105 @@ def test_tool_controlling_holder_identified(monkeypatch: pytest.MonkeyPatch) -> 
     data = result.data
     assert isinstance(data, KeyPersonsData)
     assert data.controlling_holder_identified is True
+
+
+def test_holder_percent_of_float_is_normalized_to_percent_of_company(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    yf_fix: dict[str, object] = {
+        "regularMarketPrice": 10.0,
+        "currentPrice": 10.0,
+        "lastFiscalYearEnd": 1727654400,
+        "companyOfficers": [],
+        "sharesOutstanding": 100_000_000,
+        "institutional_holders": [
+            {"Holder": "Outside Fund", "Shares": 6_000_000, "pct_held": 0.20, "Value": 1}
+        ],
+    }
+    _inject_clients(monkeypatch, yf_fix, {})
+
+    result = GetKeyPersonsTool().run(GetKeyPersonsInput(ticker="AAPL"), _FakeCtx())  # type: ignore[arg-type]
+
+    from agent.tools.base import ToolResultOk
+
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, KeyPersonsData)
+    holder = next(person for person in result.data.persons if person.name == "Outside Fund")
+    assert holder.ownership_pct == pytest.approx(6.0)
+    assert result.data.controlling_holder_identified is False
+
+
+def test_regional_control_is_unknown_and_officer_age_is_preserved(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    raw = KeyPersonsRaw(
+        ticker="DIR.MI",
+        as_of=date(2026, 8, 5),
+        officers=[
+            OfficerRecord(
+                name="Founder",
+                title="CEO",
+                year_born=1952,
+                reported_age=73,
+                total_pay_usd=None,
+            )
+        ],
+        institutional_holders=[],
+        data_age_hours=0,
+    )
+    yf_mock = MagicMock(spec=YFinanceClient)
+    yf_mock.get_key_persons.return_value = raw
+    edgar_mock = MagicMock(spec=EDGARClient)
+    edgar_mock.get_sc13_holders.return_value = []
+    monkeypatch.setattr("agent.tools.persons.yfinance_client", lambda: yf_mock)
+    monkeypatch.setattr("agent.tools.persons.edgar_client", lambda: edgar_mock)
+
+    result = GetKeyPersonsTool().run(GetKeyPersonsInput(ticker="DIR.MI"), _FakeCtx())  # type: ignore[arg-type]
+
+    from agent.tools.base import ToolResultOk
+
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, KeyPersonsData)
+    assert result.data.controlling_holder_identified is None
+    founder = result.data.persons[0]
+    assert founder.birth_year == 1952
+    assert founder.age == 74
+    assert founder.age_as_of == date(2026, 8, 5)
+
+
+def test_regional_positive_normalized_control_evidence_wins_over_unknown_default(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    raw = KeyPersonsRaw(
+        ticker="FROU.MI",
+        as_of=date(2026, 8, 5),
+        officers=[],
+        institutional_holders=[
+            InstitutionalHolderRecord(
+                name="Controlling Family",
+                shares=74_990_000,
+                pct_held=0.85,
+                value=None,
+            )
+        ],
+        shares_outstanding=100_000_000,
+        data_age_hours=0,
+    )
+    yf_mock = MagicMock(spec=YFinanceClient)
+    yf_mock.get_key_persons.return_value = raw
+    edgar_mock = MagicMock(spec=EDGARClient)
+    edgar_mock.get_sc13_holders.return_value = []
+    monkeypatch.setattr("agent.tools.persons.yfinance_client", lambda: yf_mock)
+    monkeypatch.setattr("agent.tools.persons.edgar_client", lambda: edgar_mock)
+
+    result = GetKeyPersonsTool().run(GetKeyPersonsInput(ticker="FROU.MI"), _FakeCtx())  # type: ignore[arg-type]
+
+    from agent.tools.base import ToolResultOk
+
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, KeyPersonsData)
+    assert result.data.controlling_holder_identified is True
+    assert result.data.persons[0].ownership_pct == pytest.approx(74.99)
 
 
 def test_tool_edgar_failure_graceful(monkeypatch: pytest.MonkeyPatch) -> None:

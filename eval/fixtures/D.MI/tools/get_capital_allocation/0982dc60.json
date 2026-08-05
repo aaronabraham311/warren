@@ -1,0 +1,32 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "buyback_yield_pct": null,
+    "data_age_hours": 5224,
+    "dividend_growth_streak": null,
+    "dividend_yield_pct": null,
+    "net_debt_series": [
+      61344219,
+      32333575,
+      19720348,
+      29679772,
+      null
+    ],
+    "net_debt_trajectory": "levering",
+    "payout_ratio_pct": null,
+    "share_count_cagr_pct": 4.3532,
+    "share_count_series": [
+      18750000,
+      18750000,
+      18750000,
+      16500000,
+      null
+    ],
+    "shareholder_yield_pct": null,
+    "source": "yfinance",
+    "ticker": "D.MI",
+    "years_covered": 5
+  },
+  "recorded_at": "2026-08-05T16:37:16.714123+00:00",
+  "status": "ok"
+}

@@ -1913,7 +1913,7 @@ def _key_persons_raw(*, controlling: bool = False) -> KeyPersonsRaw:
         institutional_holders=[
             InstitutionalHolderRecord(
                 name="Vanguard Group Inc",
-                shares=1273985728,
+                shares=4_000_000_000 if controlling else 1273985728,
                 pct_held=0.35 if controlling else 0.0796,
                 value=241148000000,
             ),
@@ -1930,6 +1930,7 @@ def _key_persons_raw(*, controlling: bool = False) -> KeyPersonsRaw:
                 value=112369000000,
             ),
         ],
+        shares_outstanding=15_000_000_000,
         data_age_hours=0,
     )
 

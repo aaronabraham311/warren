@@ -37,7 +37,16 @@ _ANALYSIS_OUTPUT_SCHEMA = """\
     "catalyst_strength": "contractual" | "observable" | "aspirational" | null,
     "catalyst_stage": "rumor" | "intention" | "strategic_review" | "board_authorized" | "signed" | "conditions_outstanding" | "completed" | "terminated" | null,
     "catalyst_description": <string | null>,
-    "forensic_evidence_ids": ["<EvidenceRef.evidence_id supporting every populated forensic decision field>", ...]
+    "forensic_evidence_ids": ["<EvidenceRef.evidence_id supporting every populated forensic decision field>", ...],
+    "daily_turnover_usd": <float | null>,
+    "free_float_pct": <float 0–100 | null>,
+    "position_size_cap_usd": <float | null>,
+    "founder_age_years": <int | null>,
+    "own_history_pb_percentile": <float 0–100 | null>,
+    "closability_status": "supported" | "constrained" | "unknown" | null,
+    "closability_score": <float 0–1 | null — higher means more closable>,
+    "closability_confidence": <float 0–1 | null>,
+    "closability_reasons": ["<specific actor/ability/incentive, catalyst and coverage reasons>", ...]
   }
 }"""
 
@@ -631,6 +640,25 @@ The DIRT edge comes from buying what Wall Street ignores. Analyst coverage is a 
  Large-caps rarely have genuine coverage gaps. Document the market cap in the thesis.
 - If coverage is high (> 10 analysts), explicitly note this as a DIRT-methodology concern in\
  data_quality_notes: the market-efficiency argument weakens significantly.
+
+**Closability and liquidity (mandatory for discovery candidates):** Cheapness is investable only\
+ when an identifiable actor has both the ability and incentive to close the discount. Use the\
+ free screening payload and analysis tools to calculate average daily turnover as\
+ `avg_volume_3m × current_price`, converted with the listing/trading currency (never the\
+ financial-statement currency). Estimate free-float percentage against implied shares outstanding\
+ from native market cap/current price when no direct denominator is available. Illiquidity is not\
+ an exclusion: record it, rank it, and cap position size at two days of average USD turnover\
+ (10% participation for 20 trading days). Set unknown when price, FX, volume, or denominator is\
+ unavailable; never substitute zero.
+
+Combine those free signals with get_forensic_evidence. A 74.99% controller and ~11% residual\
+ float without a cited observable/contractual catalyst is constrained even if NCAV is large. A\
+ dispersed register or an observable/contractual capital return can support closability. Founder\
+ age and own-history valuation are context only: age alone is not succession, and a historical\
+ low is not a mechanism. Missing/partial filings, below-threshold disclosure, absent insider data,\
+ or an empty catalyst list produce `closability_status="unknown"` and lower confidence — never\
+ "no controller", "no agreement", "no succession plan", or "no catalyst". Populate every\
+ closability decision field and cite forensic EvidenceRef IDs for ownership/catalyst claims.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ### Step 4.5 — Local-Language Integrity Check

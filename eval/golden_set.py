@@ -99,6 +99,39 @@ class DeepValueExpectation(_Strict):
     require_forensic_citations: bool = False
 
 
+class ClosabilityExpectation(_Strict):
+    """Envelope for the compact, cited G14 decision fields.
+
+    Unknown coverage is intentionally a first-class allowed outcome. Bounds let a golden
+    example constrain confidence without pinning one exact score or recommendation.
+    """
+
+    allowed_status: list[Literal["supported", "constrained", "unknown"]] = Field(min_length=1)
+    min_score: float | None = Field(default=None, ge=0.0, le=1.0)
+    max_score: float | None = Field(default=None, ge=0.0, le=1.0)
+    min_confidence: float | None = Field(default=None, ge=0.0, le=1.0)
+    max_confidence: float | None = Field(default=None, ge=0.0, le=1.0)
+    min_reasons: int = Field(default=1, ge=0)
+    require_unknown_semantics: bool = False
+    require_observable_or_contractual_catalyst: bool = False
+
+    @model_validator(mode="after")
+    def bounds_are_ordered(self) -> ClosabilityExpectation:
+        if (
+            self.min_score is not None
+            and self.max_score is not None
+            and self.min_score > self.max_score
+        ):
+            raise ValueError("closability min_score cannot exceed max_score")
+        if (
+            self.min_confidence is not None
+            and self.max_confidence is not None
+            and self.min_confidence > self.max_confidence
+        ):
+            raise ValueError("closability min_confidence cannot exceed max_confidence")
+        return self
+
+
 class EvalExpectations(_Strict):
     recommendation: RecommendationExpectation
     thesis_must_mention: list[ThesisMention] = []
@@ -108,6 +141,7 @@ class EvalExpectations(_Strict):
     key_risks: KeyRisksExpectation = KeyRisksExpectation()
     numerical_grounding: NumericalGrounding = NumericalGrounding()
     deep_value: DeepValueExpectation | None = None
+    closability: ClosabilityExpectation | None = None
 
 
 class EvalExample(_Strict):

@@ -8,10 +8,13 @@ from datetime import date
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from agent.screening import (
     DEFAULT_SCREEN_CRITERIA,
     GEM_HUNT_SCREEN_CRITERIA,
     ScreeningResult,
+    _closability_checks,
     _deep_value_score,
     _fundamentals_checks,
     _growth_checks,
@@ -273,7 +276,15 @@ def test_concurrent_screening_matches_sequential() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _value_fundamentals(ticker: str = "GEM", pb: float | None = 0.8) -> FundamentalsData:
+def _value_fundamentals(
+    ticker: str = "GEM",
+    pb: float | None = 0.8,
+    *,
+    float_shares: int | None = None,
+    avg_volume_3m: int | None = None,
+    current_price: float | None = None,
+    trading_currency: str | None = None,
+) -> FundamentalsData:
     return FundamentalsData(
         ticker=ticker,
         as_of=date.today(),
@@ -286,6 +297,10 @@ def _value_fundamentals(ticker: str = "GEM", pb: float | None = 0.8) -> Fundamen
         operating_margin_pct=None,
         net_margin_pct=None,
         sector=None,
+        float_shares=float_shares,
+        avg_volume_3m=avg_volume_3m,
+        current_price=current_price,
+        trading_currency=trading_currency,
         data_age_hours=1,
         source="yfinance",
     )
@@ -299,6 +314,8 @@ def _valuation(
     dividend_yield_pct: float | None = 3.0,
     ncav_to_mc: float | None = 0.5,
     market_cap_usd: int | None = 50_000_000,
+    market_cap_native: int | None = None,
+    currency: str | None = "USD",
 ) -> ValuationData:
     return ValuationData(
         ticker=ticker,
@@ -310,6 +327,8 @@ def _valuation(
         fcf_yield=None,
         earnings_yield=None,
         market_cap_usd=market_cap_usd,
+        market_cap_native=market_cap_native,
+        currency=currency,
         ncav=None,
         ncav_to_market_cap=ncav_to_mc,
         is_net_net=False,
@@ -428,6 +447,104 @@ def test_value_screen_net_debt_survives_but_scores_worse() -> None:
     assert out.score is not None and cash.score is not None and out.score > cash.score
 
 
+def test_closability_derives_turnover_float_and_position_cap_without_price_fetch() -> None:
+    signals = _closability_checks(
+        _value_fundamentals(
+            float_shares=1_000_000,
+            avg_volume_3m=1_000,
+            current_price=5.0,
+            trading_currency="EUR",
+        ),
+        _valuation(
+            market_cap_native=50_000_000,
+            market_cap_usd=55_000_000,
+            currency="EUR",
+        ),
+    )
+
+    assert signals.daily_turnover_usd == 5_500.0
+    assert signals.free_float_pct == 10.0
+    assert signals.position_size_cap_usd == 11_000.0
+    assert 0.0 <= signals.loss <= 1.0
+
+
+def test_missing_or_misaligned_trading_currency_keeps_turnover_unknown() -> None:
+    missing = _closability_checks(
+        _value_fundamentals(avg_volume_3m=1_000, current_price=5.0),
+        _valuation(market_cap_native=50_000_000, market_cap_usd=55_000_000, currency=None),
+    )
+    mismatch = _closability_checks(
+        _value_fundamentals(avg_volume_3m=1_000, current_price=5.0, trading_currency="PLN"),
+        _valuation(market_cap_native=50_000_000, market_cap_usd=13_000_000, currency="EUR"),
+    )
+    assert missing.daily_turnover_usd is None
+    assert mismatch.daily_turnover_usd is None
+    assert "turnover remains unknown" in " ".join(missing.data_quality)
+
+
+def test_illiquidity_annotates_and_ranks_but_never_excludes() -> None:
+    fundamentals = _value_fundamentals(
+        float_shares=100_000,
+        avg_volume_3m=100,
+        current_price=10.0,
+        trading_currency="USD",
+    )
+    yf = _FakeValueYF(
+        {"GEM": fundamentals},
+        {"GEM": _valuation(market_cap_native=50_000_000)},
+        {"GEM": _quality()},
+    )
+
+    outcome = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+
+    assert outcome.disposition == "candidate"
+    assert outcome.closability is not None
+    assert outcome.closability.daily_turnover_usd == 1_000.0
+    assert outcome.closability.position_size_cap_usd == 2_000.0
+
+
+def test_low_float_frou_frou_shape_ranks_below_dispersed_register() -> None:
+    tickers = ["FROU", "DISPERSED"]
+    fundamentals = {
+        "FROU": _value_fundamentals(
+            ticker="FROU",
+            float_shares=1_113_000,
+            avg_volume_3m=10_000,
+            current_price=10.0,
+            trading_currency="USD",
+        ),
+        "DISPERSED": _value_fundamentals(
+            ticker="DISPERSED",
+            float_shares=7_000_000,
+            avg_volume_3m=10_000,
+            current_price=10.0,
+            trading_currency="USD",
+        ),
+    }
+    valuations = {
+        ticker: _valuation(
+            ticker=ticker,
+            market_cap_native=100_000_000,
+            market_cap_usd=100_000_000,
+        )
+        for ticker in tickers
+    }
+    quality = {ticker: _quality(ticker=ticker) for ticker in tickers}
+
+    result = run_screening_pass(
+        tickers,
+        criteria=GEM_HUNT_SCREEN_CRITERIA,
+        client=_FakeValueYF(fundamentals, valuations, quality),  # type: ignore[arg-type]
+        screen_fn=screen_ticker_value,
+        rank=True,
+    )
+
+    assert result.candidates == ["DISPERSED", "FROU"]
+    assert result.scores["DISPERSED"] < result.scores["FROU"]
+    assert result.closability["FROU"].free_float_pct == 11.13
+    assert result.closability["DISPERSED"].free_float_pct == 70.0
+
+
 def test_value_screen_short_circuits_on_fundamentals_failure() -> None:
     """A failing P/B skips the valuation + quality fetches."""
     yf = _FakeValueYF(
@@ -519,6 +636,11 @@ def test_sparse_outcome_is_returned_and_written_to_jsonl(tmp_path: Path) -> None
     event = next(e for e in events if e["event"] == "screening_ticker_outcome")
     assert event["ticker"] == "GEM"
     assert event["disposition"] == "needs_deeper_fetch"
+    closability_event = next(e for e in events if e["event"] == "screening_closability")
+    assert closability_event["ticker"] == "GEM"
+    assert closability_event["daily_turnover_usd"] is None
+    assert closability_event["closability_loss"] == pytest.approx(0.5)
+    assert closability_event["data_quality"]
 
 
 def test_run_screening_ranks_best_value_first() -> None:

@@ -1,0 +1,38 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 2.9603,
+    "current_pe": 12.34,
+    "data_age_hours": 5224,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022,
+      2021
+    ],
+    "pb_min": 1.444,
+    "pb_percentile": 100.0,
+    "pb_series": [
+      2.9603,
+      1.444,
+      1.4446,
+      1.618,
+      null
+    ],
+    "pb_vs_10y_low": 2.0501,
+    "pe_percentile": 100.0,
+    "pe_series": [
+      12.34,
+      5.8633,
+      6.6283,
+      8.6357,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "D.MI",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T16:37:16.631944+00:00",
+  "status": "ok"
+}

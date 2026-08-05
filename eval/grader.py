@@ -28,7 +28,12 @@ from pydantic import BaseModel
 
 from agent.models import AnalysisOutput, LynchBuffettSignals
 from data_sources.forensics import ForensicEvidenceBundle
-from eval.golden_set import DeepValueExpectation, EvalExample, SignalsExpectation
+from eval.golden_set import (
+    ClosabilityExpectation,
+    DeepValueExpectation,
+    EvalExample,
+    SignalsExpectation,
+)
 from eval.judge import ThesisJudge
 
 Severity = Literal["must", "should"]
@@ -276,6 +281,155 @@ def _deep_value_checks(
     return checks
 
 
+def _closability_checks(
+    result: AnalysisOutput,
+    expectation: ClosabilityExpectation,
+    forensic_evidence: ForensicEvidenceBundle | None,
+) -> list[CheckResult]:
+    """Grade G14's compact decision fields without turning missing coverage into failure."""
+
+    dirt = result.dirt_signals
+    status = None if dirt is None else getattr(dirt, "closability_status", None)
+    score = None if dirt is None else getattr(dirt, "closability_score", None)
+    confidence = None if dirt is None else getattr(dirt, "closability_confidence", None)
+    reasons = [] if dirt is None else getattr(dirt, "closability_reasons", [])
+    checks = [
+        CheckResult(
+            check_name="closability_status_allowed",
+            passed=status in expectation.allowed_status,
+            expected=f"one of {expectation.allowed_status}",
+            actual=str(status),
+            severity="must",
+        ),
+        CheckResult(
+            check_name="closability_reasons_present",
+            passed=len(reasons) >= expectation.min_reasons,
+            expected=f">= {expectation.min_reasons} cited reason(s)",
+            actual=str(len(reasons)),
+            severity="must",
+        ),
+    ]
+    for label, value, lower, upper in (
+        ("score", score, expectation.min_score, expectation.max_score),
+        ("confidence", confidence, expectation.min_confidence, expectation.max_confidence),
+    ):
+        if lower is None and upper is None:
+            continue
+        passed = value is not None
+        if value is not None and lower is not None:
+            passed = value >= lower
+        if value is not None and upper is not None:
+            passed = passed and value <= upper
+        checks.append(
+            CheckResult(
+                check_name=f"closability_{label}_in_envelope",
+                passed=passed,
+                expected=f"{lower if lower is not None else 0.0} <= {label} <= "
+                f"{upper if upper is not None else 1.0}",
+                actual=str(value),
+                severity="must",
+            )
+        )
+
+    if expectation.require_unknown_semantics:
+        controller = None if dirt is None else dirt.controller_identified
+        reason_blob = " ".join(reasons).lower()
+        explains_gap = any(
+            term in reason_blob
+            for term in ("unknown", "coverage", "missing", "partial", "conflict")
+        )
+        checks.append(
+            CheckResult(
+                check_name="closability_unknown_stays_unknown",
+                passed=status == "unknown" and controller is None and explains_gap,
+                expected=(
+                    "unknown status, controller_identified=None, and an explicit "
+                    "coverage/missing/conflict reason"
+                ),
+                actual=f"status={status}, controller={controller}, reasons={reasons}",
+                severity="must",
+            )
+        )
+
+    if expectation.require_observable_or_contractual_catalyst:
+        strength = None if dirt is None else dirt.catalyst_strength
+        evidence_ids = set(() if dirt is None else dirt.forensic_evidence_ids)
+        catalyst_ids = (
+            set()
+            if forensic_evidence is None
+            else {
+                ref.evidence_id
+                for catalyst in forensic_evidence.catalysts
+                for ref in catalyst.evidence_refs
+            }
+        )
+        checks.append(
+            CheckResult(
+                check_name="closability_catalyst_is_cited_and_observable",
+                passed=(
+                    strength in {"observable", "contractual"}
+                    and bool(evidence_ids.intersection(catalyst_ids))
+                ),
+                expected="observable/contractual catalyst with forensic evidence ID",
+                actual=f"strength={strength}, evidence_ids={evidence_ids}",
+                severity="must",
+            )
+        )
+    return checks
+
+
+def grade_closability_ranking(
+    constrained: AnalysisOutput,
+    observable_catalyst: AnalysisOutput,
+    *,
+    min_margin: float = 0.0,
+    forensic_evidence: ForensicEvidenceBundle | None = None,
+) -> CheckResult:
+    """Pairwise G14 regression: a cited observable catalyst must outrank a control trap."""
+
+    if min_margin < 0.0:
+        raise ValueError("min_margin must be non-negative")
+
+    constrained_dirt = constrained.dirt_signals
+    catalyst_dirt = observable_catalyst.dirt_signals
+    constrained_score = (
+        None if constrained_dirt is None else getattr(constrained_dirt, "closability_score", None)
+    )
+    catalyst_score = (
+        None if catalyst_dirt is None else getattr(catalyst_dirt, "closability_score", None)
+    )
+    catalyst_strength = None if catalyst_dirt is None else catalyst_dirt.catalyst_strength
+    catalyst_evidence_ids = set(
+        () if catalyst_dirt is None else catalyst_dirt.forensic_evidence_ids
+    )
+    valid_catalyst_ids = (
+        set()
+        if forensic_evidence is None
+        else {
+            ref.evidence_id
+            for catalyst in forensic_evidence.catalysts
+            for ref in catalyst.evidence_refs
+        }
+    )
+    passed = (
+        constrained_score is not None
+        and catalyst_score is not None
+        and catalyst_score >= constrained_score + min_margin
+        and catalyst_strength in {"observable", "contractual"}
+        and bool(catalyst_evidence_ids.intersection(valid_catalyst_ids))
+    )
+    return CheckResult(
+        check_name="observable_catalyst_ranks_above_control_trap",
+        passed=passed,
+        expected=f"observable/contractual catalyst score >= constrained score + {min_margin}",
+        actual=(
+            f"constrained={constrained_score}, catalyst={catalyst_score}, "
+            f"strength={catalyst_strength}, evidence_ids={catalyst_evidence_ids}"
+        ),
+        severity="must",
+    )
+
+
 def grade_analysis(
     result: AnalysisOutput,
     example: EvalExample,
@@ -388,5 +542,7 @@ def grade_analysis(
             thesis_lower,
             forensic_evidence,
         )
+    if expectations.closability is not None:
+        checks += _closability_checks(result, expectations.closability, forensic_evidence)
 
     return _finalize(example.ticker, checks)

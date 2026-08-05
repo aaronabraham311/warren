@@ -252,6 +252,19 @@ def test_dirt_prompt_preserves_forensic_truth_rules() -> None:
     assert "original excerpt/location" in prompt_lower
 
 
+def test_dirt_prompt_has_closability_and_liquidity_contract() -> None:
+    prompt_lower = DIRT_SYSTEM_PROMPT.lower()
+    assert "identifiable actor" in prompt_lower
+    assert "ability and incentive" in prompt_lower
+    assert "avg_volume_3m × current_price" in DIRT_SYSTEM_PROMPT
+    assert "listing/trading currency" in prompt_lower
+    assert "illiquidity is not" in prompt_lower and "exclusion" in prompt_lower
+    assert "10% participation for 20 trading days" in DIRT_SYSTEM_PROMPT
+    assert 'closability_status="unknown"' in DIRT_SYSTEM_PROMPT
+    assert "age alone is not succession" in prompt_lower
+    assert "historical low is not a mechanism" in prompt_lower
+
+
 def test_dirt_prompt_has_json_output_schema() -> None:
     assert '"recommendation"' in DIRT_SYSTEM_PROMPT
     assert '"dirt_signals"' in DIRT_SYSTEM_PROMPT

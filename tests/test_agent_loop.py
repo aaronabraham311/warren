@@ -666,6 +666,15 @@ def test_dirt_signals_round_trips() -> None:
         catalyst_stage="board_authorized",
         catalyst_description="Board-authorized dividend",
         forensic_evidence_ids=["ev-cap-1", "ev-dividend-2"],
+        daily_turnover_usd=3_000.0,
+        free_float_pct=11.13,
+        position_size_cap_usd=6_000.0,
+        founder_age_years=74,
+        own_history_pb_percentile=5.0,
+        closability_status="constrained",
+        closability_score=0.2,
+        closability_confidence=0.9,
+        closability_reasons=["74.99% controller and no observable capital return"],
     )
     output = AnalysisOutput(
         ticker="BARC",
@@ -695,6 +704,14 @@ def test_dirt_signals_round_trips() -> None:
     assert reparsed.dirt_signals.catalyst_strength == "observable"
     assert reparsed.dirt_signals.catalyst_stage == "board_authorized"
     assert reparsed.dirt_signals.forensic_evidence_ids == ["ev-cap-1", "ev-dividend-2"]
+    assert reparsed.dirt_signals.daily_turnover_usd == 3_000.0
+    assert reparsed.dirt_signals.free_float_pct == 11.13
+    assert reparsed.dirt_signals.position_size_cap_usd == 6_000.0
+    assert reparsed.dirt_signals.founder_age_years == 74
+    assert reparsed.dirt_signals.own_history_pb_percentile == 5.0
+    assert reparsed.dirt_signals.closability_status == "constrained"
+    assert reparsed.dirt_signals.closability_score == 0.2
+    assert reparsed.dirt_signals.closability_confidence == 0.9
 
 
 def test_dirt_signals_aggregator_discrepancies_defaults_false() -> None:
