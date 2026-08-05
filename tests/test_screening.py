@@ -2,19 +2,28 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import date
 from unittest.mock import MagicMock, patch
 
 from agent.screening import (
     DEFAULT_SCREEN_CRITERIA,
+    GEM_HUNT_SCREEN_CRITERIA,
     ScreeningResult,
+    _deep_value_score,
     _fundamentals_checks,
     _growth_checks,
     run_screening_pass,
     screen_ticker,
+    screen_ticker_value,
 )
 from data_sources.errors import DataSourceError
-from data_sources.yfinance_client import FundamentalsData, GrowthData
+from data_sources.yfinance_client import (
+    FundamentalsData,
+    GrowthData,
+    QualityData,
+    ValuationData,
+)
 
 # ---------------------------------------------------------------------------
 # Builders + fake client
@@ -254,3 +263,220 @@ def test_concurrent_screening_matches_sequential() -> None:
 
     assert seq.candidates == conc.candidates == ["A", "C", "E"]  # order preserved
     assert seq.pass_rate == conc.pass_rate
+
+
+# ---------------------------------------------------------------------------
+# Deep-value ("gem-hunt") screen — criteria, dividend floor, ranking
+# ---------------------------------------------------------------------------
+
+
+def _value_fundamentals(ticker: str = "GEM", pb: float | None = 0.8) -> FundamentalsData:
+    return FundamentalsData(
+        ticker=ticker,
+        as_of=date.today(),
+        pe_ratio=None,
+        pb_ratio=pb,
+        roe_pct=None,
+        debt_to_equity=None,
+        fcf_ttm_usd=None,
+        gross_margin_pct=None,
+        operating_margin_pct=None,
+        net_margin_pct=None,
+        sector=None,
+        data_age_hours=1,
+        source="yfinance",
+    )
+
+
+def _valuation(
+    ticker: str = "GEM",
+    ev_ebit: float | None = 6.0,
+    price_to_ncav: float | None = 0.9,
+    net_cash: bool = True,
+    dividend_yield_pct: float | None = 3.0,
+    ncav_to_mc: float | None = 0.5,
+) -> ValuationData:
+    return ValuationData(
+        ticker=ticker,
+        as_of=date.today(),
+        enterprise_value=None,
+        ev_to_ebit=ev_ebit,
+        ev_to_ebitda=None,
+        acquirers_multiple=None,
+        fcf_yield=None,
+        earnings_yield=None,
+        market_cap_usd=None,
+        ncav=None,
+        ncav_to_market_cap=ncav_to_mc,
+        is_net_net=False,
+        price_to_ncav=price_to_ncav,
+        net_cash_usd=None,
+        net_cash_positive=net_cash,
+        p_tangible_book=None,
+        dividend_yield_pct=dividend_yield_pct,
+        data_age_hours=1,
+    )
+
+
+def _quality(ticker: str = "GEM", profit_years: int | None = 8) -> QualityData:
+    return QualityData(
+        ticker=ticker,
+        as_of=date.today(),
+        roic_pct=None,
+        roic_series=[],
+        roic_mean=None,
+        roa_pct=None,
+        gross_margin_pct=None,
+        gross_margin_series=[],
+        gross_margin_stdev=None,
+        cash_conversion_ttm=None,
+        cash_conversion_series=[],
+        consecutive_profit_years=profit_years,
+        ncav_trend=None,
+        data_age_hours=1,
+    )
+
+
+class _FakeValueYF:
+    """Stand-in for YFinanceClient serving canned fundamentals/valuation/quality."""
+
+    def __init__(
+        self,
+        fundamentals: Mapping[str, FundamentalsData | DataSourceError],
+        valuation: Mapping[str, ValuationData | DataSourceError],
+        quality: Mapping[str, QualityData | DataSourceError],
+    ) -> None:
+        self._f = fundamentals
+        self._v = valuation
+        self._q = quality
+        self.valuation_calls: list[str] = []
+        self.quality_calls: list[str] = []
+
+    def get_fundamentals(self, ticker: str) -> FundamentalsData | DataSourceError:
+        return self._f[ticker]
+
+    def get_valuation_multiples(self, ticker: str) -> ValuationData | DataSourceError:
+        self.valuation_calls.append(ticker)
+        return self._v[ticker]
+
+    def get_quality_metrics(self, ticker: str) -> QualityData | DataSourceError:
+        self.quality_calls.append(ticker)
+        return self._q[ticker]
+
+
+def _value_yf(**overrides: object) -> _FakeValueYF:
+    """A single 'GEM' name that clears every deep-value gate, with per-model overrides."""
+    return _FakeValueYF(
+        {"GEM": _value_fundamentals()},
+        {"GEM": _valuation(**overrides)},  # type: ignore[arg-type]
+        {"GEM": _quality()},
+    )
+
+
+def test_gem_hunt_criteria_are_distinct_from_garp() -> None:
+    """The deep-value set uses value keys, not the GARP pe/peg/roe/de/rev_growth gates."""
+    assert set(GEM_HUNT_SCREEN_CRITERIA) == {
+        "pb_ratio_max",
+        "max_ev_ebit",
+        "max_price_to_ncav",
+        "require_net_cash",
+        "min_consecutive_profit_years",
+        "min_dividend_yield_pct",
+    }
+    assert set(GEM_HUNT_SCREEN_CRITERIA).isdisjoint(DEFAULT_SCREEN_CRITERIA)
+
+
+def test_value_screen_passes_a_clean_gem() -> None:
+    yf = _value_yf()
+    out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+    assert out.passed is True
+    assert out.score == 6.0 - 0.5  # ev_to_ebit − ncav_to_market_cap
+
+
+def test_value_screen_filters_high_ev_ebit() -> None:
+    """A present-but-failing value gate (EV/EBIT too high) filters the name OUT."""
+    yf = _value_yf(ev_ebit=25.0)  # > max_ev_ebit (10.0)
+    out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+    assert out.passed is False
+
+
+def test_value_screen_dividend_floor_filters_zero_dividend() -> None:
+    """A zero-dividend name is filtered out when the floor is > 0."""
+    yf = _value_yf(dividend_yield_pct=0.0)
+    out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+    assert out.passed is False
+
+
+def test_dividend_yield_pct_scale_is_percent() -> None:
+    """ValuationData.dividend_yield_pct is in PERCENT: 3.0 clears a 1.0(%) floor; 0.5 fails."""
+    assert GEM_HUNT_SCREEN_CRITERIA["min_dividend_yield_pct"] == 1.0
+    above = _value_yf(dividend_yield_pct=3.0)
+    below = _value_yf(dividend_yield_pct=0.5)
+    assert screen_ticker_value("GEM", above, GEM_HUNT_SCREEN_CRITERIA).passed is True  # type: ignore[arg-type]
+    assert screen_ticker_value("GEM", below, GEM_HUNT_SCREEN_CRITERIA).passed is False  # type: ignore[arg-type]
+
+
+def test_value_screen_requires_net_cash() -> None:
+    yf = _value_yf(net_cash=False)
+    out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+    assert out.passed is False
+
+
+def test_value_screen_short_circuits_on_fundamentals_failure() -> None:
+    """A failing P/B skips the valuation + quality fetches."""
+    yf = _FakeValueYF(
+        {"GEM": _value_fundamentals(pb=5.0)},  # > pb_ratio_max
+        {"GEM": _valuation()},
+        {"GEM": _quality()},
+    )
+    out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+    assert out.passed is False
+    assert yf.valuation_calls == []
+    assert yf.quality_calls == []
+
+
+def test_deep_value_score_missing_ev_sinks_to_bottom() -> None:
+    assert _deep_value_score(_valuation(ev_ebit=None)) > 1e6
+    assert _deep_value_score(None) > 1e6
+
+
+def test_run_screening_ranks_best_value_first() -> None:
+    """rank=True sorts passing candidates cheapest-first (combined EV/EBIT + NCAV discount)."""
+    # X: ev 5, ncav_disc 0.5 → 4.5 | Z: ev 6, ncav_disc 0.1 → 5.9 | Y: ev 8, ncav_disc 2.0 → 6.0
+    universe = ["Y", "X", "Z"]  # deliberately non-sorted, non-best-first
+    fundamentals = {t: _value_fundamentals(ticker=t) for t in universe}
+    valuation = {
+        "X": _valuation(ticker="X", ev_ebit=5.0, ncav_to_mc=0.5),
+        "Y": _valuation(ticker="Y", ev_ebit=8.0, ncav_to_mc=2.0),
+        "Z": _valuation(ticker="Z", ev_ebit=6.0, ncav_to_mc=0.1),
+    }
+    quality = {t: _quality(ticker=t) for t in universe}
+    yf = _FakeValueYF(fundamentals, valuation, quality)
+
+    result = run_screening_pass(
+        universe,
+        criteria=GEM_HUNT_SCREEN_CRITERIA,
+        client=yf,  # type: ignore[arg-type]
+        screen_fn=screen_ticker_value,
+        rank=True,
+    )
+    assert result.candidates == ["X", "Z", "Y"]  # best-value-first, not alphabetical
+    assert result.candidates[:2] == ["X", "Z"]  # top-N takes the best, not "Y" (alpha-first)
+    assert result.scores["X"] < result.scores["Z"] < result.scores["Y"]
+
+
+def test_rank_false_preserves_universe_order() -> None:
+    """Default (rank=False) keeps universe order even on the value path."""
+    universe = ["Y", "X", "Z"]
+    yf = _FakeValueYF(
+        {t: _value_fundamentals(ticker=t) for t in universe},
+        {t: _valuation(ticker=t, ev_ebit=float(i + 5)) for i, t in enumerate(universe)},
+        {t: _quality(ticker=t) for t in universe},
+    )
+    result = run_screening_pass(
+        universe,
+        criteria=GEM_HUNT_SCREEN_CRITERIA,
+        client=yf,  # type: ignore[arg-type]
+        screen_fn=screen_ticker_value,
+    )
+    assert result.candidates == ["Y", "X", "Z"]  # universe order, unranked

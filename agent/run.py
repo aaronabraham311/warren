@@ -22,7 +22,11 @@ from agent.portfolio import (
     sync_watchlist_to_db,
 )
 from agent.routing import PhaseBasedRouting
-from agent.screening import run_screening_pass
+from agent.screening import (
+    GEM_HUNT_SCREEN_CRITERIA,
+    run_screening_pass,
+    screen_ticker_value,
+)
 from agent.tools._clients import yfinance_client
 from agent.universe import get_current_universe, get_gem_hunt_universe
 from data_sources.yfinance_client import PriceData
@@ -273,14 +277,18 @@ def main() -> None:
         )
 
         if gem_hunt:
-            # TODO(G6): deep-value screen criteria — swap in the deep-value screen here.
-            # G1 scaffold: falls through to the existing GARP screening pass, but over
-            # the (larger) global universe with bounded-concurrency fetches.
+            # Deep-value screen over the global universe: distinct cheap-quality-on-assets
+            # criteria (NOT the GARP pe/peg/roe/de/rev_growth gates), with score-based
+            # ranking so ``candidates`` arrive cheapest-first. The top-N truncation below
+            # therefore takes the best-value names, not the alphabetically-first.
             screening = run_screening_pass(
-                cooldown_result.active, logger=logger, max_workers=_GEM_HUNT_SCREEN_WORKERS
+                cooldown_result.active,
+                criteria=GEM_HUNT_SCREEN_CRITERIA,
+                logger=logger,
+                max_workers=_GEM_HUNT_SCREEN_WORKERS,
+                screen_fn=screen_ticker_value,
+                rank=True,
             )
-            # TODO(G6): value-score ranking before top-N — rank candidates by value score.
-            # G1 scaffold: keeps the existing screening order.
             candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]
         else:
             screening = run_screening_pass(cooldown_result.active, logger=logger)
