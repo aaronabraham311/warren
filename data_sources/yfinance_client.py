@@ -14,6 +14,12 @@ from pydantic import BaseModel
 
 from data_sources.cache import CacheStore, make_key
 from data_sources.errors import DataSourceError
+from data_sources.fx import (
+    FALLBACK_FX_RATES,
+    SUPPORTED_CURRENCIES,
+    normalize_currency,
+    to_usd,
+)
 from data_sources.symbols import to_yahoo_symbol
 
 _T = TypeVar("_T")
@@ -73,6 +79,9 @@ class PriceData(BaseModel):
     volume: int | None
     as_of: datetime
     data_age_hours: int
+    # Native trading currency (yfinance ``fast_info.currency``); None ⇒ unknown/USD.
+    # ``current_price``/``previous_close`` are reported in this currency, not USD.
+    currency: str | None = None
     source: Literal["yfinance"] = "yfinance"
 
 
@@ -89,6 +98,9 @@ class FundamentalsData(BaseModel):
     net_margin_pct: float | None
     sector: str | None
     data_age_hours: int
+    # Native statement currency (yfinance ``financialCurrency``); None ⇒ unknown/USD.
+    # ``fcf_ttm_usd`` is normalized to USD from this currency at populate time.
+    currency: str | None = None
     source: Literal["yfinance", "finnhub"]
 
 
@@ -113,6 +125,8 @@ class ValuationData(BaseModel):
     fcf_yield: float | None
     earnings_yield: float | None
     market_cap_usd: int | None
+    # Raw native market cap (in ``currency``) before USD normalization, for display.
+    market_cap_native: int | None = None
     ncav: int | None
     ncav_to_market_cap: float | None
     is_net_net: bool
@@ -121,6 +135,10 @@ class ValuationData(BaseModel):
     net_cash_positive: bool
     p_tangible_book: float | None
     dividend_yield_pct: float | None
+    # Native trading currency (yfinance ``currency``); None ⇒ unknown/USD.
+    # ``market_cap_usd`` / ``net_cash_usd`` are normalized to USD from native
+    # figures; currency-neutral ratios (price_to_ncav, ncav_to_market_cap) are not.
+    currency: str | None = None
     data_age_hours: int
     source: Literal["yfinance"] = "yfinance"
 
@@ -335,6 +353,10 @@ def _as_int(v: object) -> int | None:
     return None
 
 
+def _as_str(v: object) -> str | None:
+    return v if isinstance(v, str) else None
+
+
 _TTL_KEY_PERSONS_H = 720.0  # 30 days — persons change rarely
 _TTL_RUSSELL2000_H = 168.0  # 7 days — index rebalances quarterly
 
@@ -409,6 +431,63 @@ class YFinanceClient:
                 self._sleep(2**attempt)
         raise RuntimeError("unreachable")
 
+    # ── FX rates ──────────────────────────────────────────────────────────
+
+    def get_fx_rate(self, base: str) -> float | DataSourceError:
+        """Spot FX rate as USD per 1 unit of ``base`` (e.g. EUR → ~1.08).
+
+        Reads ``yf.Ticker("<BASE>USD=X")`` through the yfinance boundary and
+        caches into the shared ``CacheStore``. USD is the identity (1.0). An
+        unsupported currency returns a ``not_found`` DataSourceError. Never
+        raises — transport/parse failures come back as data.
+        """
+        cur = normalize_currency(base)
+        if cur is None or cur == "USD":
+            return 1.0
+        if cur not in SUPPORTED_CURRENCIES:
+            return DataSourceError(error_code="not_found", message=f"Unsupported currency {base}")
+        key = make_key("yf_fx", cur)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return float(cached)
+        try:
+            rate = self._fetch_with_retry(
+                lambda: self._fetch_fx_rate(cur),
+                no_retry=(_NotFoundError,),
+            )
+        except _NotFoundError:
+            return DataSourceError(error_code="not_found", message=f"No FX rate for {cur}")
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, repr(rate), self._ttl_prices)
+        return rate
+
+    def _fetch_fx_rate(self, base: str) -> float:
+        t = yf.Ticker(f"{base}USD=X")
+        price = getattr(t.fast_info, "last_price", None)
+        if price is None:
+            info = t.info
+            if isinstance(info, dict):
+                price = info.get("regularMarketPrice")
+        rate = _as_float(price)
+        if rate is None or rate <= 0:
+            raise _NotFoundError(base)
+        return rate
+
+    def _rate_to_usd(self, currency: str | None) -> float:
+        """Resolve the USD-per-unit rate for ``currency`` with graceful fallback.
+
+        USD/unknown/None → 1.0 (identity). A live-fetch failure degrades to the
+        committed :data:`data_sources.fx.FALLBACK_FX_RATES` table. Never raises.
+        """
+        cur = normalize_currency(currency)
+        if cur is None or cur == "USD" or cur not in SUPPORTED_CURRENCIES:
+            return 1.0
+        rate = self.get_fx_rate(cur)
+        if isinstance(rate, DataSourceError):
+            return FALLBACK_FX_RATES[cur]
+        return rate
+
     # ── get_price ─────────────────────────────────────────────────────────
 
     def get_price(self, ticker: str) -> PriceData | DataSourceError:
@@ -434,6 +513,7 @@ class YFinanceClient:
         price = getattr(fi, "last_price", None)
         prev_close = getattr(fi, "previous_close", None)
         volume = getattr(fi, "three_month_average_volume", None)
+        currency = normalize_currency(_as_str(getattr(fi, "currency", None)))
         if price is None:
             raise _NotFoundError(ticker)
         p = float(price)
@@ -447,6 +527,7 @@ class YFinanceClient:
             volume=int(float(volume)) if volume is not None else None,
             as_of=datetime.now(timezone.utc),
             data_age_hours=0,
+            currency=currency,
         )
 
     # ── get_fundamentals ──────────────────────────────────────────────────
@@ -477,6 +558,9 @@ class YFinanceClient:
             raise _NotFoundError(ticker)
         sector_raw = info.get("sector")
         sector = str(sector_raw) if isinstance(sector_raw, str) else None
+        # freeCashflow is statement-derived → financialCurrency; normalize to USD.
+        currency = normalize_currency(_as_str(info.get("financialCurrency")))
+        fcf_usd = to_usd(_as_int(info.get("freeCashflow")), currency, self._rate_to_usd(currency))
         return FundamentalsData(
             ticker=ticker.upper(),
             as_of=date.today(),
@@ -484,11 +568,12 @@ class YFinanceClient:
             pb_ratio=_as_float(info.get("priceToBook")),
             roe_pct=_as_pct(info.get("returnOnEquity")),
             debt_to_equity=_as_float(info.get("debtToEquity")),
-            fcf_ttm_usd=_as_int(info.get("freeCashflow")),
+            fcf_ttm_usd=int(fcf_usd) if fcf_usd is not None else None,
             gross_margin_pct=_as_pct(info.get("grossMargins")),
             operating_margin_pct=_as_pct(info.get("operatingMargins")),
             net_margin_pct=_as_pct(info.get("profitMargins")),
             sector=sector,
+            currency=currency,
             data_age_hours=_fiscal_age_hours(info),
             source="yfinance",
         )
@@ -567,6 +652,14 @@ class YFinanceClient:
         if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
             raise _NotFoundError(ticker)
 
+        # Market cap is quoted in the trading currency; balance-sheet items
+        # (totalCash/totalDebt) in the statement currency. For the gem-hunt slice
+        # these coincide, but resolve each rate independently to be correct.
+        trading_currency = normalize_currency(_as_str(info.get("currency")))
+        financial_currency = normalize_currency(_as_str(info.get("financialCurrency")))
+        trading_rate = self._rate_to_usd(trading_currency)
+        financial_rate = self._rate_to_usd(financial_currency)
+
         ev = _as_int(info.get("enterpriseValue"))
         ebitda = _as_float(info.get("ebitda"))
         op_income = _as_float(info.get("operatingIncome"))
@@ -601,14 +694,21 @@ class YFinanceClient:
 
         total_cash = _as_int(info.get("totalCash"))
         total_debt_info = _as_int(info.get("totalDebt"))
-        net_cash_usd: int | None = None
+        net_cash_native: int | None = None
         if total_cash is not None and total_debt_info is not None:
-            net_cash_usd = total_cash - total_debt_info
-        net_cash_positive = net_cash_usd is not None and net_cash_usd > 0
+            net_cash_native = total_cash - total_debt_info
+        # Positive-rate multiplication preserves sign, so classify off native.
+        net_cash_positive = net_cash_native is not None and net_cash_native > 0
 
         p_tangible_book: float | None = None
         if mkt_cap and tangible_bv and tangible_bv > 0:
             p_tangible_book = round(mkt_cap / tangible_bv, 2)
+
+        # Normalize the cross-name-comparable USD fields; keep the raw native cap.
+        mkt_cap_usd_f = to_usd(mkt_cap, trading_currency, trading_rate)
+        mkt_cap_usd = int(mkt_cap_usd_f) if mkt_cap_usd_f is not None else None
+        net_cash_usd_f = to_usd(net_cash_native, financial_currency, financial_rate)
+        net_cash_usd = int(net_cash_usd_f) if net_cash_usd_f is not None else None
 
         return ValuationData(
             ticker=ticker.upper(),
@@ -619,7 +719,8 @@ class YFinanceClient:
             acquirers_multiple=ev_to_ebit,
             fcf_yield=fcf_yield,
             earnings_yield=earnings_yield,
-            market_cap_usd=mkt_cap,
+            market_cap_usd=mkt_cap_usd,
+            market_cap_native=mkt_cap,
             ncav=ncav,
             ncav_to_market_cap=ncav_to_mkt_cap,
             is_net_net=is_net_net,
@@ -630,6 +731,7 @@ class YFinanceClient:
             # Already a percentage upstream (AAPL → 0.34 meaning 0.34%), unlike the
             # margin fields, which are fractions. Do not scale it again.
             dividend_yield_pct=_as_float(info.get("dividendYield")),
+            currency=trading_currency,
             data_age_hours=_fiscal_age_hours(info),
         )
 
