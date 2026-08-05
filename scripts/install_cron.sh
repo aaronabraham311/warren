@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install a cron entry that runs Warren nightly at 2 AM (Linux).
+# Install a cron entry that runs Warren's nightly gem hunt at 2 AM (Linux).
 set -euo pipefail
 
 if [[ "$(uname)" != "Linux" ]]; then
@@ -46,14 +46,26 @@ mkdir -p "$PROJECT_DIR/logs"
 # default cwd is the user's home directory, not this repo — without it the job fails
 # every night with "No module named 'agent'".
 # flock -n skips this run instead of stacking a second one if the prior run is still going.
-CRON_ENTRY="0 2 * * * cd $PROJECT_DIR && $FLOCK_BIN -n $PROJECT_DIR/logs/.nightly.lock $VENV_PYTHON -m agent.run >> $PROJECT_DIR/logs/cron.log 2>&1"
+# --gem-hunt is the scheduled mode: global 3-exchange universe + deep-value screen + Dirt
+# persona. Bare `python -m agent.run` (US GARP nightly) stays available on demand.
+CRON_ENTRY="0 2 * * * cd $PROJECT_DIR && $FLOCK_BIN -n $PROJECT_DIR/logs/.nightly.lock $VENV_PYTHON -m agent.run --gem-hunt >> $PROJECT_DIR/logs/cron.log 2>&1"
 
-# Idempotent: skip if an entry for this project already exists.
-if crontab -l 2>/dev/null | grep -qF "$VENV_PYTHON -m agent.run"; then
+# Identifies this project's entry regardless of which flags it was installed with.
+CRON_MATCH="$VENV_PYTHON -m agent.run"
+EXISTING="$(crontab -l 2>/dev/null || true)"
+
+if printf '%s\n' "$EXISTING" | grep -qF "$CRON_ENTRY"; then
   echo "Warren cron entry already installed — no changes made."
   exit 0
 fi
 
-(crontab -l 2>/dev/null; echo "$CRON_ENTRY") | crontab -
-echo "Warren cron entry installed. Next run: tonight at 2 AM."
+if printf '%s\n' "$EXISTING" | grep -qF "$CRON_MATCH"; then
+  # An entry from an earlier install (e.g. before --gem-hunt) — replace it rather than
+  # skipping, otherwise re-running this installer would leave the stale command in place.
+  (printf '%s\n' "$EXISTING" | grep -vF "$CRON_MATCH"; echo "$CRON_ENTRY") | crontab -
+  echo "Warren cron entry updated — the nightly run now uses --gem-hunt."
+else
+  (printf '%s\n' "$EXISTING"; echo "$CRON_ENTRY") | crontab -
+  echo "Warren cron entry installed. Next run: tonight at 2 AM (gem-hunt mode)."
+fi
 echo "Logs: $PROJECT_DIR/logs/cron.log"

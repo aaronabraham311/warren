@@ -86,6 +86,8 @@ warren/
 
 Warren can run autonomously at 2 AM via the OS scheduler. The process is short-lived (not a daemon) — it starts, runs, and exits.
 
+The scheduled run is **gem-hunt mode** (`python -m agent.run --gem-hunt`): the global three-exchange universe (Euronext Growth Milan `.MI`, Bolsa de Madrid `.MC`, GPW Warsaw `.WA`), the deep-value screen with score-based ranking, and the DIRT persona. The US GARP nightly is still there on demand — run `python -m agent.run` with no flags. Re-running an installer over an already-installed job replaces it, so switching modes is just a matter of editing the command and re-installing.
+
 ### macOS (launchd)
 
 ```bash
@@ -101,7 +103,7 @@ tail -f logs/launchd_stdout.log
 tail -f logs/launchd_stderr.log
 
 # Manual trigger (runs immediately, same as the scheduled run)
-python -m agent.run
+python -m agent.run --gem-hunt
 
 # Uninstall
 bash scripts/uninstall_scheduler.sh
@@ -122,7 +124,7 @@ crontab -l | grep warren
 tail -f logs/cron.log
 
 # Manual trigger
-python -m agent.run
+python -m agent.run --gem-hunt
 
 # Uninstall — remove the warren line from your crontab
 crontab -e
