@@ -59,6 +59,7 @@ module = [
     "agent.tools.screen",
     "agent.tools.holdings",
     "agent.tools.valuation",
+    "agent.tools.valuation_history",
     "agent.tools.peers",
     "agent.tools.quality",
     "agent.tools.insider",

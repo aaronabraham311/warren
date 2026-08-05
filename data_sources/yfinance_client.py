@@ -151,6 +151,39 @@ class ValuationData(BaseModel):
     source: Literal["yfinance"] = "yfinance"
 
 
+class ValuationHistory(BaseModel):
+    """Valuation-vs-own-listed-history signal (G8) — the Kino-Polska "cheapest ever" lens.
+
+    P/E and P/B time series are built by combining a ``.history()`` price slice with
+    per-fiscal-year EPS (net income / shares) and BVPS (total equity / shares) derived
+    from ``get_financials``. The percentile fields answer "how cheap is this name versus
+    its OWN past?" — a LOW percentile means cheap relative to its listed history (0 ≈ the
+    cheapest it has ever been). ``pb_vs_10y_low`` ≈ 1.0 means the current P/B sits at or
+    near its historical minimum. Series are newest-first and ``series[0]`` is the current
+    (present-price) valuation.
+
+    yfinance only exposes ~5y of statement history (a known v1 limitation), so percentiles
+    are computed over whatever overlapping years are available; with < 2 usable years the
+    percentile / low-ratio fields are ``None`` rather than a misleading value.
+    """
+
+    ticker: str
+    as_of: date
+    years_covered: int  # fiscal years with a computable P/B (the usable percentile window)
+    current_pe: float | None
+    current_pb: float | None
+    # Percentile rank (0-100) of the current multiple within its own history; LOW = cheap.
+    pe_percentile: float | None
+    pb_percentile: float | None
+    pb_min: float | None  # historical minimum P/B over available history
+    pb_vs_10y_low: float | None  # current P/B ÷ historical min P/B; ~1.0 = at/near its low
+    pe_series: list[float | None]  # per-fiscal-year P/E, newest-first (series[0] = current)
+    pb_series: list[float | None]  # per-fiscal-year P/B, newest-first (series[0] = current)
+    fiscal_years: list[int]  # newest-first, aligned positionally with the series
+    data_age_hours: int
+    source: Literal["yfinance"] = "yfinance"
+
+
 class QualityData(BaseModel):
     ticker: str
     as_of: date
@@ -813,6 +846,148 @@ class YFinanceClient:
         # Missing statements yield empty row lists rather than an error (mirrors
         # get_quality_metrics); only an unknown ticker (empty info) is not_found.
         return self._build_financials(t, ticker)
+
+    # ── get_valuation_history (valuation-vs-own-listed-history, G8) ────────────
+    #
+    # Screen/ranking hook: ``pb_percentile`` (or ``pb_vs_10y_low``) is a clean scalar a
+    # deep-value screen could rank on — e.g. surface names in the bottom decile of their
+    # own P/B history (percentile ≤ 10, or pb_vs_10y_low ≤ ~1.1). Not wired into the G6
+    # screen yet; exposing the field is enough for the agent to use it in DIRT analysis.
+
+    def get_valuation_history(self, ticker: str) -> ValuationHistory | DataSourceError:
+        key = make_key("yf_valuation_history", ticker)
+        cached = self._cache.get(key)
+        if cached is not None:
+            return ValuationHistory.model_validate_json(cached)
+        try:
+            result = self._fetch_with_retry(
+                lambda: self._fetch_valuation_history(ticker),
+                no_retry=(_NotFoundError,),
+            )
+        except _NotFoundError:
+            return DataSourceError(error_code="not_found", message=f"No data for {ticker}")
+        except Exception as exc:
+            return DataSourceError(error_code="network", message=str(exc))
+        self._cache.set(key, result.model_dump_json(), self._ttl_fundamentals)
+        return result
+
+    def _fetch_valuation_history(self, ticker: str) -> ValuationHistory:
+        t = yf.Ticker(_yf_symbol(ticker))
+        info: dict[str, object] = t.info
+        if not isinstance(info, dict) or len(info) <= 5:
+            raise _NotFoundError(ticker)
+        if info.get("regularMarketPrice") is None and info.get("currentPrice") is None:
+            raise _NotFoundError(ticker)
+
+        fin = self._build_financials(t, ticker)
+        # The FIRST ``.history()`` fetch anywhere in the client (G8). period="max" is
+        # bounded upstream to ~5y of statement history anyway; percentiles use whatever
+        # price years overlap the financials.
+        closes_by_year, latest_close = self._annual_closes(t.history(period="max"))
+
+        bs_by_year = {r.fiscal_year: r for r in fin.balance_sheet}
+        fiscal_years: list[int] = []
+        pe_series: list[float | None] = []
+        pb_series: list[float | None] = []
+        for i, inc in enumerate(fin.income_statement):
+            year = inc.fiscal_year
+            bs = bs_by_year.get(year)
+            shares = bs.shares_outstanding if bs is not None else None
+            # series[0] (newest year) uses the latest close so it reflects TODAY's price;
+            # older years align to that fiscal year's annual close.
+            price = (
+                latest_close if i == 0 and latest_close is not None else closes_by_year.get(year)
+            )
+            eps = self._per_share(inc.net_income, shares)
+            bvps = self._per_share(self._book_equity(bs), shares)
+            fiscal_years.append(year)
+            pe_series.append(self._safe_ratio(price, eps))
+            pb_series.append(self._safe_ratio(price, bvps))
+
+        pe_pct, _, _ = self._history_stats(pe_series)
+        pb_pct, pb_min, pb_vs_low = self._history_stats(pb_series)
+        years_covered = sum(1 for v in pb_series if v is not None)
+        return ValuationHistory(
+            ticker=ticker.upper(),
+            as_of=date.today(),
+            years_covered=years_covered,
+            current_pe=pe_series[0] if pe_series else None,
+            current_pb=pb_series[0] if pb_series else None,
+            pe_percentile=pe_pct,
+            pb_percentile=pb_pct,
+            pb_min=pb_min,
+            pb_vs_10y_low=pb_vs_low,
+            pe_series=pe_series,
+            pb_series=pb_series,
+            fiscal_years=fiscal_years,
+            data_age_hours=_fiscal_age_hours(info),
+        )
+
+    @staticmethod
+    def _annual_closes(hist_df: object) -> tuple[dict[int, float], float | None]:
+        """Map calendar-year → last close in that year; also return the most recent close.
+
+        Assumes the frame is date-ascending (yfinance's default), so the last row seen
+        for a year is that year's annual close and the final row is the current price.
+        Malformed/empty frames yield ``({}, None)`` — the caller degrades to None ratios.
+        """
+        closes: dict[int, float] = {}
+        latest: float | None = None
+        if hist_df is None:
+            return closes, latest
+        try:
+            index = list(hist_df.index)  # type: ignore[attr-defined]
+            prices = list(hist_df["Close"])  # type: ignore[index]
+        except Exception:
+            return closes, latest
+        for ts, val in zip(index, prices, strict=False):
+            year = getattr(ts, "year", None)
+            price = _as_float(val)
+            if not isinstance(year, int) or price is None:
+                continue
+            closes[year] = price
+            latest = price
+        return closes, latest
+
+    @staticmethod
+    def _book_equity(bs: BalanceSheetRow | None) -> int | None:
+        if bs is None or bs.total_assets is None or bs.total_liabilities is None:
+            return None
+        return bs.total_assets - bs.total_liabilities
+
+    @staticmethod
+    def _per_share(numerator: int | None, shares: int | None) -> float | None:
+        if numerator is None or not shares or shares <= 0:
+            return None
+        return numerator / shares
+
+    @staticmethod
+    def _safe_ratio(price: float | None, per_share: float | None) -> float | None:
+        # A non-positive denominator (loss-making EPS, negative book value) makes the
+        # multiple meaningless for a "cheapness" percentile, so drop it (→ None).
+        if price is None or per_share is None or per_share <= 0:
+            return None
+        return round(price / per_share, 4)
+
+    @staticmethod
+    def _history_stats(
+        series: list[float | None],
+    ) -> tuple[float | None, float | None, float | None]:
+        """(percentile, min, current÷min) for a newest-first series; ``series[0]`` is current.
+
+        Percentile is the share (0-100) of usable historical points strictly below the
+        current value — LOW = cheap vs own history. Returns all-None with < 2 usable
+        (non-None) points, the graceful short-history path.
+        """
+        vals = [v for v in series if v is not None]
+        current = series[0] if series else None
+        if current is None or len(vals) < 2:
+            return None, None, None
+        lo = min(vals)
+        below = sum(1 for v in vals if v < current)
+        percentile = round(below / (len(vals) - 1) * 100, 2)
+        ratio = round(current / lo, 4) if lo > 0 else None
+        return percentile, lo, ratio
 
     def _fetch_quality_metrics(self, ticker: str) -> QualityData:
         t = yf.Ticker(_yf_symbol(ticker))
