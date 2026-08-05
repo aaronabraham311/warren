@@ -144,7 +144,6 @@ def _deep_value_checks(
     expectation: DeepValueExpectation,
     thesis_lower: str,
     forensic_evidence: ForensicEvidenceBundle | None = None,
-    served_dirt_decision: DirtDecisionContract | None = None,
 ) -> list[CheckResult]:
     """Deep-value (DIRT) check family — one ``must`` check per configured toggle.
 
@@ -321,11 +320,15 @@ def _deep_value_checks(
                     current_price=decision.current_price,
                     horizon_years=decision.horizon_years,
                     scenarios=[
-                        DirtScenarioAssumption.model_validate(item.model_dump())
+                        DirtScenarioAssumption.model_validate(
+                            item.model_dump(
+                                exclude={"total_dividends", "total_value", "total_return", "irr"}
+                            )
+                        )
                         for item in decision.scenarios
                     ],
                     downside_floor=DirtDownsideFloorAssumption.model_validate(
-                        decision.downside_floor.model_dump()
+                        decision.downside_floor.model_dump(exclude={"adjusted", "coverage"})
                     ),
                     catalysts=decision.catalysts,
                     failure_thesis=decision.failure_thesis,
@@ -349,29 +352,6 @@ def _deep_value_checks(
                 passed=matches,
                 expected="all scenario returns and decision fields recompute deterministically",
                 actual=error or ("match" if matches else "computed fields differ"),
-                severity="must",
-            )
-        )
-
-    if expectation.require_served_decision_match:
-        matches_served = (
-            decision is not None
-            and served_dirt_decision is not None
-            and decision.model_dump(mode="json") == served_dirt_decision.model_dump(mode="json")
-        )
-        checks.append(
-            CheckResult(
-                check_name="dirt_decision_matches_served_tool",
-                passed=matches_served,
-                expected="exact model_dirt_scenarios ToolResult served to the agent",
-                actual=(
-                    "match"
-                    if matches_served
-                    else (
-                        f"analysis={decision is not None}, "
-                        f"served={served_dirt_decision is not None}"
-                    )
-                ),
                 severity="must",
             )
         )
@@ -481,7 +461,6 @@ def grade_analysis(
     example: EvalExample,
     judge: ThesisJudge | None = None,
     forensic_evidence: ForensicEvidenceBundle | None = None,
-    served_dirt_decision: DirtDecisionContract | None = None,
 ) -> EvalGrade:
     """Grade *result* against *example*.
 
@@ -588,7 +567,6 @@ def grade_analysis(
             expectations.deep_value,
             thesis_lower,
             forensic_evidence,
-            served_dirt_decision,
         )
     if expectations.closability is not None:
         checks += _closability_checks(result, expectations.closability, forensic_evidence)

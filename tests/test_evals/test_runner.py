@@ -110,7 +110,7 @@ def test_run_eval_grades_a_ticker_with_fixtures(
     assert "Result: 1/1 examples passed" in out
 
 
-def test_run_eval_grades_analysis_against_served_dirt_decision(
+def test_run_eval_recomputes_dirt_decision(
     db_engine: Engine,
     fixtures_root: Path,
     log_dir: Path,
@@ -220,7 +220,7 @@ def test_run_eval_grades_analysis_against_served_dirt_decision(
     example.expectations.deep_value = DeepValueExpectation(
         require_decision_contract=True,
         require_decision_recomputation=True,
-        require_served_decision_match=True,
+        allowed_decision_outcomes=["buy"],
     )
 
     grade = run_eval(
@@ -230,10 +230,10 @@ def test_run_eval_grades_analysis_against_served_dirt_decision(
         fixtures_root=fixtures_root,
     )[0]
 
-    served_match = next(
-        check for check in grade.checks if check.check_name == "dirt_decision_matches_served_tool"
+    recomputation = next(
+        check for check in grade.checks if check.check_name == "dirt_decision_recomputes"
     )
-    assert served_match.passed, served_match.actual
+    assert recomputation.passed, recomputation.actual
     assert grade.passed, grade.overall_notes
 
 

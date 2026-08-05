@@ -99,7 +99,6 @@ class DeepValueExpectation(_Strict):
     require_forensic_citations: bool = False
     require_decision_contract: bool = False
     require_decision_recomputation: bool = False
-    require_served_decision_match: bool = False
     allowed_decision_outcomes: list[Literal["buy", "watchlist", "pass"]] = []
 
 

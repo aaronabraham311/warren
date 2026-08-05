@@ -143,11 +143,15 @@ def test_fixture_runner_recomputes_scenarios_without_dispatching_tool_run(
         current_price=decision.current_price,
         horizon_years=decision.horizon_years,
         scenarios=[
-            DirtScenarioAssumption.model_validate(scenario.model_dump())
+            DirtScenarioAssumption.model_validate(
+                scenario.model_dump(
+                    exclude={"total_dividends", "total_value", "total_return", "irr"}
+                )
+            )
             for scenario in decision.scenarios
         ],
         downside_floor=DirtDownsideFloorAssumption.model_validate(
-            decision.downside_floor.model_dump()
+            decision.downside_floor.model_dump(exclude={"adjusted", "coverage"})
         ),
         catalysts=decision.catalysts,
         failure_thesis=decision.failure_thesis,

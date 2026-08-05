@@ -95,9 +95,20 @@ def _decision(outcome: str = "buy", weighted_irr: float = 0.27) -> dict[str, obj
             {
                 "case": case,
                 "probability": probability,
+                "assumption": "Operations remain viable",
+                "rationale": "Cited operating and valuation assumptions",
                 "terminal_price": terminal,
                 "terminal_date": "2028-06-29",
+                "cash_flows": [
+                    {
+                        "date": "2028-06-29",
+                        "amount": terminal,
+                        "kind": "terminal_sale",
+                        "source_ref": "valuation:case",
+                    }
+                ],
                 "total_dividends": 4.0,
+                "total_value": terminal + 4.0,
                 "total_return": total_return,
                 "irr": irr,
             }
@@ -110,6 +121,9 @@ def _decision(outcome: str = "buy", weighted_irr: float = 0.27) -> dict[str, obj
         "downside_floor": {
             "basis": "tangible_book",
             "gross": 48.0,
+            "haircut": 0.15,
+            "source_ref": "filing:balance-sheet",
+            "as_of": "2025-12-31",
             "adjusted": 40.8,
             "coverage": 0.816,
             "confidence": "medium",
@@ -122,14 +136,35 @@ def _decision(outcome: str = "buy", weighted_irr: float = 0.27) -> dict[str, obj
                 "evidence_strength": "contractual",
                 "expected_by": "2027-03-31",
                 "source_ref": "filing:tender",
+                "failure_condition": "Tender is withdrawn",
             }
         ],
         "failure_thesis": "The tender is withdrawn and asset coverage falls.",
-        "entry_conditions": [{"description": "Price at or below hurdle", "threshold": 56.25}],
+        "entry_conditions": [
+            {
+                "description": "Price at or below hurdle",
+                "metric": "share_price",
+                "operator": "lte",
+                "threshold": 56.25,
+                "currency": "USD",
+            }
+        ],
         "blocking_unknowns": ["Final tender size"],
         "monitoring_metrics": [
-            {"metric": "tangible_book_per_share", "failure_threshold": 40.0},
-            {"metric": "tender_completion_pct", "warning_threshold": 25.0},
+            {
+                "metric": "tangible_book_per_share",
+                "failure_threshold": 40.0,
+                "cadence": "quarterly",
+                "source_ref": "filing:balance-sheet",
+                "rationale": "Protects downside",
+            },
+            {
+                "metric": "tender_completion_pct",
+                "warning_threshold": 25.0,
+                "cadence": "event",
+                "source_ref": "filing:tender",
+                "rationale": "Tracks catalyst",
+            },
         ],
         "calculation_version": "dce_irr_v1",
     }
@@ -352,6 +387,54 @@ def test_apptest_renders_dirt_decision_badge_and_contract(today_env: SimpleNames
     ]:
         assert expected in markdown
     assert len(at.table) == 1
+
+
+def test_apptest_uses_valid_contract_over_mismatched_projection(
+    today_env: SimpleNamespace,
+) -> None:
+    analysis = _make_analysis(
+        "run-1",
+        "MISMATCH",
+        analysis_type="discovery",
+        recommendation="hold",
+        dirt_decision=_decision("buy"),
+    )
+    analysis.decision_outcome = "pass"
+    _seed(today_env.engine, [analysis])
+
+    at = AppTest.from_file(_TODAY_PAGE).run()
+
+    assert not at.exception
+    card = next(expander for expander in at.expander if "MISMATCH" in expander.label)
+    assert "BUY" in card.label
+    assert any("contract is authoritative" in warning.value for warning in at.warning)
+
+
+def test_apptest_rejects_invalid_decision_instead_of_rendering_zeroes(
+    today_env: SimpleNamespace,
+) -> None:
+    invalid = _decision("buy")
+    invalid["probability_weighted_irr"] = "not-a-number"
+    _seed(
+        today_env.engine,
+        [
+            _make_analysis(
+                "run-1",
+                "INVALID",
+                analysis_type="discovery",
+                recommendation="hold",
+                dirt_decision=invalid,
+            )
+        ],
+    )
+
+    at = AppTest.from_file(_TODAY_PAGE).run()
+
+    assert not at.exception
+    card = next(expander for expander in at.expander if "INVALID" in expander.label)
+    assert "HOLD" in card.label
+    assert any("invalid and was not rendered" in warning.value for warning in at.warning)
+    assert all(metric.label != "Weighted IRR" for metric in at.metric)
 
 
 def test_apptest_auto_expands_high_confidence_action(today_env: SimpleNamespace) -> None:

@@ -182,11 +182,15 @@ def _decision_tool_input(decision_payload: dict[str, object]) -> dict[str, objec
         current_price=decision.current_price,
         horizon_years=decision.horizon_years,
         scenarios=[
-            DirtScenarioAssumption.model_validate(scenario.model_dump())
+            DirtScenarioAssumption.model_validate(
+                scenario.model_dump(
+                    exclude={"total_dividends", "total_value", "total_return", "irr"}
+                )
+            )
             for scenario in decision.scenarios
         ],
         downside_floor=DirtDownsideFloorAssumption.model_validate(
-            decision.downside_floor.model_dump()
+            decision.downside_floor.model_dump(exclude={"adjusted", "coverage"})
         ),
         catalysts=decision.catalysts,
         failure_thesis=decision.failure_thesis,

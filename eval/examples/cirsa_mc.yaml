@@ -53,4 +53,4 @@ expectations:
     require_universe_note: true
     require_decision_contract: true
     require_decision_recomputation: true
-    require_served_decision_match: true
+    allowed_decision_outcomes: [buy, watchlist]

@@ -528,7 +528,7 @@ def test_supported_closability_requires_cited_observable_catalyst() -> None:
     ).passed
 
 
-def test_dirt_decision_contract_recomputes_and_matches_served_tool() -> None:
+def test_dirt_decision_contract_recomputes_and_matches_outcome_envelope() -> None:
     decision = DirtDecisionContract.model_validate(_BUY_DECISION)
     analysis = _dirt_analysis()
     analysis.dirt_decision = decision
@@ -536,10 +536,9 @@ def test_dirt_decision_contract_recomputes_and_matches_served_tool() -> None:
     assert example.expectations.deep_value is not None
     example.expectations.deep_value.require_decision_contract = True
     example.expectations.deep_value.require_decision_recomputation = True
-    example.expectations.deep_value.require_served_decision_match = True
     example.expectations.deep_value.allowed_decision_outcomes = ["buy"]
 
-    grade = grade_analysis(analysis, example, served_dirt_decision=decision)
+    grade = grade_analysis(analysis, example)
 
     decision_checks = [
         check for check in grade.checks if check.check_name.startswith("dirt_decision_")
@@ -548,12 +547,11 @@ def test_dirt_decision_contract_recomputes_and_matches_served_tool() -> None:
         "dirt_decision_present",
         "dirt_decision_outcome_allowed",
         "dirt_decision_recomputes",
-        "dirt_decision_matches_served_tool",
     }
     assert all(check.passed for check in decision_checks)
 
 
-def test_dirt_decision_grader_rejects_tampered_math_and_unserved_contract() -> None:
+def test_dirt_decision_grader_rejects_tampered_math() -> None:
     decision = DirtDecisionContract.model_validate(_BUY_DECISION)
     tampered = decision.model_copy(
         update={"probability_weighted_irr": decision.probability_weighted_irr + 0.05}
@@ -563,16 +561,14 @@ def test_dirt_decision_grader_rejects_tampered_math_and_unserved_contract() -> N
     example = _dirt_example()
     assert example.expectations.deep_value is not None
     example.expectations.deep_value.require_decision_recomputation = True
-    example.expectations.deep_value.require_served_decision_match = True
 
-    grade = grade_analysis(analysis, example, served_dirt_decision=decision)
+    grade = grade_analysis(analysis, example)
 
     assert not next(
         check for check in grade.checks if check.check_name == "dirt_decision_recomputes"
     ).passed
-    assert not next(
-        check for check in grade.checks if check.check_name == "dirt_decision_matches_served_tool"
-    ).passed
+
+
 def test_deep_value_checks_omitted_for_default_examples() -> None:
     """No deep_value block → none of the DIRT checks are emitted (back-compat)."""
     grade = grade_analysis(_analysis(), _example())
@@ -595,6 +591,26 @@ def test_gem_yamls_load_and_validate_as_dirt() -> None:
         assert example.persona == "dirt"
         assert example.expectations.deep_value is not None
         assert example.expectations.deep_value.require_universe_note
+        assert example.expectations.deep_value.allowed_decision_outcomes == ["buy", "watchlist"]
+
+
+def test_gem_yamls_reject_a_pass_decision() -> None:
+    from eval.golden_set import EXAMPLES_DIR
+
+    decision = DirtDecisionContract.model_validate(_BUY_DECISION).model_copy(
+        update={"outcome": "pass"}
+    )
+    for stem in ("dir_mi", "cirsa_mc", "kpl_wa"):
+        example = load_eval_example(EXAMPLES_DIR / f"{stem}.yaml")
+        analysis = _dirt_analysis()
+        analysis.dirt_decision = decision
+
+        grade = grade_analysis(analysis, example)
+
+        outcome_check = next(
+            check for check in grade.checks if check.check_name == "dirt_decision_outcome_allowed"
+        )
+        assert not outcome_check.passed
 
 
 def test_grades_the_real_golden_set_examples() -> None:

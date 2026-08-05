@@ -8,7 +8,9 @@ trace; they never query the DB for analyses themselves.
 import json
 
 import streamlit as st
+from pydantic import ValidationError
 
+from agent.models import DirtDecisionContract
 from dashboard.data import read_reasoning_trace
 from storage.models import Analysis
 
@@ -23,6 +25,15 @@ _AUTO_EXPAND_CONFIDENCE = 0.6
 def _as_float(value: object) -> float:
     """Coerce a JSON-decoded numeric value to float, defaulting to 0.0."""
     return float(value) if isinstance(value, (int, float)) else 0.0
+
+
+def _parse_dirt_decision(value: object) -> DirtDecisionContract | None:
+    if not isinstance(value, dict):
+        return None
+    try:
+        return DirtDecisionContract.model_validate(value)
+    except ValidationError:
+        return None
 
 
 def render_analysis_card(
@@ -41,11 +52,15 @@ def render_analysis_card(
     page passes it), a "was <PRIOR>" suffix flags the change so a recurring reviewer
     spots it without opening History.
     """
-    decision = analysis.dirt_decision if isinstance(analysis.dirt_decision, dict) else None
-    decision_outcome = analysis.decision_outcome
-    if decision_outcome is None and decision is not None:
-        raw_outcome = decision.get("outcome")
-        decision_outcome = raw_outcome if isinstance(raw_outcome, str) else None
+    decision = _parse_dirt_decision(analysis.dirt_decision)
+    decision_outcome = None if decision is None else decision.outcome
+    integrity_warning: str | None = None
+    if analysis.dirt_decision is not None and decision is None:
+        integrity_warning = "Stored DIRT decision is invalid and was not rendered."
+    elif decision is not None and analysis.decision_outcome != decision.outcome:
+        integrity_warning = (
+            "Stored decision projection disagrees with the contract; the contract is authoritative."
+        )
     if decision_outcome in _DECISION_BADGES:
         badge_and_call = _DECISION_BADGES[decision_outcome]
     else:
@@ -75,6 +90,8 @@ def render_analysis_card(
 
         if dq_notes:
             st.warning("⚠️ Data quality notes:\n" + "\n".join(f"- {n}" for n in dq_notes))
+        if integrity_warning is not None:
+            st.warning(integrity_warning)
 
         if decision is not None:
             render_dirt_decision(decision)
@@ -97,22 +114,23 @@ def render_analysis_card(
             render_reasoning_trace(analysis.run_id, analysis.ticker)
 
 
-def render_dirt_decision(decision: dict[str, object]) -> None:
+def render_dirt_decision(decision: DirtDecisionContract) -> None:
     """Render a computed DIRT decision contract without reinterpreting its math."""
     st.markdown("**DIRT decision contract**")
-    weighted = decision.get("probability_weighted_irr")
-    hurdle = decision.get("hurdle_irr")
-    required_price = decision.get("required_entry_price")
-    currency = str(decision.get("currency") or "")
+    weighted = decision.probability_weighted_irr
+    hurdle = decision.hurdle_irr
+    required_price = decision.required_entry_price
+    currency = decision.currency
     metric_irr, metric_hurdle, metric_entry = st.columns(3)
-    metric_irr.metric("Weighted IRR", f"{_as_float(weighted):.1%}" if weighted is not None else "—")
-    metric_hurdle.metric("Hurdle", f"{_as_float(hurdle):.1%}" if hurdle is not None else "—")
+    metric_irr.metric("Weighted IRR", f"{weighted:.1%}")
+    metric_hurdle.metric("Hurdle", f"{hurdle:.1%}")
     metric_entry.metric(
         "Required entry",
-        f"{_as_float(required_price):,.2f} {currency}" if required_price is not None else "—",
+        f"{required_price:,.2f} {currency}",
     )
 
-    scenarios = decision.get("scenarios")
+    payload = decision.model_dump(mode="json")
+    scenarios = payload.get("scenarios")
     if isinstance(scenarios, list) and scenarios:
         rows = []
         for raw in scenarios:
@@ -136,7 +154,7 @@ def render_dirt_decision(decision: dict[str, object]) -> None:
             st.markdown("**Scenarios**")
             st.table(rows)
 
-    floor = decision.get("downside_floor")
+    floor = payload.get("downside_floor")
     st.markdown("**Downside floor**")
     if isinstance(floor, dict):
         st.markdown(
@@ -153,12 +171,12 @@ def render_dirt_decision(decision: dict[str, object]) -> None:
     else:
         st.caption("Unavailable")
 
-    _render_decision_list("Catalysts", decision.get("catalysts"))
+    _render_decision_list("Catalysts", payload.get("catalysts"))
     st.markdown("**Failure thesis**")
-    st.markdown(str(decision.get("failure_thesis") or "—"))
-    _render_decision_list("Entry conditions", decision.get("entry_conditions"))
-    _render_decision_list("Blocking unknowns", decision.get("blocking_unknowns"))
-    _render_decision_list("Monitoring", decision.get("monitoring_metrics"))
+    st.markdown(decision.failure_thesis)
+    _render_decision_list("Entry conditions", payload.get("entry_conditions"))
+    _render_decision_list("Blocking unknowns", payload.get("blocking_unknowns"))
+    _render_decision_list("Monitoring", payload.get("monitoring_metrics"))
 
 
 def _render_decision_list(label: str, value: object) -> None:
