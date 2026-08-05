@@ -23,7 +23,14 @@ from eval.golden_set import (
     RecommendationExpectation,
 )
 from eval.grader import EvalGrade
-from eval.runner import resolve_persona, run_eval
+from eval.runner import (
+    FixedModelRouting,
+    create_provider,
+    resolve_eval_config,
+    resolve_persona,
+    run_eval,
+    validate_api_keys,
+)
 from eval.tool_fixtures import record_tool_result
 from storage.models import EvalRun, Run
 from tests.conftest import make_end_turn, make_tool_use
@@ -327,6 +334,16 @@ def test_output_flag_writes_one_evalgrade_per_ticker(
     assert out_path.exists(), "parent dirs are created"
     payload = json.loads(out_path.read_text())
     assert [EvalGrade.model_validate(g).ticker for g in payload] == ["AAPL", "NKE"]
+    usage = json.loads(Path(f"{out_path}.usage").read_text())
+    assert usage["run_id"] == "eval-fixed"
+    assert usage["config"] == {
+        "provider": "anthropic",
+        "model": "claude-sonnet-4-6",
+        "service_tier": "auto",
+        "reasoning_effort": "none",
+    }
+    assert usage["metrics"]["examples"] == 2
+    assert usage["metrics"]["passed"] == 1
 
 
 def test_eval_runs_table_gets_one_row_per_ticker(
@@ -375,6 +392,31 @@ def test_fixed_run_id_overwrites_rather_than_duplicates(
         assert len(rows) == 1
 
 
+def test_fixed_run_id_removes_grades_omitted_from_the_new_sweep(
+    db_engine: Engine,
+    fixtures_root: Path,
+    log_dir: Path,
+    mock_claude: MockClaude,
+) -> None:
+    client = mock_claude([make_end_turn(_ANALYSIS_JSON), make_end_turn(_ANALYSIS_JSON)])
+    run_eval(
+        examples=[_example("AAPL"), _example("NKE")],
+        client=client,
+        eval_run_id="eval-fixed",
+        fixtures_root=fixtures_root,
+    )
+    run_eval(
+        examples=[_example("AAPL")],
+        client=client,
+        eval_run_id="eval-fixed",
+        fixtures_root=fixtures_root,
+    )
+
+    with Session(db_engine) as session:
+        rows = session.scalars(select(EvalRun)).all()
+        assert [row.example_ticker for row in rows] == ["AAPL"]
+
+
 def test_identical_mocked_runs_produce_identical_grades(
     db_engine: Engine,
     fixtures_root: Path,
@@ -405,6 +447,113 @@ def test_identical_mocked_runs_produce_identical_grades(
 def test_resolve_persona_maps_the_persona_field() -> None:
     assert isinstance(resolve_persona(_example("AAPL")), DefaultPersona)
     assert isinstance(resolve_persona(_example("AAPL", persona="dirt")), DirtPersona)
+
+
+def test_run_started_records_provider_configuration(
+    db_engine: Engine,
+    fixtures_root: Path,
+    log_dir: Path,
+    mock_claude: MockClaude,
+) -> None:
+    run_eval(
+        examples=[_example("AAPL")],
+        client=mock_claude([make_end_turn(_ANALYSIS_JSON)]),
+        eval_run_id="eval-config",
+        fixtures_root=fixtures_root,
+    )
+
+    first = json.loads((log_dir / "eval-config.jsonl").read_text().splitlines()[0])
+    assert first["event"] == "run_started"
+    assert first["provider"] == "anthropic"
+    assert first["model"] == "claude-sonnet-4-6"
+    assert first["service_tier"] == "auto"
+    assert first["reasoning_effort"] == "none"
+
+
+def test_fixed_routing_never_substitutes_a_claude_model() -> None:
+    routing = FixedModelRouting("gpt-5.6-terra")
+    assert routing.select(1, [], "AAPL") == "gpt-5.6-terra"
+
+
+@pytest.mark.parametrize(
+    ("provider", "expected_model"),
+    [
+        ("anthropic", "claude-sonnet-4-6"),
+        ("openai", "gpt-5.6-luna"),
+        ("gemini", "gemini-3.6-flash"),
+    ],
+)
+def test_provider_defaults_resolve_to_matching_models(provider: str, expected_model: str) -> None:
+    config = resolve_eval_config(provider=provider)  # type: ignore[arg-type]
+    assert config.model == expected_model
+
+
+def test_provider_model_mismatch_is_rejected() -> None:
+    with pytest.raises(ValueError, match="does not belong"):
+        resolve_eval_config(provider="openai", model="claude-sonnet-4-6")
+
+
+def test_anthropic_flex_is_rejected_before_an_api_call() -> None:
+    with pytest.raises(ValueError, match="does not support Flex"):
+        resolve_eval_config(provider="anthropic", service_tier="flex")
+
+
+def test_non_anthropic_eval_requires_provider_and_judge_keys() -> None:
+    config = resolve_eval_config(provider="openai")
+    with pytest.raises(ValueError, match="ANTHROPIC_API_KEY"):
+        validate_api_keys(config, {"OPENAI_API_KEY": "openai-test"})
+    validate_api_keys(
+        config,
+        {"OPENAI_API_KEY": "openai-test", "ANTHROPIC_API_KEY": "anthropic-test"},
+    )
+
+
+def test_selected_provider_does_not_require_unrelated_key() -> None:
+    config = resolve_eval_config(provider="gemini")
+    validate_api_keys(
+        config,
+        {"GEMINI_API_KEY": "gemini-test", "ANTHROPIC_API_KEY": "anthropic-test"},
+    )
+
+
+def test_provider_factory_uses_only_the_selected_provider_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    seen: dict[str, str] = {}
+
+    def _openai(*, api_key: str) -> MagicMock:
+        seen["key"] = api_key
+        return MagicMock()
+
+    monkeypatch.setattr("eval.runner.OpenAI", _openai)
+    provider = create_provider(
+        resolve_eval_config(provider="openai"), {"OPENAI_API_KEY": "selected-key"}
+    )
+
+    assert provider.name == "openai"
+    assert seen == {"key": "selected-key"}
+
+
+def test_pinned_eval_id_replaces_wal_instead_of_double_counting(
+    db_engine: Engine,
+    fixtures_root: Path,
+    log_dir: Path,
+    tmp_path: Path,
+    mock_claude: MockClaude,
+) -> None:
+    client = mock_claude([make_end_turn(_ANALYSIS_JSON), make_end_turn(_ANALYSIS_JSON)])
+    output = tmp_path / "eval-fixed.json"
+    for _ in range(2):
+        run_eval(
+            output_path=output,
+            examples=[_example("AAPL")],
+            client=client,
+            eval_run_id="eval-fixed",
+            fixtures_root=fixtures_root,
+        )
+
+    events = [json.loads(line) for line in (log_dir / "eval-fixed.jsonl").read_text().splitlines()]
+    assert sum(event["event"] == "llm_call" for event in events) == 1
 
 
 def _capture_persona(monkeypatch: pytest.MonkeyPatch) -> dict[str, object]:

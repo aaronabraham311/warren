@@ -140,10 +140,12 @@ logs/runs/        # Per-run JSONL traces (gitignored)
 ## Eval replay
 
 `python -m agent.eval --golden-set` replays the agent over the golden set against recorded
-tool fixtures and grades the results into `eval_runs`. **Working on `eval/`? Use the `/eval`
-skill** — it covers the three determinism invariants (fixture replay, `temperature=0`, a
-pinned `--eval-run-id`), the `must`/`should` severity model, how to record tool fixtures, and
-the gotchas that have already bitten.
+tool fixtures and grades the results into `eval_runs`. Provider comparisons select the runtime
+with `--provider`, `--model`, `--service-tier`, and `--reasoning-effort`; alternate providers
+use the requested model directly, while the judge remains Sonnet. The top-level output stays a
+grade list and WAL-derived usage metrics are written to adjacent `<output>.usage`. **Working on
+`eval/`? Use the `/eval` skill** — it covers fixture replay, provider-specific determinism, a
+pinned `--eval-run-id`, the `must`/`should` severity model, and fixture recording.
 
 ## Run logging — JSONL-as-WAL
 
@@ -231,6 +233,7 @@ ruff format .                  # format
 mypy .                         # type check
 pytest                         # run tests
 python -m agent.eval --golden-set --output runs/eval-2026-05-10.json  # eval replay (exits 1 on any failure)
+python -m agent.eval --golden-set --provider openai --service-tier flex --reasoning-effort medium
 streamlit run dashboard/app.py # launch the read-only dashboard (Today page)
 python -m eval.fixtures.recorder        # re-record eval fixtures for the whole golden set
 python -m eval.fixtures.recorder AAPL   # …or just one ticker (overwrites in place)
@@ -245,7 +248,9 @@ Before claiming a task complete, run and pass `ruff check .`, `mypy .`, and `pyt
 
 | Variable | Used by |
 |---|---|
-| `ANTHROPIC_API_KEY` | `agent/run.py` — constructs the Anthropic client |
+| `ANTHROPIC_API_KEY` | Anthropic runtime and the Sonnet eval judge (required for every eval provider) |
+| `OPENAI_API_KEY` | OpenAI runtime and OpenAI provider evals |
+| `GEMINI_API_KEY` | Gemini runtime and Gemini provider evals |
 | `WARREN_DB` | `storage/engine.py` — SQLite path override (default: `warren.db`) |
 | `WARREN_LOGS_DIR` | `dashboard/data.py` — JSONL run-log dir for the reasoning trace (default: `logs/runs`) |
 | `WARREN_FILINGS_DIR` | `storage/artifacts.py` — content-addressed filing artifacts (default: `local/filings`) |

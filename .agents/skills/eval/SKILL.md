@@ -23,6 +23,7 @@ Codex loads this skill automatically for matching `eval/` tasks. You can also in
 uv run python -m agent.eval --golden-set                              # grade every golden example
 uv run python -m agent.eval --golden-set --output runs/eval-2026-05-10.json
 uv run python -m agent.eval --golden-set --eval-run-id eval-baseline  # pin the id so two runs diff
+uv run python -m agent.eval --golden-set --provider openai --model gpt-5.6-luna --service-tier flex --reasoning-effort medium
 ```
 
 `uv run python -m eval.runner` is the same entrypoint; `agent/eval.py` is a shim so the command
@@ -46,11 +47,11 @@ so no `data_sources` client is ever constructed. The network is unreachable beca
 that could reach it is instantiated — *not* because a socket guard blocks it. Don't "fix" a
 missing fixture by falling back to the live tool; that silently reintroduces network variance.
 
-**2. `temperature=0`.**
-Threaded `analyze_ticker` → `_call_and_record` → `call_claude_with_caching` →
-`build_claude_request`. When `None` it is omitted from the request entirely (via
-`anthropic.omit`), so the nightly run keeps the SDK default. Only the eval passes `0.0`.
-This gets keyword-presence stability, not bit-exactness — grade on membership, never equality.
+**2. Provider-specific determinism.**
+Anthropic evals pass `temperature=0.0`; other providers omit temperature and use the requested
+reasoning effort and service tier. `FixedModelRouting` always returns the exact requested model,
+so alternate-provider evals never fall through Claude routing. This improves stability but does
+not make generations bit-exact — grade on membership, never equality.
 
 **3. A pinned `--eval-run-id`.**
 Both `write_eval_run` and `ensure_run_started` upsert, so re-running under the same id
@@ -119,6 +120,10 @@ written with `sort_keys=True`, so a fixture diff is always a real change, never 
 - **An empty `tools/` directory is not coverage.** `has_tool_fixtures` globs for actual files.
 - **The eval writes a `runs` row.** It shows up in the dashboard's run list like any other run.
   Filter on the `eval-` id prefix if that's noise.
+- **The judge remains Sonnet.** Every provider eval requires `ANTHROPIC_API_KEY`; the selected
+  runtime additionally requires `OPENAI_API_KEY` or `GEMINI_API_KEY` as appropriate.
+- **Keep output compatibility.** `--output` is a top-level grade list. Usage totals come from
+  the run WAL and belong in the adjacent `<output>.usage` file, never embedded in that list.
 
 ---
 
@@ -184,10 +189,10 @@ Tests live under `tests/test_evals/test_analysis/`, one file per script, followi
   `test_fixture_runner_never_calls_the_real_tool`, which fails loudly if replay regresses into
   dispatching a live tool.
 - `tests/test_evals/test_runner.py` — end-to-end over a `tmp_path` fixture tree with
-  `mock_claude`, asserting console output, `--output` JSON, `eval_runs` rows, and that
-  `temperature=0.0` reaches `messages.create`.
+  mocked providers, asserting console output, `--output` JSON, the `.usage` sidecar,
+  `eval_runs` rows, fixed-model routing, and provider-specific request settings.
 
 The acceptance criterion "same recommendation for ≥12/13 tickers across two runs" needs 26 live
-Sonnet calls and **is not CI-testable**. Offline we assert `temperature=0.0` reaches the API and
-that two runs over identical mocked responses produce identical grades. Verify the real thing
+Sonnet calls and **is not CI-testable**. Offline we assert provider-specific settings reach the
+API and that two runs over identical mocked responses produce identical grades. Verify the real thing
 manually with a pinned `--eval-run-id` and diff the two `--output` files.
