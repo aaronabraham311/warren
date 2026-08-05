@@ -177,6 +177,8 @@ def model_dirt_scenarios(inp: ModelDirtScenariosInput) -> DirtDecisionContract:
             raise ValueError("buy requires probability-weighted IRR of at least 20%")
         if floor.basis == "none":
             raise ValueError("buy requires a stated downside floor")
+        if adjusted is None or adjusted <= 0.0:
+            raise ValueError("buy requires a positive adjusted downside floor")
         if not timed_support:
             raise ValueError("buy requires a timed observable or contractual catalyst")
         if inp.blocking_unknowns:
@@ -186,22 +188,15 @@ def model_dirt_scenarios(inp: ModelDirtScenariosInput) -> DirtDecisionContract:
     elif inp.outcome == "watchlist" and not inp.entry_conditions:
         raise ValueError("watchlist requires at least one entry condition")
     elif inp.outcome == "pass" and weighted_irr >= 0.20:
-        reason = inp.outcome_reason.lower()
         credible_catalyst = any(
             catalyst.evidence_strength in {"contractual", "observable"}
             and catalyst.expected_by is not None
             and inp.valuation_date < catalyst.expected_by
             for catalyst in inp.catalysts
         )
-        if (
-            credible_catalyst
-            and not inp.blocking_unknowns
-            and "structural" not in reason
-            and "value trap" not in reason
-        ):
+        if credible_catalyst and not inp.blocking_unknowns:
             raise ValueError(
-                "pass above the hurdle with a credible catalyst requires a structural trap "
-                "or blocking unknown"
+                "pass above the hurdle with a credible catalyst requires a blocking unknown"
             )
 
     required_price = _required_entry_price(inp.scenarios, inp.valuation_date, 0.20)

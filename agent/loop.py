@@ -127,6 +127,28 @@ def _parse_output(text: str) -> AnalysisOutput:
     return AnalysisOutput.model_validate_json(_extract_json(text))
 
 
+def _schema_repair_prompt(
+    persona: _Persona,
+    expected_dirt_decision: BaseModel | None,
+) -> str:
+    if getattr(persona, "requires_dirt_decision", False):
+        if expected_dirt_decision is None:
+            return (
+                "Before final synthesis, call model_dirt_scenarios successfully. Then output "
+                "only JSON matching the required schema, with dirt_decision copied exactly "
+                "from that tool result."
+            )
+        return (
+            "Output only JSON matching the required schema. dirt_decision must copy the most "
+            "recent model_dirt_scenarios result exactly; recommendation must be buy only for "
+            "outcome=buy and hold for watchlist/pass."
+        )
+    return (
+        "Output only a valid JSON object matching the required schema exactly, without "
+        "markdown fences or explanation."
+    )
+
+
 def _validate_persona_output(
     result: AnalysisOutput,
     persona: _Persona,
@@ -323,11 +345,7 @@ def analyze_ticker(
                         anthropic.types.MessageParam,
                         {
                             "role": "user",
-                            "content": (
-                                "Your response was not valid JSON matching the required schema. "
-                                "Please output ONLY a valid JSON object — no markdown fences, "
-                                "no explanation — matching the schema in your instructions exactly."
-                            ),
+                            "content": _schema_repair_prompt(persona, expected_dirt_decision),
                         },
                     )
                 )

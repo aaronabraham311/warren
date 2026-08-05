@@ -11,7 +11,7 @@ from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from agent.budget import Budget, RunContext
-from agent.loop import _validate_persona_output, analyze_ticker
+from agent.loop import _schema_repair_prompt, _validate_persona_output, analyze_ticker
 from agent.models import (
     AnalysisOutput,
     DirtCashFlow,
@@ -35,9 +35,9 @@ from agent.tools.dirt_scenarios import (
     _xnpv,
     model_dirt_scenarios,
 )
-from storage.engine import write_run_start
+from storage.engine import upsert_analysis, write_run_start
 from storage.logger import RunLogger
-from storage.models import Analysis
+from storage.models import Analysis, AnalysisData
 from tests.conftest import make_end_turn, make_tool_use
 
 VALUATION_DATE = date(2026, 1, 1)
@@ -196,6 +196,8 @@ def test_xirr_uses_actual_dates_over_365() -> None:
         ),
         ({"blocking_unknowns": ["Controller identity unresolved"]}, "blocking unknowns"),
         ({"monitoring_metrics": []}, "at least two monitoring metrics"),
+        ({"downside_floor": _floor(gross=0.0)}, "positive adjusted downside floor"),
+        ({"downside_floor": _floor(haircut=1.0)}, "positive adjusted downside floor"),
     ],
 )
 def test_buy_invariants_are_enforced(update: dict[str, object], message: str) -> None:
@@ -244,7 +246,7 @@ def test_watchlist_requires_an_entry_condition() -> None:
     assert contract.outcome == "watchlist"
 
 
-def test_pass_requires_low_return_no_credible_catalyst_or_structural_trap() -> None:
+def test_pass_above_hurdle_requires_a_typed_blocking_unknown() -> None:
     entry = DirtEntryCondition(
         description="Buy at the hurdle price",
         metric="share_price",
@@ -252,7 +254,7 @@ def test_pass_requires_low_return_no_credible_catalyst_or_structural_trap() -> N
         threshold=80.0,
         currency="USD",
     )
-    with pytest.raises(ValueError, match="structural trap"):
+    with pytest.raises(ValueError, match="blocking unknown"):
         model_dirt_scenarios(
             _input(
                 outcome="pass",
@@ -266,6 +268,7 @@ def test_pass_requires_low_return_no_credible_catalyst_or_structural_trap() -> N
             outcome="pass",
             outcome_reason="A structural control trap prevents minority value realization",
             entry_conditions=[entry],
+            blocking_unknowns=["Controller blocks minority value realization"],
             monitoring_metrics=[],
         )
     )
@@ -335,6 +338,26 @@ def test_required_evidence_text_rejects_whitespace() -> None:
             source_ref=" ",
             failure_condition=" ",
         )
+
+
+def test_decision_models_forbid_unknown_fields_and_non_finite_numbers() -> None:
+    with pytest.raises(ValidationError, match="extra_forbidden"):
+        DirtCashFlow(  # type: ignore[call-arg]
+            date=date(2027, 1, 1), amount=1.0, kind="dividend", source_ref="filing:1", typo=True
+        )
+    with pytest.raises(ValidationError, match="finite_number"):
+        DirtCashFlow(
+            date=date(2027, 1, 1),
+            amount=float("nan"),
+            kind="dividend",
+            source_ref="filing:1",
+        )
+
+
+def test_dirt_schema_repair_requires_the_missing_tool_call() -> None:
+    prompt = _schema_repair_prompt(DirtPersona(), None)
+    assert "call model_dirt_scenarios" in prompt
+    assert "dirt_decision copied exactly" in prompt
 
 
 def test_tool_is_pure_registered_and_returns_validation_errors_as_data() -> None:
@@ -451,3 +474,36 @@ def test_run_persists_and_logs_synchronized_decision_projection(
     completed = next(event for event in events if event["event"] == "ticker_completed")
     assert completed["decision_outcome"] == row.decision_outcome
     assert completed["probability_weighted_irr"] == pytest.approx(row.probability_weighted_irr)
+
+
+def test_storage_derives_decision_projections_from_contract(
+    db_engine: object, db_session: Session
+) -> None:
+    from datetime import datetime, timezone
+
+    decision = model_dirt_scenarios(_input()).model_dump(mode="json")
+    write_run_start("derived-decision-projection", datetime.now(timezone.utc))
+    upsert_analysis(
+        "derived-decision-projection",
+        "AAPL",
+        AnalysisData(
+            analysis_type="discovery",
+            recommendation="buy",
+            confidence=0.8,
+            thesis="A sufficiently detailed deterministic DIRT decision thesis.",
+            lynch_signals={"pros": [], "cons": []},
+            buffett_signals={"pros": [], "cons": []},
+            key_risks=["Catalyst execution"],
+            data_quality_notes=[],
+            tool_calls_made=1,
+            tokens_used=100,
+            dirt_decision=decision,
+            decision_outcome="pass",
+            probability_weighted_irr=-1.0,
+        ),
+    )
+    db_session.expire_all()
+
+    row = db_session.query(Analysis).filter_by(run_id="derived-decision-projection").one()
+    assert row.decision_outcome == decision["outcome"] == "buy"
+    assert row.probability_weighted_irr == pytest.approx(decision["probability_weighted_irr"])

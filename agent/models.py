@@ -169,14 +169,18 @@ class DirtSignals(BaseModel):
 NonEmptyText = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
-class DirtCashFlow(BaseModel):
+class _StrictDecisionModel(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+
+
+class DirtCashFlow(_StrictDecisionModel):
     date: date
     amount: float = Field(gt=0.0)
     kind: Literal["dividend", "terminal_sale"]
     source_ref: NonEmptyText
 
 
-class DirtScenarioAssumption(BaseModel):
+class DirtScenarioAssumption(_StrictDecisionModel):
     case: Literal["bear", "base", "bull"]
     probability: float = Field(ge=0.0, le=1.0)
     assumption: NonEmptyText
@@ -193,7 +197,7 @@ class DirtScenario(DirtScenarioAssumption):
     irr: float
 
 
-class DirtDownsideFloorAssumption(BaseModel):
+class DirtDownsideFloorAssumption(_StrictDecisionModel):
     basis: Literal["ncav", "net_cash", "tangible_book", "liquidation_value", "none"]
     gross: float | None = Field(default=None, ge=0.0)
     haircut: float | None = Field(default=None, ge=0.0, le=1.0)
@@ -229,7 +233,7 @@ class DirtDownsideFloor(DirtDownsideFloorAssumption):
     coverage: float | None = Field(default=None, ge=0.0)
 
 
-class DirtCatalyst(BaseModel):
+class DirtCatalyst(_StrictDecisionModel):
     description: NonEmptyText
     category: NonEmptyText
     evidence_strength: Literal["contractual", "observable", "aspirational"]
@@ -238,7 +242,7 @@ class DirtCatalyst(BaseModel):
     failure_condition: NonEmptyText
 
 
-class DirtEntryCondition(BaseModel):
+class DirtEntryCondition(_StrictDecisionModel):
     description: NonEmptyText
     metric: NonEmptyText
     operator: Literal["lt", "lte", "eq", "gte", "gt"]
@@ -248,7 +252,7 @@ class DirtEntryCondition(BaseModel):
     source_ref: NonEmptyText | None = None
 
 
-class DirtMonitoringMetric(BaseModel):
+class DirtMonitoringMetric(_StrictDecisionModel):
     metric: NonEmptyText
     current_value: float | None = None
     warning_threshold: float | None = None
@@ -264,7 +268,7 @@ class DirtMonitoringMetric(BaseModel):
         return self
 
 
-class DirtDecisionContract(BaseModel):
+class DirtDecisionContract(_StrictDecisionModel):
     valuation_date: date
     currency: str = Field(pattern=r"^[A-Z]{3}$")
     current_price: float = Field(gt=0.0)
