@@ -53,6 +53,7 @@ from agent.tools.valuation_history import (
 )
 from data_sources.edgar_client import FilingSection, SC13Holder
 from data_sources.errors import DataSourceError
+from data_sources.filing_models import SourceSystem, TranslationStatus
 from data_sources.finnhub_client import FinnhubFinancials, FinnhubInsiderTransaction, NewsItem
 from data_sources.yfinance_client import (
     BalanceSheetRow,
@@ -571,6 +572,66 @@ def test_read_filing_translate_plumbed_through(monkeypatch: pytest.MonkeyPatch) 
     assert isinstance(result.data, FilingSection)
     assert result.data.translate is True
     assert result.data.source_language == "ja"
+    assert result.data.translation_status is TranslationStatus.FAILED
+
+
+def test_read_filing_grounded_language_wins_over_caller_hint(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    section = _filing_section().model_copy(update={"source_language": "en"})
+    monkeypatch.setattr("agent.tools.filings.edgar_client", lambda: _FakeEdgar(section))
+    monkeypatch.setattr(
+        "agent.tools.filings.yfinance_client",
+        lambda: _FakeYF(fundamentals=lambda t: DataSourceError("not_found", "no data")),
+    )
+
+    result = ReadFilingTool().run(
+        ReadFilingInput(
+            ticker="AAPL",
+            filing_type="10-K",
+            section="business",
+            translate=True,
+            source_language="ja",
+        ),
+        _ctx(),
+    )
+
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, FilingSection)
+    assert result.data.source_language == "en"
+    assert result.data.output_language == "en"
+    assert result.data.translation_status is TranslationStatus.NOT_NEEDED
+
+
+def test_read_filing_uses_source_neutral_stored_regional_document(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    section = _filing_section(section="full_document").model_copy(
+        update={
+            "ticker": "DIR.MI",
+            "filing_type": "annual",
+            "source_language": "it",
+            "source_system": SourceSystem.BORSA_ITALIANA,
+        }
+    )
+    monkeypatch.setattr("agent.tools.filings.stored_filing_client", lambda: _FakeEdgar(section))
+    monkeypatch.setattr(
+        "agent.tools.filings.edgar_client",
+        lambda: (_ for _ in ()).throw(AssertionError("EDGAR must not be called")),
+    )
+    monkeypatch.setattr(
+        "agent.tools.filings.yfinance_client",
+        lambda: _FakeYF(fundamentals=lambda t: DataSourceError("not_found", "no data")),
+    )
+
+    result = ReadFilingTool().run(
+        ReadFilingInput(ticker="DIR.MI", filing_type="annual", section="full_document"),
+        _ctx(),
+    )
+
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, FilingSection)
+    assert result.data.source_system is SourceSystem.BORSA_ITALIANA
 
 
 def test_read_filing_aggregator_discrepancy_note_populated(
@@ -1960,6 +2021,12 @@ def test_tool_input_schema_accepts_suffix_tickers(ticker: str) -> None:
 def test_read_filing_input_accepts_g12_alphanumeric_symbols(ticker: str) -> None:
     request = ReadFilingInput(ticker=ticker, filing_type="10-K", section="business")
     assert request.ticker == ticker
+
+
+def test_read_filing_input_accepts_source_neutral_regional_contract() -> None:
+    request = ReadFilingInput(ticker="DIR.MI", filing_type="annual", section="full_document")
+    assert request.filing_type == "annual"
+    assert request.section == "full_document"
 
 
 def test_tool_input_schema_rejects_garbage_ticker() -> None:

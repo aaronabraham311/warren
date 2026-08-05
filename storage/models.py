@@ -205,6 +205,11 @@ class FilingManifest(Base):
     issuer_isin: Mapped[str | None] = mapped_column(Text)
     venue: Mapped[str] = mapped_column(Text, nullable=False)
     source_system: Mapped[str] = mapped_column(Text, nullable=False)
+    upstream_id: Mapped[str | None] = mapped_column(Text)
+    document_kind: Mapped[str | None] = mapped_column(Text)
+    title: Mapped[str | None] = mapped_column(Text)
+    publication_date: Mapped[date | None] = mapped_column(Date)
+    reporting_period_end: Mapped[date | None] = mapped_column(Date)
     landing_page_url: Mapped[str | None] = mapped_column(Text)
     direct_document_url: Mapped[str] = mapped_column(Text, nullable=False)
     mime_type: Mapped[str] = mapped_column(Text, nullable=False)
@@ -217,6 +222,10 @@ class FilingManifest(Base):
     parser_version: Mapped[str | None] = mapped_column(Text)
     extraction_version: Mapped[str | None] = mapped_column(Text)
     translation_version: Mapped[str | None] = mapped_column(Text)
+    extracted_text_checksum: Mapped[str | None] = mapped_column(Text)
+    extracted_text_artifact_key: Mapped[str | None] = mapped_column(Text)
+    translated_text_checksum: Mapped[str | None] = mapped_column(Text)
+    translated_text_artifact_key: Mapped[str | None] = mapped_column(Text)
     artifact_key: Mapped[str] = mapped_column(Text, nullable=False)
     supersedes_checksum: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
@@ -252,4 +261,11 @@ Index(
     "idx_filing_manifests_document_versions",
     FilingManifest.filing_id,
     FilingManifest.retrieved_at.desc(),
+)
+Index(
+    "idx_filing_manifests_selection",
+    FilingManifest.issuer_isin,
+    FilingManifest.document_kind,
+    FilingManifest.reporting_period_end.desc(),
+    FilingManifest.publication_date.desc(),
 )

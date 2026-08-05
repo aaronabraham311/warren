@@ -112,6 +112,11 @@ CREATE TABLE IF NOT EXISTS filing_manifests (
   issuer_isin TEXT,
   venue TEXT NOT NULL,
   source_system TEXT NOT NULL,
+  upstream_id TEXT,
+  document_kind TEXT,
+  title TEXT,
+  publication_date DATE,
+  reporting_period_end DATE,
   landing_page_url TEXT,
   direct_document_url TEXT NOT NULL,
   mime_type TEXT NOT NULL,
@@ -124,6 +129,10 @@ CREATE TABLE IF NOT EXISTS filing_manifests (
   parser_version TEXT,
   extraction_version TEXT,
   translation_version TEXT,
+  extracted_text_checksum TEXT,
+  extracted_text_artifact_key TEXT,
+  translated_text_checksum TEXT,
+  translated_text_artifact_key TEXT,
   artifact_key TEXT NOT NULL,
   supersedes_checksum TEXT,
   created_at TIMESTAMP NOT NULL,
@@ -150,3 +159,6 @@ CREATE INDEX IF NOT EXISTS idx_filing_manifests_issuer_date
   ON filing_manifests(issuer_isin, retrieved_at DESC);
 CREATE INDEX IF NOT EXISTS idx_filing_manifests_document_versions
   ON filing_manifests(filing_id, retrieved_at DESC);
+CREATE INDEX IF NOT EXISTS idx_filing_manifests_selection
+  ON filing_manifests(issuer_isin, document_kind,
+                      reporting_period_end DESC, publication_date DESC);

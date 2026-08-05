@@ -185,6 +185,26 @@ def test_document_text_rejects_inexact_partial_translation_coverage() -> None:
         )
 
 
+def test_document_text_records_failed_translation_coverage() -> None:
+    document = DocumentText(
+        filing_id="filing_failed",
+        sha256="e" * 64,
+        source_url="https://example.test/failed.pdf",
+        retrieved_at=datetime.now(timezone.utc),
+        extraction_method=ExtractionMethod.EMBEDDED_TEXT,
+        source_language="pl",
+        pages=[DocumentPage(page_number=1, text="Pierwsza")],
+        translation_missing_pages=[1],
+        translation_status=TranslationStatus.FAILED,
+        page_count=1,
+        original_char_count=8,
+        extracted_char_count=8,
+        coverage_notes=["Page 1 translation failed."],
+    )
+
+    assert document.translation_missing_pages == [1]
+
+
 def test_filings_archive_exposes_ordered_coverage_envelope() -> None:
     filing = _document_ref(direct_url="https://issuer.example/report.pdf")
     archive = FilingsArchive(
