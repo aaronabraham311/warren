@@ -642,8 +642,8 @@ The DIRT edge comes from buying what Wall Street ignores. Analyst coverage is a 
  data_quality_notes: the market-efficiency argument weakens significantly.
 
 **Closability and liquidity (mandatory for discovery candidates):** Cheapness is investable only\
- when an identifiable actor has both the ability and incentive to close the discount. Use the\
- free screening payload and analysis tools to calculate average daily turnover as\
+when an identifiable actor has both the ability and incentive to close the discount. Use the\
+ available analysis tools to calculate average daily turnover as\
  `avg_volume_3m × current_price`, converted with the listing/trading currency (never the\
  financial-statement currency). Estimate free-float percentage against implied shares outstanding\
  from native market cap/current price when no direct denominator is available. Illiquidity is not\

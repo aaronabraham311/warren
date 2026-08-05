@@ -286,8 +286,16 @@ def _closability_checks(
             and valuation_currency is not None
             and trading_currency == valuation_currency
         )
-        if currencies_align and native_cap is not None and native_cap > 0 and usd_cap is not None:
-            fx_rate = float(usd_cap) / float(native_cap)
+        if (
+            currencies_align
+            and native_cap is not None
+            and native_cap > 0
+            and usd_cap is not None
+            and usd_cap > 0
+        ):
+            candidate_fx_rate = float(usd_cap) / float(native_cap)
+            if candidate_fx_rate > 0:
+                fx_rate = candidate_fx_rate
         else:
             notes.append("trading-currency FX alignment unavailable; turnover remains unknown")
         if price is not None and price > 0 and volume is not None and volume >= 0 and fx_rate:
@@ -304,10 +312,11 @@ def _closability_checks(
         ):
             implied_shares_outstanding = float(native_cap) / price
             if implied_shares_outstanding > 0:
-                free_float_pct = round(
-                    _clamp(float(fundamentals.float_shares) / implied_shares_outstanding) * 100,
-                    2,
-                )
+                free_float_fraction = float(fundamentals.float_shares) / implied_shares_outstanding
+                if 0.0 <= free_float_fraction <= 1.0:
+                    free_float_pct = round(free_float_fraction * 100, 2)
+                else:
+                    notes.append("free-float inputs are inconsistent")
         if free_float_pct is None:
             notes.append("free-float denominator unavailable")
 

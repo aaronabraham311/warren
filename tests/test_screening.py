@@ -482,6 +482,22 @@ def test_missing_or_misaligned_trading_currency_keeps_turnover_unknown() -> None
     assert "turnover remains unknown" in " ".join(missing.data_quality)
 
 
+def test_invalid_market_cap_and_free_float_inputs_stay_unknown() -> None:
+    signals = _closability_checks(
+        _value_fundamentals(
+            float_shares=20_000_000,
+            avg_volume_3m=1_000,
+            current_price=5.0,
+            trading_currency="EUR",
+        ),
+        _valuation(market_cap_native=50_000_000, market_cap_usd=0, currency="EUR"),
+    )
+
+    assert signals.daily_turnover_usd is None
+    assert signals.free_float_pct is None
+    assert "free-float inputs are inconsistent" in signals.data_quality
+
+
 def test_illiquidity_annotates_and_ranks_but_never_excludes() -> None:
     fundamentals = _value_fundamentals(
         float_shares=100_000,

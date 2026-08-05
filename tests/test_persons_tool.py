@@ -366,7 +366,7 @@ def test_tool_controlling_holder_identified(monkeypatch: pytest.MonkeyPatch) -> 
     assert data.controlling_holder_identified is True
 
 
-def test_holder_percent_of_float_is_normalized_to_percent_of_company(
+def test_reported_percent_out_takes_precedence_over_recomputed_denominator(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     yf_fix: dict[str, object] = {
@@ -388,8 +388,8 @@ def test_holder_percent_of_float_is_normalized_to_percent_of_company(
     assert isinstance(result, ToolResultOk)
     assert isinstance(result.data, KeyPersonsData)
     holder = next(person for person in result.data.persons if person.name == "Outside Fund")
-    assert holder.ownership_pct == pytest.approx(6.0)
-    assert result.data.controlling_holder_identified is False
+    assert holder.ownership_pct == pytest.approx(20.0)
+    assert result.data.controlling_holder_identified is True
 
 
 def test_regional_control_is_unknown_and_officer_age_is_preserved(
@@ -426,7 +426,7 @@ def test_regional_control_is_unknown_and_officer_age_is_preserved(
     assert result.data.controlling_holder_identified is None
     founder = result.data.persons[0]
     assert founder.birth_year == 1952
-    assert founder.age == 74
+    assert founder.age == 73
     assert founder.age_as_of == date(2026, 8, 5)
 
 
@@ -462,7 +462,41 @@ def test_regional_positive_normalized_control_evidence_wins_over_unknown_default
     assert isinstance(result, ToolResultOk)
     assert isinstance(result.data, KeyPersonsData)
     assert result.data.controlling_holder_identified is True
-    assert result.data.persons[0].ownership_pct == pytest.approx(74.99)
+    assert result.data.persons[0].ownership_pct == pytest.approx(85.0)
+
+
+def test_reported_holder_percentage_survives_missing_share_denominator(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    raw = KeyPersonsRaw(
+        ticker="DIR.MI",
+        as_of=date(2026, 8, 5),
+        officers=[],
+        institutional_holders=[
+            InstitutionalHolderRecord(
+                name="Reported Fund",
+                shares=None,
+                pct_held=0.25,
+                value=None,
+            )
+        ],
+        shares_outstanding=None,
+        data_age_hours=0,
+    )
+    yf_mock = MagicMock(spec=YFinanceClient)
+    yf_mock.get_key_persons.return_value = raw
+    edgar_mock = MagicMock(spec=EDGARClient)
+    edgar_mock.get_sc13_holders.return_value = []
+    monkeypatch.setattr("agent.tools.persons.yfinance_client", lambda: yf_mock)
+    monkeypatch.setattr("agent.tools.persons.edgar_client", lambda: edgar_mock)
+
+    result = GetKeyPersonsTool().run(GetKeyPersonsInput(ticker="DIR.MI"), _FakeCtx())  # type: ignore[arg-type]
+
+    from agent.tools.base import ToolResultOk
+
+    assert isinstance(result, ToolResultOk)
+    assert isinstance(result.data, KeyPersonsData)
+    assert result.data.persons[0].ownership_pct == pytest.approx(25.0)
 
 
 def test_tool_edgar_failure_graceful(monkeypatch: pytest.MonkeyPatch) -> None:

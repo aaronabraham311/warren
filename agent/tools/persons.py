@@ -40,7 +40,13 @@ class KeyPersonsData(BaseModel):
 def _persons_from_yf(raw: KeyPersonsRaw) -> list[KeyPerson]:
     persons: list[KeyPerson] = []
     for off in raw.officers:
-        age = raw.as_of.year - off.year_born if off.year_born is not None else off.reported_age
+        age = (
+            off.reported_age
+            if off.reported_age is not None and 0 <= off.reported_age <= 130
+            else raw.as_of.year - off.year_born
+            if off.year_born is not None
+            else None
+        )
         persons.append(
             KeyPerson(
                 name=off.name,
@@ -53,19 +59,19 @@ def _persons_from_yf(raw: KeyPersonsRaw) -> list[KeyPerson]:
             )
         )
     for ih in raw.institutional_holders:
-        company_pct = (
-            ih.shares / raw.shares_outstanding
-            if ih.shares is not None
-            and raw.shares_outstanding is not None
-            and raw.shares_outstanding > 0
-            else None
-        )
-        if company_pct is not None:
-            if company_pct < _MAJOR_HOLDER_THRESHOLD:
-                continue
-        elif ih.pct_held is None or ih.pct_held < _MAJOR_HOLDER_THRESHOLD:
+        if ih.pct_held is not None:
+            company_pct = ih.pct_held if 0.0 <= ih.pct_held <= 1.0 else None
+        else:
+            company_pct = (
+                ih.shares / raw.shares_outstanding
+                if ih.shares is not None
+                and raw.shares_outstanding is not None
+                and raw.shares_outstanding > 0
+                else None
+            )
+        if company_pct is None or company_pct < _MAJOR_HOLDER_THRESHOLD:
             continue
-        pct = round(company_pct * 100, 4) if company_pct is not None else None
+        pct = round(company_pct * 100, 4)
         persons.append(
             KeyPerson(
                 name=ih.name,

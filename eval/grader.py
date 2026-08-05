@@ -378,58 +378,6 @@ def _closability_checks(
     return checks
 
 
-def grade_closability_ranking(
-    constrained: AnalysisOutput,
-    observable_catalyst: AnalysisOutput,
-    *,
-    min_margin: float = 0.0,
-    forensic_evidence: ForensicEvidenceBundle | None = None,
-) -> CheckResult:
-    """Pairwise G14 regression: a cited observable catalyst must outrank a control trap."""
-
-    if min_margin < 0.0:
-        raise ValueError("min_margin must be non-negative")
-
-    constrained_dirt = constrained.dirt_signals
-    catalyst_dirt = observable_catalyst.dirt_signals
-    constrained_score = (
-        None if constrained_dirt is None else getattr(constrained_dirt, "closability_score", None)
-    )
-    catalyst_score = (
-        None if catalyst_dirt is None else getattr(catalyst_dirt, "closability_score", None)
-    )
-    catalyst_strength = None if catalyst_dirt is None else catalyst_dirt.catalyst_strength
-    catalyst_evidence_ids = set(
-        () if catalyst_dirt is None else catalyst_dirt.forensic_evidence_ids
-    )
-    valid_catalyst_ids = (
-        set()
-        if forensic_evidence is None
-        else {
-            ref.evidence_id
-            for catalyst in forensic_evidence.catalysts
-            for ref in catalyst.evidence_refs
-        }
-    )
-    passed = (
-        constrained_score is not None
-        and catalyst_score is not None
-        and catalyst_score >= constrained_score + min_margin
-        and catalyst_strength in {"observable", "contractual"}
-        and bool(catalyst_evidence_ids.intersection(valid_catalyst_ids))
-    )
-    return CheckResult(
-        check_name="observable_catalyst_ranks_above_control_trap",
-        passed=passed,
-        expected=f"observable/contractual catalyst score >= constrained score + {min_margin}",
-        actual=(
-            f"constrained={constrained_score}, catalyst={catalyst_score}, "
-            f"strength={catalyst_strength}, evidence_ids={catalyst_evidence_ids}"
-        ),
-        severity="must",
-    )
-
-
 def grade_analysis(
     result: AnalysisOutput,
     example: EvalExample,

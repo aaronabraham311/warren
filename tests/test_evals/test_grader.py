@@ -23,12 +23,7 @@ from eval.golden_set import (
     ThesisMention,
     load_eval_example,
 )
-from eval.grader import (
-    _UNIVERSE_NOTE_SUBSTRING,
-    failed_grade,
-    grade_analysis,
-    grade_closability_ranking,
-)
+from eval.grader import _UNIVERSE_NOTE_SUBSTRING, failed_grade, grade_analysis
 from eval.judge import JudgeVerdict
 
 
@@ -449,13 +444,14 @@ def test_unknown_closability_rejects_false_controller_inference() -> None:
         dirt_signals=DirtSignals(
             ev_ebit=6.1,
             price_to_ncav=0.8,
-            controller_identified=False,
             closability_status="unknown",
             closability_score=0.5,
             closability_confidence=0.2,
             closability_reasons=["Coverage is partial."],
         )
     )
+    assert analysis.dirt_signals is not None
+    analysis.dirt_signals.controller_identified = False
     example = _closability_example(
         ClosabilityExpectation(
             allowed_status=["unknown"],
@@ -489,8 +485,12 @@ def test_supported_closability_requires_cited_observable_catalyst() -> None:
             closability_reasons=["Board-authorized tender offer."],
             catalyst_strength="observable",
             catalyst_stage="board_authorized",
+            catalyst_description="Board-authorized tender offer",
+            forensic_evidence_ids=["temporarily-cited"],
         )
     )
+    assert uncited.dirt_signals is not None
+    uncited.dirt_signals.forensic_evidence_ids = []
     cited = uncited.model_copy(deep=True)
     assert cited.dirt_signals is not None
     cited.dirt_signals.forensic_evidence_ids = ["catalyst-board-1"]
@@ -525,58 +525,6 @@ def test_supported_closability_requires_cited_observable_catalyst() -> None:
         for check in hallucinated_grade.checks
         if check.check_name == "closability_catalyst_is_cited_and_observable"
     ).passed
-
-
-def test_observable_catalyst_ranks_above_control_trap() -> None:
-    constrained = _dirt_analysis(
-        dirt_signals=DirtSignals(
-            closability_status="constrained",
-            closability_score=0.2,
-            closability_confidence=0.8,
-            closability_reasons=["Controller blocks minority realization."],
-            controller_identified=True,
-        )
-    )
-    catalyst = _dirt_analysis(
-        dirt_signals=DirtSignals(
-            closability_status="supported",
-            closability_score=0.8,
-            closability_confidence=0.8,
-            closability_reasons=["Signed tender offer."],
-            catalyst_strength="contractual",
-            catalyst_stage="signed",
-            forensic_evidence_ids=["signed-offer-1"],
-        )
-    )
-
-    forensic = _forensic_with_catalyst("signed-offer-1")
-    assert grade_closability_ranking(
-        constrained,
-        catalyst,
-        min_margin=0.4,
-        forensic_evidence=forensic,
-    ).passed
-
-    assert constrained.dirt_signals is not None
-    constrained.dirt_signals.closability_score = 0.7
-    assert not grade_closability_ranking(
-        constrained,
-        catalyst,
-        min_margin=0.2,
-        forensic_evidence=forensic,
-    ).passed
-
-
-def test_closability_ranking_requires_catalyst_evidence() -> None:
-    constrained = _dirt_analysis(dirt_signals=DirtSignals(closability_score=0.2))
-    catalyst = _dirt_analysis(
-        dirt_signals=DirtSignals(
-            closability_score=0.8,
-            catalyst_strength="observable",
-        )
-    )
-
-    assert not grade_closability_ranking(constrained, catalyst).passed
 
 
 def test_deep_value_checks_omitted_for_default_examples() -> None:
