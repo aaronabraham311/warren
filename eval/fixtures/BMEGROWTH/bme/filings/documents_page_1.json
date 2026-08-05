@@ -1,0 +1,31 @@
+{
+  "totalResults": 3,
+  "params": {
+    "companyKey": "05509",
+    "page": 1,
+    "pageSize": 2
+  },
+  "hasMoreResults": false,
+  "data": [
+    {
+      "types": [{"key": "021", "value": "Operaciones realizadas por directivos"}],
+      "companyKey": "05509",
+      "financialInfoYear": 0,
+      "financialInfoPeriod": null,
+      "annexes": [],
+      "relatedTo": null,
+      "replaces": null,
+      "replacedBy": [{"id": "115936"}],
+      "rectifies": null,
+      "rectifiedBy": [],
+      "id": "115930",
+      "documentType": "OtherRelevantInformation",
+      "segment": "BMEGrowth",
+      "title": "Operaciones realizadas por directivos - Transactions carried out by executives",
+      "date": "20251219",
+      "hour": "1750",
+      "url": "/MTFDocuments/OtraInfRelevante/2025/12/05509_OtraInfRelev_20251219.pdf",
+      "size": "291 KB"
+    }
+  ]
+}

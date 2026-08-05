@@ -1,0 +1,60 @@
+{
+  "totalResults": 3,
+  "params": {
+    "companyKey": "05509",
+    "page": 0,
+    "pageSize": 2
+  },
+  "hasMoreResults": true,
+  "data": [
+    {
+      "types": [{"key": "001", "value": "Informes financieros anuales y de auditoría"}],
+      "companyKey": "05509",
+      "financialInfoYear": 2025,
+      "financialInfoPeriod": "AN",
+      "annexes": [],
+      "relatedTo": null,
+      "replaces": null,
+      "replacedBy": [],
+      "rectifies": null,
+      "rectifiedBy": [],
+      "id": "118463",
+      "documentType": "OtherRelevantInformation",
+      "segment": "BMEGrowth",
+      "title": "Financial information and other information for fiscal year 2025",
+      "date": "20260430",
+      "hour": "0722",
+      "url": "/MTFDocuments/OtraInfRelevante/2026/04/05509_OtraInfRelev_20260429_1.pdf",
+      "size": "5 MB"
+    },
+    {
+      "types": [{"key": "021", "value": "Operaciones realizadas por directivos"}],
+      "companyKey": "05509",
+      "financialInfoYear": 0,
+      "financialInfoPeriod": null,
+      "annexes": [],
+      "relatedTo": null,
+      "replaces": {
+        "id": "115930",
+        "documentType": "OtherRelevantInformation",
+        "segment": "BMEGrowth",
+        "title": "Operaciones realizadas por directivos - Transactions carried out by executives",
+        "date": "20251219",
+        "hour": "1750",
+        "url": "/MTFDocuments/OtraInfRelevante/2025/12/05509_OtraInfRelev_20251219.pdf",
+        "size": "291 KB"
+      },
+      "replacedBy": [],
+      "rectifies": null,
+      "rectifiedBy": [],
+      "id": "115936",
+      "documentType": "OtherRelevantInformation",
+      "segment": "BMEGrowth",
+      "title": "Operaciones realizadas por directivos - Transactions carried out by executives",
+      "date": "20251219",
+      "hour": "2006",
+      "url": "/MTFDocuments/OtraInfRelevante/2025/12/05509_OtraInfRelev_20251219_1.pdf",
+      "size": "291 KB"
+    }
+  ]
+}
