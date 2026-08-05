@@ -1,34 +1,218 @@
-ticker
-A2A.MI
-AMP.MI
-BAMI.MI
-BGN.MI
-BMED.MI
-CPR.MI
-DIA.MI
-DIR.MI
-ENEL.MI
-ENI.MI
-ERG.MI
-FBK.MI
-G.MI
-IG.MI
-INW.MI
-IP.MI
-ISP.MI
-LDO.MI
-MB.MI
-MONC.MI
-NEXI.MI
-PIRC.MI
-PRY.MI
-PST.MI
-RACE.MI
-REC.MI
-SRG.MI
-STLAM.MI
-TEN.MI
-TIT.MI
-TRN.MI
-UCG.MI
-UNI.MI
+ticker,venue,mic,exchange_symbol,isin,legal_name,identity_source_url,resolved_at
+AAT.MI,euronext_growth_milan,EXGM,AAT,IT0005548521,AATECH,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ABC.MI,euronext_growth_milan,EXGM,ABC,IT0005466294,ABC COMPANY,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ABP.MI,euronext_growth_milan,EXGM,ABP,IT0005439861,A.B.P. NOCIVELLI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ABTG.MI,euronext_growth_milan,EXGM,ABTG,IT0005244030,ALFIO BARDOLLA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ACQ.MI,euronext_growth_milan,EXGM,ACQ,IT0005443061,ACQUAZZURRA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ADV.MI,euronext_growth_milan,EXGM,ADV,IT0005607715,ADVENTURE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+AGAIN.MI,euronext_growth_milan,EXGM,AGAIN,IT0005577090,CLOUDIA RESEARCH,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+AIM.MI,euronext_growth_milan,EXGM,AIM,IT0005204729,4AIM SICAF,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+AIM2.MI,euronext_growth_milan,EXGM,AIM2,IT0005440323,4AIM SICAF COMP 2,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ALFO.MI,euronext_growth_milan,EXGM,ALFO,IT0005466039,ALFONSINO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ALMS.MI,euronext_growth_milan,EXGM,ALMS,IT0005717241,ALIA MENTIS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+AMB.MI,euronext_growth_milan,EXGM,AMB,IT0004779515,AMBROMOBILIARE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+AMI.MI,euronext_growth_milan,EXGM,AMI,IT0005664641,FRIENDS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ARBS.MI,euronext_growth_milan,EXGM,ARBS,IT0005386369,ARTERRA BIOSCIENCE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ART.MI,euronext_growth_milan,EXGM,ART,IT0005528937,DEODATO.GALLERY,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ATON.MI,euronext_growth_milan,EXGM,ATON,IT0005449464,ATON GREEN STORAGE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+BELL.MI,euronext_growth_milan,EXGM,BELL,IT0005497042,BELLINI NAUTICA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+BF.MI,euronext_growth_milan,EXGM,BF,IT0003516066,BOLOGNAFIERE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CBB.MI,euronext_growth_milan,EXGM,CBB,IT0005377277,CLEANBNB,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CDG.MI,euronext_growth_milan,EXGM,CDG,IT0005003782,CASTA DIVA GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CFL.MI,euronext_growth_milan,EXGM,CFL,IT0005465619,COFLE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CFV.MI,euronext_growth_milan,EXGM,CFV,IT0005379604,CONFINVEST ORO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CGF.MI,euronext_growth_milan,EXGM,CGF,IT0005618043,COGEFEED,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CIRC.MI,euronext_growth_milan,EXGM,CIRC,IT0005344996,CIRCLE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CLABO.MI,euronext_growth_milan,EXGM,CLABO,IT0005091324,CLABO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CMTL.MI,euronext_growth_milan,EXGM,CMTL,IT0005632945,COM.TEL,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+COP.MI,euronext_growth_milan,EXGM,COP,IT0005379406,COPERNICO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CORE.MI,euronext_growth_milan,EXGM,CORE,IT0005461303,ALLCORE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+COSMO.MI,euronext_growth_milan,EXGM,COSMO,IT0005487670,FARMACOSMO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CREG.MI,euronext_growth_milan,EXGM,CREG,IT0005408593,CREACTIVES GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CUBE.MI,euronext_growth_milan,EXGM,CUBE,IT0005532483,CUBE LABS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CVG.MI,euronext_growth_milan,EXGM,CVG,IT0005426215,CONVERGENZE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+CYB.MI,euronext_growth_milan,EXGM,CYB,IT0005546103,CYBEROO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+D.MI,euronext_growth_milan,EXGM,D,IT0001463063,DIRECTA SIM,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DATA.MI,euronext_growth_milan,EXGM,DATA,IT0005468357,DATRIX,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DBA.MI,euronext_growth_milan,EXGM,DBA,IT0005285942,DBA GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DDM.MI,euronext_growth_milan,EXGM,DDM,IT0005659724,DEDEM,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DEA.MI,euronext_growth_milan,EXGM,DEA,IT0005600249,DIS ELET ADRIATICA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DGT.MI,euronext_growth_milan,EXGM,DGT,IT0005089476,DIGITOUCH,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DHH.MI,euronext_growth_milan,EXGM,DHH,IT0005203622,DHH,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DIT.MI,euronext_growth_milan,EXGM,DIT,IT0005454027,DESTINATION ITALIA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DOT.MI,euronext_growth_milan,EXGM,DOT,IT0005523839,DOTSTAY,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DOX.MI,euronext_growth_milan,EXGM,DOX,IT0005394413,DOXEE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+DPG.MI,euronext_growth_milan,EXGM,DPG,IT0005716813,DIPIETRO GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+E9IA.MI,euronext_growth_milan,EXGM,E9IA,IT0005391229,E-NOVIA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+EAV.MI,euronext_growth_milan,EXGM,EAV,IT0005562183,EMMA VILLAS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ECK.MI,euronext_growth_milan,EXGM,ECK,IT0005654766,ECOSUNTEK,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ECMB.MI,euronext_growth_milan,EXGM,ECMB,IT0005543332,ECOMEMBRANE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+EDAC.MI,euronext_growth_milan,EXGM,EDAC,IT0005351504,EDILIZIACROBATICA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+EGB.MI,euronext_growth_milan,EXGM,EGB,IT0005557514,E-GLOBE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+EGN.MI,euronext_growth_milan,EXGM,EGN,IT0005586497,EGOMNIA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+EHI.MI,euronext_growth_milan,EXGM,EHI,IT0005723405,EHI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ELB.MI,euronext_growth_milan,EXGM,ELB,IT0005627762,EDGELAB,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ELSA.MI,euronext_growth_milan,EXGM,ELSA,IT0005561466,ELSA SOLUTIONS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ENA.MI,euronext_growth_milan,EXGM,ENA,IT0005468290,ENA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ENT.MI,euronext_growth_milan,EXGM,ENT,IT0005353575,ENTERA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ENY.MI,euronext_growth_milan,EXGM,ENY,IT0005500712,ENERGY,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+EPRB.MI,euronext_growth_milan,EXGM,EPRB,IT0005519837,EPRCOMUNICAZIONE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ERFO.MI,euronext_growth_milan,EXGM,ERFO,IT0005497885,LAB FARMACEUT ERFO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ESAU.MI,euronext_growth_milan,EXGM,ESAU,IT0005337107,ESAUTOMOTION,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ESF.MI,euronext_growth_milan,EXGM,ESF,IT0005561441,EDIL SAN FELICE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ESIGM.MI,euronext_growth_milan,EXGM,ESIGM,IT0005421885,ESI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ESPE.MI,euronext_growth_milan,EXGM,ESPE,IT0005573818,ESPE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ESTM.MI,euronext_growth_milan,EXGM,ESTM,IT0005468191,ESTRIMA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ET.MI,euronext_growth_milan,EXGM,ET,IT0005660219,ENERGY TIME,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ETI.MI,euronext_growth_milan,EXGM,ETI,IT0005720005,ETI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ETS.MI,euronext_growth_milan,EXGM,ETS,IT0005669558,E.T.S.,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+EVISO.MI,euronext_growth_milan,EXGM,EVISO,IT0005430936,EVISO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+EXAI.MI,euronext_growth_milan,EXGM,EXAI,IT0004496029,EXPERT.AI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+EXEC.MI,euronext_growth_milan,EXGM,EXEC,IT0005557530,EXECUS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+FAE.MI,euronext_growth_milan,EXGM,FAE,IT0005500688,FAE TECHNOLOGY,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+FARM.MI,euronext_growth_milan,EXGM,FARM,IT0004674666,H-FARM,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+FCH.MI,euronext_growth_milan,EXGM,FCH,IT0005508574,FRANCHETTI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+FIC.MI,euronext_growth_milan,EXGM,FIC,IT0005252736,FIRST CAPITAL,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+FPE.MI,euronext_growth_milan,EXGM,FPE,IT0005203424,FOPE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+FPT.MI,euronext_growth_milan,EXGM,FPT,IT0005720500,FIRST POINT,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+FRE.MI,euronext_growth_milan,EXGM,FRE,IT0004819857,FRENDY ENERGY,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+FTC.MI,euronext_growth_milan,EXGM,FTC,IT0005475162,FINANZA.TECH,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+FUM.MI,euronext_growth_milan,EXGM,FUM,IT0005335754,FRANCHI UMB MARMI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GAIN.MI,euronext_growth_milan,EXGM,GAIN,IT0005672461,gAIn360,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GAMB.MI,euronext_growth_milan,EXGM,GAMB,IT0005122392,GAMBERO ROSSO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GCOM.MI,euronext_growth_milan,EXGM,GCOM,IT0005453003,GIGLIO.COM,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GDT.MI,euronext_growth_milan,EXGM,GDT,IT0005723074,GUIDOTTI SHIPS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GEL.MI,euronext_growth_milan,EXGM,GEL,IT0005312365,GEL,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GIS.MI,euronext_growth_milan,EXGM,GIS,IT0005391138,GISMONDI 1754,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GM.MI,euronext_growth_milan,EXGM,GM,IT0005531261,GENTILI MOSCONI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GML.MI,euronext_growth_milan,EXGM,GML,IT0005498610,G.M. LEATHER,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GMS.MI,euronext_growth_milan,EXGM,GMS,IT0005652489,GIOCAMONDO STUDY,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GPSY.MI,euronext_growth_milan,EXGM,GPSY,IT0005722191,GIUNTI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GRAL.MI,euronext_growth_milan,EXGM,GRAL,IT0005332595,GRIFAL,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GRN.MI,euronext_growth_milan,EXGM,GRN,IT0005549768,GREEN OLEO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GROW.MI,euronext_growth_milan,EXGM,GROW,IT0005040354,GROWENS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+GT.MI,euronext_growth_milan,EXGM,GT,IT0005607699,GT TALENT GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+HIK.MI,euronext_growth_milan,EXGM,HIK,IT0005628778,HAIKI+,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+HLX.MI,euronext_growth_milan,EXGM,HLX,IT0005451213,HELYX INDUSTRIES,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+HQF.MI,euronext_growth_milan,EXGM,HQF,IT0005450694,HIGH QUALITY FOOD,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+HZY.MI,euronext_growth_milan,EXGM,HZY,IT0005468662,HOMIZY,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+IB.MI,euronext_growth_milan,EXGM,IB,IT0005037905,INIZIAT BRESCIANE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ICC.MI,euronext_growth_milan,EXGM,ICC,IT0005469371,INTERNAT CARE COMP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ICF.MI,euronext_growth_milan,EXGM,ICF,IT0005416281,IND CHIMICHE FORES,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ICOP.MI,euronext_growth_milan,EXGM,ICOP,IT0001214433,I.CO.P.,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+IDNTT.MI,euronext_growth_milan,EXGM,IDNTT,CH1118852594,IDNTT,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ILLA.MI,euronext_growth_milan,EXGM,ILLA,IT0005578395,ILLA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ILP.MI,euronext_growth_milan,EXGM,ILP,IT0005359101,ILPRA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+IMD.MI,euronext_growth_milan,EXGM,IMD,IT0005549255,I.M.D.,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+INC.MI,euronext_growth_milan,EXGM,INC,IT0005412298,INNOVATEC,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ISC.MI,euronext_growth_milan,EXGM,ISC,IT0005474108,ISCC FINTECH,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+ITD.MI,euronext_growth_milan,EXGM,ITD,IT0005337818,INTRED,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+IVN.MI,euronext_growth_milan,EXGM,IVN,IT0005554784,IVISION TECH,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+IWB.MI,euronext_growth_milan,EXGM,IWB,IT0005075764,ITALIAN WINE BRAND,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+KLN.MI,euronext_growth_milan,EXGM,KLN,IT0005678104,KALEON,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+LDB.MI,euronext_growth_milan,EXGM,LDB,IT0005469272,LINDBERGH,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+LFG.MI,euronext_growth_milan,EXGM,LFG,IT0004973696,LEONE FILM GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+LMG.MI,euronext_growth_milan,EXGM,LMG,IT0004522162,LUCISANO MEDIA G,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+LON.MI,euronext_growth_milan,EXGM,LON,IT0005337073,LONGINO&CARDENAL,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+LS.MI,euronext_growth_milan,EXGM,LS,IT0005573438,LEMON SISTEMI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+LTX.MI,euronext_growth_milan,EXGM,LTX,IT0005600801,LITIX,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MAPS.MI,euronext_growth_milan,EXGM,MAPS,IT0005364333,MAPS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MARE.MI,euronext_growth_milan,EXGM,MARE,IT0005588626,MARE ENGINEERING,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MARK.MI,euronext_growth_milan,EXGM,MARK,IT0005670960,MARKBASS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MARP.MI,euronext_growth_milan,EXGM,MARP,IT0004376858,MARZOCCHI POMPE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MASI.MI,euronext_growth_milan,EXGM,MASI,IT0004125677,MASI AGRICOLA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MEV.MI,euronext_growth_milan,EXGM,MEV,IT0005586950,MEVIM,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MFT.MI,euronext_growth_milan,EXGM,MFT,IT0005388449,MATICA FINTEC,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MGS.MI,euronext_growth_milan,EXGM,MGS,IT0005525347,MAGIS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MNL.MI,euronext_growth_milan,EXGM,MNL,IT0005338139,MONNALISA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MPT.MI,euronext_growth_milan,EXGM,MPT,IT0005518953,IMPIANTI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MQSPA.MI,euronext_growth_milan,EXGM,MQSPA,IT0005450173,MEGLIOQUESTO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MS.MI,euronext_growth_milan,EXGM,MS,IT0005603078,MISITANO STRACUZZI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MTK.MI,euronext_growth_milan,EXGM,MTK,IT0005651481,METRIKS AI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MTS.MI,euronext_growth_milan,EXGM,MTS,IT0005427510,MIT SIM,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+MTVFR.MI,euronext_growth_milan,EXGM,MTVFR,FR0014011ND8,MONDO TV FRANCE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+NOVA.MI,euronext_growth_milan,EXGM,NOVA,IT0005605701,NOVAMARINE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+NPI.MI,euronext_growth_milan,EXGM,NPI,IT0005025355,NOTORIOUS PICTURES,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+NRST.MI,euronext_growth_milan,EXGM,NRST,GRS802003004,NEUROSOFT,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+NSP.MI,euronext_growth_milan,EXGM,NSP,IT0005497018,NEOSPERIENCE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+NUS.MI,euronext_growth_milan,EXGM,NUS,IT0005453110,NUSCO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+NXT.MI,euronext_growth_milan,EXGM,NXT,IT0005594418,NEXT GEOSOLUTIONS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+OMER.MI,euronext_growth_milan,EXGM,OMER,IT0005453748,OMER,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+OPTS.MI,euronext_growth_milan,EXGM,OPTS,IT0005713646,OPT,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+OS.MI,euronext_growth_milan,EXGM,OS,IT0005374035,OFFICINA STELLARE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+OSA.MI,euronext_growth_milan,EXGM,OSA,IT0005424830,OSAI AUTOM SYSTEM,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+OTO.MI,euronext_growth_milan,EXGM,OTO,IT0005663361,OTOFARMA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PAG.MI,euronext_growth_milan,EXGM,PAG,IT0005545238,PORTO AVIATION,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PFI.MI,euronext_growth_milan,EXGM,PFI,IT0005442154,PREMIA FINANCE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PLN.MI,euronext_growth_milan,EXGM,PLN,IT0005430951,PLANETEL,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PMED.MI,euronext_growth_milan,EXGM,PMED,IT0005676140,Piu' Medical,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PMT.MI,euronext_growth_milan,EXGM,PMT,IT0005425365,PROMOTICA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+POPR.MI,euronext_growth_milan,EXGM,POPR,IT0004587470,POLIGRAF PRINTING,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+POR.MI,euronext_growth_milan,EXGM,POR,IT0005337495,PORTOBELLO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+POZ.MI,euronext_growth_milan,EXGM,POZ,IT0005499949,POZZI MILANO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PRE.MI,euronext_growth_milan,EXGM,PRE,IT0005611071,PREDICT,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PRXD.MI,euronext_growth_milan,EXGM,PRXD,IT0005687469,Praexidia,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PSQ.MI,euronext_growth_milan,EXGM,PSQ,IT0005546319,PASQUARELLI AUTO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PTR.MI,euronext_growth_milan,EXGM,PTR,IT0005378143,PATTERN,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+PWS.MI,euronext_growth_milan,EXGM,PWS,IT0005353815,POWERSOFT,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RAD.MI,euronext_growth_milan,EXGM,RAD,IT0005379737,RADICI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RDF.MI,euronext_growth_milan,EXGM,RDF,IT0005496101,REDELFI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RDUE.MI,euronext_growth_milan,EXGM,RDUE,IT0005521247,ERREDUE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RES.MI,euronext_growth_milan,EXGM,RES,IT0005543613,RES,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RETI.MI,euronext_growth_milan,EXGM,RETI,IT0005418204,RETI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RFG.MI,euronext_growth_milan,EXGM,RFG,IT0005466963,RACING FORCE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RFLTC.MI,euronext_growth_milan,EXGM,RFLTC,IT0005549354,REDFISH,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RKT.MI,euronext_growth_milan,EXGM,RKT,IT0005481830,ROCKET SHARING C,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RMT.MI,euronext_growth_milan,EXGM,RMT,ES0105724001,RIBA MUNDO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RNV.MI,euronext_growth_milan,EXGM,RNV,IT0005500571,RENOVALO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RPTN.MI,euronext_growth_milan,EXGM,RPTN,IT0005663429,RINO PETINO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RTL.MI,euronext_growth_milan,EXGM,RTL,IT0005680373,RT&L,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+RWY.MI,euronext_growth_milan,EXGM,RWY,IT0005528069,REWAY GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+S3D.MI,euronext_growth_milan,EXGM,S3D,IT0005497893,SOLID WORLD GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SAC.MI,euronext_growth_milan,EXGM,SAC,IT0005521551,SACCHERIA F. FRANC,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SBC.MI,euronext_growth_milan,EXGM,SBC,IT0005556581,SICILY BY CAR,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SCK.MI,euronext_growth_milan,EXGM,SCK,IT0005340051,SCIUKER FRAMES,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SEIF.MI,euronext_growth_milan,EXGM,SEIF,IT0005353484,SOC EDIT IL FATTO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SGC.MI,euronext_growth_milan,EXGM,SGC,IT0005337172,SG COMPANY,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SIAV.MI,euronext_growth_milan,EXGM,SIAV,IT0005504128,SIAV,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SMCAP.MI,euronext_growth_milan,EXGM,SMCAP,IT0005621070,SMART CAPITAL,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SMN.MI,euronext_growth_milan,EXGM,SMN,IT0005573123,SIMONE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SOGES.MI,euronext_growth_milan,EXGM,SOGES,IT0005597411,SOGES GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SOS.MI,euronext_growth_milan,EXGM,SOS,IT0005338675,SOSTRAVEL.COM,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+STAR7.MI,euronext_growth_milan,EXGM,STAR7,IT0005466195,STAR7,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+SVS.MI,euronext_growth_milan,EXGM,SVS,IT0005469264,SVAS BIOSANA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TALEA.MI,euronext_growth_milan,EXGM,TALEA,IT0005378333,TALEA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TCG.MI,euronext_growth_milan,EXGM,TCG,IT0005658841,TECNO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TCM.MI,euronext_growth_milan,EXGM,TCM,IT0005425050,TECMA SOLUTIONS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TIME.MI,euronext_growth_milan,EXGM,TIME,IT0005453235,COMPAGNIA  CARAIBI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TLM.MI,euronext_growth_milan,EXGM,TLM,IT0005683401,TELMES,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TLS.MI,euronext_growth_milan,EXGM,TLS,IT0005240046,TELESIA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TMP.MI,euronext_growth_milan,EXGM,TMP,IT0005531238,TMP GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TNX.MI,euronext_growth_milan,EXGM,TNX,IT0005428898,TENAX INTERNAT,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TPS.MI,euronext_growth_milan,EXGM,TPS,IT0005246142,TPS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TRAI.MI,euronext_growth_milan,EXGM,TRAI,IT0005651507,TRADELAB,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+TWL.MI,euronext_growth_milan,EXGM,TWL,IT0005717571,TRAWELL CO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+U24.MI,euronext_growth_milan,EXGM,U24,IT0005380461,UCAPITAL24,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+UBA.MI,euronext_growth_milan,EXGM,UBA,IT0005628158,UBALDI COSTRUZIONI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+VARV.MI,euronext_growth_milan,EXGM,VARV,IT0005568461,SBE-VARVIT,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+VIM.MI,euronext_growth_milan,EXGM,VIM,IT0004717200,VIMI FASTENERS,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+VLC.MI,euronext_growth_milan,EXGM,VLC,IT0005562514,VALICA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+VLT.MI,euronext_growth_milan,EXGM,VLT,IT0005532525,VALTECNE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+VNE.MI,euronext_growth_milan,EXGM,VNE,IT0005556110,VNE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+VNT.MI,euronext_growth_milan,EXGM,VNT,IT0005433765,VANTEA SMART,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+VNXT.MI,euronext_growth_milan,EXGM,VNXT,IT0005652414,VINEXT,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+VVG.MI,euronext_growth_milan,EXGM,VVG,IT0005622581,VIVENDA GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WAMI28.MI,euronext_growth_milan,EXGM,WAMI28,IT0005707846,WARR FRIENDS 26-28,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WBS.MI,euronext_growth_milan,EXGM,WBS,IT0005384901,WEBSOLUTE,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WDHH28.MI,euronext_growth_milan,EXGM,WDHH28,IT0005645541,WARR DHH 25-28,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WDIT27.MI,euronext_growth_milan,EXGM,WDIT27,IT0005630220,WDESTINATION 24-27,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WEHI.MI,euronext_growth_milan,EXGM,WEHI,IT0005723371,WARR EHI,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WETI29.MI,euronext_growth_milan,EXGM,WETI29,IT0005719965,WARR ETI 26-29,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WEXE26.MI,euronext_growth_milan,EXGM,WEXE26,IT0005557498,WARR EXECUS 23-26,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WGAIN.MI,euronext_growth_milan,EXGM,WGAIN,IT0005672602,WARR GAIN360 25-28,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WSMN26.MI,euronext_growth_milan,EXGM,WSMN26,IT0005573172,WARR SIMONE 23-26,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+WTLM28.MI,euronext_growth_milan,EXGM,WTLM28,IT0005683781,WARR TELMES 25-28,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+XHS.MI,euronext_growth_milan,EXGM,XHS,IT0005568487,XENIA,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+YKY.MI,euronext_growth_milan,EXGM,YKY,IT0005573966,YAKKYO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+YOLO.MI,euronext_growth_milan,EXGM,YOLO,IT0005495871,YOLO GROUP,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00
+YRM.MI,euronext_growth_milan,EXGM,YRM,IT0001017851,ROSETTI MARINO,https://live.euronext.com/en/pd_es/data/stocks,2026-08-05T13:07:04.975683+00:00

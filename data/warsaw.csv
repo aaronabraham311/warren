@@ -1,26 +1,329 @@
-ticker
-ALE.WA
-ALR.WA
-BDX.WA
-CCC.WA
-CDR.WA
-CPS.WA
-DNP.WA
-ENA.WA
-GPW.WA
-JSW.WA
-KGH.WA
-KPL.WA
-KRU.WA
-KTY.WA
-LPP.WA
-MBK.WA
-MIL.WA
-OPL.WA
-PEO.WA
-PGE.WA
-PKN.WA
-PKO.WA
-PZU.WA
-SPL.WA
-TPE.WA
+ticker,venue,mic,exchange_symbol,isin,legal_name,identity_source_url,resolved_at
+4MB.WA,newconnect,,4MB,PLESLTN00010,4Mobility S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+7FT.WA,newconnect,,7FT,PLTRCPS00016,7FIT Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+7LV.WA,newconnect,,7LV,PL7LVLS00017,7LEVELS SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ABK.WA,newconnect,,ABK,PLABAK000013,Abak S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AER.WA,newconnect,,AER,GB00B42V2T10,VENDA SE,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AFC.WA,newconnect,,AFC,PLAKCFN00013,AKCEPT Finance SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AGL.WA,newconnect,,AGL,CY0101452114,Agroliga Group Plc.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AGP.WA,newconnect,,AGP,PLAGRMP00010,AGROMEP Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AIN.WA,newconnect,,AIN,PLABSIN00012,ABS Investment Alternatywna Spolka Inwestycyjna Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AIT.WA,newconnect,,AIT,PLATCDL00013,Aiton Caldwell SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AME.WA,newconnect,,AME,PLDNMPT00016,ADVANCED MEDICAL EQUIPMENT SPOLKA AKCYJNA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AOL.WA,newconnect,,AOL,PLONLIN00013,Analizy Online S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+APA.WA,newconnect,,APA,PLAPANT00017,APANET SA Class D,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+APC.WA,newconnect,,APC,PLBIOMD00017,Apollo Capital S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+APS.WA,newconnect,,APS,PLPOMST00012,Automatyka-Pomiary-Sterowanie SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AQA.WA,newconnect,,AQA,PLAQA0000014,AQUA Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AQU.WA,newconnect,,AQU,PLAQUA000014,AQUA S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ARG.WA,newconnect,,ARG,PLARTGS00019,Art Games Studio SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ARI.WA,newconnect,,ARI,PLAGRIN00013,Agencja Rozwoju Innowacji SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ASA.WA,newconnect,,ASA,PLHMSG000019,APIS S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ASR.WA,newconnect,,ASR,PLASTRO00013,Astro S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ATA.WA,newconnect,,ATA,PLATCRG00013,ATC Cargo S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ATJ.WA,newconnect,,ATJ,PLATMCJ00018,Atomic Jelly SA Class A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AUX.WA,newconnect,,AUX,PLAXILA00018,AUXILIA SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AVE.WA,newconnect,,AVE,PLADMSC00013,Advertigo SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+AZC.WA,newconnect,,AZC,PLAZTEC00011,Aztec International S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BAC.WA,newconnect,,BAC,PLBCT0000020,B-ACT SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BEE.WA,newconnect,,BEE,PLA346500012,BeeIN SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BEP.WA,newconnect,,BEP,PLBMSEP00011,Biomass Energy Project SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BGD.WA,newconnect,,BGD,PLBIOGN00018,Biogened SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BHX.WA,newconnect,,BHX,PLBNRHL00013,Binary Helix SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BIG.WA,newconnect,,BIG,PLBSG0000023,Baseig Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BKD.WA,newconnect,,BKD,PLBKDGM00019,Baked Games SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BLF.WA,newconnect,,BLF,PLBLTXG00010,BeLeaf Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BLT.WA,newconnect,,BLT,PLBLT0000013,Balticon SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BPC.WA,newconnect,,BPC,PLBLKPC00014,Black Pearl SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BPN.WA,newconnect,,BPN,PLBLKPT00018,Black Point SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BRO.WA,newconnect,,BRO,PLBRWRG00013,Browar Czarnkow SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BRP.WA,newconnect,,BRP,PLBLRSP00015,Black Rose Projects SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BSA.WA,newconnect,,BSA,PLINVNT00011,BRAS S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BSH.WA,newconnect,,BSH,PLBRSLH00012,Bridge Solutions Hub S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BSN.WA,newconnect,,BSN,PLBRNSN00016,Brainscan SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BTC.WA,newconnect,,BTC,PLDMNMN00016,BTC Studios SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BTF.WA,newconnect,,BTF,PLVKMTK00015,BTCS S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+BTK.WA,newconnect,,BTK,PLBZTKN00013,BizTech Konsulting SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CAI.WA,newconnect,,CAI,PLHOTB000011,CARLSON INVESTMENTS SE,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CBD.WA,newconnect,,CBD,PLBLOCM00013,Cannabis Poland SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CCR.WA,newconnect,,CCR,PLCNSTC00013,Constance Care SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CCS.WA,newconnect,,CCS,PLCCS0000012,Cyfrowe Centrum Serwisowe SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CFG.WA,newconnect,,CFG,PLCRFRG00016,Creativeforge Games SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CFS.WA,newconnect,,CFS,PLCFBPS00019,Centrum Finansowe SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CHP.WA,newconnect,,CHP,PLCHRPK00018,Cherrypick Games SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CLA.WA,newconnect,,CLA,PLCNSLB00012,CONSOLE LABS Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CMC.WA,newconnect,,CMC,PLCOMEC00016,COMECO S.A. Class D,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CMI.WA,newconnect,,CMI,PLCMINT00013,CM International SA Class BC,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+COS.WA,newconnect,,COS,PLVBN0000015,Cosma S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CRB.WA,newconnect,,CRB,PLCRBST00016,Carbon Studio S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CRC.WA,newconnect,,CRC,PLCRPCP00034,CARPATHIA CAPITAL S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CST.WA,newconnect,,CST,PLCSTR000014,Cstore S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CTE.WA,newconnect,,CTE,PLLRPSP00015,CTE Group SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CTF.WA,newconnect,,CTF,PLSTRGM00014,Centurion Finance ASI SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+CWA.WA,newconnect,,CWA,PLCNSLW00018,Consoleway SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DDI.WA,newconnect,,DDI,PLIFN4L00018,Draw Distance SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DFH.WA,newconnect,,DFH,PLKLBTR00014,Defence.Hub S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DGS.WA,newconnect,,DGS,PLDMLGM00014,Demolish Games S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DIV.WA,newconnect,,DIV,PLGTRNT00010,DI VOLIO S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DKR.WA,newconnect,,DKR,PLDKTRA00013,Dektra S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DNS.WA,newconnect,,DNS,PLDANKS00014,DANKS Europejskie Centrum Doradztwa Podatkowego S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DPG.WA,newconnect,,DPG,PLDRPGM00048,Dark Point Games SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DRF.WA,newconnect,,DRF,PLDRD2400010,Dr. Finance SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DRG.WA,newconnect,,DRG,PLDRGGM00013,Drageus Games S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DRZ.WA,newconnect,,DRZ,PLDRZCZ00030,Do Rzeczy S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DTX.WA,newconnect,,DTX,PLFTPRF00016,Ditix S.A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+DUA.WA,newconnect,,DUA,PLDLITY00010,Duality SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EBX.WA,newconnect,,EBX,PLEKOBX00018,Ekobox SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ECC.WA,newconnect,,ECC,PLECCGM00012,ECC Games SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ECK.WA,newconnect,,ECK,PLERSNK00016,Eurosnack S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ECL.WA,newconnect,,ECL,PLESCLL00010,ECL S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ECN.WA,newconnect,,ECN,PLACRTS00018,Ecnology Group S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ECT.WA,newconnect,,ECT,PLEC5TH00024,Eco5tech SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EDL.WA,newconnect,,EDL,PLEDSON00018,EDITEL Polska S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EEE.WA,newconnect,,EEE,PLBBCLS00017,Ekipa Holding Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EGH.WA,newconnect,,EGH,PLEKPLG00019,Ekopol Gornoslaski Holding S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EGY.WA,newconnect,,EGY,PLVGUAR00011,ENERGY S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EKE.WA,newconnect,,EKE,PLDNTMD00012,EKO-OZE SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EKS.WA,newconnect,,EKS,PLEKOSK00019,e-Kiosk S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ELQ.WA,newconnect,,ELQ,PLIPOSA00010,ELQ Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EMP.WA,newconnect,,EMP,PLEMPCT00017,Emplocity SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EMS.WA,newconnect,,EMS,PLTRMPR00017,Enimso Europe SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+END.WA,newconnect,,END,PLHDRGM00011,Eneida Games S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EPR.WA,newconnect,,EPR,PLPRIPK00018,EKOPARK S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ETX.WA,newconnect,,ETX,PLEURTX00012,Euro-Tax.pl S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EUV.WA,newconnect,,EUV,PLEONTW00016,EUVIC S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EXA.WA,newconnect,,EXA,PLEXMBL00010,Examobile SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EXC.WA,newconnect,,EXC,PLEXCLN00016,EXCELLENCE S.A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+EXM.WA,newconnect,,EXM,PLEXIM000013,e-Xim IT Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+F51.WA,newconnect,,F51,PLFRMGR00015,Farm 51 Group SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FAR.WA,newconnect,,FAR,PLFRMIN00010,Farm Innovations SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FEM.WA,newconnect,,FEM,PLSMSKH00019,Femion Technology SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FFP.WA,newconnect,,FFP,PLGTRMP00010,FARMY FOTOWOLTAIKI POLSKA S.A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FHD.WA,newconnect,,FHD,PLFHDOM00010,Fundusz Hipoteczny DOM SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FIB.WA,newconnect,,FIB,PLDGNET00012,FIBO SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FIG.WA,newconnect,,FIG,PLGPPIK00011,FIGENE CAPITAL S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FLG.WA,newconnect,,FLG,PLEENRG00014,Falcon 1 Green World Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FOR.WA,newconnect,,FOR,PLFRENT00014,Forever Entertainment SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FOX.WA,newconnect,,FOX,PLSPFXG00014,Space Fox Games SA Class A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FPO.WA,newconnect,,FPO,PLFRPST00019,Forposta SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FRB.WA,newconnect,,FRB,PLBETMX00013,Forbuild SA Class C,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FRM.WA,newconnect,,FRM,PLFRMND00011,FREEMIND S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FRW.WA,newconnect,,FRW,PLFRZNW00013,Frozen Way S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FTH.WA,newconnect,,FTH,PLJRSDB00015,Fintech SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FTL.WA,newconnect,,FTL,PLTLCMD00018,FOOTHILLS S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+FVE.WA,newconnect,,FVE,PLINVFM00012,Foto Volt Eko Energia SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GAL.WA,newconnect,,GAL,PLGALVO00017,Galvo SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GAR.WA,newconnect,,GAR,PLABNET00019,Garin AI SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GDC.WA,newconnect,,GDC,PLINSTC00010,Gamedust S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GDS.WA,newconnect,,GDS,PLGDVS000012,G-DEVS Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GEN.WA,newconnect,,GEN,PLGNOMD00024,Genomed S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GHT.WA,newconnect,,GHT,PLGMHTS00015,Gamehunters SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GHY.WA,newconnect,,GHY,PLTLVPL00014,Global Hydrogen Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GKS.WA,newconnect,,GKS,PLGKS0000016,GKS GieKSa Katowice SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GME.WA,newconnect,,GME,PLGRMID00019,Gremi Media SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GMV.WA,newconnect,,GMV,PLGMV0000016,Gamivo SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GMZ.WA,newconnect,,GMZ,PLINFSC00019,Grupa Modne Zakupy S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GOL.WA,newconnect,,GOL,PLGOLAB00019,Golab SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GRC.WA,newconnect,,GRC,PLRCKL000010,Group Recykl SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GRL.WA,newconnect,,GRL,PLGRNLS00027,Green Lanes SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GRM.WA,newconnect,,GRM,PLGRMPC00016,GREMPCO S.A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GRZ.WA,newconnect,,GRZ,PLGRNZB00015,Green Zebras SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GTF.WA,newconnect,,GTF,PLGOTFI00016,Go24.pl SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GTS.WA,newconnect,,GTS,PLGEOTR00010,Geotrans SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+GX1.WA,newconnect,,GX1,PLGENXN00013,genXone SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+HEN.WA,newconnect,,HEN,PLINNGN00015,HyEnergy Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+HER.WA,newconnect,,HER,PLADVGP00011,Highlander Enterprise S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+HOR.WA,newconnect,,HOR,PLHRTIC00014,Hortico SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+HPE.WA,newconnect,,HPE,PLCRBON00018,hiPower Energy spoyka akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+HPM.WA,newconnect,,HPM,PLHPRMN00037,HIPROMINE S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+HPS.WA,newconnect,,HPS,PLHDRAP00017,Hydrapres S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+HRC.WA,newconnect,,HRC,PLGRHRC00012,Grupa HRC Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+HRT.WA,newconnect,,HRT,PLHRTIM00013,Hurtimex Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+HUB.WA,newconnect,,HUB,PLBRTZM00010,Hub.Tech SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IBC.WA,newconnect,,IBC,PLIBCPL00018,IBC Polska F&P SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ICG.WA,newconnect,,ICG,PLDGTAV00013,ICE CODE GAMES SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IDH.WA,newconnect,,IDH,PLICI0000010,IDH DEVELOPMENT S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IFA.WA,newconnect,,IFA,PLINFRA00015,GENERATIONIS.AI S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IFL.WA,newconnect,,IFL,PLINTFL00042,Internetowy Fundusz Leasingowy S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IGT.WA,newconnect,,IGT,PLIGRTR00014,Igoria Trade SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IMG.WA,newconnect,,IMG,PLIMRGM00010,TRUSTBTC S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IMR.WA,newconnect,,IMR,PLTLPKA00010,Intermarum SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+INM.WA,newconnect,,INM,PLCDE0000010,InventionMed SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+INS.WA,newconnect,,INS,PLINDOS00035,Indos SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+INT.WA,newconnect,,INT,PLINTNT00015,Internity S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IPW.WA,newconnect,,IPW,PLIMGPW00013,Image Power S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ISD.WA,newconnect,,ISD,PLINSPR00016,Inside Park SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IVE.WA,newconnect,,IVE,PLIVSTK00016,Investeko SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IVO.WA,newconnect,,IVO,PLA295700027,Incuvo S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+IWS.WA,newconnect,,IWS,PLA319800019,Iron Wolf Studio S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+JJB.WA,newconnect,,JJB,PLJJBEE00028,Jujubee S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+JRC.WA,newconnect,,JRC,PLPYLON00015,JRC Group Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+K2P.WA,newconnect,,K2P,PLKL2PL00014,Kool2Play Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KBJ.WA,newconnect,,KBJ,PLKBJ0000016,KBJ SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KLE.WA,newconnect,,KLE,PLMRTIN00011,GRUPA KLEPSYDRA Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KLK.WA,newconnect,,KLK,PLKLJKW00024,Kolejkowo SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KLN.WA,newconnect,,KLN,PLKLON000010,Klon SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KMB.WA,newconnect,,KMB,PLKMBKN00010,Kombinat Konopny SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KME.WA,newconnect,,KME,PLMDIUS00018,Kancelaria Medius SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KOR.WA,newconnect,,KOR,PLKRBNK00019,Korbank S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KPC.WA,newconnect,,KPC,PLKUPIC00010,Kupiec SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KPI.WA,newconnect,,KPI,PLKPWEC00015,Kancelaria Prawna - Inkaso WEC S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+KUB.WA,newconnect,,KUB,PLKBT0000015,Kubota SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LBD.WA,newconnect,,LBD,PLFBRD000018,Lokaty Budowlane S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LCN.WA,newconnect,,LCN,PLCCTLS00017,Labocanna SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LEG.WA,newconnect,,LEG,PLLGIMI00029,Legimi Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LET.WA,newconnect,,LET,PLGDVIS00018,Letus Capital S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LFR.WA,newconnect,,LFR,PLLFTER00018,Liftero S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LGT.WA,newconnect,,LGT,PLLGNTD00017,Logintrade SA Class C,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LHD.WA,newconnect,,LHD,PLLCHND00029,Lichthund S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LMG.WA,newconnect,,LMG,PLLVMGM00016,Live Motion Games SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LTM.WA,newconnect,,LTM,PLLNTRG00017,Longterm Games SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LUD.WA,newconnect,,LUD,PLARTBM00013,LUDUS S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LUG.WA,newconnect,,LUG,PLLUG0000010,LUG S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LUK.WA,newconnect,,LUK,PLSAP0000018,Lukardi SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+LXB.WA,newconnect,,LXB,PLBVTSA00012,LexBono Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+M4B.WA,newconnect,,M4B,PLM4B0000017,M4B S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MAD.WA,newconnect,,MAD,PLMADKM00019,Madkom SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MAZ.WA,newconnect,,MAZ,PLMZPGR00025,MAZOP Group Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MBF.WA,newconnect,,MBF,PLMBFCR00018,MBF Group SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MCD.WA,newconnect,,MCD,PLMDNPL00013,Mycodern Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MDA.WA,newconnect,,MDA,PLYLWHT00012,MedApp SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MDB.WA,newconnect,,MDB,PLINBOK00010,Medicofarma Biotech Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MDP.WA,newconnect,,MDP,PLTCHPR00019,MEDCAMP S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MDT.WA,newconnect,,MDT,PLCCHT000014,MedTech Solutions S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MER.WA,newconnect,,MER,PLMERA000019,Mera S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MFD.WA,newconnect,,MFD,PLMDVLP00016,M FOOD S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MGS.WA,newconnect,,MGS,PLMNCGS00019,Madnetic Games SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MID.WA,newconnect,,MID,PLMIDVN00017,Midven S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MIG.WA,newconnect,,MIG,PLRSYSA00014,MILITARY GROUP S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MLB.WA,newconnect,,MLB,PLMKLAB00023,MakoLab S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MLM.WA,newconnect,,MLM,PL2INTC00018,Milisystem S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MLP.WA,newconnect,,MLP,PLMLKPL00012,MILKPOL S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MLT.WA,newconnect,,MLT,PLMNLIT00014,Moonlit S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MMC.WA,newconnect,,MMC,PLMMCNF00014,MM Conferences SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MMS.WA,newconnect,,MMS,PLA346100011,Madmind Studio SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MND.WA,newconnect,,MND,PLMNRLM00010,MINERAL MIDRANGE S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MNS.WA,newconnect,,MNS,PLGRMNK00014,Mennica Skarbowa SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MO2.WA,newconnect,,MO2,PLAIRMK00017,Moliera2 Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MPS.WA,newconnect,,MPS,PLMGPLS00015,MegaPixel Studio S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MPY.WA,newconnect,,MPY,PLMPAY000017,mPay SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MRD.WA,newconnect,,MRD,PLVENIT00010,MEDARD Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MRG.WA,newconnect,,MRG,PLADMSV00013,MERLIN GROUP Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MRH.WA,newconnect,,MRH,PLLSNRN00015,Mr Hamburger SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MRK.WA,newconnect,,MRK,PLMARKA00014,Marka SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MSM.WA,newconnect,,MSM,PLMSMDC00018,Massmedica S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MTN.WA,newconnect,,MTN,PLMLTNE00013,MILTON ESSEX S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MUN.WA,newconnect,,MUN,PLSITE000013,Munar SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+MXP.WA,newconnect,,MXP,PLMXPZZ00015,MaxiPizza S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+NOB.WA,newconnect,,NOB,PLPLNTR00018,Noobz from Poland S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+NOV.WA,newconnect,,NOV,PLBABY000016,Novina Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+NRS.WA,newconnect,,NRS,PLHCKLG00010,Neurone Studio SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+NST.WA,newconnect,,NST,PLNSTMD00010,Nestmedic SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+NTS.WA,newconnect,,NTS,PLNTRSW00019,Notoria Serwis S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+NTV.WA,newconnect,,NTV,PLSTCKI00016,New Tech Venture S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+O2T.WA,newconnect,,O2T,PLJWASA00013,ONE2TRIBE S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+OLY.WA,newconnect,,OLY,PLOLMP000016,OLYMP Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ONC.WA,newconnect,,ONC,PLONCTR00028,ONICO S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ONE.WA,newconnect,,ONE,PLONESL00011,One Solution S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+OPI.WA,newconnect,,OPI,PLIMAGS00013,Optigis S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ORG.WA,newconnect,,ORG,PLORGNK00010,Organic Farma Zdrowia S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ORL.WA,newconnect,,ORL,PLORZL000019,ORZEL S.A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+OUT.WA,newconnect,,OUT,PLOUTDR00013,Outdoorzy S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+OVI.WA,newconnect,,OVI,PLOVIDW00014,Ovid Works SA Class A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+OZE.WA,newconnect,,OZE,PLCSYSA00016,OZE Capital S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+P24.WA,newconnect,,P24,PLPRS2400012,Present24 Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+P2B.WA,newconnect,,P2B,PLPRKLS00016,Planet B2B SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+P2C.WA,newconnect,,P2C,PLPLCHL00019,Play2Chill S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PAC.WA,newconnect,,PAC,PLBTEVL00019,Proacta S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PBT.WA,newconnect,,PBT,PLPRMBG00018,PrimeBit Games SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PDG.WA,newconnect,,PDG,PLPRMGM00015,Pyramid Games Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PFG.WA,newconnect,,PFG,PL71MDA00018,Prefa Group S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PGG.WA,newconnect,,PGG,PLASMDV00013,Proguns Group S.A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PGH.WA,newconnect,,PGH,PLEBCSL00011,POLSKA GRUPA HUTNICZA S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PIT.WA,newconnect,,PIT,PLANMD000014,Polaris IT Group S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PLG.WA,newconnect,,PLG,PLRAJDY00015,PL Group Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PLI.WA,newconnect,,PLI,PLPTGMG00013,Platige Image SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PLM.WA,newconnect,,PLM,PLPOLMN00010,Polman SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PLT.WA,newconnect,,PLT,PLA342500016,Plot Twist S.A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PNT.WA,newconnect,,PNT,PLPNTPK00014,Pointpack SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PRA.WA,newconnect,,PRA,PLRKLMF00010,Prime Alternatywna Spolka Inwestycyjna Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PRE.WA,newconnect,,PRE,PLPRTSD00022,President Studio S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PRH.WA,newconnect,,PRH,PLRDDVS00016,Polski Holding Rozwoju S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PRN.WA,newconnect,,PRN,PLPRNRH00010,Partner-Nieruchomosci SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PRO.WA,newconnect,,PRO,PLAPNPS00017,APN Promise SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PRS.WA,newconnect,,PRS,PLPRMUS00013,Prymus SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+PTN.WA,newconnect,,PTN,PLPLTRN00018,Poltronic S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+QUB.WA,newconnect,,QUB,PLQBCGM00018,QubicGames SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RAY.WA,newconnect,,RAY,PLPRPLR00025,Purple Ray Studio SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RBS.WA,newconnect,,RBS,PLRBSNE00015,Robinson Europe SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RCA.WA,newconnect,,RCA,PLROCCA00013,Rocca S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RCM.WA,newconnect,,RCM,PLRCMGR00012,Red Carpet Media Group SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RCW.WA,newconnect,,RCW,PLRCHZW00012,Ruch Chorzow SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RDG.WA,newconnect,,RDG,PLRADGN00014,Read-Gene SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RGL.WA,newconnect,,RGL,PLRBGRL00016,Robs Group Logistic SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RKG.WA,newconnect,,RKG,PLRCKGM00017,Rockgame SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RNT.WA,newconnect,,RNT,PLGURDR00013,Private Rented Sector S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RRH.WA,newconnect,,RRH,PLCMPRS00011,RRH Group S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RSG.WA,newconnect,,RSG,PLRDSGM00018,Red Square Games Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RSP.WA,newconnect,,RSP,PLAGRTR00011,REMOR SOLAR POLSKA SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+RST.WA,newconnect,,RST,PLA348700016,Road Studio S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+S4E.WA,newconnect,,S4E,PLS4E0000015,S4E S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SBE.WA,newconnect,,SBE,PLSFTBL00012,SoftBlue SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SCS.WA,newconnect,,SCS,PLSTCLS00013,Stem Cells Spin SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SDS.WA,newconnect,,SDS,PLSDSOP00013,SDS Optic Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SED.WA,newconnect,,SED,PLEC20000010,SEDIVIO S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SEV.WA,newconnect,,SEV,PLSVNET00019,Sevenet S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SFD.WA,newconnect,,SFD,PLSFD0000013,SFD SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SFK.WA,newconnect,,SFK,PLSFKPL00011,Skoczowska Fabryka Kapeluszy Polkap SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SGD.WA,newconnect,,SGD,PLSFLND00011,Sigma Defence S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SIN.WA,newconnect,,SIN,PLTABLO00012,Solar Innovation Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SKN.WA,newconnect,,SKN,PLSAKAN00010,SAKANA S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SKY.WA,newconnect,,SKY,PLYTFRC00015,Stohid Technology SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SMT.WA,newconnect,,SMT,PLSMTRC00013,Simteract Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SNG.WA,newconnect,,SNG,PLMWTNS00010,SYNERGA.fund SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SNN.WA,newconnect,,SNN,PLPRSGD00011,Sunway Network Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SOK.WA,newconnect,,SOK,PLSNK0000012,Sonka Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+STA.WA,newconnect,,STA,PLSTRWI00019,Starward Industries SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+STD.WA,newconnect,,STD,PLSTNDR00019,Standrew SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SUN.WA,newconnect,,SUN,PLSNTCH00012,Suntech S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SWM.WA,newconnect,,SWM,PLSFTMN00015,Software Mansion SA Series A-E,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SYG.WA,newconnect,,SYG,PLMODE000019,Sygnis S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+SZR.WA,newconnect,,SZR,PLSZAR000018,SZAR S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TCR.WA,newconnect,,TCR,PLNGTDV00016,Tech Robotics S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TEC.WA,newconnect,,TEC,PLIPODS00014,TECNOVATICA S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TGG.WA,newconnect,,TGG,PLTRGG000014,Triggo SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TGS.WA,newconnect,,TGS,PLKKHRB00011,True Games Syndicate SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+THD.WA,newconnect,,THD,PLTHDST00017,Dust SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TLG.WA,newconnect,,TLG,PLPTLTG00018,Przedsiebiorstwo Telekomunikacyjne Telgam S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TLO.WA,newconnect,,TLO,PLTELST00017,Telesto SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TLS.WA,newconnect,,TLS,PLTLSTD00019,Telestrada S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TME.WA,newconnect,,TME,PLTRMEX00019,Termoexpert SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TMP.WA,newconnect,,TMP,PLTLMDC00018,Telemedycyna Polska S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TNT.WA,newconnect,,TNT,PLVCAOC00015,T&T Proenergy Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TOS.WA,newconnect,,TOS,PLTAMEX00015,TAMEX Obiekty Sportowe S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TRX.WA,newconnect,,TRX,PLAUXLM00026,Trex SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+TXN.WA,newconnect,,TXN,PLTAXNT00011,Tax-Net SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+UFC.WA,newconnect,,UFC,PLDTBRK00037,Unified Factory SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+UFG.WA,newconnect,,UFG,PLUFGMS00017,UF Games S.A,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+UNV.WA,newconnect,,UNV,PLALDA000010,Universe S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VAI.WA,newconnect,,VAI,PLDTLGM00019,Volaria AI SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VAR.WA,newconnect,,VAR,PLYORIM00019,Varsav Game Studios SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VDS.WA,newconnect,,VDS,PLVIDIS00014,ViDiS SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VEE.WA,newconnect,,VEE,PLVCTCM00019,Vee SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VER.WA,newconnect,,VER,PLMPLVR00016,MPL Verbum S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VFA.WA,newconnect,,VFA,PLVRFBR00017,VRFABRIC SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VIV.WA,newconnect,,VIV,PLVRTLV00019,Euroinvestment SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VLT.WA,newconnect,,VLT,PLNVVIS00016,VOOLT Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VMX.WA,newconnect,,VMX,PLVMAX000028,V-MAX Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+VRB.WA,newconnect,,VRB,PLVRBCM00015,Verbicom SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+WGP.WA,newconnect,,WGP,PLSKNWL00011,W.G Partners SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+WHH.WA,newconnect,,WHH,PLWRTHL00016,Werth-Holz SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+WLI.WA,newconnect,,WLI,PLGMSBX00010,Wildlands Interactive S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+WOD.WA,newconnect,,WOD,PLWDKAN00016,Wodkan S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+WRL.WA,newconnect,,WRL,PLWRZCL00014,Wierzyciel S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+XBS.WA,newconnect,,XBS,PLPROLG00013,XBS PRO-LOG SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+XDD.WA,newconnect,,XDD,PLMNTZN00014,Mentzen Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+YBS.WA,newconnect,,YBS,PLINSAG00011,YBS S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+YOS.WA,newconnect,,YOS,PLACREO00019,Yoshi Innovation Spolka Akcyjna,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ZEN.WA,newconnect,,ZEN,PLA351100013,Zeneris Projekty S.A.,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00
+ZRX.WA,newconnect,,ZRX,PLCRLNS00018,Zortrax SA,https://scanner.tradingview.com/poland/scan,2026-08-05T13:07:23.253685+00:00

@@ -25,15 +25,17 @@ import csv
 import json
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
+from sqlalchemy import and_, or_, select
 from sqlalchemy.orm import Session
 
 from data_sources.errors import DataSourceError
 from data_sources.exchange_client import EXCHANGE_SPECS, ExchangeClient
+from data_sources.security_identity import SecurityIdentity
 from data_sources.sp500_client import SP500Client
-from storage.models import UniverseSnapshot
+from storage.models import SecurityIdentityRecord, UniverseSnapshot
 
 SP500_PATH = Path("data/sp500.csv")
 REFRESH_INTERVAL_DAYS = 7
@@ -45,10 +47,12 @@ EXCHANGE_CSV_PATHS: dict[str, Path] = {
     "warsaw": Path("data/warsaw.csv"),
 }
 GEM_HUNT_EXCHANGES = ("milan", "madrid", "warsaw")
+GEM_HUNT_IDENTITY_VENUES = frozenset(("euronext_growth_milan", "bme_growth", "newconnect"))
 
 # A no-arg callable returning a constituent list or an error — the client seam.
-ConstituentFetcher = Callable[[], "list[str] | DataSourceError"]
-SP500Fetcher = ConstituentFetcher
+ConstituentPayload = list[str] | list[SecurityIdentity] | DataSourceError
+ConstituentFetcher = Callable[[], ConstituentPayload]
+SP500Fetcher = Callable[[], list[str] | DataSourceError]
 
 
 @dataclass
@@ -88,6 +92,34 @@ def _load_fallback_csv(path: Path = SP500_PATH) -> list[str]:
         ]
 
 
+def _load_exchange_fallback(key: str) -> tuple[list[str], list[SecurityIdentity]]:
+    path = EXCHANGE_CSV_PATHS[key]
+    with path.open(newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    tickers = [(row.get("ticker") or "").strip() for row in rows]
+    identities: list[SecurityIdentity] = []
+    for row in rows:
+        ticker = (row.get("ticker") or "").strip()
+        isin = (row.get("isin") or "").strip()
+        legal_name = (row.get("legal_name") or "").strip()
+        resolved_at = (row.get("resolved_at") or "").strip()
+        if not all((ticker, isin, legal_name, resolved_at)):
+            continue
+        identities.append(
+            SecurityIdentity(
+                canonical_ticker=ticker,
+                venue=(row.get("venue") or "").strip(),
+                mic=(row.get("mic") or "").strip() or None,
+                exchange_symbol=(row.get("exchange_symbol") or "").strip(),
+                isin=isin,
+                legal_name=legal_name,
+                identity_source_url=(row.get("identity_source_url") or "").strip(),
+                resolved_at=datetime.fromisoformat(resolved_at),
+            )
+        )
+    return [ticker for ticker in tickers if ticker], identities
+
+
 def _default_fetcher() -> list[str] | DataSourceError:
     return SP500Client().get_sp500_constituents()
 
@@ -125,12 +157,85 @@ def _default_exchange_fetcher(key: str) -> ConstituentFetcher:
     return lambda: ExchangeClient(spec).get_constituents()
 
 
+def _partition_exchange_payload(
+    key: str, payload: ConstituentPayload
+) -> tuple[list[str], list[SecurityIdentity]]:
+    if isinstance(payload, DataSourceError):
+        return _load_exchange_fallback(key)
+    if not payload:
+        return [], []
+    first = payload[0]
+    if isinstance(first, SecurityIdentity):
+        identities = [item for item in payload if isinstance(item, SecurityIdentity)]
+        return [item.canonical_ticker for item in identities], identities
+    return [item for item in payload if isinstance(item, str)], []
+
+
 def fetch_exchange_list(key: str, fetcher: ConstituentFetcher | None = None) -> list[str]:
     """Fetch one exchange's constituents, falling back to its committed CSV on any error."""
-    result = (fetcher or _default_exchange_fetcher(key))()
-    if isinstance(result, DataSourceError):
-        return _load_fallback_csv(EXCHANGE_CSV_PATHS[key])
-    return result
+    tickers, _ = _partition_exchange_payload(key, (fetcher or _default_exchange_fetcher(key))())
+    return tickers
+
+
+def save_security_identities(session: Session, identities: list[SecurityIdentity]) -> None:
+    """Upsert verified identities without committing the surrounding refresh."""
+    for identity in identities:
+        if identity.isin is None or identity.legal_name is None:
+            continue
+        key = (identity.venue, identity.isin)
+        row = session.get(SecurityIdentityRecord, key)
+        conflicts = session.scalars(
+            select(SecurityIdentityRecord).where(
+                and_(
+                    SecurityIdentityRecord.is_active.is_(True),
+                    or_(
+                        SecurityIdentityRecord.canonical_ticker == identity.canonical_ticker,
+                        and_(
+                            SecurityIdentityRecord.venue == identity.venue,
+                            SecurityIdentityRecord.exchange_symbol == identity.exchange_symbol,
+                        ),
+                    ),
+                )
+            )
+        ).all()
+        stale = [conflict for conflict in conflicts if conflict is not row]
+        for conflict in stale:
+            conflict.is_active = False
+            conflict.superseded_by_isin = identity.isin
+        if row is None:
+            row = SecurityIdentityRecord(
+                venue=identity.venue,
+                isin=identity.isin,
+                canonical_ticker=identity.canonical_ticker,
+                mic=identity.mic,
+                exchange_symbol=identity.exchange_symbol,
+                legal_name=identity.legal_name,
+                identity_source_url=identity.identity_source_url,
+                resolved_at=identity.resolved_at,
+                is_active=True,
+                superseded_by_isin=None,
+            )
+            session.add(row)
+        else:
+            row.canonical_ticker = identity.canonical_ticker
+            row.mic = identity.mic
+            row.exchange_symbol = identity.exchange_symbol
+            row.legal_name = identity.legal_name
+            row.identity_source_url = identity.identity_source_url
+            row.resolved_at = identity.resolved_at
+            row.is_active = True
+            row.superseded_by_isin = None
+
+
+def _has_security_identity_coverage(session: Session) -> bool:
+    venues = set(
+        session.scalars(
+            select(SecurityIdentityRecord.venue)
+            .where(SecurityIdentityRecord.is_active.is_(True))
+            .distinct()
+        )
+    )
+    return GEM_HUNT_IDENTITY_VENUES.issubset(venues)
 
 
 def get_gem_hunt_universe(
@@ -150,11 +255,17 @@ def get_gem_hunt_universe(
             (``"milan"``/``"madrid"``/``"warsaw"``) — the offline-test injection seam.
     """
     snapshot = load_snapshot(session, kind="gem_hunt")
-    if snapshot is None or snapshot.age_days > REFRESH_INTERVAL_DAYS:
+    needs_identity_bootstrap = fetchers is None and not _has_security_identity_coverage(session)
+    if snapshot is None or snapshot.age_days > REFRESH_INTERVAL_DAYS or needs_identity_bootstrap:
         overrides = fetchers or {}
         constituents: list[str] = []
+        identities: list[SecurityIdentity] = []
         for key in GEM_HUNT_EXCHANGES:
-            constituents += fetch_exchange_list(key, overrides.get(key))
+            payload = (overrides.get(key) or _default_exchange_fetcher(key))()
+            venue_tickers, venue_identities = _partition_exchange_payload(key, payload)
+            constituents += venue_tickers
+            identities += venue_identities
+        save_security_identities(session, identities)
         save_snapshot(session, constituents, kind="gem_hunt")
     else:
         constituents = snapshot.tickers

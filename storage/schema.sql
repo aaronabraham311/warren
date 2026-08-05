@@ -92,9 +92,26 @@ CREATE TABLE IF NOT EXISTS discovery_cooldown (
   suppression_reason TEXT
 );
 
+CREATE TABLE IF NOT EXISTS security_identities (
+  venue TEXT NOT NULL,
+  isin TEXT NOT NULL,
+  canonical_ticker TEXT NOT NULL,
+  mic TEXT,
+  exchange_symbol TEXT NOT NULL,
+  legal_name TEXT NOT NULL,
+  identity_source_url TEXT NOT NULL,
+  resolved_at TIMESTAMP NOT NULL,
+  is_active INTEGER NOT NULL DEFAULT 1,
+  superseded_by_isin TEXT,
+  PRIMARY KEY (venue, isin)
+);
+
 -- Performance indexes (Tech Spec §7.5)
 CREATE INDEX IF NOT EXISTS idx_analyses_ticker_created ON analyses(ticker, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_analyses_run             ON analyses(run_id);
 CREATE INDEX IF NOT EXISTS idx_tool_calls_run           ON tool_calls(run_id);
 CREATE INDEX IF NOT EXISTS idx_runs_started             ON runs(started_at DESC);
 CREATE INDEX IF NOT EXISTS idx_eval_runs_run            ON eval_runs(run_id);
+CREATE INDEX IF NOT EXISTS idx_security_identities_isin ON security_identities(isin);
+CREATE INDEX IF NOT EXISTS idx_security_identities_current_ticker
+  ON security_identities(canonical_ticker, is_active);

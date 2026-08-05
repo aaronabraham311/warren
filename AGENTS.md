@@ -5,7 +5,8 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
 ## Project map
 
 - `agent/`: agent loop, routing, personas, budgets, portfolio/universe screening, and typed tools.
-- `data_sources/`: all external API clients and cache behavior.
+- `data_sources/`: all external API clients and cache behavior, including typed
+  junior-market identity sources used by universe refresh and regional filings.
 - `storage/`: SQLAlchemy models, SQLite engine, Alembic migrations, JSONL WAL recovery.
 - `eval/`: deterministic golden-set replay, graders, fixtures, and analysis helpers.
 - `dashboard/`: Streamlit read-only dashboard and its data layer.
@@ -18,6 +19,7 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
 - Inspect `git status --short --branch` before editing and preserve unrelated changes.
 - Use `apply_patch` for file edits. Do not use shell redirection or ad-hoc scripts to write source files.
 - Keep external API calls in `data_sources/`; `agent/tools/` calls clients through `agent/tools/_clients.py`.
+- Treat TradingView's keyless scanner as an unofficial NewConnect source: its terms/source risk require repository-owner approval before merge; committed snapshots remain the runtime fallback.
 - Tools return typed `ToolResultOk` or `ToolResultError` data; they do not raise for expected data-source failures.
 - Keep tests offline. Do not fall back from missing eval fixtures to live tools.
 - Use SQLAlchemy 2.x style and Alembic batch mode for SQLite schema alterations.

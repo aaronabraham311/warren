@@ -161,6 +161,23 @@ class UniverseSnapshot(Base):
     refreshed_at: Mapped[date] = mapped_column(Date, nullable=False)
 
 
+class SecurityIdentityRecord(Base):
+    """Stable ISIN-backed identity, including superseded historical mappings."""
+
+    __tablename__ = "security_identities"
+
+    venue: Mapped[str] = mapped_column(Text, primary_key=True)
+    isin: Mapped[str] = mapped_column(Text, primary_key=True)
+    canonical_ticker: Mapped[str] = mapped_column(Text, nullable=False)
+    mic: Mapped[str | None] = mapped_column(Text)
+    exchange_symbol: Mapped[str] = mapped_column(Text, nullable=False)
+    legal_name: Mapped[str] = mapped_column(Text, nullable=False)
+    identity_source_url: Mapped[str] = mapped_column(Text, nullable=False)
+    resolved_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    superseded_by_isin: Mapped[str | None] = mapped_column(Text)
+
+
 class DiscoveryCooldown(Base):
     __tablename__ = "discovery_cooldown"
 
@@ -174,4 +191,10 @@ Index("idx_analyses_ticker_created", Analysis.ticker, Analysis.created_at.desc()
 Index("idx_analyses_run", Analysis.run_id)
 Index("idx_tool_calls_run", ToolCall.run_id)
 Index("idx_runs_started", Run.started_at.desc())
+Index(
+    "idx_security_identities_current_ticker",
+    SecurityIdentityRecord.canonical_ticker,
+    SecurityIdentityRecord.is_active,
+)
 Index("idx_eval_runs_run", EvalRun.run_id)
+Index("idx_security_identities_isin", SecurityIdentityRecord.isin)
