@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install Warren as a launchd LaunchAgent that runs nightly at 2 AM (macOS only).
+# Install Warren as a launchd LaunchAgent that runs the nightly gem hunt at 2 AM (macOS only).
 set -euo pipefail
 
 if [[ "$(uname)" != "Darwin" ]]; then
@@ -44,6 +44,10 @@ sed \
   -e "s|/path/to/.venv/bin/python|$VENV_PYTHON|g" \
   "$PLIST_TEMPLATE" > "$PLIST_DEST"
 
+# Unload first so re-running this installer actually applies the new plist. launchd keeps
+# the argv it loaded until the label is unloaded, so a bare `load` over an already-registered
+# job silently keeps running the old command (e.g. one installed before --gem-hunt).
+launchctl unload "$PLIST_DEST" 2>/dev/null || true
 launchctl load "$PLIST_DEST"
-echo "Warren scheduler installed. Next run: tonight at 2 AM."
+echo "Warren scheduler installed. Next run: tonight at 2 AM (gem-hunt mode)."
 echo "Logs: $PROJECT_DIR/logs/launchd_stdout.log and launchd_stderr.log"

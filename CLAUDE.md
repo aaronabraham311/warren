@@ -15,7 +15,7 @@ Warren is an AI stock-analysis agent. The user asks a natural-language question;
 
 ```
 agent/
-  run.py          # CLI entrypoint: python -m agent.run [TICKER] [--skip-ticker-validation]
+  run.py          # CLI entrypoint: python -m agent.run [TICKER] [--skip-ticker-validation] [--persona] [--gem-hunt]; build_parser() is split out of main() so tests exercise the real CLI surface
   cooldown.py     # Discovery cooldown — filter_universe_for_cooldown(), has_material_event(), set_cooldown(), get_cooldown_entry(), clear_cooldown(); 7-day dedup with material-news override
   portfolio.py    # load_portfolio/load_watchlist (validated) + sync_*_to_db snapshots
   universe.py     # get_current_universe(session, watchlist) → sorted S&P 500 ∪ watchlist; get_gem_hunt_universe(session, watchlist, fetchers=) → sorted Milan∪Madrid∪Warsaw∪watchlist. Weekly-refreshed via UniverseSnapshot (per-`kind` row: "sp500" | "gem_hunt"); SP500Client/ExchangeClient fetch with data/*.csv fallback. Weekly cadence just avoids a re-scrape — the universe never enters an LLM prompt (screening is deterministic Python).
@@ -205,6 +205,8 @@ load; refresh quarterly.
 uv sync                        # install / sync deps
 python -m agent.run AAPL       # single ticker deep analysis
 python -m agent.run            # nightly mode: screen universe → deep-analyse top 3 candidates
+python -m agent.run --gem-hunt # gem-hunt nightly (what the installed scheduler runs): global
+                               #   3-exchange universe + deep-value screen + DIRT persona
 ruff check .                   # lint
 ruff format .                  # format
 mypy .                         # type check

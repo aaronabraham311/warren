@@ -11,6 +11,7 @@
     <string>/path/to/.venv/bin/python</string>
     <string>-m</string>
     <string>agent.run</string>
+    <string>--gem-hunt</string>
   </array>
 
   <key>WorkingDirectory</key>

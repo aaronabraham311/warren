@@ -1,10 +1,13 @@
 """Tests for nightly scheduler scripts and supporting configuration."""
 
 import argparse
+import plistlib
 from pathlib import Path
 
 SCRIPTS_DIR = Path(__file__).parent.parent / "scripts"
 PLIST_TEMPLATE = SCRIPTS_DIR / "com.warren.agent.plist.template"
+INSTALL_CRON = SCRIPTS_DIR / "install_cron.sh"
+INSTALL_SCHEDULER = SCRIPTS_DIR / "install_scheduler.sh"
 
 
 def test_plist_template_exists() -> None:
@@ -38,6 +41,51 @@ def test_plist_template_schedule_is_2am() -> None:
     assert "<integer>0</integer>" in content  # Minute
 
 
+def _program_arguments() -> list[str]:
+    """The argv launchd will exec, straight out of the plist template."""
+    plist = plistlib.loads(PLIST_TEMPLATE.read_bytes())
+    args = plist["ProgramArguments"]
+    assert isinstance(args, list)
+    return [str(arg) for arg in args]
+
+
+def test_plist_template_runs_gem_hunt() -> None:
+    """The scheduled macOS run is gem-hunt mode, not the US GARP default."""
+    assert "--gem-hunt" in _program_arguments()
+
+
+def test_plist_program_arguments_order() -> None:
+    """--gem-hunt is an agent.run argument, not an interpreter one."""
+    args = _program_arguments()
+    assert args[1:] == ["-m", "agent.run", "--gem-hunt"]
+    assert args[0].endswith("/python")
+
+
+def test_cron_entry_runs_gem_hunt() -> None:
+    assert "-m agent.run --gem-hunt" in INSTALL_CRON.read_text()
+
+
+def test_cron_entry_keeps_flock_guard_and_cd() -> None:
+    """Adding the flag must not disturb the overlap guard or module resolution."""
+    content = INSTALL_CRON.read_text()
+    assert "$FLOCK_BIN -n $PROJECT_DIR/logs/.nightly.lock" in content
+    assert "cd $PROJECT_DIR &&" in content
+
+
+def test_install_cron_replaces_stale_entry() -> None:
+    """A pre-existing entry (e.g. installed before --gem-hunt) is rewritten, not skipped."""
+    content = INSTALL_CRON.read_text()
+    assert 'grep -vF "$CRON_MATCH"' in content
+
+
+def test_install_scheduler_unloads_before_load() -> None:
+    """launchd keeps the loaded argv until unloaded — a bare `load` would no-op."""
+    content = INSTALL_SCHEDULER.read_text()
+    unload = content.index("launchctl unload")
+    load = content.index("launchctl load")
+    assert unload < load
+
+
 def test_scripts_are_executable() -> None:
     for name in ("install_scheduler.sh", "uninstall_scheduler.sh", "install_cron.sh"):
         path = SCRIPTS_DIR / name
@@ -45,13 +93,10 @@ def test_scripts_are_executable() -> None:
 
 
 def _make_parser() -> argparse.ArgumentParser:
-    """Reproduce the parser from agent/run.py without importing the full module."""
-    parser = argparse.ArgumentParser(description="Warren stock analysis agent")
-    parser.add_argument("ticker", nargs="?", default="AAPL")
-    parser.add_argument("--skip-ticker-validation", action="store_true")
-    parser.add_argument("--persona", choices=["default", "dirt"], default="default")
-    parser.add_argument("--gem-hunt", action="store_true")
-    return parser
+    """The real agent/run.py parser — not a copy, so it cannot drift from production."""
+    from agent.run import build_parser
+
+    return build_parser()
 
 
 def test_run_cli_accepts_ticker() -> None:
@@ -59,9 +104,10 @@ def test_run_cli_accepts_ticker() -> None:
     assert args.ticker == "AAPL"
 
 
-def test_run_cli_default_ticker() -> None:
+def test_run_cli_default_ticker_is_none_for_nightly() -> None:
+    """No ticker means nightly mode (screen the universe), not an implicit AAPL."""
     args = _make_parser().parse_args([])
-    assert args.ticker == "AAPL"
+    assert args.ticker is None
 
 
 def test_run_cli_gem_hunt_flag_defaults_off() -> None:
@@ -78,6 +124,14 @@ def test_run_cli_gem_hunt_composes_with_skip_ticker_validation() -> None:
     args = _make_parser().parse_args(["--gem-hunt", "--skip-ticker-validation"])
     assert args.gem_hunt is True
     assert args.skip_ticker_validation is True
+
+
+def test_scheduled_argv_parses_to_gem_hunt_run() -> None:
+    """End-to-end on the argv launchd ships: nightly mode, gem-hunt on."""
+    module_args = _program_arguments()[3:]  # drop <python> -m agent.run
+    args = _make_parser().parse_args(module_args)
+    assert args.gem_hunt is True
+    assert args.ticker is None
 
 
 def test_resolve_persona_gem_hunt_forces_dirt() -> None:

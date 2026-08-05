@@ -197,7 +197,8 @@ def resolve_persona(persona_arg: str, gem_hunt: bool) -> DefaultPersona | DirtPe
     return DefaultPersona()
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
+    """The CLI surface. Split out of main() so tests can exercise the real parser."""
     parser = argparse.ArgumentParser(description="Warren stock analysis agent")
     parser.add_argument(
         "ticker",
@@ -225,7 +226,11 @@ def main() -> None:
             "DIRT persona regardless of --persona. Early runs may need --skip-ticker-validation."
         ),
     )
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
 
     migrate()
     reconcile_orphans(_LOG_DIR)  # self-heal any run left "running" by a previous crash
