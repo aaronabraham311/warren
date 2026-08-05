@@ -3,7 +3,7 @@ from typing import Literal, Protocol, runtime_checkable
 
 import anthropic
 
-from agent.models import HAIKU_4_5, OPUS_4_7, SONNET_4_6, LynchBuffettSignals
+from agent.models import HAIKU_4_5, OPUS_4_7, SONNET_4_6, DirtSignals, LynchBuffettSignals
 
 # The set of models the routing layer may select. Kept in sync with agent.models
 # by tests/test_routing.py (a drift guard asserts get_args(ModelID) matches the
@@ -51,6 +51,12 @@ class _Analysis(Protocol):
     def lynch_signals(self) -> LynchBuffettSignals: ...
     @property
     def buffett_signals(self) -> LynchBuffettSignals: ...
+    # Populated only in deep-value (DIRT) mode; None for the default persona, where
+    # the Lynch/Buffett pros/cons carry the signal instead. Declared read-only for
+    # the same covariance reason as the fields above. Imported directly from
+    # agent.models (same module as LynchBuffettSignals), so no import cycle arises.
+    @property
+    def dirt_signals(self) -> DirtSignals | None: ...
 
 
 class OpusTrigger(Protocol):
@@ -81,9 +87,30 @@ class DefaultOpusTrigger:
         # Condition 3: any sell recommendation in the current run.
         cond_sell = any(a.recommendation == "sell" for a in analyses)
 
-        # All three are computed before the disjunction so each is evaluated
+        # Condition 4 (deep-value / DIRT mode): a contested or fragile deep-value setup.
+        # In DIRT mode the Lynch/Buffett pros/cons are empty (dirt_signals is populated
+        # instead), so condition 2 never escalates a contested cheap call. This condition
+        # fires when either:
+        #   (a) source verification found aggregator-vs-filing discrepancies — the numbers
+        #       the whole thesis rests on are in doubt, so a contested cheap call warrants
+        #       the strongest model; or
+        #   (b) a deep NCAV discount (≥30%) is paired with a non-net-cash balance sheet
+        #       (net_cash_positive is explicitly False) — "cheap but fragile", the classic
+        #       value-trap shape where the discount may be the market pricing distress.
+        # dirt_signals is None for the default persona, so this is a strict no-op there and
+        # default-persona routing is byte-for-byte unchanged.
+        def _dirt_contested(s: DirtSignals) -> bool:
+            deep_discount = s.ncav_discount_pct is not None and s.ncav_discount_pct >= 30.0
+            fragile = s.net_cash_positive is False
+            return s.aggregator_discrepancies_found or (deep_discount and fragile)
+
+        cond_dirt = any(
+            a.dirt_signals is not None and _dirt_contested(a.dirt_signals) for a in analyses
+        )
+
+        # All conditions are computed before the disjunction so each is evaluated
         # independently — no single condition can short-circuit the others away.
-        return cond_low_conf or cond_signal_split or cond_sell
+        return cond_low_conf or cond_signal_split or cond_sell or cond_dirt
 
 
 def _no_analyses() -> list[_Analysis]:
