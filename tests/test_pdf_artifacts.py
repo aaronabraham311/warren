@@ -275,6 +275,35 @@ def test_all_sparse_pages_with_failed_ocr_return_typed_error(tmp_path: Path) -> 
     assert result.source == "bme"
 
 
+def test_document_ocr_deadline_marks_remaining_sparse_pages_unresolved(tmp_path: Path) -> None:
+    store = ArtifactStore(tmp_path)
+    artifact = store.put(_pdf("", ""), mime_type="application/pdf")
+    calls: list[int] = []
+    ticks = iter([0.0, 0.0, 3.0])
+
+    def ocr(_: bytes, page_number: int) -> OcrPageText:
+        calls.append(page_number)
+        return OcrPageText("Recovered text")
+
+    result = PdfTextExtractor(
+        store,
+        ocr_page=ocr,
+        ocr_document_timeout_seconds=2.0,
+        _monotonic=lambda: next(ticks),
+    ).extract_stored(
+        filing_id="filing_test",
+        source_url="https://example.test/report.pdf",
+        source_language=None,
+        artifact=artifact,
+        retrieved_at=NOW,
+    )
+
+    assert not isinstance(result, DataSourceError)
+    assert calls == [1]
+    assert result.truncated is True
+    assert any("OCR deadline" in note for note in result.coverage_notes)
+
+
 def test_page_count_and_uncompressed_content_stream_are_bounded(tmp_path: Path) -> None:
     store = ArtifactStore(tmp_path)
     many_pages = store.put(_pdf("one", "two"), mime_type="application/pdf")

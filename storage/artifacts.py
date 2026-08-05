@@ -35,7 +35,7 @@ class ArtifactIntegrityError(RuntimeError):
 class StoredArtifact:
     sha256: str
     relative_key: str
-    byte_length: int
+    byte_length: int | None
     mime_type: str
 
 
@@ -93,7 +93,7 @@ class ArtifactStore:
             raise ArtifactIntegrityError("Artifact key does not match checksum and MIME type")
         path = self.root / expected_key
         content = self._verify(path, artifact.sha256)
-        if len(content) != artifact.byte_length:
+        if artifact.byte_length is not None and len(content) != artifact.byte_length:
             raise ArtifactIntegrityError(
                 "Artifact byte length mismatch: "
                 f"expected {artifact.byte_length}, got {len(content)}"

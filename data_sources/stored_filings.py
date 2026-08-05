@@ -26,7 +26,7 @@ from data_sources.filing_translation import (
     translate_document_with_provider,
 )
 from data_sources.pdf_artifacts import EXTRACTION_VERSION, PdfTextExtractor
-from storage.artifacts import ArtifactStore, StoredArtifact
+from storage.artifacts import ArtifactIntegrityError, ArtifactStore, StoredArtifact
 
 MAX_SECTION_CHARS = 200_000
 
@@ -99,7 +99,8 @@ class StoredFilingClient:
         query = (
             "SELECT filing_id, checksum, source_system, direct_document_url, mime_type, "
             "byte_length, retrieved_at, source_language, artifact_key, publication_date, "
-            "reporting_period_end FROM filing_manifests WHERE issuer_isin = ? "
+            "reporting_period_end, extracted_text_checksum, extracted_text_artifact_key, "
+            "extraction_version FROM filing_manifests WHERE issuer_isin = ? "
             "AND mime_type = 'application/pdf' AND document_kind = ? "
             "AND publication_date IS NOT NULL"
         )
@@ -149,17 +150,30 @@ class StoredFilingClient:
             byte_length=byte_length,
             mime_type=mime_type,
         )
-        document = self._extractor.extract_stored(
+        cached_document = self._load_extracted_document(
             filing_id=filing_id,
+            source_checksum=checksum,
             source_url=source_url,
-            source_language=source_language,
-            source=source_value,
-            artifact=artifact,
-            retrieved_at=retrieved_at,
+            extracted_checksum=(str(manifest[11]) if manifest[11] is not None else None),
+            extracted_key=(str(manifest[12]) if manifest[12] is not None else None),
+            extraction_version=(str(manifest[13]) if manifest[13] is not None else None),
         )
-        if isinstance(document, DataSourceError):
-            return document
-        self._persist_extracted_document(document, filing_id=filing_id, checksum=checksum)
+        if isinstance(cached_document, DataSourceError):
+            return cached_document
+        if cached_document is None:
+            document = self._extractor.extract_stored(
+                filing_id=filing_id,
+                source_url=source_url,
+                source_language=source_language,
+                source=source_value,
+                artifact=artifact,
+                retrieved_at=retrieved_at,
+            )
+            if isinstance(document, DataSourceError):
+                return document
+            self._persist_extracted_document(document, filing_id=filing_id, checksum=checksum)
+        else:
+            document = cached_document
 
         if translate:
             translated = translate_document_with_provider(
@@ -223,6 +237,42 @@ class StoredFilingClient:
             coverage_warnings=list(dict.fromkeys(warnings)),
             translate=translate,
         )
+
+    def _load_extracted_document(
+        self,
+        *,
+        filing_id: str,
+        source_checksum: str,
+        source_url: str,
+        extracted_checksum: str | None,
+        extracted_key: str | None,
+        extraction_version: str | None,
+    ) -> DocumentText | DataSourceError | None:
+        if (
+            extraction_version != EXTRACTION_VERSION
+            or extracted_checksum is None
+            or extracted_key is None
+        ):
+            return None
+        artifact = StoredArtifact(
+            sha256=extracted_checksum,
+            relative_key=extracted_key,
+            byte_length=None,
+            mime_type="application/json",
+        )
+        try:
+            document = DocumentText.model_validate_json(self._store.read(artifact))
+        except (ArtifactIntegrityError, OSError, ValueError) as exc:
+            return _error("parse", f"cached extracted filing is invalid: {exc}", "extract")
+        if (
+            document.filing_id != filing_id
+            or document.sha256 != source_checksum
+            or document.source_url != source_url
+        ):
+            return _error(
+                "parse", "cached extracted filing provenance does not match its manifest", "extract"
+            )
+        return document
 
     def _persist_extracted_document(
         self, document: DocumentText, *, filing_id: str, checksum: str

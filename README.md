@@ -140,7 +140,7 @@ crontab -e
 | `WARREN_LOGS_DIR` | Optional: override the JSONL run-log dir the dashboard reads (default `logs/runs`) |
 | `WARREN_FILINGS_DIR` | Optional: content-addressed raw filing/text artifacts (default `local/filings`; excluded from Git) |
 | `WARREN_TRANSLATION_MODEL` | Optional: explicit Anthropic model for filing-page translation; unset keeps translation fail-closed |
-| `WARREN_TRANSLATION_INPUT_USD_PER_MILLION_TOKENS` | Required with a translation model: current input-token price used by the hard cost bound |
-| `WARREN_TRANSLATION_OUTPUT_USD_PER_MILLION_TOKENS` | Required with a translation model: current output-token price used by the hard cost bound |
+| `WARREN_TRANSLATION_INPUT_USD_PER_MILLION_TOKENS` | Required with a translation model: current input-token price used by the estimated cost admission budget |
+| `WARREN_TRANSLATION_OUTPUT_USD_PER_MILLION_TOKENS` | Required with a translation model: current output-token price used by the estimated cost admission budget |
 
 Never commit `.env`. Use `.env.example` as the template.

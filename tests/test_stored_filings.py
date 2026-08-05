@@ -20,6 +20,9 @@ RETRIEVED = datetime(2026, 8, 5, 12, 0, tzinfo=timezone.utc)
 
 
 class _Extractor:
+    def __init__(self) -> None:
+        self.calls = 0
+
     def extract_stored(
         self,
         *,
@@ -30,6 +33,7 @@ class _Extractor:
         retrieved_at: datetime,
         source: str | None = None,
     ) -> DocumentText | DataSourceError:
+        self.calls += 1
         assert artifact.sha256 == CHECKSUM
         return DocumentText(
             filing_id=filing_id,
@@ -152,6 +156,24 @@ def test_stored_pdf_returns_page_aligned_citations_and_honest_section_warning(
     assert result.filing_date.isoformat() == "2025-04-30"
     assert any("full-document" in warning for warning in result.coverage_warnings)
     assert any("0.88" in warning for warning in result.coverage_warnings)
+
+
+def test_second_read_reuses_integrity_checked_extracted_artifact(tmp_path: Path) -> None:
+    connection = _connection()
+    extractor = _Extractor()
+    client = StoredFilingClient(
+        connection,
+        ArtifactStore(tmp_path),
+        extractor=extractor,
+    )
+
+    first = client.get_filing_section("TEST.MI", "annual", "full", document_kind="annual")
+    second = client.get_filing_section("TEST.MI", "annual", "full", document_kind="annual")
+
+    assert isinstance(first, FilingSection)
+    assert isinstance(second, FilingSection)
+    assert second.text == first.text
+    assert extractor.calls == 1
 
 
 def test_translation_request_without_provider_returns_original_with_failed_status(

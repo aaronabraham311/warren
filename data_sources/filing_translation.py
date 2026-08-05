@@ -256,7 +256,11 @@ class CostReportingTranslator(Protocol):
 
 @dataclass(frozen=True)
 class TranslationLimits:
-    """Hard limits on pages processed and uncached provider work."""
+    """Hard work limits plus an estimated provider-cost admission budget.
+
+    Provider-reported billing can exceed an estimate for the final admitted page; actual
+    spend is recorded and prevents subsequent calls, but cannot be revoked after a call.
+    """
 
     max_pages: int = 100
     max_characters: int = 500_000

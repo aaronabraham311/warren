@@ -8,6 +8,7 @@ import shutil
 import subprocess
 import tempfile
 import threading
+import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass
@@ -76,7 +77,9 @@ class PdfArtifactPipeline:
         max_document_text_characters: int = 10_000_000,
         ocr_min_chars: int = 40,
         ocr_page_limit: int = 20,
+        ocr_document_timeout_seconds: float = 120.0,
         ocr_page: OcrPage | None = None,
+        _monotonic: Callable[[], float] = time.monotonic,
     ) -> None:
         if max_bytes < 1 or max_pages < 1 or ocr_page_limit < 0 or ocr_min_chars < 0:
             raise ValueError("PDF byte/page/OCR bounds must be non-negative and non-zero")
@@ -97,7 +100,9 @@ class PdfArtifactPipeline:
             max_document_text_characters=max_document_text_characters,
             ocr_min_chars=ocr_min_chars,
             ocr_page_limit=ocr_page_limit,
+            ocr_document_timeout_seconds=ocr_document_timeout_seconds,
             ocr_page=ocr_page,
+            _monotonic=_monotonic,
         )
 
     def fetch(self, document: DocumentRef) -> FetchedPdf | DataSourceError:
@@ -195,7 +200,9 @@ class PdfTextExtractor:
         max_document_text_characters: int = 10_000_000,
         ocr_min_chars: int = 40,
         ocr_page_limit: int = 20,
+        ocr_document_timeout_seconds: float = 120.0,
         ocr_page: OcrPage | None = None,
+        _monotonic: Callable[[], float] = time.monotonic,
     ) -> None:
         if (
             max_pages < 1
@@ -206,6 +213,8 @@ class PdfTextExtractor:
             raise ValueError("PDF extraction bounds must be positive")
         if ocr_page_limit < 0 or ocr_min_chars < 0:
             raise ValueError("OCR bounds cannot be negative")
+        if ocr_document_timeout_seconds <= 0:
+            raise ValueError("OCR document timeout must be positive")
         self._store = store
         self._session = session
         self._max_pages = max_pages
@@ -214,7 +223,9 @@ class PdfTextExtractor:
         self._max_document_text_characters = max_document_text_characters
         self._ocr_min_chars = ocr_min_chars
         self._ocr_page_limit = ocr_page_limit
+        self._ocr_document_timeout_seconds = ocr_document_timeout_seconds
         self._ocr_page = ocr_page or _poppler_tesseract_ocr
+        self._monotonic = _monotonic
 
     def extract_stored(
         self,
@@ -303,7 +314,12 @@ class PdfTextExtractor:
         output = list(embedded)
         confidences: list[float] = []
         ocr_failures: list[int] = []
-        for page_number in selected:
+        ocr_deadline = self._monotonic() + self._ocr_document_timeout_seconds
+        deadline_skipped: list[int] = []
+        for index, page_number in enumerate(selected):
+            if self._monotonic() >= ocr_deadline:
+                deadline_skipped = selected[index:]
+                break
             ocr_result = self._ocr_page(pdf_content, page_number)
             if isinstance(ocr_result, DataSourceError):
                 ocr_failures.append(page_number)
@@ -321,7 +337,7 @@ class PdfTextExtractor:
             if ocr_result.confidence is not None:
                 confidences.append(ocr_result.confidence)
 
-        unresolved = sorted(set(skipped + ocr_failures))
+        unresolved = sorted(set(skipped + ocr_failures + deadline_skipped))
         extracted_char_count = sum(len(text) for text in output)
         if extracted_char_count == 0:
             stage: ErrorStage = "ocr" if sparse_pages else "extract"
@@ -336,6 +352,11 @@ class PdfTextExtractor:
         if ocr_failures:
             notes.append(
                 f"OCR unavailable or failed for pages {', '.join(map(str, ocr_failures))}."
+            )
+        if deadline_skipped:
+            notes.append(
+                "Document OCR deadline reached; pages "
+                f"{', '.join(map(str, deadline_skipped))} were not OCR'd."
             )
         if unresolved:
             notes.append(

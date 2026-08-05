@@ -48,7 +48,8 @@ Live translation is disabled unless all three variables are configured:
 `WARREN_TRANSLATION_MODEL`,
 `WARREN_TRANSLATION_INPUT_USD_PER_MILLION_TOKENS`, and
 `WARREN_TRANSLATION_OUTPUT_USD_PER_MILLION_TOKENS`. Prices are explicit because model
-pricing changes; they feed the hard estimated-cost limit. The provider version includes
+pricing changes; they feed the estimated-cost admission budget. Actual provider billing can
+exceed the estimate for the final admitted page and is recorded to stop subsequent calls. The provider version includes
 the model and prompt version, so changing either invalidates cached pages.
 Translation provider spend is currently bounded and reported by the PDF translation
 limits, but it is not debited from `RunContext`'s agent-loop token budget. Treat the
