@@ -1,0 +1,6 @@
+interface:
+  display_name: "Warren evals"
+  short_description: "Replay and debug Warren evaluations"
+  default_prompt: "Use $eval to work on Warren's deterministic eval harness."
+policy:
+  allow_implicit_invocation: true
