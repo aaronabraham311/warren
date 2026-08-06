@@ -135,7 +135,9 @@ def test_help_persona_and_budget_work_and_persist_without_service() -> None:
     assert executor.requests == []
     assert saved[-1].persona == "dirt"
     assert saved[-1].max_cost_usd == 3.5
-    assert "Commands:" in stdout.getvalue()
+    assert "Commands" in stdout.getvalue()
+    assert "Analyze AAPL" in stdout.getvalue()
+    assert "/history [ticker]" in stdout.getvalue()
 
 
 def test_stored_data_and_snapshot_commands_work_without_api_key(
@@ -483,8 +485,9 @@ def test_main_reports_recovered_runs_before_entering_repl(
     notices: list[object] = []
     activities: list[str] = []
 
-    def activity(message: str) -> object:
+    def activity(message: str, *, announce: bool = False) -> object:
         activities.append(message)
+        assert announce
         return nullcontext()
 
     fake_app = SimpleNamespace(

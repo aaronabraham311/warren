@@ -152,7 +152,7 @@ def test_plain_activity_is_immediate_and_completed_tools_persist_once() -> None:
     with renderer.activity("Preparing analysis…"):
         assert stderr.getvalue() == "Preparing analysis…\n"
         renderer.emit(ToolCallStarted("run-1", "AAPL", "read_filing"))
-        renderer.emit(ToolCallCompleted("run-1", "AAPL", "read_filing", "success", False, 1420, 0))
+        renderer.emit(ToolCallCompleted("run-1", "AAPL", "read_filing", "ok", False, 1420, 0))
 
     transcript = stderr.getvalue()
     assert "Using: Regulatory filing" in transcript
@@ -181,6 +181,7 @@ def test_tty_activity_always_stops_live_renderer(monkeypatch: object) -> None:
 
     assert isinstance(monkeypatch, MonkeyPatch)
     monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("TERM", "xterm-256color")
     stderr = _TTYBuffer()
     renderer = TerminalRenderer(
         stdout=_TTYBuffer(),
@@ -195,14 +196,36 @@ def test_tty_activity_always_stops_live_renderer(monkeypatch: object) -> None:
 
     assert renderer._live is None
     assert renderer._progress is None
-    assert "Preparing analysis" not in stderr.getvalue()
+    assert "Using Market quote" in stderr.getvalue()
+    assert "\x1b[?25h" in stderr.getvalue()
+
+
+def test_dumb_terminal_uses_plain_activity_without_live_control_codes(
+    monkeypatch: object,
+) -> None:
+    from pytest import MonkeyPatch
+
+    assert isinstance(monkeypatch, MonkeyPatch)
+    monkeypatch.setenv("TERM", "dumb")
+    stderr = _TTYBuffer()
+    renderer = TerminalRenderer(
+        stdout=_TTYBuffer(),
+        stderr=stderr,
+        color="never",
+        animation=True,
+    )
+
+    with renderer.activity("Preparing analysis…"):
+        assert renderer._live is None
+
+    assert stderr.getvalue() == "Preparing analysis…\n"
 
 
 def test_renderer_builds_safe_latest_run_evidence_index() -> None:
     renderer = TerminalRenderer(stdout=StringIO(), stderr=StringIO(), color="never")
     renderer.emit(RunStarted("run-1", "tickers", ("AAPL",)))
-    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "success", False, 5, 0))
-    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "success", True, 1, 0))
+    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "ok", False, 5, 0))
+    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "ok", True, 1, 0))
     renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_news", "error", False, 5, 0))
 
     assert renderer.evidence_for("AAPL") == ("get_quote",)

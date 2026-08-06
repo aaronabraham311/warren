@@ -342,13 +342,7 @@ class TerminalApp:
                 message += f" Usage: {command.usage}"
             self.renderer.diagnostic(message)
         elif isinstance(command, HelpCommand):
-            self.renderer.notice(
-                "Commands: /help /new /history [ticker] /show RUN_ID /trace [RUN_ID] "
-                "/portfolio /watchlist /discover /gem-hunt /persona [default|dirt] "
-                "/budget [USD] /tools /quit\n"
-                "Examples: Analyze AAPL | Compare COST with WMT | Review my portfolio | "
-                "Run discovery | Run gem hunt | Show the risks"
-            )
+            self.renderer.render_help()
         elif isinstance(command, PersonaCommand):
             if command.persona is None:
                 self.renderer.notice(f"Persona: {self.default_persona}")
@@ -631,7 +625,7 @@ class TerminalApp:
         with self.renderer.activity("Preparing analysis…"):
             with _cancel_on_sigint(
                 token,
-                on_cancel=lambda: self.renderer.update_activity("Stopping…"),
+                on_cancel=self.renderer.show_stopping,
             ):
                 result = self.executor(
                     request,
@@ -776,7 +770,7 @@ def _recover_interrupted_runs() -> int:
 def main() -> int:
     app = create_app()
     try:
-        with app.renderer.activity("Starting Warren…"):
+        with app.renderer.activity("Starting Warren…", announce=True):
             recovered = _recover_interrupted_runs()
     except Exception:
         # A missing/unmigrated database must not prevent offline help and local

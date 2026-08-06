@@ -118,6 +118,10 @@ def _tool_label(tool_name: str) -> str:
     return _TOOL_LABELS.get(sanitized, sanitized.replace("_", " ").strip().title())
 
 
+def _tool_succeeded(status: str) -> bool:
+    return status.casefold() in {"ok", "success"}
+
+
 def _format_duration(latency_ms: int) -> str:
     if latency_ms < 1000:
         return f"{latency_ms}ms"
@@ -185,7 +189,9 @@ class TerminalRenderer:
         self.show_cost = show_cost
         self._state = _ProgressState()
         self._evidence_by_ticker: dict[str, list[str]] = {}
-        self._live_enabled = animation and _is_tty(stderr)
+        self._live_enabled = (
+            animation and _is_tty(stderr) and os.environ.get("TERM", "").casefold() != "dumb"
+        )
         self._live: Live | None = None
         self._progress: Progress | None = None
         self._progress_task_id: TaskID | None = None
@@ -212,17 +218,25 @@ class TerminalRenderer:
         self._plain_activity_started = False
 
     @contextmanager
-    def activity(self, message: str) -> Iterator[TerminalRenderer]:
+    def activity(
+        self,
+        message: str,
+        *,
+        announce: bool = False,
+    ) -> Iterator[TerminalRenderer]:
         """Show immediate activity and guarantee terminal cleanup on every exit path."""
 
-        self.start_activity(message)
+        self.start_activity(message, announce=announce)
         try:
             yield self
         finally:
             self.stop_live()
 
-    def start_activity(self, message: str) -> None:
+    def start_activity(self, message: str, *, announce: bool = False) -> None:
         self._state.message = sanitize_terminal_text(message)
+        if announce:
+            self.stderr.print(Text(self._state.message, style="warren.activity"))
+            self._plain_activity_started = True
         if self._live_enabled:
             if self._live is None:
                 self._progress = Progress(
@@ -269,13 +283,40 @@ class TerminalRenderer:
         line.append(" for commands", style="warren.muted")
         self.stdout.print(line)
 
+    def render_help(self) -> None:
+        self.stdout.print(Text("Commands", style="warren.strong"))
+        table = Table.grid(padding=(0, 2), expand=False)
+        table.add_column(style="warren.brand", no_wrap=True)
+        table.add_column()
+        for command, description in (
+            ("Analyze", "Analyze AAPL · Compare COST with WMT · Review my portfolio"),
+            ("Research", "/discover · /gem-hunt"),
+            ("Runs", "/history [ticker] · /show RUN_ID · /trace [RUN_ID]"),
+            ("Holdings", "/portfolio · /watchlist"),
+            ("Session", "/new · /persona [default|dirt] · /budget [USD]"),
+            ("Reference", "/tools · /help · /quit"),
+        ):
+            table.add_row(command, description)
+        self.stdout.print(table)
+
+    def show_stopping(self) -> None:
+        """Make cancellation visible even while a provider call is still blocking."""
+
+        self.stop_live()
+        self.stderr.print(
+            Text(
+                "■ Stopping… press Ctrl-C again to stop immediately",
+                style="warren.warning",
+            )
+        )
+
     def emit(self, event: RunEvent) -> None:
         if isinstance(event, RunStarted):
             self._evidence_by_ticker.clear()
         elif (
             isinstance(event, ToolCallCompleted)
             and event.ticker is not None
-            and event.status == "success"
+            and _tool_succeeded(event.status)
         ):
             evidence = self._evidence_by_ticker.setdefault(event.ticker, [])
             if event.tool_name not in evidence:
@@ -300,7 +341,7 @@ class TerminalRenderer:
         return tuple(self._evidence_by_ticker.get(ticker, ()))
 
     def _render_tool_completion(self, event: ToolCallCompleted) -> None:
-        success = event.status == "success"
+        success = _tool_succeeded(event.status)
         glyph = "✓" if success else "✗"
         style = "warren.success" if success else "warren.error"
         label = _tool_label(event.tool_name)
