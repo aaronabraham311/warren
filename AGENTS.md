@@ -38,8 +38,13 @@ uv run mypy .
 uv run pytest -q
 uv run python -m agent.run AAPL
 uv run python -m agent.eval --golden-set
+uv run python -m agent.eval --golden-set --provider openai --service-tier flex --reasoning-effort medium
 uv run streamlit run dashboard/app.py
 ```
+
+Provider comparison evals keep the top-level grade-list JSON unchanged and write WAL-derived
+usage metrics beside it as `<output>.usage`. Non-Anthropic evals still require
+`ANTHROPIC_API_KEY` because the judge remains Sonnet.
 
 For a normal code change, run focused tests first and then the full checks above before claiming completion. If a check is slow or interrupted, report that rather than implying it passed.
 

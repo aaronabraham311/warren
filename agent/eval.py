@@ -9,4 +9,4 @@ it replays; ``python -m eval.runner`` works identically.
 from eval.runner import main
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

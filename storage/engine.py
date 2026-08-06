@@ -173,6 +173,13 @@ def write_eval_run(
         session.commit()
 
 
+def clear_eval_runs(run_id: str) -> None:
+    """Remove every prior grade for a pinned eval run before replaying it."""
+    with Session(get_engine()) as session:
+        session.execute(delete(EvalRun).where(EvalRun.run_id == run_id))
+        session.commit()
+
+
 def ensure_prompt_version(
     version_tag: str,
     persona_system_prompt: str,
