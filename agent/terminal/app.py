@@ -21,6 +21,7 @@ from agent.chat import RecentContext
 from agent.models import AnalysisOutput
 from agent.requests import FollowUpKind, RunnableRequest, StoredResultFollowUp
 from agent.service import RunMode, RunRequest, RunResult, TickerRunResult, execute_run
+from agent.terminal.binder import BinderDocument, ResultBinder, build_binder_document
 from agent.terminal.commands import (
     BudgetCommand,
     CommandError,
@@ -73,6 +74,10 @@ class CommandParser(Protocol):
 
 class CommandHandler(Protocol):
     def __call__(self, command: object, app: TerminalApp) -> bool: ...
+
+
+class BinderRunner(Protocol):
+    def run(self, document: BinderDocument) -> None: ...
 
 
 class _PromptToolkitReader:
@@ -264,6 +269,7 @@ class TerminalApp:
         settings: TerminalSettings | None = None,
         settings_saver: Callable[[TerminalSettings], object] = save_settings,
         api_key_available: Callable[[], bool] | None = None,
+        binder: BinderRunner | None = None,
     ) -> None:
         self.renderer = renderer
         self.reader = reader
@@ -282,6 +288,7 @@ class TerminalApp:
         self.api_key_available = api_key_available or (
             lambda: bool(os.environ.get("ANTHROPIC_API_KEY"))
         )
+        self.binder = binder
         self._interrupt_armed = False
 
     def run(self) -> int:
@@ -633,13 +640,40 @@ class TerminalApp:
                     event_sink=self.renderer,
                     cancellation=token,
                 )
-        self.renderer.render_result(
-            result,
-            compare=compare or len(request.tickers) > 1,
-        )
+        is_comparison = compare or len(request.tickers) > 1
+        if self._can_open_binder(result, compare=is_comparison):
+            self.renderer.render_compact_result(result)
+            try:
+                assert self.binder is not None
+                ticker = result.analyses[0].ticker
+                self.binder.run(
+                    build_binder_document(
+                        result,
+                        evidence_tools=self.renderer.evidence_for(ticker),
+                    )
+                )
+            except (EOFError, KeyboardInterrupt):
+                pass
+            except Exception:
+                self.renderer.diagnostic(
+                    "Interactive result view was unavailable; showing the plain report."
+                )
+                self.renderer.render_result(result, compare=False)
+        else:
+            self.renderer.render_result(result, compare=is_comparison)
         self.recent.record_result(text, result)
         if result.status == "cancelled":
             self._interrupt_armed = True
+
+    def _can_open_binder(self, result: RunResult, *, compare: bool) -> bool:
+        return (
+            self.binder is not None
+            and self.renderer.supports_result_binder
+            and not compare
+            and result.status == "success"
+            and len(result.ticker_results) == 1
+            and len(result.analyses) == 1
+        )
 
     def _render_follow_up(self, follow_up: StoredResultFollowUp) -> None:
         analysis = self.recent.select_ticker(follow_up.ticker)
@@ -719,6 +753,7 @@ def create_app(
     settings_saver: Callable[[TerminalSettings], object] = save_settings,
     api_key_available: Callable[[], bool] | None = None,
     width: int | None = None,
+    binder: BinderRunner | None = None,
 ) -> TerminalApp:
     loaded_settings, history_file = (
         _load_terminal_settings() if settings is None else (settings, None)
@@ -736,6 +771,11 @@ def create_app(
         show_cost=bool(_setting(active_settings, "show_cost", True)),
         width=width,
     )
+    if binder is None and bool(_setting(active_settings, "animation", True)):
+        stdin_tty = bool(getattr(stdin, "isatty", lambda: False)())
+        stdout_tty = bool(getattr(stdout, "isatty", lambda: False)())
+        if stdin_tty and stdout_tty and os.environ.get("TERM", "").casefold() != "dumb":
+            binder = ResultBinder()
     prompt_reader = reader
     if prompt_reader is None:
         prompt_reader = (
@@ -756,6 +796,7 @@ def create_app(
         settings=typed_settings,
         settings_saver=settings_saver,
         api_key_available=api_key_available,
+        binder=binder,
     )
 
 

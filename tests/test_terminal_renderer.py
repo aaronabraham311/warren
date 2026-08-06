@@ -72,6 +72,16 @@ def test_non_tty_comparison_preserves_request_order_and_prints_footer() -> None:
     assert stderr.getvalue() == ""
 
 
+def test_compact_result_leaves_only_durable_recommendation_summary() -> None:
+    stdout = _TTYBuffer()
+    renderer = TerminalRenderer(stdout=stdout, stderr=StringIO(), color="never")
+
+    renderer.render_compact_result(_result(_analysis("AMD")))
+
+    assert stdout.getvalue() == "AMD | HOLD | confidence 72% | Run run-123\n"
+    assert "investment thesis" not in stdout.getvalue()
+
+
 def test_partial_comparison_preserves_failed_ticker_position() -> None:
     stdout = StringIO()
     stderr = StringIO()
