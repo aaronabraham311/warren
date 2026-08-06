@@ -1,99 +1,223 @@
-"""LLM-as-judge for the ``thesis_must_mention`` grading family.
+"""Blinded, batched semantic judging for eval concepts.
 
-The substring checks in ``eval.grader`` ask *does the thesis contain this exact word*.
-That fails analytically-sound theses on vocabulary alone (a thesis discussing Chevron's
-"integrated" cost advantage in different words fails ``breakeven_or_cost_position``). This
-module grades the *idea* instead: a small Claude call decides whether the thesis
-substantively reasons about the concept, however it's phrased.
-
-Three determinism guarantees, mirroring the eval harness's invariants:
-
-1. **Pinned model.** ``claude-sonnet-5`` (``_JUDGE_MODEL``), never the routed agent model.
-2. **No sampling params + thinking off.** Sonnet 5 rejects ``temperature``/``top_p``/``top_k``
-   with a 400 — the eval's ``temperature=0`` is agent-only — so the judge passes none, and
-   sets ``thinking={"type": "disabled"}`` for a cheap, stable verdict.
-3. **Cached verdicts.** Keyed on ``sha256(model + thesis + concept)`` in the shared
-   ``CacheStore``, so re-running the same eval re-reads verdicts instead of paying for them.
-
-The judge is a ``Protocol`` so tests inject a deterministic fake and never touch the
-network — ``grade_analysis`` takes ``judge=None`` and keeps the substring behavior.
+The grader supplies only the candidate text and rubric: judges never see the producing
+provider, the preferred recommendation, or another judge's vote.  Live Sonnet requests
+are batched per ticker and cached per item.  ``HumanVerdictJudge`` provides the same
+contract from a deterministic local verdict mapping for offline adjudication.
 """
 
+from __future__ import annotations
+
+import hashlib
+import json
+from collections.abc import Mapping, Sequence
 from typing import Protocol
 
 import anthropic
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from agent.models import SONNET_5
 from data_sources.cache import CacheStore, make_key
 
-# yfinance-style basics: verdicts are a pure function of (thesis, concept, model), so a
-# long TTL is a re-run cache, not a freshness window. 90 days matches the fixture policy.
 _VERDICT_TTL_HOURS = 90 * 24
-
 _JUDGE_MODEL = SONNET_5
-
-# Bumped whenever the judge's grading semantics change, so verdicts cached under an older
-# prompt are not reused. v2: align the judge with the golden set's any-of semantics.
-_JUDGE_PROMPT_VERSION = "v2"
+_JUDGE_PROMPT_VERSION = "v3-batched-blind"
 
 _SYSTEM = (
-    "You grade an equity-analysis thesis against an expected topic that is defined by a set of "
-    "acceptable framings (an any-of list). The expectation is SATISFIED if the thesis "
-    "substantively engages AT LEAST ONE of those framings for the given company — it need not "
-    "engage all of them, nor the broader narrative that connects them. Judge the idea, not the "
-    "vocabulary: reasoning about any one framing in different words passes; a bare keyword drop "
-    "with no real engagement does not. Do not demand more than one framing, or a specific angle "
-    "the list does not require. Be strict about substance but faithful to the any-of semantics, "
-    "and record your verdict with the record_verdict tool."
+    "You are a blinded equity-analysis evaluator. Grade each independent item only against "
+    "its supplied rubric. You are not told which model produced the analysis or what a golden "
+    "recommendation label says. Judge substantive reasoning, not vocabulary: a bare keyword "
+    "does not pass, while an evidence-backed conclusion phrased differently does. For an any-of "
+    "rubric, substantively engaging one framing is sufficient. Return one verdict for every id."
 )
 
-_VERDICT_TOOL: anthropic.types.ToolParam = {
-    "name": "record_verdict",
-    "description": "Record whether the thesis substantively engages the expected topic.",
+_VERDICTS_TOOL: anthropic.types.ToolParam = {
+    "name": "record_verdicts",
+    "description": "Record one semantic grading verdict for every supplied opaque check id.",
     "input_schema": {
         "type": "object",
         "properties": {
-            "passes": {
-                "type": "boolean",
-                "description": "True if the thesis substantively reasons about the topic.",
-            },
-            "reasoning": {
-                "type": "string",
-                "description": "One sentence justifying the verdict.",
-            },
+            "verdicts": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "check_id": {"type": "string"},
+                        "passes": {"type": "boolean"},
+                        "reasoning": {"type": "string"},
+                    },
+                    "required": ["check_id", "passes", "reasoning"],
+                    "additionalProperties": False,
+                },
+            }
         },
-        "required": ["passes", "reasoning"],
+        "required": ["verdicts"],
+        "additionalProperties": False,
     },
 }
+
+
+class SemanticRequest(BaseModel):
+    """One blinded semantic check. ``check_id`` is stable and contains no gold answer."""
+
+    model_config = ConfigDict(frozen=True)
+
+    check_id: str = Field(min_length=1)
+    text: str
+    concept: list[str] = Field(min_length=1)
+    ticker: str
+    rubric: str = "Substantively engages at least one supplied framing."
+
+
+class JudgeVote(BaseModel):
+    judge_id: str
+    passes: bool
+    reasoning: str
 
 
 class JudgeVerdict(BaseModel):
     passes: bool
     reasoning: str
+    agreement: bool = True
+    votes: list[JudgeVote] = []
 
 
-def _prompt(thesis: str, concept: list[str], ticker: str) -> str:
-    alternatives = "\n".join(f"  - {framing}" for framing in concept)
-    return (
-        f"Company: {ticker}\n"
-        f"Expected topic — satisfied by substantively engaging ANY ONE of these framings:\n"
-        f"{alternatives}\n\n"
-        f"Thesis:\n{thesis}\n\n"
-        f"Does the thesis substantively reason about at least one of the framings above "
-        f"for {ticker}? Engaging a single framing is enough; do not require the others."
-    )
+class _VerdictRecord(BaseModel):
+    check_id: str
+    passes: bool
+    reasoning: str
+
+
+class _VerdictBatch(BaseModel):
+    verdicts: list[_VerdictRecord]
+
+
+class JudgeUnavailableError(RuntimeError):
+    """A configured judge could not produce a complete set of verdicts."""
 
 
 class ThesisJudge(Protocol):
-    """Grades whether a thesis engages an expected topic. Implementations must be pure
-    given ``(thesis, concept, ticker)`` so the eval stays reproducible."""
+    """Compatibility name for a field-neutral semantic judge."""
 
     def judge(self, *, thesis: str, concept: list[str], ticker: str) -> JudgeVerdict: ...
 
+    def judge_many(self, requests: Sequence[SemanticRequest]) -> dict[str, JudgeVerdict]: ...
+
+
+def canonical_request_key(request: SemanticRequest, *, judge_id: str) -> str:
+    """Collision-safe content key for cached or human verdicts."""
+    payload = {
+        "prompt_version": _JUDGE_PROMPT_VERSION,
+        "judge_id": judge_id,
+        "check_id": request.check_id,
+        "ticker": request.ticker,
+        "text": request.text,
+        "concept": request.concept,
+        "rubric": request.rubric,
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(encoded.encode()).hexdigest()
+
+
+def _single_request(thesis: str, concept: list[str], ticker: str) -> SemanticRequest:
+    return SemanticRequest(
+        check_id="semantic_concept",
+        text=thesis,
+        concept=concept,
+        ticker=ticker,
+    )
+
+
+class HumanVerdictJudge:
+    """Deterministic local judge backed by canonical-request-keyed human verdicts."""
+
+    def __init__(
+        self,
+        verdicts: Mapping[str, JudgeVerdict | bool],
+        judge_id: str = "human",
+    ) -> None:
+        self._verdicts = verdicts
+        self.judge_id = judge_id
+
+    def judge(self, *, thesis: str, concept: list[str], ticker: str) -> JudgeVerdict:
+        request = _single_request(thesis, concept, ticker)
+        return self.judge_many([request])[request.check_id]
+
+    def judge_many(self, requests: Sequence[SemanticRequest]) -> dict[str, JudgeVerdict]:
+        result: dict[str, JudgeVerdict] = {}
+        for request in requests:
+            key = canonical_request_key(request, judge_id=self.judge_id)
+            raw = self._verdicts.get(key)
+            if raw is None:
+                raise JudgeUnavailableError(
+                    f"{self.judge_id} has no verdict for {request.check_id} ({key})"
+                )
+            verdict = (
+                raw
+                if isinstance(raw, JudgeVerdict)
+                else JudgeVerdict(passes=raw, reasoning="human verdict")
+            )
+            result[request.check_id] = verdict.model_copy(
+                update={
+                    "votes": [
+                        JudgeVote(
+                            judge_id=self.judge_id,
+                            passes=verdict.passes,
+                            reasoning=verdict.reasoning,
+                        )
+                    ]
+                }
+            )
+        return result
+
+
+class JudgePanel:
+    """Require agreement across independently configured blinded judges."""
+
+    def __init__(self, judges: Sequence[tuple[str, ThesisJudge]]) -> None:
+        if not judges:
+            raise ValueError("a judge panel needs at least one judge")
+        self._judges = tuple(judges)
+
+    def judge(self, *, thesis: str, concept: list[str], ticker: str) -> JudgeVerdict:
+        request = _single_request(thesis, concept, ticker)
+        return self.judge_many([request])[request.check_id]
+
+    def judge_many(self, requests: Sequence[SemanticRequest]) -> dict[str, JudgeVerdict]:
+        votes_by_check: dict[str, list[JudgeVote]] = {request.check_id: [] for request in requests}
+        for judge_id, judge in self._judges:
+            try:
+                verdicts = judge.judge_many(requests)
+            except Exception as exc:  # one missing judge is an explicit eval outcome
+                raise JudgeUnavailableError(f"judge {judge_id!r} failed: {exc}") from exc
+            for request in requests:
+                verdict = verdicts.get(request.check_id)
+                if verdict is None:
+                    raise JudgeUnavailableError(f"judge {judge_id!r} omitted {request.check_id!r}")
+                votes_by_check[request.check_id].append(
+                    JudgeVote(
+                        judge_id=judge_id,
+                        passes=verdict.passes,
+                        reasoning=verdict.reasoning,
+                    )
+                )
+
+        result: dict[str, JudgeVerdict] = {}
+        for check_id, votes in votes_by_check.items():
+            agreement = len({vote.passes for vote in votes}) == 1
+            passes = agreement and votes[0].passes
+            reasoning = "; ".join(f"{vote.judge_id}: {vote.reasoning}" for vote in votes)
+            result[check_id] = JudgeVerdict(
+                passes=passes,
+                reasoning=reasoning,
+                agreement=agreement,
+                votes=votes,
+            )
+        return result
+
 
 class SonnetThesisJudge:
-    """A ``ThesisJudge`` backed by a pinned Sonnet 5 call, with a verdict cache."""
+    """Pinned Sonnet semantic judge; uncached checks are sent in one batched request."""
 
     def __init__(
         self,
@@ -105,31 +229,88 @@ class SonnetThesisJudge:
         self._cache = cache
         self._model = model
 
+    @property
+    def judge_id(self) -> str:
+        return f"anthropic:{self._model}"
+
     def judge(self, *, thesis: str, concept: list[str], ticker: str) -> JudgeVerdict:
-        key = make_key("eval_judge", _JUDGE_PROMPT_VERSION, self._model, thesis, "|".join(concept))
-        if self._cache is not None:
-            cached = self._cache.get(key)
-            if cached is not None:
-                return JudgeVerdict.model_validate_json(cached)
+        request = _single_request(thesis, concept, ticker)
+        return self.judge_many([request])[request.check_id]
 
-        verdict = self._call(thesis, concept, ticker)
+    def judge_many(self, requests: Sequence[SemanticRequest]) -> dict[str, JudgeVerdict]:
+        result: dict[str, JudgeVerdict] = {}
+        missing: list[SemanticRequest] = []
+        keys: dict[str, str] = {}
+        for request in requests:
+            digest = canonical_request_key(request, judge_id=self.judge_id)
+            key = make_key("eval_judge", digest)
+            keys[request.check_id] = key
+            cached = self._cache.get(key) if self._cache is not None else None
+            if cached is None:
+                missing.append(request)
+            else:
+                result[request.check_id] = JudgeVerdict.model_validate_json(cached)
 
-        if self._cache is not None:
-            self._cache.set(key, verdict.model_dump_json(), _VERDICT_TTL_HOURS)
-        return verdict
+        if missing:
+            fresh = self._call_many(missing)
+            result.update(fresh)
+            if self._cache is not None:
+                for check_id, verdict in fresh.items():
+                    self._cache.set(keys[check_id], verdict.model_dump_json(), _VERDICT_TTL_HOURS)
 
-    def _call(self, thesis: str, concept: list[str], ticker: str) -> JudgeVerdict:
-        # No temperature/top_p/top_k — Sonnet 5 rejects sampling params (HTTP 400).
+        omitted = {request.check_id for request in requests} - set(result)
+        if omitted:
+            raise JudgeUnavailableError(f"judge omitted verdicts: {sorted(omitted)}")
+        return result
+
+    def _call_many(self, requests: Sequence[SemanticRequest]) -> dict[str, JudgeVerdict]:
+        items = [
+            {
+                "check_id": request.check_id,
+                "company": request.ticker,
+                "rubric": request.rubric,
+                "acceptable_framings": request.concept,
+                "candidate_text": request.text,
+            }
+            for request in requests
+        ]
         response = self._client.messages.create(
             model=self._model,
-            max_tokens=512,
+            max_tokens=max(512, 256 * len(requests)),
             thinking={"type": "disabled"},
             system=_SYSTEM,
-            tools=[_VERDICT_TOOL],
-            tool_choice={"type": "tool", "name": "record_verdict"},
-            messages=[{"role": "user", "content": _prompt(thesis, concept, ticker)}],
+            tools=[_VERDICTS_TOOL],
+            tool_choice={"type": "tool", "name": "record_verdicts"},
+            messages=[
+                {
+                    "role": "user",
+                    "content": "Grade every item in this JSON array:\n"
+                    + json.dumps(items, ensure_ascii=False),
+                }
+            ],
         )
         for block in response.content:
-            if isinstance(block, anthropic.types.ToolUseBlock) and block.name == "record_verdict":
-                return JudgeVerdict.model_validate(dict(block.input))
-        raise ValueError(f"judge returned no record_verdict tool call for {ticker}")
+            if isinstance(block, anthropic.types.ToolUseBlock) and block.name == "record_verdicts":
+                batch = _VerdictBatch.model_validate(block.input)
+                expected = {request.check_id for request in requests}
+                actual = {record.check_id for record in batch.verdicts}
+                if actual != expected or len(actual) != len(batch.verdicts):
+                    raise JudgeUnavailableError(
+                        "judge verdict ids mismatch: "
+                        f"expected {sorted(expected)}, got {sorted(actual)}"
+                    )
+                return {
+                    record.check_id: JudgeVerdict(
+                        passes=record.passes,
+                        reasoning=record.reasoning,
+                        votes=[
+                            JudgeVote(
+                                judge_id=self.judge_id,
+                                passes=record.passes,
+                                reasoning=record.reasoning,
+                            )
+                        ],
+                    )
+                    for record in batch.verdicts
+                }
+        raise JudgeUnavailableError("judge returned no record_verdicts tool call")

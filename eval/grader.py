@@ -21,7 +21,9 @@ surfaces is a stylistic choice that drifts between prompt versions without indic
 regression, whereas a forbidden term or an out-of-envelope recommendation does.
 """
 
+import json
 import re
+from collections.abc import Sequence
 from typing import Literal
 
 from pydantic import BaseModel
@@ -41,7 +43,7 @@ from eval.golden_set import (
     EvalExample,
     SignalsExpectation,
 )
-from eval.judge import ThesisJudge
+from eval.judge import JudgeVerdict, SemanticRequest, ThesisJudge
 
 Severity = Literal["must", "should"]
 
@@ -55,8 +57,20 @@ _THESIS_EXCERPT_CHARS = 100
 # string, so wording tweaks elsewhere in the note don't spuriously fail the check.
 _UNIVERSE_NOTE_SUBSTRING = "DIRT universe: US small-caps (Russell 2000)"
 
-# Terms that count as surfacing a value-trap / balance-sheet-fragility concern.
-_VALUE_TRAP_TERMS = ("value trap", "value-trap", "balance sheet", "balance-sheet", "fragil")
+_VALUE_TRAP_FRAMINGS = [
+    "debt burden, refinancing, or ability to service debt",
+    "negative free cash flow, recurring cash burn, or funding runway",
+    "NCAV erosion, asset deterioration, or loss of the claimed asset-value floor",
+    "trading illiquidity or inability to realize value",
+    "missing catalyst, minority control, or a controlling-holder discount",
+]
+_VALUE_TRAP_RUBRIC = (
+    "Assess whether the apparent cheapness is a value trap. Pass only when the analysis uses "
+    "specific evidence about at least one supplied dimension and reaches a supported adverse "
+    "or protective conclusion. Net cash, covered debt service, durable NCAV, or positive cash "
+    "generation may support a protective conclusion. The bare words 'value trap', 'risk', "
+    "'balance sheet', or 'fragile' without analysis do not pass."
+)
 
 
 class CheckResult(BaseModel):
@@ -181,19 +195,6 @@ def _deep_value_checks(
                     if dirt is None
                     else f"price_to_ncav={dirt.price_to_ncav}, discount={dirt.ncav_discount_pct}"
                 ),
-                severity="must",
-            )
-        )
-
-    if expectation.require_value_trap_risk:
-        blob = (" ".join(result.key_risks) + " " + result.thesis).lower()
-        hits = [t for t in _VALUE_TRAP_TERMS if t in blob]
-        checks.append(
-            CheckResult(
-                check_name="value_trap_risk_surfaced",
-                passed=bool(hits),
-                expected=f"key_risks/thesis raise a value-trap concern (any of {list(_VALUE_TRAP_TERMS)})",  # noqa: E501
-                actual=f"found {hits}" if hits else f"none present in {result.key_risks}",
                 severity="must",
             )
         )
@@ -456,24 +457,40 @@ def _closability_checks(
     return checks
 
 
+def _analysis_evidence(result: AnalysisOutput) -> str:
+    """Blinded candidate text for recommendation-consistency judging."""
+    return json.dumps(
+        {
+            "recommendation": result.recommendation,
+            "thesis": result.thesis,
+            "buffett_signals": result.buffett_signals.model_dump(),
+            "lynch_signals": result.lynch_signals.model_dump(),
+            "key_risks": result.key_risks,
+        },
+        sort_keys=True,
+    )
+
+
+def _judge_many(
+    judge: ThesisJudge,
+    requests: Sequence[SemanticRequest],
+) -> dict[str, JudgeVerdict]:
+    """Use the batch seam so a live panel makes one request per judge and ticker."""
+    return judge.judge_many(requests)
+
+
 def grade_analysis(
     result: AnalysisOutput,
     example: EvalExample,
     judge: ThesisJudge | None = None,
     forensic_evidence: ForensicEvidenceBundle | None = None,
 ) -> EvalGrade:
-    """Grade *result* against *example*.
-
-    When *judge* is supplied, each ``thesis_must_mention`` expectation is graded
-    semantically (does the thesis reason about the topic, in any phrasing) rather than by
-    substring match. Every other check family stays deterministic, and ``judge=None``
-    preserves the exact substring behavior — the grader's default and the path all unit
-    tests exercise.
-    """
+    """Grade *result* against *example*, batching all semantic checks when possible."""
     expectations = example.expectations
     thesis_lower = result.thesis.lower()
     excerpt = result.thesis[:_THESIS_EXCERPT_CHARS]
     checks: list[CheckResult] = []
+    semantic: list[tuple[SemanticRequest, str, Severity, str]] = []
 
     allowed = expectations.recommendation.allowed
     checks.append(
@@ -486,20 +503,43 @@ def grade_analysis(
         )
     )
 
+    consistency_id = "recommendation_evidence_consistent"
+    semantic.append(
+        (
+            SemanticRequest(
+                check_id=consistency_id,
+                text=_analysis_evidence(result),
+                concept=[
+                    "the recommendation follows from the thesis, signals, and risks",
+                    "the recommendation acknowledges material contrary evidence",
+                ],
+                ticker=example.ticker,
+                rubric=(
+                    "Pass when the stated buy/sell/hold label is a defensible conclusion from "
+                    "the supplied evidence and material counter-evidence is not ignored. Do not "
+                    "compare against, infer, or enforce a golden recommendation label."
+                ),
+            ),
+            consistency_id,
+            "must",
+            "recommendation is consistent with its own evidence",
+        )
+    )
+
     for mention in expectations.thesis_must_mention:
         check_name = f"thesis_mentions_{_slug('_or_'.join(mention.any_of[:2]))}"
         if judge is not None:
-            # Semantic grading: does the thesis reason about the topic in any phrasing?
-            verdict = judge.judge(
-                thesis=result.thesis, concept=mention.any_of, ticker=example.ticker
-            )
-            checks.append(
-                CheckResult(
-                    check_name=check_name,
-                    passed=verdict.passes,
-                    expected=f"engages topic {mention.any_of}",
-                    actual=verdict.reasoning,
-                    severity="must",
+            semantic.append(
+                (
+                    SemanticRequest(
+                        check_id=check_name,
+                        text=result.thesis,
+                        concept=mention.any_of,
+                        ticker=example.ticker,
+                    ),
+                    check_name,
+                    "must",
+                    f"engages topic {mention.any_of}",
                 )
             )
             continue
@@ -537,15 +577,23 @@ def grade_analysis(
 
     required_risks = expectations.key_risks.must_include_one_of
     if required_risks:
-        risks_blob = " ".join(result.key_risks).lower()
-        hits = [r for r in required_risks if r.lower() in risks_blob]
-        checks.append(
-            CheckResult(
-                check_name="key_risks_include_one_of",
-                passed=bool(hits),
-                expected=f"any of {required_risks}",
-                actual=f"found {hits}" if hits else f"none present in {result.key_risks}",
-                severity="must",
+        framings = [f"{risk.concept}: {'; '.join(risk.any_of)}" for risk in required_risks]
+        semantic.append(
+            (
+                SemanticRequest(
+                    check_id="key_risks_include_one_of",
+                    text="\n".join(result.key_risks),
+                    concept=framings,
+                    ticker=example.ticker,
+                    rubric=(
+                        "Pass when the key-risks section substantively explains at least one "
+                        "configured risk concept. A bare label or keyword with no company-specific "
+                        "meaning does not pass."
+                    ),
+                ),
+                "key_risks_include_one_of",
+                "must",
+                f"substantively covers any of {[risk.concept for risk in required_risks]}",
             )
         )
 
@@ -568,7 +616,94 @@ def grade_analysis(
             thesis_lower,
             forensic_evidence,
         )
+        if expectations.deep_value.require_value_trap_assessment:
+            semantic.append(
+                (
+                    SemanticRequest(
+                        check_id="value_trap_assessed",
+                        text=result.thesis + "\nKey risks:\n" + "\n".join(result.key_risks),
+                        concept=_VALUE_TRAP_FRAMINGS,
+                        ticker=example.ticker,
+                        rubric=_VALUE_TRAP_RUBRIC,
+                    ),
+                    "value_trap_assessed",
+                    "must",
+                    "evidence-backed adverse or protective value-trap assessment",
+                )
+            )
     if expectations.closability is not None:
         checks += _closability_checks(result, expectations.closability, forensic_evidence)
+
+    if judge is None:
+        for _request, check_name, severity, expected in semantic:
+            checks.append(
+                CheckResult(
+                    check_name=check_name,
+                    passed=False,
+                    expected=expected,
+                    actual="not evaluated: semantic judge not configured",
+                    severity="should" if check_name == consistency_id else severity,
+                )
+            )
+        return _finalize(example.ticker, checks)
+
+    requests = [item[0] for item in semantic]
+    try:
+        verdicts = _judge_many(judge, requests)
+    except Exception as exc:  # preserve deterministic grades and expose judge failure
+        checks.append(
+            CheckResult(
+                check_name="judge_available",
+                passed=False,
+                expected="semantic judge returns every requested verdict",
+                actual=f"{type(exc).__name__}: {exc}",
+                severity="must",
+            )
+        )
+        for _request, check_name, severity, expected in semantic:
+            checks.append(
+                CheckResult(
+                    check_name=check_name,
+                    passed=False,
+                    expected=expected,
+                    actual="not evaluated because the semantic judge failed",
+                    severity=severity,
+                )
+            )
+        return _finalize(example.ticker, checks)
+
+    for request, check_name, severity, expected in semantic:
+        verdict = verdicts.get(request.check_id)
+        if verdict is None:
+            checks.append(
+                CheckResult(
+                    check_name=check_name,
+                    passed=False,
+                    expected=expected,
+                    actual="judge omitted this verdict",
+                    severity=severity,
+                )
+            )
+            continue
+        checks.append(
+            CheckResult(
+                check_name=check_name,
+                passed=verdict.passes,
+                expected=expected,
+                actual=verdict.reasoning,
+                severity=severity,
+            )
+        )
+        if len(verdict.votes) > 1:
+            votes = ", ".join(f"{vote.judge_id}={vote.passes}" for vote in verdict.votes)
+            checks.append(
+                CheckResult(
+                    check_name=f"judge_agreement_{check_name}",
+                    passed=verdict.agreement,
+                    expected="all blinded judges agree",
+                    actual=votes,
+                    severity="must",
+                )
+            )
 
     return _finalize(example.ticker, checks)

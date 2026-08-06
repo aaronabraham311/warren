@@ -12,14 +12,30 @@ import pytest
 
 from agent.models import SONNET_5
 from data_sources.cache import CacheStore
-from eval.judge import JudgeVerdict, SonnetThesisJudge
+from eval.judge import (
+    HumanVerdictJudge,
+    JudgeUnavailableError,
+    JudgeVerdict,
+    SemanticRequest,
+    SonnetThesisJudge,
+    canonical_request_key,
+)
 
 
-def _verdict_response(passes: bool, reasoning: str) -> MagicMock:
+def _verdict_response(
+    passes: bool,
+    reasoning: str,
+    check_ids: list[str] | None = None,
+) -> MagicMock:
+    ids = check_ids or ["semantic_concept"]
     block = anthropic.types.ToolUseBlock(
         id="tu_1",
-        name="record_verdict",
-        input={"passes": passes, "reasoning": reasoning},
+        name="record_verdicts",
+        input={
+            "verdicts": [
+                {"check_id": check_id, "passes": passes, "reasoning": reasoning} for check_id in ids
+            ]
+        },
         type="tool_use",
     )
     response = MagicMock()
@@ -39,7 +55,8 @@ def test_judge_pins_sonnet_5_and_omits_sampling_params() -> None:
 
     verdict = judge.judge(thesis="…", concept=["moat"], ticker="AAPL")
 
-    assert verdict == JudgeVerdict(passes=True, reasoning="engages the topic")
+    assert verdict.passes
+    assert verdict.reasoning == "engages the topic"
     kwargs = client.messages.create.call_args.kwargs
     assert kwargs["model"] == SONNET_5
     # Sonnet 5 rejects sampling params with a 400 — the judge must pass none.
@@ -47,7 +64,7 @@ def test_judge_pins_sonnet_5_and_omits_sampling_params() -> None:
     assert "top_p" not in kwargs
     assert "top_k" not in kwargs
     assert kwargs["thinking"] == {"type": "disabled"}
-    assert kwargs["tool_choice"] == {"type": "tool", "name": "record_verdict"}
+    assert kwargs["tool_choice"] == {"type": "tool", "name": "record_verdicts"}
 
 
 def test_judge_caches_verdicts_across_calls() -> None:
@@ -58,7 +75,9 @@ def test_judge_caches_verdicts_across_calls() -> None:
     first = judge.judge(thesis="same thesis", concept=["take rate"], ticker="PYPL")
     second = judge.judge(thesis="same thesis", concept=["take rate"], ticker="PYPL")
 
-    assert first == second == JudgeVerdict(passes=False, reasoning="no real engagement")
+    assert first == second
+    assert not first.passes
+    assert first.reasoning == "no real engagement"
     # Second call served from cache — the model is hit exactly once.
     assert client.messages.create.call_count == 1
 
@@ -67,5 +86,33 @@ def test_judge_raises_when_no_verdict_tool_call() -> None:
     response = MagicMock()
     response.content = [anthropic.types.TextBlock(text="oops", type="text")]
     judge = SonnetThesisJudge(_stub_client(response))
-    with pytest.raises(ValueError, match="record_verdict"):
+    with pytest.raises(JudgeUnavailableError, match="record_verdicts"):
         judge.judge(thesis="…", concept=["moat"], ticker="AAPL")
+
+
+def test_multiple_checks_are_sent_in_one_live_request() -> None:
+    requests = [
+        SemanticRequest(check_id="risk", text="risk text", concept=["leverage"], ticker="AAPL"),
+        SemanticRequest(check_id="thesis", text="thesis text", concept=["moat"], ticker="AAPL"),
+    ]
+    client = _stub_client(_verdict_response(True, "supported", ["risk", "thesis"]))
+    verdicts = SonnetThesisJudge(client).judge_many(requests)
+    assert set(verdicts) == {"risk", "thesis"}
+    assert client.messages.create.call_count == 1
+
+
+def test_human_verdicts_use_canonical_collision_safe_keys() -> None:
+    left = SemanticRequest(
+        check_id="risk", text="a", concept=["x|y", "z"], ticker="AAPL", rubric="r"
+    )
+    right = SemanticRequest(
+        check_id="risk", text="a", concept=["x", "y|z"], ticker="AAPL", rubric="r"
+    )
+    left_key = canonical_request_key(left, judge_id="human")
+    right_key = canonical_request_key(right, judge_id="human")
+    assert left_key != right_key
+
+    judge = HumanVerdictJudge({left_key: JudgeVerdict(passes=True, reasoning="reviewed")})
+    assert judge.judge_many([left])["risk"].passes
+    with pytest.raises(JudgeUnavailableError, match="no verdict"):
+        judge.judge_many([right])

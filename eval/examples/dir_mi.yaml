@@ -12,8 +12,8 @@ notes: |
   Because this is a real gem and not a trap, `buy` is inside the envelope — but `hold` remains
   defensible on a lack-of-control or catalyst-timing view, so both are allowed. What the eval
   actually pins is the DIRT methodology: the thesis must surface the cheapness measures
-  (EV/EBIT and NCAV), it must still name the value-trap / balance-sheet-fragility risk that
-  every deep-value name carries even when the answer is buy, and it must emit the G9 universe
+  (EV/EBIT and NCAV), it must assess whether value-trap / balance-sheet fragility is present
+  using evidence (a protective net-cash conclusion is valid), and it must emit the G9 universe
   note into data_quality_notes. `sell` is excluded — nothing here supports a deterioration or
   broken-thesis catalyst.
 last_curated: 2026-08-04
@@ -37,14 +37,12 @@ expectations:
 
   key_risks:
     must_include_one_of:
-      - value trap
-      - liquidity
-      - small-cap
-      - coverage
-      - control
-      - catalyst
-      - balance sheet
-      - illiquid
+      - concept: value realization
+        any_of: [trading liquidity, small-cap illiquidity, lack of coverage, missing catalyst]
+      - concept: minority ownership
+        any_of: [control discount, controlling holder, minority shareholder protections]
+      - concept: financial resilience
+        any_of: [debt service, cash burn, NCAV erosion, balance-sheet protection]
 
   numerical_grounding:
     min_specific_numbers: 3
@@ -53,7 +51,7 @@ expectations:
   deep_value:
     require_ev_ebit: true
     require_ncav: true
-    require_value_trap_risk: true
+    require_value_trap_assessment: true
     require_universe_note: true
     require_decision_contract: true
     require_decision_recomputation: true

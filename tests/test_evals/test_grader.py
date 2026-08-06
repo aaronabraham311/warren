@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from datetime import date
 
 import pytest
@@ -25,7 +26,7 @@ from eval.golden_set import (
     load_eval_example,
 )
 from eval.grader import _UNIVERSE_NOTE_SUBSTRING, failed_grade, grade_analysis
-from eval.judge import JudgeVerdict
+from eval.judge import JudgePanel, JudgeVerdict, SemanticRequest
 
 
 class _FakeJudge:
@@ -34,10 +35,20 @@ class _FakeJudge:
     def __init__(self, passes: bool, reasoning: str = "scripted") -> None:
         self._verdict = JudgeVerdict(passes=passes, reasoning=reasoning)
         self.calls: list[tuple[str, list[str], str]] = []
+        self.batches: list[list[SemanticRequest]] = []
 
     def judge(self, *, thesis: str, concept: list[str], ticker: str) -> JudgeVerdict:
         self.calls.append((thesis, concept, ticker))
         return self._verdict
+
+    def judge_many(self, requests: Sequence[SemanticRequest]) -> dict[str, JudgeVerdict]:
+        self.batches.append(list(requests))
+        return {request.check_id: self._verdict for request in requests}
+
+
+class _FailingJudge(_FakeJudge):
+    def judge_many(self, requests: Sequence[SemanticRequest]) -> dict[str, JudgeVerdict]:
+        raise RuntimeError("judge offline")
 
 
 def _analysis(
@@ -123,8 +134,16 @@ def test_judge_passes_thesis_that_misses_the_keyword_but_engages_the_topic() -> 
     check = next(c for c in grade.checks if c.check_name.startswith("thesis_mentions_"))
     assert check.severity == "must"
     assert check.actual == "Thesis reasons about relative production cost."
-    # The judge saw the full thesis, the concept keywords, and the ticker.
-    assert judge.calls == [(thesis, ["cost curve", "breakeven"], "AAPL")]
+    # The batched judge saw the full thesis, concept framings, and ticker exactly once.
+    thesis_request = next(
+        request for request in judge.batches[0] if request.check_id.startswith("thesis_mentions_")
+    )
+    assert (thesis_request.text, thesis_request.concept, thesis_request.ticker) == (
+        thesis,
+        ["cost curve", "breakeven"],
+        "AAPL",
+    )
+    assert len(judge.batches) == 1
 
 
 def test_judge_negative_fails_the_example_at_must_severity() -> None:
@@ -138,12 +157,54 @@ def test_judge_negative_fails_the_example_at_must_severity() -> None:
     assert check.severity == "must"
 
 
+def test_recommendation_envelope_and_evidence_consistency_are_separate() -> None:
+    grade = grade_analysis(
+        _analysis(recommendation="sell"),
+        _example(allowed=["hold", "buy"]),
+        _FakeJudge(True, "The evidence supports sell."),
+    )
+    envelope = next(c for c in grade.checks if c.check_name == "recommendation_in_allowed")
+    consistency = next(
+        c for c in grade.checks if c.check_name == "recommendation_evidence_consistent"
+    )
+    assert not envelope.passed
+    assert consistency.passed
+    assert not grade.passed
+
+
+def test_judge_failure_is_explicit_and_keeps_deterministic_checks() -> None:
+    grade = grade_analysis(_analysis(), _example(), _FailingJudge(True))
+    assert next(c for c in grade.checks if c.check_name == "recommendation_in_allowed").passed
+    unavailable = next(c for c in grade.checks if c.check_name == "judge_available")
+    assert not unavailable.passed
+    assert "judge offline" in unavailable.actual
+
+
+def test_panel_disagreement_is_an_explicit_failure() -> None:
+    panel = JudgePanel(
+        [
+            ("sonnet", _FakeJudge(True, "supported")),
+            ("human", _FakeJudge(False, "unsupported")),
+        ]
+    )
+    grade = grade_analysis(_analysis(), _example(), panel)
+    disagreement = next(
+        c
+        for c in grade.checks
+        if c.check_name == "judge_agreement_recommendation_evidence_consistent"
+    )
+    assert not disagreement.passed
+    assert "sonnet=True" in disagreement.actual
+    assert "human=False" in disagreement.actual
+
+
 def test_judge_is_not_called_when_absent() -> None:
     """judge=None keeps the substring path — the default and back-compat guarantee."""
     example = _example(must_mention=[ThesisMention(any_of=["moat"])])
     judge = _FakeJudge(passes=False)
     grade_analysis(_analysis(), example)  # no judge arg
     assert judge.calls == []
+    assert judge.batches == []
 
 
 def test_thesis_must_not_mention_fails_when_forbidden_term_present() -> None:
@@ -170,7 +231,8 @@ def test_should_failure_does_not_fail_the_example() -> None:
 def test_must_failure_fails_the_example() -> None:
     grade = grade_analysis(_analysis(recommendation="sell"), _example(allowed=["buy"]))
     assert not grade.passed
-    assert all(c.severity == "must" for c in grade.checks if not c.passed)
+    envelope = next(c for c in grade.checks if c.check_name == "recommendation_in_allowed")
+    assert envelope.severity == "must"
 
 
 def test_signal_count_check_omitted_when_yaml_does_not_set_it() -> None:
@@ -180,10 +242,12 @@ def test_signal_count_check_omitted_when_yaml_does_not_set_it() -> None:
 
 def test_key_risks_include_one_of() -> None:
     example = _example(key_risks=KeyRisksExpectation(must_include_one_of=["china", "regulatory"]))
-    ok = grade_analysis(_analysis(key_risks=["China exposure is material"]), example)
+    ok = grade_analysis(
+        _analysis(key_risks=["China exposure is material"]), example, _FakeJudge(True)
+    )
     assert ok.passed
 
-    bad = grade_analysis(_analysis(key_risks=["valuation"]), example)
+    bad = grade_analysis(_analysis(key_risks=["valuation"]), example, _FakeJudge(False))
     assert not bad.passed
     assert (
         next(c for c in bad.checks if c.check_name == "key_risks_include_one_of").severity == "must"
@@ -257,7 +321,7 @@ def _dirt_example() -> EvalExample:
             deep_value=DeepValueExpectation(
                 require_ev_ebit=True,
                 require_ncav=True,
-                require_value_trap_risk=True,
+                require_value_trap_assessment=True,
                 require_universe_note=True,
             ),
         ),
@@ -294,13 +358,13 @@ def _forensic_with_catalyst(evidence_id: str) -> ForensicEvidenceBundle:
 _DIRT_CHECKS = {
     "ev_ebit_present",
     "ncav_cited",
-    "value_trap_risk_surfaced",
+    "value_trap_assessed",
     "universe_note_present",
 }
 
 
 def test_deep_value_checks_pass_when_all_present() -> None:
-    grade = grade_analysis(_dirt_analysis(), _dirt_example())
+    grade = grade_analysis(_dirt_analysis(), _dirt_example(), _FakeJudge(True))
     dirt = [c for c in grade.checks if c.check_name in _DIRT_CHECKS]
     assert {c.check_name for c in dirt} == _DIRT_CHECKS
     assert all(c.passed and c.severity == "must" for c in dirt)
@@ -312,7 +376,7 @@ def test_ev_ebit_check_fails_when_absent_from_signals_and_thesis() -> None:
         dirt_signals=DirtSignals(ev_ebit=None, price_to_ncav=0.8),
         thesis="A cheap, profitable small-cap trading below its net current asset value.",
     )
-    grade = grade_analysis(analysis, _dirt_example())
+    grade = grade_analysis(analysis, _dirt_example(), _FakeJudge(True))
     check = next(c for c in grade.checks if c.check_name == "ev_ebit_present")
     assert not check.passed
     assert not grade.passed
@@ -323,24 +387,54 @@ def test_ncav_check_fails_when_absent_from_signals_and_thesis() -> None:
         dirt_signals=DirtSignals(ev_ebit=6.1, price_to_ncav=None, ncav_discount_pct=None),
         thesis="Cheap at 6.1x EV/EBIT with a clean balance sheet and net cash.",
     )
-    grade = grade_analysis(analysis, _dirt_example())
+    grade = grade_analysis(analysis, _dirt_example(), _FakeJudge(True))
     check = next(c for c in grade.checks if c.check_name == "ncav_cited")
     assert not check.passed
     assert not grade.passed
 
 
-def test_value_trap_check_fails_when_no_such_risk_surfaced() -> None:
+def test_value_trap_check_fails_when_no_substantive_assessment() -> None:
     analysis = _dirt_analysis(key_risks=["FX translation drag on reported revenue"])
     analysis.thesis = "Cheap at 6.1x EV/EBIT, trades at 0.8x NCAV; earnings are steady."
-    grade = grade_analysis(analysis, _dirt_example())
-    check = next(c for c in grade.checks if c.check_name == "value_trap_risk_surfaced")
+    grade = grade_analysis(analysis, _dirt_example(), _FakeJudge(False, "No trap evidence."))
+    check = next(c for c in grade.checks if c.check_name == "value_trap_assessed")
     assert not check.passed
     assert not grade.passed
 
 
+def test_value_trap_magic_words_do_not_substitute_for_analysis() -> None:
+    analysis = _dirt_analysis(
+        key_risks=["Value trap risk; fragile balance sheet."],
+        thesis="Cheap at 6.1x EV/EBIT and 0.8x NCAV.",
+    )
+    grade = grade_analysis(
+        analysis,
+        _dirt_example(),
+        _FakeJudge(False, "Bare labels without supporting evidence."),
+    )
+    check = next(c for c in grade.checks if c.check_name == "value_trap_assessed")
+    assert not check.passed
+
+
+def test_value_trap_protective_conclusion_can_pass() -> None:
+    analysis = _dirt_analysis(
+        key_risks=["Shares are illiquid and the controlling holder may delay realization."],
+        thesis=(
+            "Cheap at 6.1x EV/EBIT and 0.8x NCAV, but 55M of net cash, recurring positive "
+            "free cash flow, and no debt service make permanent impairment less likely."
+        ),
+    )
+    grade = grade_analysis(
+        analysis,
+        _dirt_example(),
+        _FakeJudge(True, "Net cash and positive FCF support a protective conclusion."),
+    )
+    assert next(c for c in grade.checks if c.check_name == "value_trap_assessed").passed
+
+
 def test_universe_note_check_fails_when_missing() -> None:
     analysis = _dirt_analysis(data_quality_notes=["some other note"])
-    grade = grade_analysis(analysis, _dirt_example())
+    grade = grade_analysis(analysis, _dirt_example(), _FakeJudge(True))
     check = next(c for c in grade.checks if c.check_name == "universe_note_present")
     assert not check.passed
     assert not grade.passed
@@ -574,7 +668,7 @@ def test_deep_value_checks_omitted_for_default_examples() -> None:
     grade = grade_analysis(_analysis(), _example())
     assert not any(
         c.check_name
-        in {"ev_ebit_present", "ncav_cited", "value_trap_risk_surfaced", "universe_note_present"}
+        in {"ev_ebit_present", "ncav_cited", "value_trap_assessed", "universe_note_present"}
         for c in grade.checks
     )
 
