@@ -9,6 +9,7 @@
 | Integration | piped transcript order; no prompt/ANSI when redirected; generic startup; no Alembic INFO; no runtime state for `--help` |
 | Restart | settings/history/recent stored-run behavior across process restart |
 | Real PTY | spinner/elapsed; durable tool order; cursor restoration; prompt after success/cancel; narrow width; user-visible color |
+| Semantic screen | named `pyte` cell-grid/cursor checkpoints; fake clock; required width and resize matrix |
 
 Run the focused automated surface:
 
@@ -17,7 +18,8 @@ uv run pytest -q \
   tests/test_terminal_renderer.py \
   tests/test_terminal_app.py \
   tests/test_terminal_integration.py \
-  tests/test_terminal_restart_integration.py
+  tests/test_terminal_restart_integration.py \
+  tests/test_terminal_reliability.py
 ```
 
 ## Deterministic startup PTY smoke
@@ -48,6 +50,13 @@ uv run pytest -q \
 Those tests inject executors and typed events, so they do not require credentials or
 network access. They complement rather than replace the startup PTY smoke and the
 manual provider-backed E2E below.
+
+Semantic snapshots live under `tests/__snapshots__/`. Update them only with the
+explicit local command below, inspect the diff, and never auto-update them in CI:
+
+```bash
+uv run pytest -q tests/test_terminal_reliability.py --snapshot-update
+```
 
 ## Manual live-agent E2E
 

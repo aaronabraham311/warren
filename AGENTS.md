@@ -8,7 +8,8 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
   request parsing, interactive terminal, agent loop, routing, personas, budgets,
   portfolio/universe screening, and typed tools.
 - `agent/terminal/`: prompt lifecycle, typed slash commands, local completion,
-  control-safe rendering, non-secret settings, and read-only persisted-state queries.
+  control-safe rendering, deterministic semantic-screen reliability lab, non-secret
+  settings, and read-only persisted-state queries.
 - `data_sources/`: all external API clients and cache behavior, including typed
   junior-market identity sources used by universe refresh and regional filings.
 - `storage/`: SQLAlchemy models, SQLite engine, Alembic migrations, JSONL WAL recovery.
@@ -34,6 +35,8 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
   authoritative for traces and SQLite remains the read/query projection.
 - Keep natural-language terminal routing deterministic. Ambiguous, invalid, and
   unsupported input must not fall through to a model or external data source.
+- Test terminal semantics with the pure activity reducer and `pyte` screen checkpoints;
+  reserve byte assertions for ANSI/cursor hygiene and real PTYs for OS integration.
 - Interactive and batch entry points call the shared run service; the terminal must
   not shell out to or parse output from `agent.run`.
 - Prefer dataclasses for multi-value returns and keep public boundaries typed and validated.

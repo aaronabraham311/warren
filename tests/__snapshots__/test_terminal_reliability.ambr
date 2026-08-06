@@ -1,0 +1,36 @@
+# serializer version: 1
+# name: test_semantic_screen_checkpoint_captures_visible_wait_and_cursor[model-wait-48x8]
+  dict({
+    'activity': dict({
+      'cancellation_requested': False,
+      'completed_models': 0,
+      'completed_tools': 1,
+      'external_wait': True,
+      'last_event_at': 1.0,
+      'operation': 'model',
+      'operation_name': 'synthesis',
+      'operation_started_at': 1.0,
+      'outcome': None,
+      'run_id': 'run-1',
+      'ticker': 'AMD',
+    }),
+    'cells': tuple(
+      '✓ Market quote  ·  178ms',
+      '✓ Research pass  ·  1 tools gathered',
+      '                                    ⠋ Synthesizi',
+      '⠋ Waiting for model response · AMD 0:00:16',
+      '',
+      '',
+      '',
+      '',
+    ),
+    'cursor': tuple(
+      42,
+      3,
+    ),
+    'cursor_visible': False,
+    'name': 'model-wait-16s',
+    'scrollback': tuple(
+    ),
+  })
+# ---

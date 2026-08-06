@@ -5,12 +5,13 @@ from __future__ import annotations
 import os
 import re
 import sys
+import time
 import unicodedata
 from collections.abc import Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
 from io import TextIOBase
-from typing import IO, Iterator, Literal, TextIO
+from typing import IO, Callable, Iterator, Literal, TextIO
 
 from rich.console import Console, Group
 from rich.live import Live
@@ -143,11 +144,13 @@ def _console(
     *,
     color: ColorMode,
     width: int | None,
+    no_color: bool | None = None,
+    terminal_type: str | None = None,
 ) -> Console:
-    no_color = bool(os.environ.get("NO_COLOR"))
+    no_color_enabled = bool(os.environ.get("NO_COLOR")) if no_color is None else no_color
     terminal = _is_tty(stream)
     force_terminal: bool | None = None
-    if color == "never" or no_color or (color == "auto" and not terminal):
+    if color == "never" or no_color_enabled or (color == "auto" and not terminal):
         color_system: ColorSystem | None = None
         force_terminal = False
     elif color == "always":
@@ -165,6 +168,10 @@ def _console(
         highlight=False,
         markup=False,
         soft_wrap=False,
+        force_interactive=(terminal_type.casefold() != "dumb")
+        if terminal_type is not None
+        else None,
+        _environ={**os.environ, "TERM": terminal_type} if terminal_type is not None else None,
     )
 
 
@@ -238,15 +245,32 @@ class TerminalRenderer:
         animation: bool = True,
         show_cost: bool = True,
         width: int | None = None,
+        clock: Callable[[], float] = time.monotonic,
+        terminal_type: str | None = None,
+        no_color: bool | None = None,
     ) -> None:
-        self.stdout = _console(stdout, color=color, width=width)
-        self.stderr = _console(stderr, color=color, width=width)
+        self.stdout = _console(
+            stdout,
+            color=color,
+            width=width,
+            no_color=no_color,
+            terminal_type=terminal_type,
+        )
+        self.stderr = _console(
+            stderr,
+            color=color,
+            width=width,
+            no_color=no_color,
+            terminal_type=terminal_type,
+        )
         self.show_cost = show_cost
         self._interactive_results_enabled = animation
+        self._clock = clock
+        self._terminal_type = terminal_type or os.environ.get("TERM", "")
         self._state = _ProgressState()
         self._evidence_by_ticker: dict[str, list[str]] = {}
         self._live_enabled = (
-            animation and _is_tty(stderr) and os.environ.get("TERM", "").casefold() != "dumb"
+            animation and _is_tty(stderr) and self._terminal_type.casefold() != "dumb"
         )
         self._live: Live | None = None
         self._progress: Progress | None = None
@@ -313,6 +337,7 @@ class TerminalRenderer:
                     TimeElapsedColumn(),
                     console=self.stderr,
                     auto_refresh=False,
+                    get_time=self._clock,
                     expand=False,
                 )
                 self._progress_task_id = self._progress.add_task(
@@ -345,6 +370,25 @@ class TerminalRenderer:
             self.stderr.print(Text(self._state.message, style="warren.activity"))
         else:
             self.start_activity(self._state.message)
+
+    def refresh_activity(self) -> None:
+        """Refresh the current frame; deterministic tests advance an injected clock."""
+
+        if self._live is not None:
+            self._live.refresh()
+
+    def resize(self, width: int) -> None:
+        """Apply a terminal-width change to subsequent activity frames."""
+
+        self.stdout.width = width
+        self.stderr.width = width
+        if self._progress is not None:
+            self._progress.columns = (
+                SpinnerColumn(style="warren.activity"),
+                _ActivityColumn(self._state, width),
+                TimeElapsedColumn(),
+            )
+        self.refresh_activity()
 
     def _start_model_activity(self, event: LlmCallStarted) -> None:
         ticker = sanitize_terminal_text(event.ticker or "request")
