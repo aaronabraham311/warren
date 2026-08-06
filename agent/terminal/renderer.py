@@ -25,6 +25,7 @@ from agent.events import (
     AnalysisCompleted,
     CandidateSelected,
     LlmCallCompleted,
+    LlmCallFailed,
     LlmCallPurpose,
     LlmCallStarted,
     RunCancelled,
@@ -475,6 +476,16 @@ class TerminalRenderer:
             self._render_model_completion(event)
             ticker = sanitize_terminal_text(event.ticker) if event.ticker else "the request"
             self.update_activity(f"Analyzing {ticker}…")
+            return
+        if isinstance(event, LlmCallFailed):
+            self.stderr.print(
+                Text(
+                    "✗ Model request  ·  " + sanitize_terminal_text(event.error_type),
+                    style="warren.error",
+                )
+            )
+            ticker = sanitize_terminal_text(event.ticker) if event.ticker else "the request"
+            self.update_activity(f"Model request failed for {ticker}")
             return
         if isinstance(event, ToolCallCompleted):
             self._render_tool_completion(event)

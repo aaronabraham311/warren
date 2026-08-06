@@ -11,7 +11,7 @@ from pydantic import BaseModel, ValidationError
 
 from agent.budget import RunContext
 from agent.caching import call_claude_with_caching
-from agent.events import LlmCallPurpose, ToolCallStarted, emit_safely
+from agent.events import LlmCallPurpose
 from agent.models import AnalysisOutput
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
@@ -280,9 +280,21 @@ def _call_and_record(
         tool_count=run_context.budget.total_tool_calls,
     )
     t0 = time.monotonic()
-    response = _call_claude(
-        client, model, persona_prompt, portfolio_context, messages, max_tokens, temperature
-    )
+    try:
+        response = _call_claude(
+            client, model, persona_prompt, portfolio_context, messages, max_tokens, temperature
+        )
+    except Exception as exc:
+        run_context.logger.log(
+            "llm_call_failed",
+            ticker=ticker,
+            phase="deep",
+            model=model,
+            purpose=purpose,
+            iteration=run_context.iterations,
+            error_type=type(exc).__name__,
+        )
+        raise
     latency_ms = int((time.monotonic() - t0) * 1000)
     _record_usage(run_context, response)
     run_context.logger.log_llm_call(
@@ -445,6 +457,7 @@ def analyze_ticker(
 
                 tool = TOOL_REGISTRY.get(block.name)
                 t0 = time.monotonic()
+                run_context.logger.log_tool_started(ticker=ticker, tool_name=block.name)
                 error_msg: str | None = None
                 cached = False
                 retry_count = 0
@@ -468,14 +481,6 @@ def analyze_ticker(
                             retryable=False,
                         )
                     else:
-                        emit_safely(
-                            run_context.event_sink,
-                            ToolCallStarted(
-                                run_id=run_context.run_id,
-                                ticker=ticker,
-                                tool_name=block.name,
-                            ),
-                        )
                         outcome = _run_with_retry(tool, parsed, run_context, _sleep, tool_runner)
                         tool_result = outcome.result
                         retry_count = outcome.retry_count

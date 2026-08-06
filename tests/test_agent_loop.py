@@ -85,6 +85,7 @@ def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Sessi
     assert lifecycle == [
         "llm_call_started",
         "llm_call",
+        "tool_call_started",
         "tool_call",
         "llm_call_started",
         "llm_call",
@@ -130,6 +131,24 @@ def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Sessi
     assert analysis is not None
     assert analysis.recommendation == "hold"
     assert analysis.confidence == pytest.approx(0.72)
+
+
+def test_provider_failure_has_paired_durable_model_outcome(mock_claude: MagicMock) -> None:
+    client = mock_claude([])
+    client.messages.create.side_effect = RuntimeError("authorization=secret")
+    ctx = _ctx("run-provider-failure")
+
+    with pytest.raises(RuntimeError, match="secret"):
+        analyze_ticker("AMD", _persona(), _routing(), ctx)
+
+    trace = [json.loads(line) for line in ctx.logger.path.read_text().splitlines()]
+    assert [record["event"] for record in trace] == [
+        "llm_call_started",
+        "llm_call_failed",
+    ]
+    assert trace[0]["operation_id"] == trace[1]["operation_id"]
+    assert trace[1]["error_type"] == "RuntimeError"
+    assert "error_msg" not in trace[1]
 
 
 # ── Tool-call persistence ─────────────────────────────────────────────────────

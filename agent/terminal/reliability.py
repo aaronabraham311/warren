@@ -17,6 +17,7 @@ from agent.events import (
     AnalysisCompleted,
     CandidateSelected,
     LlmCallCompleted,
+    LlmCallFailed,
     LlmCallStarted,
     RunCancelled,
     RunCompleted,
@@ -131,6 +132,15 @@ def reduce_activity(state: ActivityState, event: RunEvent, *, now: float) -> Act
             operation_started_at=now,
             external_wait=False,
             completed_models=state.completed_models + 1,
+        )
+    if isinstance(event, LlmCallFailed):
+        return replace(
+            current,
+            ticker=event.ticker or state.ticker,
+            operation="ticker",
+            operation_name=event.ticker or state.ticker,
+            operation_started_at=now,
+            external_wait=False,
         )
     if isinstance(event, ToolCallStarted):
         return replace(

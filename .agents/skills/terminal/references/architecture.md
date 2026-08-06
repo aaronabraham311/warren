@@ -35,8 +35,11 @@ and scheduled runs. Preserve that architecture: never shell from the terminal in
   agent execution, persistence, and final typed `RunResult`.
 - `agent/events.py`: redacted display-event contract. It must not contain prompt text,
   tool input/output, secrets, or hidden reasoning.
+- `agent/lifecycle.py`: pure validator and derived trace summary for sequences,
+  operation-parent links, paired outcomes, retries, failures, and slow operations.
 - `storage/logger.py`: durable JSONL chokepoint. Display events derived from WAL records
-  emit only after the record is flushed and fsynced.
+  emit only after the record is flushed and fsynced. Every new record carries the
+  supported schema version, run-local sequence, monotonic time, and operation linkage.
 - `agent/cancellation.py` and `agent/locking.py`: shared cooperative cancellation and
   non-overlap contract for interactive, batch, and scheduled runs.
 
