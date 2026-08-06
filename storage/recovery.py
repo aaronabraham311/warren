@@ -54,18 +54,17 @@ def _output_file_path(stored_output: str | None) -> str | None:
 
 def _read_events(jsonl_path: Path) -> list[dict[str, object]]:
     events: list[dict[str, object]] = []
-    with jsonl_path.open(encoding="utf-8") as fh:
-        for line in fh:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                obj = json.loads(line)
-            except (json.JSONDecodeError, ValueError):
-                # A torn final line from a hard crash — skip it; everything before is intact.
-                continue
-            if isinstance(obj, dict):
-                events.append(obj)
+    for raw_line in jsonl_path.read_bytes().splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        try:
+            obj = json.loads(line)
+        except (json.JSONDecodeError, UnicodeDecodeError, ValueError):
+            # A hard crash may leave the final record incomplete or mid-codepoint.
+            continue
+        if isinstance(obj, dict):
+            events.append(obj)
     return events
 
 

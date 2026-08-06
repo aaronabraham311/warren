@@ -23,17 +23,24 @@ class TerminalSettings(BaseModel):
     show_cost: bool = True
 
 
-def settings_path(state_dir: Path = Path(".warren")) -> Path:
-    return state_dir / "settings.json"
+def terminal_state_dir() -> Path:
+    """Return the state directory shared by terminal preferences and run locking."""
+
+    return Path(os.environ.get("WARREN_STATE_DIR", ".warren"))
 
 
-def history_path(state_dir: Path = Path(".warren")) -> Path:
+def settings_path(state_dir: Path | None = None) -> Path:
+    return (state_dir or terminal_state_dir()) / "settings.json"
+
+
+def history_path(state_dir: Path | None = None) -> Path:
+    state_dir = state_dir or terminal_state_dir()
     state_dir.mkdir(parents=True, exist_ok=True)
     return state_dir / "history"
 
 
 def load_settings(
-    state_dir: Path = Path(".warren"),
+    state_dir: Path | None = None,
     *,
     warn: Callable[[str], None] | None = None,
 ) -> TerminalSettings:
@@ -57,8 +64,9 @@ def load_settings(
     return TerminalSettings()
 
 
-def save_settings(settings: TerminalSettings, state_dir: Path = Path(".warren")) -> Path:
+def save_settings(settings: TerminalSettings, state_dir: Path | None = None) -> Path:
     """Atomically replace settings.json after flushing file and directory metadata."""
+    state_dir = state_dir or terminal_state_dir()
     state_dir.mkdir(parents=True, exist_ok=True)
     destination = settings_path(state_dir)
     temporary: Path | None = None

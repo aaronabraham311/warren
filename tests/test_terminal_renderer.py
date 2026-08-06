@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from io import StringIO
 
-from agent.events import LlmCallCompleted, RunCompleted, RunFailed, ToolCallCompleted
+from agent.events import LlmCallCompleted, RunCompleted, RunFailed, RunStarted, ToolCallCompleted
 from agent.models import AnalysisOutput, LynchBuffettSignals
 from agent.service import RunResult, TickerRunResult
 from agent.terminal.renderer import TerminalRenderer, sanitize_terminal_text
@@ -132,6 +132,18 @@ def test_progress_diagnostics_include_cache_retry_error_duration_and_run_id() ->
     assert stdout.getvalue() == ""
 
 
+def test_renderer_builds_safe_latest_run_evidence_index() -> None:
+    renderer = TerminalRenderer(stdout=StringIO(), stderr=StringIO(), color="never")
+    renderer.emit(RunStarted("run-1", "tickers", ("AAPL",)))
+    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "success", False, 5, 0))
+    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "success", True, 1, 0))
+    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_news", "error", False, 5, 0))
+
+    assert renderer.evidence_for("AAPL") == ("get_quote",)
+    renderer.emit(RunStarted("run-2", "tickers", ("MSFT",)))
+    assert renderer.evidence_for("AAPL") == ()
+
+
 def test_no_color_overrides_forced_color(monkeypatch: object) -> None:
     from pytest import MonkeyPatch
 
@@ -141,3 +153,11 @@ def test_no_color_overrides_forced_color(monkeypatch: object) -> None:
     renderer = TerminalRenderer(stdout=StringIO(), stderr=stderr, color="always")
     renderer.emit(RunFailed("r", "boom"))
     assert "\x1b" not in stderr.getvalue()
+
+
+def test_non_normal_termination_reason_is_visible() -> None:
+    stdout = StringIO()
+    analysis = _analysis("AAPL").model_copy(update={"termination_reason": "iteration_capped"})
+    TerminalRenderer(stdout=stdout, stderr=StringIO(), color="never").render_analysis(analysis)
+
+    assert "Termination: iteration_capped" in stdout.getvalue()
