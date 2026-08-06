@@ -76,19 +76,21 @@ warren/
 ├── storage/        # SQLAlchemy models, schema, migrations
 ├── eval/           # Golden-set evaluation harness
 ├── dashboard/      # Streamlit multi-page app
-├── scripts/        # Nightly scheduler install/uninstall (launchd + cron)
+├── scripts/        # Weekly scheduler install/uninstall (launchd + cron)
 ├── docs/           # PRD and tech spec
 ├── data/           # Portfolio and watchlist CSVs
 └── logs/runs/      # JSONL run traces
 ```
 
-## Nightly Scheduler
+## Weekly Scheduler
 
-Warren can run autonomously at 2 AM via the OS scheduler. The process is short-lived (not a daemon) — it starts, runs, and exits.
+Warren can run autonomously every Sunday at 7 AM ET via the OS scheduler. The process is short-lived (not a daemon) — it starts, runs, and exits.
 
 The scheduled run is **gem-hunt mode** (`python -m agent.run --gem-hunt`): the global three-exchange universe (Euronext Growth Milan `.MI`, Bolsa de Madrid `.MC`, GPW Warsaw `.WA`), the deep-value screen with score-based ranking, and the DIRT persona. The US GARP nightly is still there on demand — run `python -m agent.run` with no flags. Re-running an installer over an already-installed job replaces it, so switching modes is just a matter of editing the command and re-installing.
 
 ### macOS (launchd)
+
+`launchd` uses the Mac's system timezone. Set the Mac to Eastern Time for the scheduled run to occur at 7 AM ET.
 
 ```bash
 # Install — validates .env has ANTHROPIC_API_KEY; the agent reads .env itself at
@@ -110,6 +112,8 @@ bash scripts/uninstall_scheduler.sh
 ```
 
 ### Linux (cron)
+
+The installer sets `CRON_TZ=America/New_York`, so the Sunday trigger follows Eastern Time across daylight-saving changes.
 
 ```bash
 # Install — validates .env has ANTHROPIC_API_KEY; the agent reads .env itself at
