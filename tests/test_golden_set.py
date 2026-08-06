@@ -106,6 +106,23 @@ def test_clear_hold_prefers_hold(by_ticker: dict[str, EvalExample]) -> None:
         assert by_ticker[ticker].expectations.recommendation.preferred == "hold"
 
 
+def test_cvx_envelope_is_not_rewritten_to_accept_sell(by_ticker: dict[str, EvalExample]) -> None:
+    recommendation = by_ticker["CVX"].expectations.recommendation
+    assert recommendation.allowed == ["hold", "buy"]
+    assert recommendation.preferred == "hold"
+
+
+@pytest.mark.parametrize("ticker", ["DIR.MI", "CIRSA.MC", "KPL.WA"])
+def test_dirt_risks_are_structured_and_require_substantive_assessment(
+    ticker: str, by_ticker: dict[str, EvalExample]
+) -> None:
+    expectations = by_ticker[ticker].expectations
+    assert expectations.key_risks.must_include_one_of
+    assert all(risk.concept and risk.any_of for risk in expectations.key_risks.must_include_one_of)
+    assert expectations.deep_value is not None
+    assert expectations.deep_value.require_value_trap_assessment
+
+
 # ── AC: the impaired case excludes buy; at least one other ticker shares that constraint ──
 
 
