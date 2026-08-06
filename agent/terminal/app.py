@@ -78,13 +78,14 @@ class CommandHandler(Protocol):
 class _PromptToolkitReader:
     def __init__(self, history_file: Path | None) -> None:
         history = FileHistory(str(history_file)) if history_file is not None else None
+        no_color = bool(os.environ.get("NO_COLOR"))
         self._session: PromptSession[str] = PromptSession(
             history=history,
             completer=WarrenCompleter(),
             style=Style.from_dict(
                 {
-                    "prompt.brand": f"{NAVY_MUTED} bold",
-                    "prompt.chevron": f"{NAVY_BRAND} bold",
+                    "prompt.brand": "bold" if no_color else f"{NAVY_MUTED} bold",
+                    "prompt.chevron": "bold" if no_color else f"{NAVY_BRAND} bold",
                 }
             ),
         )

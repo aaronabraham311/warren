@@ -7,6 +7,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from prompt_toolkit.styles import Style
 
 from agent.cancellation import CancellationToken
 from agent.events import RunStarted
@@ -331,6 +332,29 @@ def test_prompt_toolkit_reader_installs_local_completer(
     assert "style" in captured
     assert "warren" in str(prompts[0])
     assert "›" in str(prompts[0])
+
+
+def test_prompt_toolkit_reader_honors_no_color(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, object] = {}
+
+    class Session:
+        def prompt(self, prompt: object) -> str:
+            del prompt
+            return "/quit"
+
+    def make_session(**kwargs: object) -> Session:
+        captured.update(kwargs)
+        return Session()
+
+    monkeypatch.setenv("NO_COLOR", "1")
+    monkeypatch.setattr(terminal_app, "PromptSession", make_session)
+
+    terminal_app._PromptToolkitReader(None)
+
+    style = captured["style"]
+    assert isinstance(style, Style)
+    assert style.get_attrs_for_style_str("class:prompt.brand").color == ""
+    assert style.get_attrs_for_style_str("class:prompt.chevron").color == ""
 
 
 @pytest.mark.parametrize(
