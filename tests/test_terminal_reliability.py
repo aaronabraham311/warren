@@ -14,6 +14,7 @@ from hypothesis import given
 from hypothesis import strategies as st
 from syrupy.assertion import SnapshotAssertion
 
+from agent.activity import ActivityState, reduce_activity
 from agent.events import (
     LlmCallStarted,
     RunCompleted,
@@ -22,12 +23,7 @@ from agent.events import (
     TickerStarted,
     ToolCallCompleted,
 )
-from agent.terminal.reliability import (
-    ActivityState,
-    FakeClock,
-    TerminalScenario,
-    reduce_activity,
-)
+from agent.terminal.reliability import FakeClock, TerminalScenario
 
 
 def test_reducer_tracks_external_wait_counts_and_terminal_outcome() -> None:

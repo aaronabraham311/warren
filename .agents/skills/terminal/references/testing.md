@@ -10,6 +10,7 @@
 | Restart | settings/history/recent stored-run behavior across process restart |
 | Real PTY | spinner/elapsed; durable tool order; cursor restoration; prompt after success/cancel; narrow width; user-visible color |
 | Semantic screen | named `pyte` cell-grid/cursor checkpoints; fake clock; required width and resize matrix |
+| Run health | injected clock; external wait vs renderer/agent/trace stall; recovery transitions; bounded metric labels |
 
 Run the focused automated surface:
 

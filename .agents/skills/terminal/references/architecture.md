@@ -26,9 +26,12 @@ and scheduled runs. Preserve that architecture: never shell from the terminal in
 - `agent/terminal/renderer.py`: the only Rich presentation/event-sink boundary. Owns
   TTY detection, theme, sanitization, live activity, tool transcript, results, and
   plain fallbacks.
-- `agent/terminal/reliability.py`: pure activity-state reduction, injected monotonic
-  clock, and semantic VT checkpoints. It uses `pyte`; do not grow a Warren terminal
+- `agent/terminal/reliability.py`: injected monotonic clock and semantic VT
+  checkpoints. It uses `pyte`; do not grow a Warren terminal
   emulator or infer state by scraping rendered text.
+- `agent/activity.py`: renderer-independent activity state and reducer.
+- `agent/terminal/health.py`: metadata-only active-run diagnostics, bounded metrics,
+  and external-wait/renderer/agent/trace stall classification.
 - `agent/terminal/queries.py`: read-only persisted run/trace/portfolio/watchlist views.
 - `agent/terminal/settings.py`: versioned local terminal preferences and history paths.
 - `agent/service.py`: migration/recovery, input sync, target selection, run locking,
