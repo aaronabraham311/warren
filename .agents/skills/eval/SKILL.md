@@ -31,6 +31,7 @@ reads the way the ticket specified. It exits **1** if any example failed, so CI 
 For each `eval/examples/{ticker}.yaml` the runner replays `analyze_ticker` against recorded
 tool outputs, grades the result into an `EvalGrade`, writes one `eval_runs` row, and prints a
 per-ticker line. It never triggers a real analysis run and never writes `analyses`.
+Any fixture miss or invalid evidence fixture is a mandatory run-invalidating failure.
 
 ---
 
@@ -63,8 +64,9 @@ overwrites its rows in place rather than duplicating them. `eval_runs.run_id` is
 ## Grading: envelopes, not answers
 
 `eval/golden_set.py` describes the *envelope* of acceptable output (which recommendations are
-allowed, which topics the thesis must engage, how many signals, which risks). `grade_analysis`
-asserts membership in that envelope. It never asserts a single expected answer — a prompt
+allowed, which topics the thesis must engage, how many signals, which semantic risk concepts).
+`grade_analysis` asserts membership in that envelope and separately checks whether the thesis'
+evidence supports its recommendation. It never asserts a single expected answer — a prompt
 change that moves an ambiguous ticker from `hold` to `buy` should be *visible*, not fatal.
 
 Severity decides what a failure means:
@@ -87,9 +89,6 @@ wrong. `EvalExpectations` sets `extra="forbid"`, so a misspelled YAML key fails 
 
 ## Recording tool fixtures
 
-**Current state: no ticker has `tools/` fixtures yet**, so the command reports 0/13 with
-`fixture_missing` for every ticker. That is expected, not a bug.
-
 Note the two distinct fixture trees under `eval/fixtures/{TICKER}/`:
 
 - `{client}/{method}/{hash}.json` — **raw upstream payloads** (yfinance `.info`, EDGAR HTML).
@@ -102,6 +101,13 @@ Note the two distinct fixture trees under `eval/fixtures/{TICKER}/`:
 
 `{hash}` is `sha256(json.dumps(tool_input, sort_keys=True))[:8]` in both trees. Files are
 written with `sort_keys=True`, so a fixture diff is always a real change, never key reordering.
+Tool keys are semantic: explicit DCF behavioral defaults collapse to the omitted-default key,
+while genuinely different news windows remain distinct.
+
+Record all supported calls with `uv run python -m eval.fixtures.recorder AAPL`, or repair only
+the filing sources backing curated expectations with
+`uv run python -m eval.fixtures.recorder --mandatory-evidence-only SBUX LUMN`. The recorder
+validates output schemas and filing substance before overwriting an existing fixture.
 
 ---
 
@@ -119,6 +125,15 @@ written with `sort_keys=True`, so a fixture diff is always a real change, never 
 - **An empty `tools/` directory is not coverage.** `has_tool_fixtures` globs for actual files.
 - **The eval writes a `runs` row.** It shows up in the dashboard's run list like any other run.
   Filter on the `eval-` id prefix if that's noise.
+- **Semantic judging is blinded and batched.** Gold identifiers and labels are not sent to the
+  judge. `JudgePanel` records disagreement/unavailability explicitly and can combine the
+  pinned Sonnet judge with imported human verdicts.
+- **Keep output compatibility.** `--output` is a top-level grade list. Usage totals come from
+  the run WAL rather than the public grade list. A concise `<output>.report` summarizes strict
+  pass rate, mandatory coverage, failure families,
+  fixture parity, schema failures, and judge disagreement. Full prompts, raw model blocks,
+  finals, validated outputs/failures, fixture diagnostics, and grades go to the owner-only
+  private JSONL audit companion; do not publish or commit it.
 
 ---
 
@@ -184,8 +199,8 @@ Tests live under `tests/test_evals/test_analysis/`, one file per script, followi
   `test_fixture_runner_never_calls_the_real_tool`, which fails loudly if replay regresses into
   dispatching a live tool.
 - `tests/test_evals/test_runner.py` — end-to-end over a `tmp_path` fixture tree with
-  `mock_claude`, asserting console output, `--output` JSON, `eval_runs` rows, and that
-  `temperature=0.0` reaches `messages.create`.
+  `mock_claude`, asserting console output, `--output` JSON, the `.report` sidecar, private
+  audit records, `eval_runs` rows, and that `temperature=0.0` reaches `messages.create`.
 
 The acceptance criterion "same recommendation for ≥12/13 tickers across two runs" needs 26 live
 Sonnet calls and **is not CI-testable**. Offline we assert `temperature=0.0` reaches the API and
