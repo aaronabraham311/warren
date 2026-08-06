@@ -97,6 +97,9 @@ class DeepValueExpectation(_Strict):
     # Opt-in because only examples with a grounded regional forensic fixture can assert it.
     # The check traces ownership/RPT/buyback/catalyst claims to compact EvidenceRef IDs.
     require_forensic_citations: bool = False
+    require_decision_contract: bool = False
+    require_decision_recomputation: bool = False
+    allowed_decision_outcomes: list[Literal["buy", "watchlist", "pass"]] = []
 
 
 class ClosabilityExpectation(_Strict):

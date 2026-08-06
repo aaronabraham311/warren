@@ -2,12 +2,16 @@ import json
 import warnings
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
 from agent.budget import Budget, RunContext
+from agent.models import DirtDecisionContract, DirtDownsideFloorAssumption, DirtScenarioAssumption
 from agent.tools import TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResultError, ToolResultOk
+from agent.tools.dirt_scenarios import ModelDirtScenariosInput
+from dashboard.seed_demo import _BUY_DECISION
 from data_sources.yfinance_client import PriceData
 from eval.tool_fixtures import (
     FixtureMiss,
@@ -129,30 +133,47 @@ def test_fixture_runner_never_calls_the_real_tool(tmp_path: Path, ctx: RunContex
     assert isinstance(result, ToolResultOk)
 
 
-def test_fixture_runner_executes_only_allowlisted_pure_tool(
-    tmp_path: Path, ctx: RunContext
+def test_fixture_runner_recomputes_scenarios_without_dispatching_tool_run(
+    tmp_path: Path, ctx: RunContext, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    called = False
-
-    class _PureTool(Tool):
-        name = "model_dirt_scenarios"
-        description = "pure"
-        input_schema = _quote_tool().input_schema
-        output_schema = PriceData
-
-        def run(self, tool_input: object, ctx: object) -> ToolResultOk:
-            nonlocal called
-            called = True
-            return ToolResultOk(data=_price())
-
-    runner = FixtureToolRunner("AAPL", tmp_path)
-    result = runner.run(
-        _PureTool(), _quote_tool().input_schema.model_validate({"ticker": "AAPL"}), ctx
+    decision = DirtDecisionContract.model_validate(_BUY_DECISION)
+    tool_input = ModelDirtScenariosInput(
+        valuation_date=decision.valuation_date,
+        currency=decision.currency,
+        current_price=decision.current_price,
+        horizon_years=decision.horizon_years,
+        scenarios=[
+            DirtScenarioAssumption.model_validate(
+                scenario.model_dump(
+                    exclude={"total_dividends", "total_value", "total_return", "irr"}
+                )
+            )
+            for scenario in decision.scenarios
+        ],
+        downside_floor=DirtDownsideFloorAssumption.model_validate(
+            decision.downside_floor.model_dump(exclude={"adjusted", "coverage"})
+        ),
+        catalysts=decision.catalysts,
+        failure_thesis=decision.failure_thesis,
+        outcome=decision.outcome,
+        outcome_reason=decision.outcome_reason,
+        entry_conditions=decision.entry_conditions,
+        blocking_unknowns=decision.blocking_unknowns,
+        monitoring_metrics=decision.monitoring_metrics,
+    )
+    tool = TOOL_REGISTRY["model_dirt_scenarios"]
+    monkeypatch.setattr(
+        tool,
+        "run",
+        MagicMock(side_effect=AssertionError("FixtureToolRunner must not dispatch Tool.run")),
     )
 
-    assert called is True
+    runner = FixtureToolRunner("AAPL", tmp_path)
+    result = runner.run(tool, tool_input, ctx)
+
     assert isinstance(result, ToolResultOk)
     assert result.cached is True
+    assert result.data == decision
     assert runner.served["model_dirt_scenarios"] is result
     assert runner.misses == []
 

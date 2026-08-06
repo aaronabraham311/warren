@@ -26,7 +26,14 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from agent.models import AnalysisOutput, LynchBuffettSignals
+from agent.models import (
+    AnalysisOutput,
+    DirtDecisionContract,
+    DirtDownsideFloorAssumption,
+    DirtScenarioAssumption,
+    LynchBuffettSignals,
+)
+from agent.tools.dirt_scenarios import ModelDirtScenariosInput, model_dirt_scenarios
 from data_sources.forensics import ForensicEvidenceBundle
 from eval.golden_set import (
     ClosabilityExpectation,
@@ -274,6 +281,77 @@ def _deep_value_checks(
                     if claim_types
                     else "no forensic claims made"
                 ),
+                severity="must",
+            )
+        )
+
+    decision = result.dirt_decision
+    if expectation.require_decision_contract:
+        checks.append(
+            CheckResult(
+                check_name="dirt_decision_present",
+                passed=decision is not None,
+                expected="a complete dirt_decision contract",
+                actual="present" if decision is not None else "absent",
+                severity="must",
+            )
+        )
+
+    if expectation.allowed_decision_outcomes:
+        outcome = None if decision is None else decision.outcome
+        checks.append(
+            CheckResult(
+                check_name="dirt_decision_outcome_allowed",
+                passed=outcome in expectation.allowed_decision_outcomes,
+                expected=f"one of {expectation.allowed_decision_outcomes}",
+                actual=str(outcome),
+                severity="must",
+            )
+        )
+
+    if expectation.require_decision_recomputation:
+        recomputed: DirtDecisionContract | None = None
+        error: str | None = None
+        if decision is not None:
+            try:
+                inputs = ModelDirtScenariosInput(
+                    valuation_date=decision.valuation_date,
+                    currency=decision.currency,
+                    current_price=decision.current_price,
+                    horizon_years=decision.horizon_years,
+                    scenarios=[
+                        DirtScenarioAssumption.model_validate(
+                            item.model_dump(
+                                exclude={"total_dividends", "total_value", "total_return", "irr"}
+                            )
+                        )
+                        for item in decision.scenarios
+                    ],
+                    downside_floor=DirtDownsideFloorAssumption.model_validate(
+                        decision.downside_floor.model_dump(exclude={"adjusted", "coverage"})
+                    ),
+                    catalysts=decision.catalysts,
+                    failure_thesis=decision.failure_thesis,
+                    outcome=decision.outcome,
+                    outcome_reason=decision.outcome_reason,
+                    entry_conditions=decision.entry_conditions,
+                    blocking_unknowns=decision.blocking_unknowns,
+                    monitoring_metrics=decision.monitoring_metrics,
+                )
+                recomputed = model_dirt_scenarios(inputs)
+            except (ValueError, TypeError) as exc:
+                error = str(exc)
+        matches = (
+            decision is not None
+            and recomputed is not None
+            and decision.model_dump(mode="json") == recomputed.model_dump(mode="json")
+        )
+        checks.append(
+            CheckResult(
+                check_name="dirt_decision_recomputes",
+                passed=matches,
+                expected="all scenario returns and decision fields recompute deterministically",
+                actual=error or ("match" if matches else "computed fields differ"),
                 severity="must",
             )
         )

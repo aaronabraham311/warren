@@ -48,6 +48,7 @@ class LiveToolRunner:
 
 
 _MAX_ITERATIONS = 8
+_MAX_DIRT_ITERATIONS = 12
 _MAX_TOOL_REPEATS = 3
 _FORCE_FINAL_MAX_TOKENS = 2048
 
@@ -149,6 +150,32 @@ def _schema_repair_prompt(
     )
 
 
+def _parse_persona_output(
+    text: str,
+    persona: _Persona,
+    expected_dirt_decision: BaseModel | None,
+) -> AnalysisOutput:
+    """Parse an analysis while keeping the served DIRT contract authoritative.
+
+    The scenario tool computes and validates the decision contract locally. Asking the
+    model to reproduce that large object verbatim in its final response adds a fragile
+    formatting step and can also change calculated values. Once a contract has been
+    served, project it (and its recommendation mapping) into the final analysis before
+    Pydantic validation. The narrative and DIRT signals still come from the model.
+    """
+    if not getattr(persona, "requires_dirt_decision", False) or expected_dirt_decision is None:
+        return _parse_output(text)
+
+    payload = json.loads(_extract_json(text))
+    if not isinstance(payload, dict):
+        raise ValueError("analysis output must be a JSON object")
+    payload["dirt_decision"] = expected_dirt_decision.model_dump(mode="json")
+    payload["recommendation"] = (
+        "buy" if getattr(expected_dirt_decision, "outcome", None) == "buy" else "hold"
+    )
+    return AnalysisOutput.model_validate(payload)
+
+
 def _validate_persona_output(
     result: AnalysisOutput,
     persona: _Persona,
@@ -173,6 +200,15 @@ def _validate_persona_output(
     if result.recommendation != expected_recommendation:
         raise ValueError("DIRT recommendation must map buy to buy and watchlist/pass to hold")
     return result
+
+
+def _iteration_limit(persona: _Persona) -> int:
+    """Give evidence-heavy DIRT analysis room for its required local decision call."""
+    return (
+        _MAX_DIRT_ITERATIONS
+        if getattr(persona, "requires_dirt_decision", False)
+        else _MAX_ITERATIONS
+    )
 
 
 def _last_text(content: list[anthropic.types.ContentBlock]) -> str:
@@ -262,6 +298,7 @@ def analyze_ticker(
     iteration = 0
     schema_repair_attempt = False
     expected_dirt_decision: BaseModel | None = None
+    max_iterations = _iteration_limit(persona)
 
     while True:
         iteration += 1
@@ -273,7 +310,7 @@ def analyze_ticker(
 
         # ── Iteration / token caps → force a final answer ────────────────────
         force_label: str | None = None
-        if iteration > _MAX_ITERATIONS:
+        if iteration > max_iterations:
             force_label = "iteration_capped"
         elif run_context.budget.token_exceeded():
             force_label = "token_capped"
@@ -294,7 +331,11 @@ def analyze_ticker(
             )
             try:
                 result = _validate_persona_output(
-                    _parse_output(_last_text(response.content)), persona, expected_dirt_decision
+                    _parse_persona_output(
+                        _last_text(response.content), persona, expected_dirt_decision
+                    ),
+                    persona,
+                    expected_dirt_decision,
                 )
                 result.termination_reason = force_label  # type: ignore[assignment]
                 return result
@@ -323,7 +364,9 @@ def analyze_ticker(
             text = _last_text(response.content)
             try:
                 result = _validate_persona_output(
-                    _parse_output(text), persona, expected_dirt_decision
+                    _parse_persona_output(text, persona, expected_dirt_decision),
+                    persona,
+                    expected_dirt_decision,
                 )
                 if schema_repair_attempt:
                     result.termination_reason = "schema_repair_success"
@@ -461,7 +504,9 @@ def analyze_ticker(
                 )
                 try:
                     result = _validate_persona_output(
-                        _parse_output(_last_text(response.content)),
+                        _parse_persona_output(
+                            _last_text(response.content), persona, expected_dirt_decision
+                        ),
                         persona,
                         expected_dirt_decision,
                     )

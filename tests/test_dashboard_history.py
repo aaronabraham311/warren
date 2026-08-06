@@ -39,6 +39,8 @@ def _make_analysis(
     confidence: float = 0.5,
     created_at: datetime = _BASE,
     analysis_type: str = "holding",
+    decision_outcome: str | None = None,
+    weighted_irr: float | None = None,
 ) -> Analysis:
     return Analysis(
         run_id=run_id,
@@ -52,6 +54,8 @@ def _make_analysis(
         key_risks=["valuation"],
         data_quality_notes=[],
         created_at=created_at,
+        decision_outcome=decision_outcome,
+        probability_weighted_irr=weighted_irr,
     )
 
 
@@ -167,6 +171,31 @@ def test_search_respects_limit(db_session: Session) -> None:
     assert len(search_analyses(db_session, limit=3)) == 3
 
 
+def test_search_filters_and_sorts_dirt_decisions(db_session: Session) -> None:
+    db_session.add(_make_run("r1"))
+    db_session.add_all(
+        [
+            _make_analysis("r1", "PASS", decision_outcome="pass", weighted_irr=0.40),
+            _make_analysis("r1", "WATCH", decision_outcome="watchlist", weighted_irr=0.45),
+            _make_analysis("r1", "BUYLO", decision_outcome="buy", weighted_irr=0.22),
+            _make_analysis("r1", "BUYHI", decision_outcome="buy", weighted_irr=0.35),
+            _make_analysis("r1", "LEGACY"),
+        ]
+    )
+    db_session.commit()
+
+    ordered = [row.analysis.ticker for row in search_analyses(db_session)]
+    assert ordered == ["BUYHI", "BUYLO", "WATCH", "PASS", "LEGACY"]
+
+    filtered = search_analyses(
+        db_session,
+        decision_outcomes=["buy", "watchlist"],
+        weighted_irr_min=0.30,
+        weighted_irr_max=0.50,
+    )
+    assert [row.analysis.ticker for row in filtered] == ["BUYHI", "WATCH"]
+
+
 # --------------------------------------------------------------------------- #
 # AppTest integration
 # --------------------------------------------------------------------------- #
@@ -239,3 +268,53 @@ def test_apptest_card_expands_with_thesis(history_env: SimpleNamespace) -> None:
     assert "AAPL thesis." in markdown_text
     assert "Lynch signals" in markdown_text
     assert "Key risks" in markdown_text
+
+
+def test_apptest_outcome_filter_narrows_rows(history_env: SimpleNamespace) -> None:
+    with Session(history_env.engine) as session:
+        session.add(_make_run("decisions"))
+        session.flush()
+        session.add_all(
+            [
+                _make_analysis("decisions", "BUYDIRT", decision_outcome="buy", weighted_irr=0.31),
+                _make_analysis("decisions", "PASSDIRT", decision_outcome="pass", weighted_irr=0.10),
+            ]
+        )
+        session.commit()
+
+    at = AppTest.from_file(_HISTORY_PAGE).run()
+    at.sidebar.multiselect[1].set_value(["buy"]).run()
+
+    assert not at.exception
+    labels = [expander.label for expander in at.expander]
+    assert any("BUYDIRT" in label for label in labels)
+    assert not any("PASSDIRT" in label for label in labels)
+
+
+def test_apptest_weighted_irr_filter_has_unbounded_number_inputs(
+    history_env: SimpleNamespace,
+) -> None:
+    with Session(history_env.engine) as session:
+        session.add(_make_run("irr-decisions"))
+        session.flush()
+        session.add_all(
+            [
+                _make_analysis(
+                    "irr-decisions", "INRANGE", decision_outcome="buy", weighted_irr=0.35
+                ),
+                _make_analysis(
+                    "irr-decisions", "TOOHIGH", decision_outcome="buy", weighted_irr=4.50
+                ),
+            ]
+        )
+        session.commit()
+
+    at = AppTest.from_file(_HISTORY_PAGE).run()
+    at.sidebar.toggle[0].set_value(True).run()
+    at.sidebar.number_input[0].set_value(4.0)
+    at.sidebar.number_input[1].set_value(5.0).run()
+
+    assert not at.exception
+    labels = [expander.label for expander in at.expander]
+    assert any("TOOHIGH" in label for label in labels)
+    assert not any("INRANGE" in label for label in labels)

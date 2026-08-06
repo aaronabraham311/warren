@@ -33,6 +33,15 @@ with st.sidebar:
     date_from = st.date_input("From", value=None)
     date_to = st.date_input("To", value=None)
     conf_min, conf_max = st.slider("Confidence range", 0.0, 1.0, (0.0, 1.0), step=0.05)
+    outcome_filter = st.multiselect("DIRT outcome", ["buy", "watchlist", "pass"], default=[])
+    filter_irr = st.toggle("Filter by weighted IRR", value=False)
+    irr_min: float | None
+    irr_max: float | None
+    if filter_irr:
+        irr_min = st.number_input("Minimum weighted IRR", value=0.0, step=0.05)
+        irr_max = st.number_input("Maximum weighted IRR", value=1.0, step=0.05)
+    else:
+        irr_min, irr_max = None, None
 
 with get_session() as session:
     results = search_analyses(
@@ -43,6 +52,9 @@ with get_session() as session:
         date_to=date_to,
         conf_min=conf_min,
         conf_max=conf_max,
+        decision_outcomes=outcome_filter,
+        weighted_irr_min=irr_min,
+        weighted_irr_max=irr_max,
     )
 
     if not results:

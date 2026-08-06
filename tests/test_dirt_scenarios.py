@@ -417,10 +417,16 @@ def test_loop_captures_and_accepts_served_decision(mock_claude: MagicMock, tmp_p
         dirt_signals=DirtSignals(ev_ebit=5.0),
         dirt_decision=served,
     )
+    model_output = output.model_copy(
+        update={
+            "recommendation": "hold",
+            "dirt_decision": served.model_copy(update={"required_entry_price": 1.0}),
+        }
+    )
     mock_claude(
         [
             make_tool_use("model_dirt_scenarios", inp.model_dump(mode="json")),
-            make_end_turn(output.model_dump_json()),
+            make_end_turn(model_output.model_dump_json()),
         ]
     )
     logger = RunLogger("loop-dirt-decision", tmp_path)
@@ -431,6 +437,7 @@ def test_loop_captures_and_accepts_served_decision(mock_claude: MagicMock, tmp_p
         RunContext(run_id="loop-dirt-decision", budget=Budget(), logger=logger),
     )
     assert result.dirt_decision == served
+    assert result.recommendation == "buy"
 
 
 def test_run_persists_and_logs_synchronized_decision_projection(

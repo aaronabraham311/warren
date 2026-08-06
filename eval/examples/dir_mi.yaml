@@ -55,3 +55,6 @@ expectations:
     require_ncav: true
     require_value_trap_risk: true
     require_universe_note: true
+    require_decision_contract: true
+    require_decision_recomputation: true
+    allowed_decision_outcomes: [buy, watchlist]

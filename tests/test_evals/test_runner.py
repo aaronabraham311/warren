@@ -13,8 +13,10 @@ from sqlalchemy.orm import Session
 from agent.models import AnalysisOutput, LynchBuffettSignals
 from agent.persona import DefaultPersona, DirtPersona
 from agent.tools.base import ToolResultOk
+from agent.tools.dirt_scenarios import ModelDirtScenariosInput, model_dirt_scenarios
 from data_sources.yfinance_client import PriceData
 from eval.golden_set import (
+    DeepValueExpectation,
     EvalExample,
     EvalExpectations,
     NumericalGrounding,
@@ -106,6 +108,133 @@ def test_run_eval_grades_a_ticker_with_fixtures(
     out = capsys.readouterr().out
     assert "✅ AAPL:" in out
     assert "Result: 1/1 examples passed" in out
+
+
+def test_run_eval_recomputes_dirt_decision(
+    db_engine: Engine,
+    fixtures_root: Path,
+    log_dir: Path,
+    mock_claude: MockClaude,
+) -> None:
+    scenario_input = ModelDirtScenariosInput.model_validate(
+        {
+            "valuation_date": "2026-01-01",
+            "currency": "USD",
+            "current_price": 100.0,
+            "horizon_years": 2,
+            "scenarios": [
+                {
+                    "case": case,
+                    "probability": probability,
+                    "assumption": "Operations remain viable",
+                    "rationale": "Cited operating and valuation assumptions",
+                    "terminal_price": terminal_price,
+                    "terminal_date": "2028-01-01",
+                    "cash_flows": [
+                        {
+                            "date": "2027-01-01",
+                            "amount": 5.0,
+                            "kind": "dividend",
+                            "source_ref": "filing:p12",
+                        },
+                        {
+                            "date": "2028-01-01",
+                            "amount": terminal_price,
+                            "kind": "terminal_sale",
+                            "source_ref": "valuation:case",
+                        },
+                    ],
+                }
+                for case, probability, terminal_price in (
+                    ("bear", 0.25, 80.0),
+                    ("base", 0.50, 160.0),
+                    ("bull", 0.25, 240.0),
+                )
+            ],
+            "downside_floor": {
+                "basis": "tangible_book",
+                "gross": 90.0,
+                "haircut": 0.2,
+                "source_ref": "filing:balance-sheet",
+                "as_of": "2025-12-31",
+                "adjustments": ["Exclude goodwill"],
+                "confidence": "medium",
+            },
+            "catalysts": [
+                {
+                    "description": "Board-authorized tender",
+                    "category": "capital_return",
+                    "evidence_strength": "contractual",
+                    "expected_by": "2027-06-30",
+                    "source_ref": "filing:tender",
+                    "failure_condition": "Tender authorization is withdrawn",
+                }
+            ],
+            "failure_thesis": "Asset coverage fails or the tender is withdrawn",
+            "outcome": "buy",
+            "outcome_reason": "The cited catalyst clears the return hurdle",
+            "blocking_unknowns": [],
+            "monitoring_metrics": [
+                {
+                    "metric": "tangible_book_per_share",
+                    "current_value": 90.0,
+                    "failure_threshold": 70.0,
+                    "cadence": "quarterly",
+                    "source_ref": "filing:balance-sheet",
+                    "rationale": "Protects the downside floor",
+                },
+                {
+                    "metric": "tender_completion_pct",
+                    "current_value": 0.0,
+                    "warning_threshold": 25.0,
+                    "cadence": "event",
+                    "source_ref": "filing:tender",
+                    "rationale": "Tracks the discount-closing mechanism",
+                },
+            ],
+        }
+    )
+    decision = model_dirt_scenarios(scenario_input)
+    analysis_json = json.dumps(
+        {
+            "ticker": "AAPL",
+            "analysis_type": "discovery",
+            "recommendation": "buy",
+            "confidence": 0.8,
+            "thesis": "At 5.0x EV/EBIT, the 20% hurdle is cleared with 72% floor coverage.",
+            "lynch_signals": {"pros": ["discounted valuation"], "cons": []},
+            "buffett_signals": {"pros": ["asset coverage"], "cons": []},
+            "key_risks": ["The tender may be withdrawn"],
+            "data_quality_notes": [],
+            "dirt_signals": {"ev_ebit": 5.0},
+            "dirt_decision": decision.model_dump(mode="json"),
+        }
+    )
+    client = mock_claude(
+        [
+            make_tool_use("model_dirt_scenarios", scenario_input.model_dump(mode="json")),
+            make_end_turn(analysis_json),
+        ]
+    )
+    example = _example("AAPL", persona="dirt")
+    example.expectations.deep_value = DeepValueExpectation(
+        require_decision_contract=True,
+        require_decision_recomputation=True,
+        allowed_decision_outcomes=["buy"],
+    )
+
+    grade = run_eval(
+        examples=[example],
+        client=client,
+        eval_run_id="eval-dirt-served",
+        fixtures_root=fixtures_root,
+    )[0]
+
+    recomputation = next(
+        check for check in grade.checks if check.check_name == "dirt_decision_recomputes"
+    )
+    assert recomputation.passed, recomputation.actual
+    assert grade.passed, grade.overall_notes
 
 
 def test_ticker_without_fixtures_fails_without_an_llm_call(

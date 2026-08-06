@@ -205,6 +205,11 @@ def test_dirt_prompt_dirt_signals_required() -> None:
     assert "non-null" in DIRT_SYSTEM_PROMPT or "MUST be non-null" in DIRT_SYSTEM_PROMPT
 
 
+def test_dirt_prompt_uses_compact_injected_decision_output() -> None:
+    assert 'emit `"dirt_decision": null`' in DIRT_SYSTEM_PROMPT
+    assert "Warren replaces it" in DIRT_SYSTEM_PROMPT
+
+
 def test_dirt_prompt_requires_honest_own_history_check() -> None:
     assert "get_valuation_history" in DIRT_SYSTEM_PROMPT
     assert "Maximum 10 calls" in DIRT_SYSTEM_PROMPT
@@ -261,6 +266,8 @@ def test_dirt_prompt_has_closability_and_liquidity_contract() -> None:
     assert "illiquidity is not" in prompt_lower and "exclusion" in prompt_lower
     assert "10% participation for 20 trading days" in DIRT_SYSTEM_PROMPT
     assert 'closability_status="unknown"' in DIRT_SYSTEM_PROMPT
+    assert "neutral prior `closability_score=0.5`" in DIRT_SYSTEM_PROMPT
+    assert "do not turn missing data into a negative score" in prompt_lower
     assert "age alone is not succession" in prompt_lower
     assert "historical low is not a mechanism" in prompt_lower
 
