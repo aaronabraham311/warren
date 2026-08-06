@@ -37,7 +37,7 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
 - Interactive and batch entry points call the shared run service; the terminal must
   not shell out to or parse output from `agent.run`.
 - Prefer dataclasses for multi-value returns and keep public boundaries typed and validated.
-- Do not push, open PRs, modify external systems, or use destructive Git commands unless the user asks.
+- Do not use destructive Git commands unless the user asks.
 
 ## Common commands
 
