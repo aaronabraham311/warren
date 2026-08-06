@@ -207,7 +207,7 @@ def test_dirt_prompt_dirt_signals_required() -> None:
 
 def test_dirt_prompt_requires_honest_own_history_check() -> None:
     assert "get_valuation_history" in DIRT_SYSTEM_PROMPT
-    assert "Maximum 9 calls" in DIRT_SYSTEM_PROMPT
+    assert "Maximum 10 calls" in DIRT_SYSTEM_PROMPT
     assert "OWN listed" in DIRT_SYSTEM_PROMPT
     assert "years_covered" in DIRT_SYSTEM_PROMPT
     assert "does NOT represent a decade" in DIRT_SYSTEM_PROMPT
@@ -235,13 +235,21 @@ def test_dirt_prompt_market_cap_gates_are_usd_normalized() -> None:
     assert "$5B (USD-normalized)" in DIRT_SYSTEM_PROMPT
 
 
-def test_dirt_prompt_sec_filing_graceful_degradation() -> None:
+def test_dirt_prompt_uses_cited_regional_evidence_not_sec_degradation() -> None:
     prompt_lower = DIRT_SYSTEM_PROMPT.lower()
-    # Non-US names lack SEC/EDGAR filings — degrade to news + fundamentals.
-    assert "degrade gracefully" in prompt_lower
-    assert "get_news" in DIRT_SYSTEM_PROMPT
-    assert "fundamentals" in prompt_lower
-    assert "sec_degradation" in DIRT_SYSTEM_PROMPT
+    assert "get_forensic_evidence" in DIRT_SYSTEM_PROMPT
+    assert "evidenceref.evidence_id" in prompt_lower
+    assert "partial coverage" in prompt_lower
+    assert "unknown, never" in prompt_lower
+    assert "sec_degradation" not in DIRT_SYSTEM_PROMPT
+
+
+def test_dirt_prompt_preserves_forensic_truth_rules() -> None:
+    prompt_lower = DIRT_SYSTEM_PROMPT.lower()
+    assert "authorization is not execution" in prompt_lower
+    assert "age is not a succession catalyst" in prompt_lower
+    assert "refinancing" in prompt_lower and "explicit evidence" in prompt_lower
+    assert "original excerpt/location" in prompt_lower
 
 
 def test_dirt_prompt_has_json_output_schema() -> None:
@@ -295,5 +303,7 @@ def test_prompt_has_lack_of_control_guardrail() -> None:
 def test_dirt_prompt_has_control_discount_check() -> None:
     prompt_lower = DIRT_SYSTEM_PROMPT.lower()
     assert "control-discount check" in prompt_lower
-    assert "controlling_holder_identified" in DIRT_SYSTEM_PROMPT
+    assert "get_forensic_evidence" in DIRT_SYSTEM_PROMPT
+    assert "controller_identified" in DIRT_SYSTEM_PROMPT
+    assert "control_check: unknown" in DIRT_SYSTEM_PROMPT
     assert "shareholder_yield_pct" in DIRT_SYSTEM_PROMPT

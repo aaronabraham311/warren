@@ -231,6 +231,24 @@ class FilingManifest(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
 
 
+class ForensicSnapshot(Base):
+    """Reusable forensic extraction for one immutable filing-corpus version."""
+
+    __tablename__ = "forensic_snapshots"
+
+    ticker: Mapped[str] = mapped_column(Text, primary_key=True)
+    issuer_isin: Mapped[str] = mapped_column(Text, primary_key=True)
+    as_of: Mapped[date] = mapped_column(Date, primary_key=True)
+    lookback_start: Mapped[date] = mapped_column(Date, primary_key=True)
+    extractor_version: Mapped[str] = mapped_column(Text, primary_key=True)
+    corpus_hash: Mapped[str] = mapped_column(Text, primary_key=True)
+    venue: Mapped[str] = mapped_column(Text, primary_key=True)
+    generated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    evidence_json: Mapped[dict[str, object]] = mapped_column(JSON, nullable=False)
+    coverage_json: Mapped[dict[str, object]] = mapped_column(JSON, nullable=False)
+    warnings_json: Mapped[list[object]] = mapped_column(JSON, nullable=False)
+
+
 class DiscoveryCooldown(Base):
     __tablename__ = "discovery_cooldown"
 
@@ -268,4 +286,10 @@ Index(
     FilingManifest.document_kind,
     FilingManifest.reporting_period_end.desc(),
     FilingManifest.publication_date.desc(),
+)
+Index(
+    "idx_forensic_snapshots_ticker_as_of",
+    ForensicSnapshot.ticker,
+    ForensicSnapshot.as_of.desc(),
+    ForensicSnapshot.generated_at.desc(),
 )

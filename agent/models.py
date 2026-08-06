@@ -1,9 +1,9 @@
 # Single source of truth for model identifiers, per-token pricing (USD), and
 # the AnalysisOutput schema shared between the loop and storage layers.
 
-from typing import Final, Literal, TypedDict
+from typing import Final, Literal, Self, TypedDict
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from data_sources.symbols import TICKER_PATTERN
 
@@ -91,6 +91,69 @@ class DirtSignals(BaseModel):
     insider_sentiment: Literal["positive", "negative", "neutral"] | None = None
     analyst_coverage_count: int | None = None
     aggregator_discrepancies_found: bool = False
+    # Compact decision fields from get_forensic_evidence. The full cited bundle stays
+    # in the tool trace/snapshot; these fields must be backed by forensic_evidence_ids.
+    controller_identified: bool | None = None
+    controller_name: str | None = None
+    controller_economic_interest_pct: float | None = Field(default=None, ge=0.0, le=100.0)
+    controller_voting_rights_pct: float | None = Field(default=None, ge=0.0, le=100.0)
+    catalyst_strength: Literal["contractual", "observable", "aspirational"] | None = None
+    catalyst_stage: (
+        Literal[
+            "rumor",
+            "intention",
+            "strategic_review",
+            "board_authorized",
+            "signed",
+            "conditions_outstanding",
+            "completed",
+            "terminated",
+        ]
+        | None
+    ) = None
+    catalyst_description: str | None = None
+    forensic_evidence_ids: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def forensic_claims_are_cited_and_coherent(self) -> Self:
+        controller_claimed = any(
+            value is not None
+            for value in (
+                self.controller_identified,
+                self.controller_name,
+                self.controller_economic_interest_pct,
+                self.controller_voting_rights_pct,
+            )
+        )
+        catalyst_claimed = any(
+            value is not None
+            for value in (
+                self.catalyst_strength,
+                self.catalyst_stage,
+                self.catalyst_description,
+            )
+        )
+        if (controller_claimed or catalyst_claimed) and not self.forensic_evidence_ids:
+            raise ValueError("forensic decision fields require cited evidence IDs")
+        if self.controller_identified is not True and any(
+            value is not None
+            for value in (
+                self.controller_name,
+                self.controller_economic_interest_pct,
+                self.controller_voting_rights_pct,
+            )
+        ):
+            raise ValueError("controller details require controller_identified=true")
+        if catalyst_claimed and any(
+            value is None
+            for value in (
+                self.catalyst_strength,
+                self.catalyst_stage,
+                self.catalyst_description,
+            )
+        ):
+            raise ValueError("catalyst claims require strength, stage, and description")
+        return self
 
 
 TerminationReason = Literal[

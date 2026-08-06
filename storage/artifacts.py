@@ -86,12 +86,16 @@ class ArtifactStore:
             mime_type=mime_type.split(";", 1)[0].strip().lower(),
         )
 
-    def read(self, artifact: StoredArtifact) -> bytes:
+    def read(self, artifact: StoredArtifact, *, max_bytes: int | None = None) -> bytes:
         """Read an artifact after checking its safe key, checksum, and recorded size."""
+        if max_bytes is not None and max_bytes < 1:
+            raise ValueError("max_bytes must be positive")
         expected_key = self.relative_key(artifact.sha256, artifact.mime_type)
         if artifact.relative_key != expected_key:
             raise ArtifactIntegrityError("Artifact key does not match checksum and MIME type")
         path = self.root / expected_key
+        if max_bytes is not None and path.stat().st_size > max_bytes:
+            raise ArtifactIntegrityError("Artifact exceeds the configured read limit")
         content = self._verify(path, artifact.sha256)
         if artifact.byte_length is not None and len(content) != artifact.byte_length:
             raise ArtifactIntegrityError(

@@ -15,6 +15,7 @@ import sqlite3
 from decimal import Decimal
 
 import anthropic
+from sqlalchemy.orm import Session
 
 from data_sources.edgar_client import EDGARClient
 from data_sources.filing_translation import (
@@ -23,11 +24,13 @@ from data_sources.filing_translation import (
     PageTranslator,
 )
 from data_sources.finnhub_client import FinnhubClient
+from data_sources.forensics import ForensicEvidenceClient
 from data_sources.gdelt_client import GDELTClient
 from data_sources.ofac_client import OFACClient
 from data_sources.stored_filings import StoredFilingClient
 from data_sources.yfinance_client import YFinanceClient
 from storage.artifacts import ArtifactStore
+from storage.engine import get_engine
 
 _conn: sqlite3.Connection | None = None
 _yf: YFinanceClient | None = None
@@ -37,6 +40,8 @@ _finnhub_resolved = False
 _gdelt: GDELTClient | None = None
 _ofac: OFACClient | None = None
 _stored_filings: StoredFilingClient | None = None
+_forensics: ForensicEvidenceClient | None = None
+_forensics_session: Session | None = None
 
 
 def _connection() -> sqlite3.Connection:
@@ -93,6 +98,16 @@ def stored_filing_client() -> StoredFilingClient:
     return _stored_filings
 
 
+def forensic_evidence_client() -> ForensicEvidenceClient:
+    """Return the process-wide cited-evidence client over Warren's SQLAlchemy session."""
+
+    global _forensics, _forensics_session
+    if _forensics is None:
+        _forensics_session = Session(get_engine())
+        _forensics = ForensicEvidenceClient(_forensics_session, ArtifactStore())
+    return _forensics
+
+
 def _translation_provider() -> PageTranslator | None:
     model = os.environ.get("WARREN_TRANSLATION_MODEL", "").strip()
     input_rate = os.environ.get("WARREN_TRANSLATION_INPUT_USD_PER_MILLION_TOKENS", "").strip()
@@ -109,6 +124,7 @@ def _translation_provider() -> PageTranslator | None:
 
 def reset_clients() -> None:
     global _conn, _yf, _edgar, _finnhub, _finnhub_resolved, _gdelt, _ofac, _stored_filings
+    global _forensics, _forensics_session
     if _conn is not None:
         _conn.close()
     _conn = None
@@ -119,3 +135,7 @@ def reset_clients() -> None:
     _gdelt = None
     _ofac = None
     _stored_filings = None
+    if _forensics_session is not None:
+        _forensics_session.close()
+    _forensics = None
+    _forensics_session = None

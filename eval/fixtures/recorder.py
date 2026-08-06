@@ -61,6 +61,12 @@ RECORDED_CALLS: tuple[RecordedCall, ...] = (
     RecordedCall("read_filing", {"filing_type": "10-K", "section": "mdna"}),
 )
 
+# Regional forensic evidence is intentionally not added to RECORDED_CALLS: doing so would make
+# every US/default example require an inapplicable regional fixture. The CLI includes this call
+# automatically for target-market tickers and also permits explicit ``--tool`` selection.
+REGIONAL_RECORDED_CALLS: tuple[RecordedCall, ...] = (RecordedCall("get_forensic_evidence"),)
+_REGIONAL_SUFFIXES = (".MI", ".MC", ".WA")
+
 
 @dataclass
 class RecordSummary:
@@ -120,18 +126,28 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--tool",
         action="append",
-        choices=sorted({call.tool for call in RECORDED_CALLS}),
+        choices=sorted({call.tool for call in RECORDED_CALLS + REGIONAL_RECORDED_CALLS}),
         help="Record only this tool (repeatable); defaults to the complete recorder set.",
     )
     args = parser.parse_args(argv)
 
     tickers = args.tickers or [ex.ticker for ex in load_all_examples()]
+    recordable_calls = RECORDED_CALLS + REGIONAL_RECORDED_CALLS
     selected_calls = (
-        tuple(call for call in RECORDED_CALLS if call.tool in args.tool)
-        if args.tool
-        else RECORDED_CALLS
+        tuple(call for call in recordable_calls if call.tool in args.tool) if args.tool else None
     )
-    summaries = [record_ticker(t, calls=selected_calls) for t in tickers]
+    summaries = [
+        record_ticker(
+            ticker,
+            calls=(
+                selected_calls
+                if selected_calls is not None
+                else RECORDED_CALLS
+                + (REGIONAL_RECORDED_CALLS if ticker.upper().endswith(_REGIONAL_SUFFIXES) else ())
+            ),
+        )
+        for ticker in tickers
+    ]
 
     total_ok = sum(s.ok for s in summaries)
     errors = [e for s in summaries for e in s.errors]

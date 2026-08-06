@@ -1,6 +1,15 @@
 from datetime import date
 
+import pytest
+from pydantic import ValidationError
+
 from agent.models import AnalysisOutput, DirtSignals, LynchBuffettSignals
+from data_sources.forensics import (
+    CatalystEvidence,
+    EvidenceRef,
+    ForensicEvidenceBundle,
+    HolderPosition,
+)
 from eval.golden_set import (
     DeepValueExpectation,
     EvalExample,
@@ -306,6 +315,64 @@ def test_universe_note_check_fails_when_missing() -> None:
     check = next(c for c in grade.checks if c.check_name == "universe_note_present")
     assert not check.passed
     assert not grade.passed
+
+
+def test_forensic_claims_require_evidence_ids_when_opted_in() -> None:
+    with pytest.raises(ValidationError, match="require cited evidence IDs"):
+        DirtSignals(
+            ev_ebit=6.1,
+            price_to_ncav=0.8,
+            controller_identified=True,
+            controller_name="Founding Family",
+        )
+
+
+def test_forensic_claims_pass_with_compact_evidence_ids() -> None:
+    example = _dirt_example()
+    assert example.expectations.deep_value is not None
+    example.expectations.deep_value.require_forensic_citations = True
+    analysis = _dirt_analysis(
+        dirt_signals=DirtSignals(
+            ev_ebit=6.1,
+            price_to_ncav=0.8,
+            controller_identified=True,
+            controller_name="Founding Family",
+            catalyst_strength="observable",
+            catalyst_stage="board_authorized",
+            catalyst_description="Board-authorized asset sale",
+            forensic_evidence_ids=["evidence-cap-table-1", "evidence-catalyst-2"],
+        ),
+        thesis="Cheap at 6.1x EV/EBIT and 0.8x NCAV with an observable catalyst.",
+    )
+    ownership_ref = EvidenceRef.model_construct(  # type: ignore[call-arg]
+        evidence_id="evidence-cap-table-1"
+    )
+    catalyst_ref = EvidenceRef.model_construct(  # type: ignore[call-arg]
+        evidence_id="evidence-catalyst-2"
+    )
+    forensic = ForensicEvidenceBundle.model_construct(  # type: ignore[call-arg]
+        cap_table=[
+            HolderPosition.model_construct(  # type: ignore[call-arg]
+                evidence_refs=[ownership_ref]
+            )
+        ],
+        stake_events=[],
+        agreements=[],
+        related_party_transactions=[],
+        auditor_history=[],
+        debt_facilities=[],
+        capital_returns=[],
+        leadership_events=[],
+        catalysts=[
+            CatalystEvidence.model_construct(  # type: ignore[call-arg]
+                evidence_refs=[catalyst_ref]
+            )
+        ],
+    )
+    grade = grade_analysis(analysis, example, forensic_evidence=forensic)
+    check = next(c for c in grade.checks if c.check_name == "forensic_claims_cited")
+    assert check.passed
+    assert check.severity == "must"
 
 
 def test_deep_value_checks_omitted_for_default_examples() -> None:

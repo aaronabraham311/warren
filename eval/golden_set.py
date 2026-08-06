@@ -94,6 +94,9 @@ class DeepValueExpectation(_Strict):
     require_ncav: bool = False
     require_value_trap_risk: bool = False
     require_universe_note: bool = False
+    # Opt-in because only examples with a grounded regional forensic fixture can assert it.
+    # The check traces ownership/RPT/buyback/catalyst claims to compact EvidenceRef IDs.
+    require_forensic_citations: bool = False
 
 
 class EvalExpectations(_Strict):

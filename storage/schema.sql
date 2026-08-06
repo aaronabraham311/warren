@@ -144,6 +144,21 @@ CREATE TABLE IF NOT EXISTS filing_manifests (
     REFERENCES filing_manifests(filing_id, checksum)
 );
 
+CREATE TABLE IF NOT EXISTS forensic_snapshots (
+  ticker TEXT NOT NULL,
+  issuer_isin TEXT NOT NULL,
+  as_of DATE NOT NULL,
+  lookback_start DATE NOT NULL,
+  extractor_version TEXT NOT NULL,
+  corpus_hash TEXT NOT NULL,
+  venue TEXT NOT NULL,
+  generated_at TIMESTAMP NOT NULL,
+  evidence_json JSON NOT NULL,
+  coverage_json JSON NOT NULL,
+  warnings_json JSON NOT NULL,
+  PRIMARY KEY (ticker, issuer_isin, venue, as_of, lookback_start, extractor_version, corpus_hash)
+);
+
 -- Performance indexes (Tech Spec §7.5)
 CREATE INDEX IF NOT EXISTS idx_analyses_ticker_created ON analyses(ticker, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_analyses_run             ON analyses(run_id);
@@ -162,3 +177,5 @@ CREATE INDEX IF NOT EXISTS idx_filing_manifests_document_versions
 CREATE INDEX IF NOT EXISTS idx_filing_manifests_selection
   ON filing_manifests(issuer_isin, document_kind,
                       reporting_period_end DESC, publication_date DESC);
+CREATE INDEX IF NOT EXISTS idx_forensic_snapshots_ticker_as_of
+  ON forensic_snapshots(ticker, as_of DESC, generated_at DESC);

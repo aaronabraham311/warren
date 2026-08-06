@@ -18,7 +18,7 @@ import pytest
 from agent.tools import TOOL_REGISTRY
 from agent.tools.base import ToolResult, ToolResultError, ToolResultOk
 from data_sources.yfinance_client import PriceData, ValuationHistory
-from eval.fixtures.recorder import RECORDED_CALLS, record_ticker
+from eval.fixtures.recorder import RECORDED_CALLS, REGIONAL_RECORDED_CALLS, record_ticker
 from eval.golden_set import EvalExample, load_all_examples
 from eval.tool_fixtures import FIXTURES_DIR, tool_fixture_path
 
@@ -114,6 +114,11 @@ def test_record_ticker_survives_a_raising_tool(tmp_path: Path) -> None:
 
 def test_recorder_includes_valuation_history() -> None:
     assert "get_valuation_history" in {call.tool for call in RECORDED_CALLS}
+
+
+def test_regional_recorder_includes_forensic_evidence_without_polluting_us_set() -> None:
+    assert {call.tool for call in REGIONAL_RECORDED_CALLS} == {"get_forensic_evidence"}
+    assert "get_forensic_evidence" not in {call.tool for call in RECORDED_CALLS}
 
 
 def test_record_ticker_can_target_one_tool(tmp_path: Path) -> None:
