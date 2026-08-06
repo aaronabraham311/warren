@@ -25,6 +25,12 @@ import dotenv
 from agent.budget import Budget, RunContext
 from agent.tools import TOOL_REGISTRY
 from agent.tools.base import ToolResultError
+from eval.fixture_evidence import (
+    CURATED_FILING_CONCEPTS,
+    FILING_CALLS,
+    NEWS_WINDOWS,
+    validate_fixture_result,
+)
 from eval.golden_set import load_all_examples
 from eval.tool_fixtures import FIXTURES_DIR, record_tool_result
 from storage.logger import RunLogger
@@ -40,9 +46,10 @@ class RecordedCall:
     input: dict[str, object] = field(default_factory=dict)
 
 
-# The ticker-scoped, network-backed tools an eval run reaches for. Deliberately excludes
-# screen_universe / get_holding_context / screen_watchlists (local CSV or entity-scoped).
-RECORDED_CALLS: tuple[RecordedCall, ...] = (
+# The compact contract committed for every default golden-set ticker. Broader news windows
+# and filing sections are recordable, but requiring every cross-product here would add many
+# fixtures that no expectation actually depends on.
+_SCALAR_CALLS: tuple[RecordedCall, ...] = (
     RecordedCall("get_quote"),
     RecordedCall("get_fundamentals"),
     RecordedCall("get_growth_metrics"),
@@ -54,11 +61,27 @@ RECORDED_CALLS: tuple[RecordedCall, ...] = (
     RecordedCall("estimate_intrinsic_value"),
     RecordedCall("get_insider_activity"),
     RecordedCall("get_key_persons"),
-    RecordedCall("get_news"),
+)
+
+CORE_RECORDED_CALLS: tuple[RecordedCall, ...] = (
+    *_SCALAR_CALLS,
+    RecordedCall("get_news", {"days": 7}),
     RecordedCall("get_peer_comparison"),
     RecordedCall("read_filing", {"filing_type": "10-K", "section": "business"}),
     RecordedCall("read_filing", {"filing_type": "10-K", "section": "risk_factors"}),
     RecordedCall("read_filing", {"filing_type": "10-K", "section": "mdna"}),
+)
+
+# The ticker-scoped, network-backed tools an eval run can reach for. Deliberately excludes
+# screen_universe / get_holding_context / screen_watchlists (local CSV or entity-scoped).
+RECORDED_CALLS: tuple[RecordedCall, ...] = (
+    *_SCALAR_CALLS,
+    *(RecordedCall("get_news", {"days": days}) for days in NEWS_WINDOWS),
+    RecordedCall("get_peer_comparison"),
+    *(
+        RecordedCall("read_filing", {"filing_type": filing_type, "section": section})
+        for filing_type, section in FILING_CALLS
+    ),
 )
 
 # Regional forensic evidence is intentionally not added to RECORDED_CALLS: doing so would make
@@ -82,6 +105,15 @@ def _context() -> RunContext:
     )
 
 
+def mandatory_evidence_calls(ticker: str) -> tuple[RecordedCall, ...]:
+    """Return only filing calls that back curated expectations for *ticker*."""
+    return tuple(
+        RecordedCall("read_filing", {"filing_type": filing_type, "section": section})
+        for expected_ticker, filing_type, section in CURATED_FILING_CONCEPTS
+        if expected_ticker == ticker.upper()
+    )
+
+
 def record_ticker(
     ticker: str,
     root: Path = FIXTURES_DIR,
@@ -99,6 +131,7 @@ def record_ticker(
 
         try:
             result = tool.run(tool_input, ctx)
+            validate_fixture_result(ticker, tool, tool_input, result)
         except Exception as exc:  # noqa: BLE001 — report and move on; one bad tool ≠ lost run
             summary.failures.append(f"{label}: {exc}")
             print(f"  ✗ {label}: {exc}")
@@ -129,7 +162,14 @@ def main(argv: list[str] | None = None) -> int:
         choices=sorted({call.tool for call in RECORDED_CALLS + REGIONAL_RECORDED_CALLS}),
         help="Record only this tool (repeatable); defaults to the complete recorder set.",
     )
+    parser.add_argument(
+        "--mandatory-evidence-only",
+        action="store_true",
+        help="Record only filing calls that back curated expectations for each ticker.",
+    )
     args = parser.parse_args(argv)
+    if args.tool and args.mandatory_evidence_only:
+        parser.error("--tool and --mandatory-evidence-only are mutually exclusive")
 
     tickers = args.tickers or [ex.ticker for ex in load_all_examples()]
     recordable_calls = RECORDED_CALLS + REGIONAL_RECORDED_CALLS
@@ -140,10 +180,18 @@ def main(argv: list[str] | None = None) -> int:
         record_ticker(
             ticker,
             calls=(
-                selected_calls
-                if selected_calls is not None
-                else RECORDED_CALLS
-                + (REGIONAL_RECORDED_CALLS if ticker.upper().endswith(_REGIONAL_SUFFIXES) else ())
+                mandatory_evidence_calls(ticker)
+                if args.mandatory_evidence_only
+                else (
+                    selected_calls
+                    if selected_calls is not None
+                    else RECORDED_CALLS
+                    + (
+                        REGIONAL_RECORDED_CALLS
+                        if ticker.upper().endswith(_REGIONAL_SUFFIXES)
+                        else ()
+                    )
+                )
             ),
         )
         for ticker in tickers

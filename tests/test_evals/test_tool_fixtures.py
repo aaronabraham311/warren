@@ -12,6 +12,7 @@ from agent.tools import TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResultError, ToolResultOk
 from agent.tools.dirt_scenarios import ModelDirtScenariosInput
 from dashboard.seed_demo import _BUY_DECISION
+from data_sources.edgar_client import FilingSection
 from data_sources.yfinance_client import PriceData
 from eval.tool_fixtures import (
     FixtureMiss,
@@ -56,6 +57,81 @@ def test_fixture_path_layout(tmp_path: Path) -> None:
     path = tool_fixture_path("AAPL", "get_quote", {"ticker": "AAPL"}, tmp_path)
     assert path.parent == tmp_path / "AAPL" / "tools" / "get_quote"
     assert path.name == f"{tool_input_hash({'ticker': 'AAPL'})}.json"
+
+
+def test_dcf_explicit_behavior_defaults_share_the_omitted_fixture_key(tmp_path: Path) -> None:
+    omitted = {
+        "ticker": "AAPL",
+        "growth_rate": None,
+        "discount_rate": None,
+        "terminal_growth_rate": None,
+        "projection_years": None,
+    }
+    explicit = {
+        "ticker": "AAPL",
+        "growth_rate": 0.08,
+        "discount_rate": 0.10,
+        "terminal_growth_rate": 0.025,
+        "projection_years": 10,
+    }
+
+    assert tool_fixture_path(
+        "AAPL", "estimate_intrinsic_value", omitted, tmp_path
+    ) == tool_fixture_path("AAPL", "estimate_intrinsic_value", explicit, tmp_path)
+
+
+def test_dcf_real_override_keeps_a_distinct_fixture_key(tmp_path: Path) -> None:
+    omitted = {
+        "ticker": "AAPL",
+        "growth_rate": None,
+        "discount_rate": None,
+        "terminal_growth_rate": None,
+        "projection_years": None,
+    }
+    override = {**omitted, "growth_rate": 0.04}
+
+    assert tool_fixture_path(
+        "AAPL", "estimate_intrinsic_value", omitted, tmp_path
+    ) != tool_fixture_path("AAPL", "estimate_intrinsic_value", override, tmp_path)
+
+
+def test_news_windows_are_never_aliased(tmp_path: Path) -> None:
+    seven_days = tool_fixture_path("AAPL", "get_news", {"ticker": "AAPL", "days": 7}, tmp_path)
+    thirty_days = tool_fixture_path("AAPL", "get_news", {"ticker": "AAPL", "days": 30}, tmp_path)
+
+    assert seven_days != thirty_days
+
+
+def test_replay_rejects_toc_fragment_as_unusable_evidence(tmp_path: Path, ctx: RunContext) -> None:
+    tool = TOOL_REGISTRY["read_filing"]
+    raw_input = {"ticker": "SBUX", "filing_type": "10-K", "section": "mdna"}
+    filing = FilingSection(
+        ticker="SBUX",
+        filing_type="10-K",
+        section="mdna",
+        fiscal_year=2025,
+        filing_date=datetime(2026, 1, 1, tzinfo=timezone.utc).date(),
+        text="Item 7 of this Report. Table of Contents.",
+        word_count=8,
+        truncated=False,
+        edgar_url="https://www.sec.gov/example",
+    )
+    parsed = tool.input_schema.model_validate(raw_input)
+    record_tool_result(
+        "SBUX",
+        "read_filing",
+        parsed.model_dump(mode="json"),
+        ToolResultOk(data=filing),
+        tmp_path,
+    )
+    runner = FixtureToolRunner("SBUX", tmp_path)
+
+    result = runner.run(tool, parsed, ctx)
+
+    assert isinstance(result, ToolResultError)
+    assert "unusable filing evidence" in result.message
+    assert len(runner.evidence_issues) == 1
+    assert runner.misses == []
 
 
 def test_has_tool_fixtures_false_when_absent(tmp_path: Path) -> None:
