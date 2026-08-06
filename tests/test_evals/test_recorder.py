@@ -6,9 +6,10 @@ contract: it drives the real tools, overwrites in place, records data-source err
 than dropping them, and leaves the golden set fully covered.
 """
 
+import json
 from collections.abc import Iterator
 from contextlib import ExitStack, contextmanager
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -16,7 +17,7 @@ import pytest
 
 from agent.tools import TOOL_REGISTRY
 from agent.tools.base import ToolResult, ToolResultError, ToolResultOk
-from data_sources.yfinance_client import PriceData
+from data_sources.yfinance_client import PriceData, ValuationHistory
 from eval.fixtures.recorder import RECORDED_CALLS, record_ticker
 from eval.golden_set import EvalExample, load_all_examples
 from eval.tool_fixtures import FIXTURES_DIR, tool_fixture_path
@@ -32,6 +33,26 @@ def _ok(price: float) -> ToolResultOk:
             volume=50_000_000,
             as_of=datetime(2026, 1, 1, tzinfo=timezone.utc),
             data_age_hours=1,
+        )
+    )
+
+
+def _valuation_history_ok() -> ToolResultOk:
+    return ToolResultOk(
+        data=ValuationHistory(
+            ticker="AAPL",
+            as_of=date(2026, 8, 5),
+            years_covered=4,
+            current_pe=30.0,
+            current_pb=8.0,
+            pe_percentile=25.0,
+            pb_percentile=0.0,
+            pb_min=8.0,
+            pb_vs_10y_low=1.0,
+            fiscal_years=[2025, 2024, 2023, 2022],
+            pe_series=[30.0, 32.0, 28.0, 35.0],
+            pb_series=[8.0, 9.0, 8.5, 10.0],
+            data_age_hours=24,
         )
     )
 
@@ -91,10 +112,28 @@ def test_record_ticker_survives_a_raising_tool(tmp_path: Path) -> None:
     assert not (tmp_path / "AAPL").exists()
 
 
-# DIRT/deep-value gems (persona="dirt") carry small *synthetic* partial fixtures authored by
-# hand — their international tickers do not record cleanly from live APIs, and the live replay
-# they exercise is never run in CI. Completeness is asserted only for the default examples,
-# which are recorded from live data via the recorder.
+def test_recorder_includes_valuation_history() -> None:
+    assert "get_valuation_history" in {call.tool for call in RECORDED_CALLS}
+
+
+def test_record_ticker_can_target_one_tool(tmp_path: Path) -> None:
+    call = next(call for call in RECORDED_CALLS if call.tool == "get_valuation_history")
+    with _stub_every_tool(return_value=_valuation_history_ok()):
+        summary = record_ticker("AAPL", tmp_path, calls=(call,))
+
+    assert summary.ok == 1
+    fixture_dir = tmp_path / "AAPL" / "tools" / "get_valuation_history"
+    assert fixture_dir.is_dir()
+    assert not (tmp_path / "AAPL" / "tools" / "get_quote").exists()
+    payload = json.loads(next(fixture_dir.iterdir()).read_text())
+    assert isinstance(
+        TOOL_REGISTRY["get_valuation_history"].output_schema.model_validate(payload["data"]),
+        ValuationHistory,
+    )
+
+
+# Default examples require every recorded call. Regional DIRT examples remain partial overall,
+# but G15 separately pins live valuation-history coverage for both current and legacy tickers.
 @pytest.mark.parametrize(
     "example",
     [e for e in load_all_examples() if e.persona != "dirt"],
@@ -116,3 +155,23 @@ def test_golden_set_fixture_completeness(example: EvalExample) -> None:
         ).exists()
     ]
     assert not missing, f"{ticker} is missing fixtures for: {', '.join(missing)}"
+
+
+@pytest.mark.parametrize(
+    "ticker",
+    [
+        # Current G12 canonical junior-market examples.
+        "ABP.MI",
+        "LAB.MC",
+        "CHP.WA",
+        # Legacy G15 examples remain replayable, including honest not-found errors.
+        "DIR.MI",
+        "CIRSA.MC",
+        "KPL.WA",
+    ],
+)
+def test_regional_valuation_history_fixture_completeness(ticker: str) -> None:
+    payload = (
+        TOOL_REGISTRY["get_valuation_history"].input_schema(ticker=ticker).model_dump(mode="json")
+    )
+    assert tool_fixture_path(ticker, "get_valuation_history", payload, FIXTURES_DIR).exists()

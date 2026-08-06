@@ -205,6 +205,14 @@ def test_dirt_prompt_dirt_signals_required() -> None:
     assert "non-null" in DIRT_SYSTEM_PROMPT or "MUST be non-null" in DIRT_SYSTEM_PROMPT
 
 
+def test_dirt_prompt_requires_honest_own_history_check() -> None:
+    assert "get_valuation_history" in DIRT_SYSTEM_PROMPT
+    assert "Maximum 9 calls" in DIRT_SYSTEM_PROMPT
+    assert "OWN listed" in DIRT_SYSTEM_PROMPT
+    assert "years_covered" in DIRT_SYSTEM_PROMPT
+    assert "does NOT represent a decade" in DIRT_SYSTEM_PROMPT
+
+
 def test_dirt_prompt_universe_limitation_note() -> None:
     assert "universe-limitation note" in DIRT_SYSTEM_PROMPT or "DIRT universe" in DIRT_SYSTEM_PROMPT
 

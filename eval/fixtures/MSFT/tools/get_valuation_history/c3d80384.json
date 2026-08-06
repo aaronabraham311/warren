@@ -1,0 +1,35 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 8.2112,
+    "current_pe": 27.1594,
+    "data_age_hours": 877,
+    "fiscal_years": [
+      2026,
+      2025,
+      2024,
+      2023
+    ],
+    "pb_min": 8.2112,
+    "pb_percentile": 0.0,
+    "pb_series": [
+      8.2112,
+      10.4209,
+      11.5345,
+      13.2937
+    ],
+    "pb_vs_10y_low": 1.0,
+    "pe_percentile": 0.0,
+    "pe_series": [
+      27.1594,
+      35.1497,
+      35.1361,
+      37.8859
+    ],
+    "source": "yfinance",
+    "ticker": "MSFT",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:56:43.457675+00:00",
+  "status": "ok"
+}

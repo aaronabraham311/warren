@@ -1,0 +1,38 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": null,
+    "current_pe": 44.4527,
+    "data_age_hours": 4621,
+    "fiscal_years": [
+      2026,
+      2025,
+      2024,
+      2023,
+      2022
+    ],
+    "pb_min": null,
+    "pb_percentile": null,
+    "pb_series": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "pb_vs_10y_low": null,
+    "pe_percentile": 0.0,
+    "pe_series": [
+      44.4527,
+      62.5604,
+      111.0205,
+      279.101,
+      null
+    ],
+    "source": "yfinance",
+    "ticker": "NVDA",
+    "years_covered": 0
+  },
+  "recorded_at": "2026-08-05T13:56:45.892527+00:00",
+  "status": "ok"
+}

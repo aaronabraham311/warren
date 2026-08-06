@@ -26,9 +26,11 @@ class GetValuationHistoryTool(Tool):
         "and P/B time series from a historical price slice plus per-fiscal-year EPS and "
         "book-value-per-share, then exposes pe_percentile / pb_percentile (0-100 rank of "
         "the current multiple within its own history; LOW = cheap, 0 = cheapest ever) and "
-        "pb_vs_10y_low (current P/B divided by its historical minimum; ~1.0 = at/near its "
-        "low). yfinance exposes only ~5y of history; with under 2 usable years the "
-        "percentile fields are None rather than misleading."
+        "the legacy field pb_vs_10y_low (current P/B divided by its historical minimum; "
+        "~1.0 = at/near its low). Despite that legacy name, this is NOT evidence of a "
+        "10-year low: yfinance normally exposes only ~5 years of statement history. Use "
+        "years_covered to state the actual window; with under 2 usable years the percentile "
+        "fields are None rather than misleading."
     )
     input_schema = GetValuationHistoryInput
     output_schema = ValuationHistory

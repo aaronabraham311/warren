@@ -47,6 +47,7 @@ RECORDED_CALLS: tuple[RecordedCall, ...] = (
     RecordedCall("get_fundamentals"),
     RecordedCall("get_growth_metrics"),
     RecordedCall("get_valuation_multiples"),
+    RecordedCall("get_valuation_history"),
     RecordedCall("get_quality_metrics"),
     RecordedCall("get_financial_strength"),
     RecordedCall("get_capital_allocation"),
@@ -75,12 +76,16 @@ def _context() -> RunContext:
     )
 
 
-def record_ticker(ticker: str, root: Path = FIXTURES_DIR) -> RecordSummary:
+def record_ticker(
+    ticker: str,
+    root: Path = FIXTURES_DIR,
+    calls: tuple[RecordedCall, ...] = RECORDED_CALLS,
+) -> RecordSummary:
     """Execute every recorded call for *ticker* against live APIs and save the results."""
     ctx = _context()
     summary = RecordSummary(ticker=ticker)
 
-    for call in RECORDED_CALLS:
+    for call in calls:
         tool = TOOL_REGISTRY[call.tool]
         tool_input = tool.input_schema.model_validate({"ticker": ticker, **call.input})
         payload = tool_input.model_dump(mode="json")
@@ -112,10 +117,21 @@ def main(argv: list[str] | None = None) -> int:
         nargs="*",
         help="Tickers to record; defaults to every ticker in the golden set.",
     )
+    parser.add_argument(
+        "--tool",
+        action="append",
+        choices=sorted({call.tool for call in RECORDED_CALLS}),
+        help="Record only this tool (repeatable); defaults to the complete recorder set.",
+    )
     args = parser.parse_args(argv)
 
     tickers = args.tickers or [ex.ticker for ex in load_all_examples()]
-    summaries = [record_ticker(t) for t in tickers]
+    selected_calls = (
+        tuple(call for call in RECORDED_CALLS if call.tool in args.tool)
+        if args.tool
+        else RECORDED_CALLS
+    )
+    summaries = [record_ticker(t, calls=selected_calls) for t in tickers]
 
     total_ok = sum(s.ok for s in summaries)
     errors = [e for s in summaries for e in s.errors]

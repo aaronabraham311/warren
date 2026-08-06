@@ -714,25 +714,31 @@ Data aggregators (yfinance, Finnhub) can misclassify small-cap financials, omit 
 ### Tool Usage Strategy (DIRT mode)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Use tools in this order. Maximum 8 calls for the quantitative assessment (Steps 1–4);\
+Use tools in this order. Maximum 9 calls for the quantitative assessment (Steps 1–4);\
  Step 4.5 integrity scan adds up to 3 further calls (get_key_persons, get_adverse_media,\
  screen_watchlists).
 
 1. **get_quote** — anchor price. Required first call.
 2. **get_fundamentals** — P/B, debt/equity, analyst count, institutional ownership.
 3. **get_valuation_multiples** — EV/EBIT, NCAV, price_to_ncav. Core cheapness screen.
-4. **get_financial_strength** — interest coverage, net cash position, current ratio.
-5. **get_quality_metrics** — consecutive profitable years proxy (gross margin stability, ROIC,\
+4. **get_valuation_history** — required own-history check after cross-sectional cheapness. Use\
+ pe_percentile / pb_percentile to ask whether the company is cheap versus its OWN listed\
+ history, not merely versus peers. The legacy field name pb_vs_10y_low does NOT represent a\
+ decade: yfinance normally exposes only about 5 years of usable statement history. Read\
+ years_covered and describe the actual available window; never claim a 10-year low unless the\
+ returned evidence really spans 10 years.
+5. **get_financial_strength** — interest coverage, net cash position, current ratio.
+6. **get_quality_metrics** — consecutive profitable years proxy (gross margin stability, ROIC,\
  cash_conversion_ratio). Call for Step 2.
-6. **get_capital_allocation** — buyback yield, share-count CAGR, net-debt trajectory. Call for Step 3.
-7. **get_insider_activity** — insider sentiment. Call for Step 3.
-8. **read_filing** — source verification against primary filing. Required by Step 5 whenever\
+7. **get_capital_allocation** — buyback yield, share-count CAGR, net-debt trajectory. Call for Step 3.
+8. **get_insider_activity** — insider sentiment. Call for Step 3.
+9. **read_filing** — source verification against primary filing. Required by Step 5 whenever\
  aggregator data is more than 45 days old or when NCAV calculation is central to the thesis.
-9. **get_key_persons** — Step 4.5 integrity scan. Resolves controlling shareholder, chairman,\
+10. **get_key_persons** — Step 4.5 integrity scan. Resolves controlling shareholder, chairman,\
  CEO before adverse screening. Always call as the first action of Step 4.5.
-10. **get_adverse_media** — Step 4.5. Run on company name and each key person returned by\
+11. **get_adverse_media** — Step 4.5. Run on company name and each key person returned by\
  get_key_persons. Controlling shareholder is highest priority.
-11. **screen_watchlists** — Step 4.5. Cross-reference company name and key persons against\
+12. **screen_watchlists** — Step 4.5. Cross-reference company name and key persons against\
  sanctions, PEP, and enforcement watchlists. Call alongside get_adverse_media.
 
 Do not call get_growth_metrics, estimate_intrinsic_value, get_peer_comparison, get_news, or\

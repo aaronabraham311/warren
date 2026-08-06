@@ -1,0 +1,35 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 18.7855,
+    "current_pe": 35.5041,
+    "data_age_hours": 7429,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022
+    ],
+    "pb_min": 11.8204,
+    "pb_percentile": 100.0,
+    "pb_series": [
+      18.7855,
+      15.7505,
+      13.349,
+      11.8204
+    ],
+    "pb_vs_10y_low": 1.5892,
+    "pe_percentile": 100.0,
+    "pe_series": [
+      35.5041,
+      31.2225,
+      29.9339,
+      28.1194
+    ],
+    "source": "yfinance",
+    "ticker": "V",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:56:49.265254+00:00",
+  "status": "ok"
+}

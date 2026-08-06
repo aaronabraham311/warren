@@ -1942,6 +1942,12 @@ def test_get_valuation_history_ok(monkeypatch: pytest.MonkeyPatch) -> None:
     assert result.data.pb_vs_10y_low == 1.0
 
 
+def test_get_valuation_history_description_disclaims_legacy_ten_year_name() -> None:
+    tool = TOOL_REGISTRY["get_valuation_history"]
+    assert "NOT evidence of a 10-year low" in tool.description
+    assert "years_covered" in tool.description
+
+
 def test_get_valuation_history_maps_data_source_error(monkeypatch: pytest.MonkeyPatch) -> None:
     err = DataSourceError(error_code="not_found", message="no data")
     monkeypatch.setattr(

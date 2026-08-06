@@ -1,0 +1,35 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "current_pb": 4.0093,
+    "current_pe": null,
+    "data_age_hours": 5317,
+    "fiscal_years": [
+      2025,
+      2024,
+      2023,
+      2022
+    ],
+    "pb_min": 0.8266,
+    "pb_percentile": 100.0,
+    "pb_series": [
+      4.0093,
+      0.8266,
+      1.9065,
+      1.0208
+    ],
+    "pb_vs_10y_low": 4.8504,
+    "pe_percentile": null,
+    "pe_series": [
+      null,
+      null,
+      124.1262,
+      13.1564
+    ],
+    "source": "yfinance",
+    "ticker": "INTC",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-05T13:56:39.373599+00:00",
+  "status": "ok"
+}
