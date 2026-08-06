@@ -49,9 +49,15 @@ a table-of-contents/cross-reference fragment, and must contain any curated evide
 needed by a mandatory golden expectation. An invalid new extraction is reported as a
 failure and the previous fixture is left untouched.
 
+For filings whose formal Item 7 wrapper links to a separate financial section, the EDGAR
+parser follows the internal `Financial Table of Contents` target before applying the same
+substance checks; the short wrapper itself is never accepted as MD&A evidence.
+
 `CORE_RECORDED_CALLS` is the compact completeness contract required for every default
-golden-set ticker. The broader `RECORDED_CALLS` matrix is available for targeted refreshes;
-it is intentionally not required as a full ticker × input cross-product. The
+golden-set ticker. The controlled follow-up subset additionally records every supported news
+window because provider planners commonly request 7, 14, or 30 days. The broader
+`RECORDED_CALLS` matrix is available for targeted refreshes; it is intentionally not required
+as a full ticker × input cross-product. The
 `--mandatory-evidence-only` mode records just the filing calls that back curated qualitative
 expectations, which is the safest way to repair an evidence source without unrelated churn.
 

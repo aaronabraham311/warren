@@ -30,6 +30,7 @@ from eval.runner import (
     resolve_eval_config,
     resolve_persona,
     run_eval,
+    select_examples,
     validate_api_keys,
 )
 from eval.tool_fixtures import record_tool_result
@@ -60,6 +61,22 @@ def _example(ticker: str, persona: str = "default") -> EvalExample:
             numerical_grounding=NumericalGrounding(min_specific_numbers=3),
         ),
     )
+
+
+def test_select_examples_preserves_requested_order_and_normalizes_case() -> None:
+    examples = [_example("AAPL"), _example("BRK.B"), _example("LUMN")]
+
+    selected = select_examples(["lumn", "AAPL"], examples)
+
+    assert [example.ticker for example in selected] == ["LUMN", "AAPL"]
+
+
+def test_select_examples_rejects_unknown_and_duplicate_tickers() -> None:
+    examples = [_example("AAPL")]
+    with pytest.raises(ValueError, match="Unknown golden-set ticker"):
+        select_examples(["MSFT"], examples)
+    with pytest.raises(ValueError, match="must not contain duplicates"):
+        select_examples(["AAPL", "aapl"], examples)
 
 
 @pytest.fixture()

@@ -23,6 +23,7 @@ def test_usage_sidecar_sums_wal_metrics_without_double_counting_subsets(tmp_path
                 "output_tokens": 80,
                 "reasoning_tokens": 30,
                 "tool_use_tokens": 20,
+                "latency_ms": 100,
                 "cost_usd": 0.01,
                 "raw_usage": {"input_tokens": 450, "reasoning_tokens": 30},
             },
@@ -34,6 +35,7 @@ def test_usage_sidecar_sums_wal_metrics_without_double_counting_subsets(tmp_path
                 "output_tokens": 20,
                 "reasoning_tokens": 0,
                 "tool_use_tokens": 0,
+                "latency_ms": 300,
                 "cost_usd": 0.002,
             },
             {"event": "tool_call", "input_tokens": 999_999},
@@ -66,11 +68,13 @@ def test_usage_sidecar_sums_wal_metrics_without_double_counting_subsets(tmp_path
     assert metrics["cache_read_tokens"] == 300
     assert metrics["cache_creation_tokens"] == 50
     assert metrics["output_tokens"] == 100
+    assert metrics["visible_output_tokens"] == 70
     assert metrics["reasoning_tokens"] == 30
     assert metrics["tool_use_tokens"] == 20
     assert metrics["cost_usd"] == pytest.approx(0.012)
     assert metrics["prompt_cache_hit_rate"] == pytest.approx(300 / 470)
     assert metrics["reasoning_token_ratio"] == pytest.approx(0.3)
+    assert metrics["latency_ms"] == {"mean": 200.0, "p50": 100, "p95": 300, "max": 300}
 
 
 def test_unavailable_reasoning_and_empty_denominators_are_null(tmp_path: Path) -> None:
@@ -95,6 +99,8 @@ def test_unavailable_reasoning_and_empty_denominators_are_null(tmp_path: Path) -
     assert metrics["reasoning_tokens"] is None
     assert metrics["prompt_cache_hit_rate"] is None
     assert metrics["reasoning_token_ratio"] is None
+    assert metrics["visible_output_tokens"] == 0
+    assert metrics["latency_ms"] is None
 
 
 def test_usage_sidecar_does_not_match_grade_json_glob(tmp_path: Path) -> None:

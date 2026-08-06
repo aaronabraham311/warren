@@ -10,6 +10,14 @@ from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
 from data_sources.edgar_client import FilingSection
 
 NEWS_WINDOWS: Final[tuple[int, ...]] = (7, 14, 30)
+CONTROLLED_FOLLOWUP_TICKERS: Final[tuple[str, ...]] = (
+    "AAPL",
+    "BRK.B",
+    "LUMN",
+    "SBUX",
+    "V",
+    "CIRSA.MC",
+)
 FILING_CALLS: Final[tuple[tuple[str, str], ...]] = (
     ("10-K", "business"),
     ("10-K", "risk_factors"),
@@ -41,7 +49,9 @@ CURATED_FILING_CONCEPTS: Final[dict[tuple[str, str, str], tuple[tuple[str, ...],
     ),
     ("LUMN", "10-K", "mdna"): (("revenue", "legacy", "decline"),),
     ("V", "10-K", "mdna"): (("payment volume", "cross-border", "payments volume"),),
+    ("V", "10-K", "business"): (("payment", "transaction", "network"),),
     ("CVX", "10-K", "business"): (("integrated", "upstream", "downstream"),),
+    ("CVX", "10-K", "mdna"): (("upstream", "downstream", "production"),),
     ("COST", "10-K", "mdna"): (("comparable sales", "membership", "renewal"),),
     ("PYPL", "10-K", "business"): (("branded", "unbranded", "checkout"),),
     ("NVDA", "10-K", "business"): (("hyperscaler", "customer concentration", "cloud"),),

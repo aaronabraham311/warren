@@ -1,0 +1,7 @@
+{
+  "error_code": "network",
+  "message": "HTTPSConnectionPool(host='sanctionsapi.treasury.gov', port=443): Max retries exceeded with url: /api/ofac/search?name=Joaquim+Agut+Bonsfills&type=individual (Caused by NameResolutionError(\"HTTPSConnection(host='sanctionsapi.treasury.gov', port=443): Failed to resolve 'sanctionsapi.treasury.gov' ([Errno 8] nodename nor servname provided, or not known)\"))",
+  "recorded_at": "2026-08-06T02:02:56.793361+00:00",
+  "retryable": true,
+  "status": "error"
+}

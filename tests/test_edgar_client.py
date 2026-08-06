@@ -213,6 +213,36 @@ def test_ten_q_mdna_uses_quarterly_item_boundaries(
     assert "Market risk" not in result.text
 
 
+def test_mdna_follows_linked_financial_section_when_item_wrapper_is_only_an_index(
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
+) -> None:
+    substantive = " ".join(
+        [
+            "Upstream production, downstream margins, commodity prices, capital spending, "
+            "and operating costs drove the annual results."
+        ]
+        * 12
+    )
+    html = f"""<html><body>
+    <div id="financial"></div>
+    <div>Financial Table of Contents</div>
+    <div>Management's Discussion and Analysis of Financial Condition and Results of Operations</div>
+    <div>{substantive}</div>
+    <div>Item 7. Management's Discussion and Analysis</div>
+    <div>The index is presented in the <a href="#financial">Financial Table of Contents</a>.</div>
+    <div>Item 7A. Quantitative and Qualitative Disclosures</div>
+    </body></html>"""
+    client, _urls = _build_client(edgar_conn, monkeypatch, edgar_fixture, filing_html=html)
+
+    result = client.get_filing_section("AAPL", "10-K", "mdna")
+
+    assert isinstance(result, FilingSection)
+    assert result.word_count >= 75
+    assert "Upstream production" in result.text
+
+
 def test_fiscal_year_selects_older_filing(
     edgar_conn: sqlite3.Connection,
     monkeypatch: pytest.MonkeyPatch,

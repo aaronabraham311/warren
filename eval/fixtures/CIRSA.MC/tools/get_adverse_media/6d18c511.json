@@ -1,0 +1,7 @@
+{
+  "error_code": "network",
+  "message": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+  "recorded_at": "2026-08-06T02:29:45.275838+00:00",
+  "retryable": true,
+  "status": "error"
+}

@@ -1,0 +1,434 @@
+{
+  "data": {
+    "days": 30,
+    "items": [
+      {
+        "datetime": "2026-08-05T01:20:00Z",
+        "headline": "Greg Abel Just Sold 2.3 Million Shares of Amazon Stock. Here's Why That Could Be a Huge Mistake.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Amazon stock has been soaring.",
+        "url": "https://finnhub.io/api/news?id=ba8700c78b0d2ef52a7900e787cf8a5a2ef884b0b1bffb16d890a8d9f04d4878"
+      },
+      {
+        "datetime": "2026-08-04T21:34:00Z",
+        "headline": "Sandisk and 4 Other Must-See Earnings Charts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Sandisk will hog the spotlight but Berkshire Hathaway is also reporting this week.",
+        "url": "https://finnhub.io/api/news?id=fce986d2e3155dcd4543638bf5a52cc0f679b7689fdac1003ce2fc124076610e"
+      },
+      {
+        "datetime": "2026-08-04T20:42:00Z",
+        "headline": "Top Stock Reports for Berkshire Hathaway, Micron & Oracle",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Berkshire Hathaway, Micron and Oracle lead today's top stock reports, highlighting key growth drivers, opportunities and risks shaping their outlooks.",
+        "url": "https://finnhub.io/api/news?id=86a7b32a7464e514c6663204616c3b2d47d56f5eef8446ef48b8ef8712688bc3"
+      },
+      {
+        "datetime": "2026-08-04T19:31:07Z",
+        "headline": "Warren Buffett's Wealth-Building Strategy Points to This One ETF for Long-Term Investors",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Warren Buffett\u2018s strategy for everyday investors to build wealth doesn\u2019t rely on complex stock picking or insider knowledge. Instead, the legendary investor recommends simply buying and holding a low-cost S&P 500 index fund, specifically pointing to the Vanguard S&P 500...",
+        "url": "https://finnhub.io/api/news?id=edf1ea26709195f2e5f34f12f679f639c12da980ed088664723ceba3bfa3b590"
+      },
+      {
+        "datetime": "2026-08-04T13:00:00Z",
+        "headline": "Dwellworks Living by CORT Launches Following Completion of Acquisition by CORT Business Services",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "CHANTILLY, Va., August 04, 2026--CORT Business Services, a Berkshire Hathaway company and the nation\u2019s leading provider of furniture rental and transition services, today announced the completion of its acquisition of Dwellworks Living, the temporary housing division of Dwellworks and a leading provider of temporary living solutions. Effective immediately, the business is operating as Dwellworks Living by CORT.",
+        "url": "https://finnhub.io/api/news?id=53d6ba76f9ac9689614aae7caea5fb4bd3388d274a86c4893badde96485a9163"
+      },
+      {
+        "datetime": "2026-08-04T12:47:00Z",
+        "headline": "Greg Abel Hasn't Touched Berkshire's Energy Holdings. Is That a Signal?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Greg Abel's quiet vote of confidence in Berkshire's energy holdings could be one of his most important investment signals yet.",
+        "url": "https://finnhub.io/api/news?id=1e3cca5b664d62b9b9378290c254ba6d589660cea584b4d4b7d93a1751c9037b"
+      },
+      {
+        "datetime": "2026-08-04T12:10:05Z",
+        "headline": "Berkshire Hathaway Hits an 8 Month High. It\u2019s Now My Top Buy and Hold Forever Pick.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Warren Buffett handed the keys to Greg Abel and went quiet, leaving behind a $397 billion cash pile, a resumption of buybacks, and a stock sitting just below all-time highs. Five specific reasons explain why this transition moment could be the most compelling entry point in years.",
+        "url": "https://finnhub.io/api/news?id=1b6288319e36019e8fdd4a1c07788a38cca358949413957f8281466a1a960b1c"
+      },
+      {
+        "datetime": "2026-08-04T12:00:43Z",
+        "headline": "Are Billionaire Investor Warren Buffett\u2019s Top 5 Stock Picks a Buy in August?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Warren Buffett's five biggest public bets have all moved sharply this year, but not in the same direction, and the gap between where he bought and where these stocks trade now tells a very different story for each one.",
+        "url": "https://finnhub.io/api/news?id=08f6b8804bd44534d0f7131d5db2b2a053f613564cab51a77bb341213fc49569"
+      },
+      {
+        "datetime": "2026-08-04T11:35:00Z",
+        "headline": "Got $10,000? Here's How I'd Split It Across These 5 Energy Stocks.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "From Berkshire Hathaway to Oklo, there are plenty of ways to construct a diversified energy portfolio with $10,000.",
+        "url": "https://finnhub.io/api/news?id=525dd473821a8b58750d443e2cd133fc5c50a50dac22eb54fc915c469356a73d"
+      },
+      {
+        "datetime": "2026-08-04T11:00:03Z",
+        "headline": "Is Berkshire Focus Fund (BFOCX) a Strong Mutual Fund Pick Right Now?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Mutual Fund Report for BFOCX",
+        "url": "https://finnhub.io/api/news?id=a001ef0843a53e4d3238de822040b41abfbeec5f9d7b076d15ff4a3715b09a75"
+      },
+      {
+        "datetime": "2026-08-04T04:50:00Z",
+        "headline": "Berkshire Hathaway Has Invested $23 Billion in This Stock Since Greg Abel Took Over as CEO. History Says There May Be More to Come",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Greg Abel has been a busy man since taking over from Warren Buffett.",
+        "url": "https://finnhub.io/api/news?id=176ecfe9c0f23528106111f31ee5056d04d53db3f1e552750026c998702a1cf0"
+      },
+      {
+        "datetime": "2026-08-04T02:17:00Z",
+        "headline": "Buffett's AI concerns clash with Berkshire's Alphabet buy",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Warren Buffett rarely calls his own investments mistakes. He rarely doubles down on ones he still questions. In a July CNBC interview, he did both at once. Buffett confirmed he personally started Berkshire's Alphabet position, confessed he should have bought years earlier, and flagged the enormous ...",
+        "url": "https://finnhub.io/api/news?id=164c9dbb57ec9be9ccb22a8c65bc41e271f591f750356b7c78bc46e49fbce8d8"
+      },
+      {
+        "datetime": "2026-08-04T00:30:17Z",
+        "headline": "Warren Buffett Says You Don't Need 20 Right Calls To Get Rich \u2014 '4 Or 5 Will Probably Do It'",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Warren Buffett is one of the most well-known investors of all time, helping Berkshire Hathaway consistently beat the S&P 500 before he stepped down as CEO at the end of 2025. Buffett\u2019s advice from a 2013 interview about timing investments...",
+        "url": "https://finnhub.io/api/news?id=4e34ce92e6ab8c8a3f1ba84b3af676d5148c79980f12fc60ee2596a1c12a05ba"
+      },
+      {
+        "datetime": "2026-08-03T20:06:00Z",
+        "headline": "Buffett-Inspired ETF Owns Berkshire, Apple, Amex and Generates 15% Yield",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The VistaShares Target 15 Berkshire Select Income ETF has topped Berkshire stock\u2019s return of 3% since March 2025.",
+        "url": "https://finnhub.io/api/news?id=1bf8c6458c718c98c45171ca70adba3f4e1fe6b3deedcaed08f104bb3915a2d4"
+      },
+      {
+        "datetime": "2026-08-03T16:40:00Z",
+        "headline": "The S&P 493 Are Staging a Comeback\u2014This Value ETF Offers Broad Exposure",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "As the NASDAQ-100 corrects amid an AI CapEx-driven tech sell-off, sectors like healthcare and financials are rallying, boosting diversified value ETFs like the Schwab U.S. Large-Cap Value ETF (SCHV).",
+        "url": "https://finnhub.io/api/news?id=6e71450bdf5b7604e689e41936a1f88574d1e3d7cf4c5df85452b935df8a116d"
+      },
+      {
+        "datetime": "2026-08-03T15:25:00Z",
+        "headline": "Greg Abel Poured $23 Billion of Berkshire's Cash Into Alphabet Stock",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Berkshire's new CEO is bullish on the tech giant's future.",
+        "url": "https://finnhub.io/api/news?id=d6aac124c4e7ce7666b672518aa7ac37216740c844467295946b97f6d05c6201"
+      },
+      {
+        "datetime": "2026-08-03T14:50:00Z",
+        "headline": "Greg Abel Closed Berkshire Hathaway's Taylor Morrison Deal on July 24. Here's What Berkshire Owns Now.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Berkshire is banking on a rebound in the housing market.",
+        "url": "https://finnhub.io/api/news?id=de07063c937574cda89eea1f874e3db6c1d4cd5fde909ff05b5304418370a2f3"
+      },
+      {
+        "datetime": "2026-08-03T12:43:18Z",
+        "headline": "Goldman Sachs Adds Financial Giant to the August Conviction List of Top Stock Picks",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Goldman Sachs just refreshed its August Conviction List with a financial services name analysts say the market is sleeping on, and two other picks in the sector that could quietly outperform through year-end.",
+        "url": "https://finnhub.io/api/news?id=96cb816abcad94b848927a20aedb08b2a1231ec8b2d65277cd0596f18318acbc"
+      },
+      {
+        "datetime": "2026-08-03T09:36:03Z",
+        "headline": "Warsh Says Cross The Street By Yourself",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Fed Chair Warsh has shifted policy communication, ending forward guidance and emphasizing market-driven price discovery. Read the full analysis here.",
+        "url": "https://finnhub.io/api/news?id=54ba81c2e1aba966169d85975237da15741216a18063f1cfd461da5f5a784b29"
+      },
+      {
+        "datetime": "2026-08-03T09:26:00Z",
+        "headline": "Warren Buffett's Successor, Greg Abel, Started His Tenure With a Bang by Slashing Berkshire's Chevron Stake and Making a Virtual Monopoly the New No. 5 Holding",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Oracle of Omaha's understudy cut Berkshire Hathaway's Chevron stake by 35% in favor of a company with a foundational sustainable moat and serious artificial intelligence (AI) ambitions.",
+        "url": "https://finnhub.io/api/news?id=0dd7659df568a45fd31c256ea4026875f113877b8bb9a437bcff667274e8ee1b"
+      },
+      {
+        "datetime": "2026-08-03T05:35:00Z",
+        "headline": "Greg Abel Is Spending Berkshire Hathaway's Cash on Whole Companies Instead of Stocks. Here's What That Changes for Shareholders.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Abel isn't charting a new path, but he is putting his stamp on the company.",
+        "url": "https://finnhub.io/api/news?id=802d56d8ff5bffc083ca8780b981c21f9dd70d375ae103ccca0b293651403f59"
+      },
+      {
+        "datetime": "2026-08-01T11:30:00Z",
+        "headline": "SpaceX's First Earnings Post IPO",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Wall Street Week Ahead: key earnings (SpaceX, AMD), IPOs, dividends & macro data (PMIs, jobs). Read here for more details.",
+        "url": "https://finnhub.io/api/news?id=9de17a5f3bdcc68bc05d4cf666a8e11bd0e6515b1992fd4959b95b7838d3aa1b"
+      },
+      {
+        "datetime": "2026-08-01T10:41:54Z",
+        "headline": "\u200aBerkshire Hathaway shares hit eight-month high",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "The conglomerate that Warren Buffett built rallied to an eight-month high this week. There could be more gains ahead if they play catch up with the S&P 500.",
+        "url": "https://finnhub.io/api/news?id=c0de88a9455741031b05308fd4d0f7ebae54de65a6dc12cb9fa99cbf230976ef"
+      },
+      {
+        "datetime": "2026-07-29T09:51:18Z",
+        "headline": "Berkshire Hathaway: Sum-Of-The-Parts Model Signals An Intrinsic Value Gap",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Berkshire Hathaway lags the S&P 500\u00e2\u0080\u0094see why its insurance float, underwriting profits and key segments matter for long-term value.",
+        "url": "https://finnhub.io/api/news?id=7e8adfff1c8631497bd7c10c70b72586e1b46b2ec1cd536ee75bb26177f7c06b"
+      },
+      {
+        "datetime": "2026-07-28T21:55:03Z",
+        "headline": "Berkshire Hathaway: Skip Tech Earnings, Buy This Classic Defensive",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Berkshire Hathaway stands out in this market, consistently producing high cash flows. Click here to read why BRK.B stock is a Buy.",
+        "url": "https://finnhub.io/api/news?id=0f396bf7a2e70eef90cc9d6454d41ad48508bea502225276a3ff3a1c92a80d59"
+      },
+      {
+        "datetime": "2026-07-27T12:50:38Z",
+        "headline": "Occidental Petroleum: Eventually The Iran War Will End; How Will Occidental Fare Then?",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Occidental Petroleum (OXY) analysis: debt reduced via OxyChem sale, hedging risks, Middle East upside, and Direct Air Capture doubts\u00e2\u0080\u0094see why it\u00e2\u0080\u0099s a Hold.",
+        "url": "https://finnhub.io/api/news?id=0b0c3de5f9c42fb6fe20cddda482f37c110ea687070afe3d3ec54ab0a35d1fdd"
+      },
+      {
+        "datetime": "2026-07-27T07:05:00Z",
+        "headline": "The GoodHaven Fund 2026 Semi-Annual Contributors And Detractors",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "The GoodHaven Fund's top three detractors, all long-term winners, accounted for approximately 400 basis points of negative performance in the period. Read more here.",
+        "url": "https://finnhub.io/api/news?id=2587314ce6e7197d0c6a823711faa283f7a54f7e63ad41b78316e71fb22a0b4a"
+      },
+      {
+        "datetime": "2026-07-25T08:28:33Z",
+        "headline": "Buffett favors an estate tax, but like virtually all billionaires, he won't be paying it",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Warren Buffett believes he and other very wealthy Americans are under-taxed but by giving his fortune to charity, he won't be paying billions in potential levies to the government.",
+        "url": "https://finnhub.io/api/news?id=006565c4f03e3eb16bd4f60fd7e16b10d9d071a719f3f1afa1d7fa3b4ee9056a"
+      },
+      {
+        "datetime": "2026-07-24T12:03:47Z",
+        "headline": "Taylor Morrison CEO: Strong housing sales data speaks to desire and need for today's housing",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Sheryl Palmer, Taylor Morrison CEO, joins 'Squawk on the Street' to discuss the company's merger with Berkshire Hathaway, what to expect from housing demand and much more.",
+        "url": "https://finnhub.io/api/news?id=514aeaea4c95f32abefb0c1759a34aafc95f4aeb7657ef17fdfd5c4fb8af5f1f"
+      },
+      {
+        "datetime": "2026-07-24T09:30:00Z",
+        "headline": "Why Dividend Investing Often Wins",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Dividend growers beat the S&P 500 with lower volatility. Click for a look at my investing strategy and my current top income picks.",
+        "url": "https://finnhub.io/api/news?id=83c2461bcf3e54837747f3251ab2778c666c21e7da621a9e9f206f7150e563a8"
+      },
+      {
+        "datetime": "2026-07-22T19:24:53Z",
+        "headline": "Alphabet Earnings: Much To Love, But That CapEx Is Getting Scary",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Alphabet Inc. earnings beat as CapEx surges and FCF turns negative. Click for this updated look at GOOG stock and see why I am still bullish.",
+        "url": "https://finnhub.io/api/news?id=c6feec5eec73ee689722a78e0f5307a8163727a6c6ead2715a893296836e436c"
+      },
+      {
+        "datetime": "2026-07-22T03:35:00Z",
+        "headline": "The Steepener Was Built On A Barrel Of Oil",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "The index did nothing for two weeks. Underneath it, money fired every long-duration haven and bought small banks and energy.",
+        "url": "https://finnhub.io/api/news?id=ca7127b0fb9307c8281f2db00670cfd84f1664633656317df840d147d53c52ee"
+      },
+      {
+        "datetime": "2026-07-21T19:33:07Z",
+        "headline": "Tracking Bruce Berkowitz's Fairholme Portfolio: Q1 2026 Update",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Fairholme\u00e2\u0080\u0099s latest 13F: a $1.51B portfolio with JOE at ~80%, plus key buys in PGR, EPD, and new KHC stakes. Click here to read more.",
+        "url": "https://finnhub.io/api/news?id=104f5cb47a0a4b8615d0c2ef31822e452d1a9e6b7c32f6f19d4d472cb59263ae"
+      },
+      {
+        "datetime": "2026-07-21T08:30:00Z",
+        "headline": "Earnings Season May Be Last Hurrah For Hyperscalers And A Turning Point In The Market Cycle",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Q2 earnings could mark a market turning point as AI/growth risks rise and sentiment shifts to sector rotation. Click here to read what investors need to know.",
+        "url": "https://finnhub.io/api/news?id=7ac950c7354798115fbe4e373a4bc1d4e6d7936dbc7fc2f91eb25fd2697239ef"
+      },
+      {
+        "datetime": "2026-07-21T04:08:33Z",
+        "headline": "Undercovered Dozen: ServiceNow, Kraft Heinz, Infleqtion, And More",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Explore top stock picks: ServiceNow, Kraft Heinz, and GigaCloud rated Strong Buys, plus Corning downgraded to Sell.",
+        "url": "https://finnhub.io/api/news?id=501e5fb617eefb247a8912f0d6ec808ca7462634a393bd8e67b2c3c947268dbb"
+      },
+      {
+        "datetime": "2026-07-18T10:53:36Z",
+        "headline": "Two unexpected revelations in Warren Buffett's CNBC interview",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Warren Buffett tells CNBC that Bill Gates' ties to Jeffrey Epstein didn't drive his termination of donations.",
+        "url": "https://finnhub.io/api/news?id=128545b5f8c011b3a4ba5e6a786db42d4d2d8efc2c4dcaa5a7bd01abb4051063"
+      },
+      {
+        "datetime": "2026-07-15T21:06:31Z",
+        "headline": "CNBC Daily Open: Big Tech rally drowns out Iran war fears \u2014 Buffett urges caution",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Stocks closed higher on Big Tech gains and a surprise drop in wholesale prices, shrugging off fresh U.S. strikes on Iran, a naval blockade.",
+        "url": "https://finnhub.io/api/news?id=1e07bdef80a0af08fd01bf638b3f218f3b9f7a6365800ce65e099e1193803362"
+      },
+      {
+        "datetime": "2026-07-15T09:10:03Z",
+        "headline": "Watch CNBC's full interview with Berkshire Hathaway Chairman Warren Buffett",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC's Becky Quick sits down with Berkshire Hathaway Chairman Warren Buffett in Omaha. They discuss the pace of his annual donations of Berkshire Hathaway shares, why he has not included the Gates Foundation this year, his views on his company's portfolio, and more.",
+        "url": "https://finnhub.io/api/news?id=130c8197f4cc86ed70609b5d01f2bbf7e046e280c6a996136344ab8d8d2aac11"
+      },
+      {
+        "datetime": "2026-07-15T09:06:54Z",
+        "headline": "Warren Buffett on the market today: It's tough to find values when everybody is preferring gambling",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Berkshire Hathaway Chairman Warren Buffett joins 'Squawk Box' to discuss the latest market trends, whether the markets right now make sense to him, and more.",
+        "url": "https://finnhub.io/api/news?id=db476932ca13b4120a9263776af06bf4fab3f405438246b664d42916a5c3d5de"
+      },
+      {
+        "datetime": "2026-07-15T07:55:56Z",
+        "headline": "Warren Buffett speeds up pace of annual donations, will leave it to his kids on how to manage",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Berkshire Hathaway Chairman Warren Buffett joins 'Squawk Box' to discuss his goals for his annual donations, the pressures that his kids will face in distributing those funds, his faith in CEO Greg Abel, and more.",
+        "url": "https://finnhub.io/api/news?id=f3ac0222f94c3f4dfe7469fc98bb78db52e38389de4147534e0aaaa6f3dc6666"
+      },
+      {
+        "datetime": "2026-07-15T07:41:33Z",
+        "headline": "Warren Buffett: I initiated Berkshire Hathaway's investment in Alphabet",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Berkshire Hathaway Chairman Warren Buffett joins 'Squawk Box' to discuss the company's $31B-plus stake in Alphabet, whose idea it was to buy into the tech giant, his investment in technology, and more.",
+        "url": "https://finnhub.io/api/news?id=54ef5a2c42e70875e9d9d078d2b9cf1df6c267b606468510a6fd00f04f49d37d"
+      },
+      {
+        "datetime": "2026-07-15T07:04:56Z",
+        "headline": "Warren Buffett on the timeline and distribution of his annual stock donations",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Berkshire Hathaway Chairman Warren Buffett joins 'Squawk Box' to discuss the timeline to distribute his fortune, why he's expediting the rate from ten years after his death to a little over eight years from now, and more.",
+        "url": "https://finnhub.io/api/news?id=c7680a9fbe1c45c9b9e41021aa8a2d0e5e8e3ca5fbb8a9710855da590b6ea150"
+      },
+      {
+        "datetime": "2026-07-14T11:25:59Z",
+        "headline": "Warren Buffett is accelerating his charitable donations with aim to give away Berkshire wealth by 2034",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Warren Buffett is speeding up the pace of his annual donations of Berkshire Hathaway shares to four family foundations, giving them a total of almost $6 billion now.",
+        "url": "https://finnhub.io/api/news?id=d33832e7313a463d1fa154a66981889c0a503da4a12d2c37edff085bb2b9ebe2"
+      },
+      {
+        "datetime": "2026-07-14T08:23:11Z",
+        "headline": "Warren Buffett excludes Gates Foundation from his annual donations of Berkshire stock",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC's Becky Quick reports on the latest news on Warren Buffett.",
+        "url": "https://finnhub.io/api/news?id=20f1a712077a2671a11987fbf72d1d9eb06ce810963fc91f405a2d960c5428da"
+      },
+      {
+        "datetime": "2026-07-13T13:45:49Z",
+        "headline": "How To Build A $50,000 Dividend Portfolio In Today's Market",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Build a resilient dividend income portfolio with quality stocks & ETFs: 3.75% yield, low payout ratios, low beta, and defensive sector focus. Here's what investors need to consider.",
+        "url": "https://finnhub.io/api/news?id=2fc7e2002ab8e39cabb3974c06cad1fde6ceec9d2584a7770aa6b20f081d01e9"
+      },
+      {
+        "datetime": "2026-07-13T11:50:09Z",
+        "headline": "7 Numbers That Should Make A Prudent Investor Say 'Whoa!'",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "The key market warning signs? Read why tech concentration, stretched valuations, and housing headwinds can lead to trouble for investors.",
+        "url": "https://finnhub.io/api/news?id=89b00f20ff3e92a7ecc93748ec4bae0bcd72dafdac0b92439af7c3fa61a4da3d"
+      },
+      {
+        "datetime": "2026-07-11T23:45:28Z",
+        "headline": "Defensive Leader Kraft Heinz Is Experiencing Bullish Capital Rotation",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Kraft Heinz (KHC) looks undervalued with a 6.4% dividend, rising technical momentum, and insider buying\u00e2\u0080\u0094see the bull case, key catalysts, and risks now.",
+        "url": "https://finnhub.io/api/news?id=53dbf3b18b433e5d9182fd22cdb06eadd412cba5ceabd3f2aa310d74362ae2c4"
+      },
+      {
+        "datetime": "2026-07-11T09:07:41Z",
+        "headline": "Berkshire Hathaway gains ground, but still trails the S&P 500 as '26 enters second half",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "With 2026 a bit more than half over, Berkshire Hathaway's B shares are down 1.8% year-to-date and 12.4 percentage points behind the S&P 500's 10.7% gain.",
+        "url": "https://finnhub.io/api/news?id=dc58b704fc81e5b6cc08a843b1391d8acc3be1c1bc7f4980fca82845a90be899"
+      },
+      {
+        "datetime": "2026-07-11T06:56:21Z",
+        "headline": "Why I Prioritize My HSA Over My IRA For Maximum Tax Alpha",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Maximize your Health Savings Account: triple tax benefits, tax-free compounding, early-retirement strategy, and estate planning pitfalls. Click to read more.",
+        "url": "https://finnhub.io/api/news?id=ccff67c9c87a90d991f3e72478f240657980d0ad5a8cee0ce558c1fa19ee6557"
+      },
+      {
+        "datetime": "2026-07-08T08:10:18Z",
+        "headline": "Managing A $1 Million Portfolio: A Better Way To Equal Weight The S&P 500",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Many retirees still want exposure to the S&P 500 but fret about the major US market cap weighted indexes due to valuations. Read more here.",
+        "url": "https://finnhub.io/api/news?id=7821ef559ec72586683799b615c292115d2ea99833529980a18a1c280c49cdc7"
+      },
+      {
+        "datetime": "2026-07-07T16:14:18Z",
+        "headline": "Berkshire Hathaway: Poised To Reclaim $540 Record High (Rating Upgrade)",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Berkshire Hathaway stock may be set for a breakout on a strong 2026 insurance outlook, high yields, and bullish technicals. Click to see key BRK.B levels now.",
+        "url": "https://finnhub.io/api/news?id=275ac1f296ef4bc779318f0a0791ca539fec5833e1771c5cdc7f2bedee81c5fb"
+      },
+      {
+        "datetime": "2026-07-07T07:17:55Z",
+        "headline": "M/I Homes: A Muddled Picture",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "M/I Homes (MHO) surges on buyout buzz and legislative tailwinds, but Q1 weakness signals no 2026 rebound.",
+        "url": "https://finnhub.io/api/news?id=501464dd90ac11c781bb767031029dcdbadea3851082e3e44dfce4f7abb64a42"
+      },
+      {
+        "datetime": "2026-07-07T06:30:00Z",
+        "headline": "We're In (The Early Stages Of) A Bubble",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Analyst Clem Chambers explains the market's\u00c2\u00a0big shuffle, AI's value chain and highlights a rare earth pick.",
+        "url": "https://finnhub.io/api/news?id=1eecfc6dd4234ae95f27b4f84553f5dbaaeff325e1bfe798ab6aef4fbc9cb149"
+      }
+    ],
+    "ticker": "BRK.B"
+  },
+  "recorded_at": "2026-08-06T01:15:14.073462+00:00",
+  "status": "ok"
+}

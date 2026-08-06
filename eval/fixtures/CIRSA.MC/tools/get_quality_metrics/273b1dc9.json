@@ -1,0 +1,36 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "cash_conversion_series": [
+      6.535,
+      32.9176,
+      4.7193,
+      6.5269
+    ],
+    "cash_conversion_ttm": 6.535,
+    "consecutive_profit_years": 4,
+    "data_age_hours": 5233,
+    "gross_margin_pct": 55.5295,
+    "gross_margin_series": [
+      55.5295,
+      55.952,
+      54.2885,
+      54.5551
+    ],
+    "gross_margin_stdev": 0.7883,
+    "ncav_trend": "declining",
+    "roa_pct": 1.888,
+    "roic_mean": 7.719,
+    "roic_pct": 8.7154,
+    "roic_series": [
+      8.7154,
+      5.9337,
+      8.9571,
+      7.2696
+    ],
+    "source": "yfinance",
+    "ticker": "CIRSA.MC"
+  },
+  "recorded_at": "2026-08-06T01:33:28.965912+00:00",
+  "status": "ok"
+}

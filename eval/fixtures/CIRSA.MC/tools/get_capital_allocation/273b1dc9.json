@@ -1,0 +1,30 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "buyback_yield_pct": 0.0,
+    "data_age_hours": 5233,
+    "dividend_growth_streak": 0,
+    "dividend_yield_pct": 1.9231,
+    "net_debt_series": [
+      1885724000,
+      2426464000,
+      2210803000,
+      2245729000
+    ],
+    "net_debt_trajectory": "delevering",
+    "payout_ratio_pct": 60.6414,
+    "share_count_cagr_pct": 0.0,
+    "share_count_series": [
+      167992667,
+      167992667,
+      167992667,
+      167992667
+    ],
+    "shareholder_yield_pct": 1.9231,
+    "source": "yfinance",
+    "ticker": "CIRSA.MC",
+    "years_covered": 4
+  },
+  "recorded_at": "2026-08-06T01:33:29.107784+00:00",
+  "status": "ok"
+}

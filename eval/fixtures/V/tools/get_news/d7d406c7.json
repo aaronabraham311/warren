@@ -1,0 +1,1978 @@
+{
+  "data": {
+    "days": 30,
+    "items": [
+      {
+        "datetime": "2026-08-05T22:23:04Z",
+        "headline": "Visa Puts Stablecoins Into Its Cross-Border Payout Rail Across 18 Billion Endpoints",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa has moved stablecoin integration beyond experimental pilots into production-grade infrastructure. As of August 5, 2026, the company is deploying stablecoin capabilities across Visa Direct, its real-time push payments platform, to reach more than 18 billion endpoints across eligible cards, accounts, and digital wallets in 195 countries and territories. This is a live, scalable deployment [\u2026]",
+        "url": "https://finnhub.io/api/news?id=9d2ee044e6caae070fc71b4467fb7a23c589ad3fe03b8733c7245c0c8fc4feb7"
+      },
+      {
+        "datetime": "2026-08-05T22:03:00Z",
+        "headline": "Visa Adds Stablecoin Funding and Payouts to Visa Direct With zerohash",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa Inc. (NYSE: $V) is adding stablecoin funding and payout capabilities to Visa Direct through a collaboration wi...",
+        "url": "https://finnhub.io/api/news?id=d69d60fb92b1d000f18db2445819471040bdb16fd722637b94ac44eae06eab07"
+      },
+      {
+        "datetime": "2026-08-05T22:00:06Z",
+        "headline": "PYPL's Historical Floor Is Back, But Is The Business The Same?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PayPal's stock has returned to a price zone that has historically launched powerful rallies, after trading well below it as recently as last month.",
+        "url": "https://finnhub.io/api/news?id=3988dc755ee6b61f931b86655461e749a8c074be65ba45ac54b70d35728d6c0b"
+      },
+      {
+        "datetime": "2026-08-05T19:42:48Z",
+        "headline": "Visa Widens Stablecoin Payouts via Zerohash Rails",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Eligible Visa Direct clients can now prefund accounts and send payouts in stablecoins, expanding Visa's latest push to bring blockchain-based payments into its global network.",
+        "url": "https://finnhub.io/api/news?id=7f6eb9f1cf308e2b48548e565d95d9aae41ddebbc0e0c9985ef965ae19cd9d72"
+      },
+      {
+        "datetime": "2026-08-05T19:10:05Z",
+        "headline": "What's going on in today's session: dow jones movers",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Let's have a look at the top dow jones gainers and losers one hour before the close of the markets of today's session.",
+        "url": "https://finnhub.io/api/news?id=37410582800957237105abc7d2874ac064d8356eef6cdbe69591925af8b9c264"
+      },
+      {
+        "datetime": "2026-08-05T18:24:00Z",
+        "headline": "Global Payments Q2 Earnings Beat Estimates on Genius Platform Momentum",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "GPN Q2 EPS beat estimates as Genius platform adoption lifts earnings, though revenues narrowly miss expectations.",
+        "url": "https://finnhub.io/api/news?id=c793b2de5ba3e0a2974aca585f8b6ae6bba10690c735d8cf0304ddcb989b21da"
+      },
+      {
+        "datetime": "2026-08-05T18:08:10Z",
+        "headline": "Visa\u2019s $2.4 Billion Bet: Behavioral Biometrics as the Trust Layer for Agent Commerce",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa\u2019s $2.4 billion cash acquisition of BioCatch on August 3, 2026, represents an 85% premium over the company\u2019s 2024 valuation, signaling a strategic pivot to control the plumbing of future commerce. By securing this asset, Visa is positioning behavioral biometrics not merely as a fraud-prevention tool, but as the foundational agent identity layer for a [\u2026]",
+        "url": "https://finnhub.io/api/news?id=4ec739048f853c1c793432946139f08e01e81f3bbd262f02d69a1d6d02994333"
+      },
+      {
+        "datetime": "2026-08-05T18:01:51Z",
+        "headline": "Circle's Arc Names Its Founding Validators Ahead of Mainnet Release",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Arc, Circle's institutional blockchain, goes live September 16th with a validator cohort built from TradFi giants.",
+        "url": "https://finnhub.io/api/news?id=777ab23a375aebcc215d5212c735edb164b64ba40eb2f0189d3f2c913c23268e"
+      },
+      {
+        "datetime": "2026-08-05T17:34:00Z",
+        "headline": "5 Financial Transaction Stocks in Focus Despite Rising Tech Costs",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Cross-border payment growth and strategic expansion support the industry players, but rising technology costs and consumer spending pressures continue to weigh on margins. Companies like V, MA, PYPL, FIS and WEX are likely to navigate industry challenges.",
+        "url": "https://finnhub.io/api/news?id=3ff87e21b0ce2fa0c563ccee6133cb2f23d1962127b907234864431f285ce4ab"
+      },
+      {
+        "datetime": "2026-08-05T17:28:06Z",
+        "headline": "Mastercard and Visa Continue Advancing Their Stablecoin Ambitions",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The biggest card companies are taking different paths to the same goal: dominating the rails beneath stablecoins.",
+        "url": "https://finnhub.io/api/news?id=b7a561eb39aede5832fa543b7565735c810e35ccff9f785cf4bb4d9f494fa35a"
+      },
+      {
+        "datetime": "2026-08-05T16:40:04Z",
+        "headline": "Uncover the latest developments among dow jones stocks in today's session.",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Wondering what's happening in today's session for the dow jones index? Stay informed with the top movers within the dow jones index on Wednesday.",
+        "url": "https://finnhub.io/api/news?id=c3f017020e693632ac5d4d9c9d82b142c56fb9d2d174d424bd80f10b75f07988"
+      },
+      {
+        "datetime": "2026-08-05T15:38:09Z",
+        "headline": "Circle Taps Visa, Mastercard and BlackRock as Validators for September Arc Launch",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Circle's USDC distribution deal with Coinbase has been renewed on existing terms, and Arc's testnet has processed half a billion transactions.",
+        "url": "https://finnhub.io/api/news?id=3b09705a15688db23ea5c39a342df6ccbeccc3449f5f0b5dfc2b8a67dc310d41"
+      },
+      {
+        "datetime": "2026-08-05T14:37:33Z",
+        "headline": "BeInCrypto Stage Brings Together Global Leaders at Rio Innovation Week 2026",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The BeInCrypto Stage returns to Rio Innovation Week for a fourth year, with panels on tokenised equities, prediction markets and crypto voter.",
+        "url": "https://finnhub.io/api/news?id=d5530a5beebc9ed11d6aec34d52cd52b92f7bc8c3452d50c01d980b97b58b3e6"
+      },
+      {
+        "datetime": "2026-08-05T13:58:23Z",
+        "headline": "Mastercard Is in Millions of Portfolios. Last Quarter, Elite Investors Were Quietly Buying Its Rival",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Seth Klarman spent four decades building a reputation for buying almost nothing, so when Baupost quietly planted a nine-figure flag in a payment network last quarter, the choice of which rail he picked over the obvious favorite deserves a close look.",
+        "url": "https://finnhub.io/api/news?id=fbff8ca0d5c200fd406617b5c864ab8eedf4e975098bf14fac4b8090881668d3"
+      },
+      {
+        "datetime": "2026-08-05T13:54:00Z",
+        "headline": "Circle Internet Group Posts Mixed Financial Results",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The stock of Circle Internet Group (NYSE: $CRCL) is down 5% after the stablecoin issuer reported mixed financial re...",
+        "url": "https://finnhub.io/api/news?id=7edc25046711b33bcce069354c79c89e87e13c9e2613e703d317b74dc44ba4c6"
+      },
+      {
+        "datetime": "2026-08-05T12:58:24Z",
+        "headline": "Circle shares climb after Q2 results, federal bank charter approval and higher guidance",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Circle Internet Group (NYSE:CRCL) shares rose around 7% in pre-market trading after the stablecoin issuer reported second-quarter results in line with expectations, secured the first federal bank charter granted to a stablecoin company and raised parts of its full-year outlook. The company also announced that BlackRock, Visa and Mastercard will serve as validators for its upcoming blockchain network.",
+        "url": "https://finnhub.io/api/news?id=7a905011e0062faef31ace90f712a1bcbcbe52f38f254bda3cd2a2ae0a8a54d5"
+      },
+      {
+        "datetime": "2026-08-05T12:11:41Z",
+        "headline": "Circle's Q2 Results Beat Estimates: So Why Is CRCL Stock Selling Off?",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Circle stock falls 4% despite an earnings beat as Mizuho flags weaker USDC trends, lower margins and slowing transaction volume.",
+        "url": "https://finnhub.io/api/news?id=bc46425f5240e2f94b6bd69c9f024a4440e3f902744dd3a62fb73ed1b6d08735"
+      },
+      {
+        "datetime": "2026-08-05T11:15:03Z",
+        "headline": "Circle jumps 7% in premarket trade after Q2 bank charter, in-line earnings",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- Shares of Circle Internet Group jumped 7% in premarket trading on Wednesday after the stablecoin issuer reported second-quarter earnings in line with estimates and disclosed it had received the first federal bank charter awarded to a stablecoin company.",
+        "url": "https://finnhub.io/api/news?id=c58dedc23c16870ffdb4f75a0cd30e6ed41c8716c78c0bf7dbc4680fe5e776d8"
+      },
+      {
+        "datetime": "2026-08-05T10:44:00Z",
+        "headline": "Visa, Mastercard join another stablecoin group",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The card networks are keeping their options open with respect to stablecoin communities, locking arms with Circle on its latest effort.",
+        "url": "https://finnhub.io/api/news?id=558fbb9f8db59fb0865b4b07b9c3d7351a1cf8671191abe966a46d1cb06b1bff"
+      },
+      {
+        "datetime": "2026-08-05T10:25:00Z",
+        "headline": "Circle Internet Stock Rises on Earnings as Profit Overcomes Crypto Slump",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Circle Internet stock advances after the company posts better-than-expected second-quarter earnings.",
+        "url": "https://finnhub.io/api/news?id=4908b7b551f693d2a1ca2a1011d548af7f62bb251799076aa2dd1893b62fdfa1"
+      },
+      {
+        "datetime": "2026-08-05T10:15:48Z",
+        "headline": "Western Union and Rain launch Stablecard tied to USDPT",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The new product, Stablecard by Western Union, combines a digital wallet with a USDPT-backed Visa secured credit card.",
+        "url": "https://finnhub.io/api/news?id=36d5a0353246dc297c36a714c2e319e4cb73d24cbc94106d9c00cc8f555998c6"
+      },
+      {
+        "datetime": "2026-08-05T08:24:44Z",
+        "headline": "5 Relatively Secure And Cheap Dividend Stocks, Yields Up To 8% (August 2026)",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "This article is part of our monthly series where we highlight five large-cap, relatively safe, dividend-paying companies offering significant discounts to...",
+        "url": "https://finnhub.io/api/news?id=5f2eb158c0593aed5df4ec4f1dcfa80215ea6593532eff0c775faa62415d818f"
+      },
+      {
+        "datetime": "2026-08-05T07:22:20Z",
+        "headline": "SEC Is 'Ready, Willing And Able' To Replace CLARITY Act If It Fails, Bitwise's Matt Hougan Says",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Clarity Act odds fall to 27%, but Matt Hougan says SEC rulemaking can keep crypto regulation moving if Congress misses the deadline.",
+        "url": "https://finnhub.io/api/news?id=61c21d3ba0ea9b9ce929c734d69f33c84eb3724ac6a45ccbcdd053336f36df4e"
+      },
+      {
+        "datetime": "2026-08-05T06:00:30Z",
+        "headline": "Circle names BlackRock, Visa and others as initial Arc partners, signaling early institutional backing",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Circle on Wednesday revealed the initial group of partners that will help run the company's new Arc blockchain.",
+        "url": "https://finnhub.io/api/news?id=260a642a8a849ab72e75cc6619b0766df0337fae0b9c3289c938411e4283c75c"
+      },
+      {
+        "datetime": "2026-08-05T00:59:12Z",
+        "headline": "Stablecorp CEO went from 'ridiculed' to running half of Canada's stablecoin market",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A year after the GENIUS Act, the US is experiencing a stablecoin gold rush. Western Union announced it\u2019s own stablecoin. Paypal did too. Transaction volume on stablecoins is greater than Visa and Mastercard combined and ACH. Canada\u2019s stablecoin market is a bit different. There are only 2 issuers of ...",
+        "url": "https://finnhub.io/api/news?id=e6d96963cfaca36af6777bdcce30c9c132bcc9841bf64ef380224cd23d69b046"
+      },
+      {
+        "datetime": "2026-08-04T21:06:27Z",
+        "headline": "Central Bancompany Inc (CBC) (Q2 2026) Earnings Call Highlights: Strong Net Income Growth and ...",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Central Bancompany Inc (CBC) reports a 16% year-over-year increase in adjusted net income, robust loan growth, and a refreshed $100 million buyback authorization.",
+        "url": "https://finnhub.io/api/news?id=a4ec8203cb4f2bbd5aa2598707e1ecddf9485629bdb0e484c9bdb6bdfe908f5e"
+      },
+      {
+        "datetime": "2026-08-04T20:05:00Z",
+        "headline": "Circle Faces Crypto Slump and New Competitor Ahead of Earnings",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The firm is hurting from a slowdown in the crypto market, and the announcement of a new competitor will further pressure the stock.",
+        "url": "https://finnhub.io/api/news?id=236660685e86986098b7d559370e95e952427cdac5ecbb472f0d1846f8e2d4dc"
+      },
+      {
+        "datetime": "2026-08-04T18:53:22Z",
+        "headline": "The list of companies laying off staff this year includes Angi and Tailwind, with dozens of others like Meta warning of job cuts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Layoffs have hit companies including Angi and Tailwind this year amid as AI and economic conditions reshape business.",
+        "url": "https://finnhub.io/api/news?id=9a8dd1d876ef010de08bff1e8524c0107a45982c31c2fba74d7172caf66c297e"
+      },
+      {
+        "datetime": "2026-08-04T18:14:47Z",
+        "headline": "Every Bank Needs A Stablecoin Strategy: Sheffield",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Cuy Sheffield, Head of Crypto at Visa, joins Scarlet Fu and Tim Stenovec on \"Bloomberg Crypto.\" They discuss that Visa has unveiled it's own stablecoin platform. It's designed to let financial firms issue, move and manage stablecoins.",
+        "url": "https://finnhub.io/api/news?id=40f8f060d2db383d13ae1dc6665abbe5be821db16630d364db04aa606ace60eb"
+      },
+      {
+        "datetime": "2026-08-04T16:40:04Z",
+        "headline": "Tuesday's session: top gainers and losers in the dow jones index",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Join us in exploring the top gainers and losers within the dow jones index in the middle of the day on Tuesday as we examine the latest happenings in today's session.",
+        "url": "https://finnhub.io/api/news?id=30905f0760c72cb9500a521fd9bc31fde32949ac88ad843d045fab1c8fb20a6c"
+      },
+      {
+        "datetime": "2026-08-04T15:51:00Z",
+        "headline": "FIS Beats Q2 Earnings on Banking Solutions Strength, Cuts 2026 Outlook",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Fidelity National tops Q2 EPS estimates as Banking Solutions fuels growth and margins improve, but the company lowers its full-year revenue and earnings outlook.",
+        "url": "https://finnhub.io/api/news?id=91dabb48f06d4be7ef4de404b43c32918a587b964201f6f6a3adf778744b73eb"
+      },
+      {
+        "datetime": "2026-08-04T14:29:57Z",
+        "headline": "FIFA World Cup drove consumer spending in Toronto, Vancouver",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "'Canada\u2019s host cities demonstrated how major events can create immediate opportunities for businesses of all sizes'",
+        "url": "https://finnhub.io/api/news?id=7d527e3b6bf4d0845d122cdfdffd1bc4944599e1f7fb844e31f0c0d61e310a27"
+      },
+      {
+        "datetime": "2026-08-04T14:12:44Z",
+        "headline": "Visa (V) Is Buying BioCatch To Take On AI Driven Payments Fraud",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa has agreed to acquire BioCatch, an AI powered fraud intelligence company focused on detecting and preventing digital payments fraud. The deal is aimed at strengthening Visa's cybersecurity tools across its global payments network and services for banks, merchants and consumers. The acquisition comes as digital scammers increasingly use AI driven tactics to target online transactions and accounts. Visa, listed as NYSE:V, is moving deeper into AI based security at a time when digital...",
+        "url": "https://finnhub.io/api/news?id=f385293e63b5d82d8eec6a1d221dcc54cefa52ce846c646a0d0308f1e1b1d401"
+      },
+      {
+        "datetime": "2026-08-04T12:00:00Z",
+        "headline": "New Visa Data Shows FIFA World Cup 2026\u2122 Drove Spending Surges of Up to 24.6% in Toronto and Vancouver",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Matchday spending in Canada\u2019s host cities increased during the tournament, highlighting the economic impact of FIFA World Cup 2026\u2122 on local businesses. TORONTO, Aug. 04, 2026 (GLOBE NEWSWIRE) -- Following the unforgettable 13 Canadian-hosted matches for FIFA World Cup 2026\u2122, Visa data reveals the tournament left a measurable economic footprint across Canada\u2019s host cities. Matchday spending rose as much as 24.6% in Toronto and 12.7% in Vancouver compared to the same period in 2025, highlighting",
+        "url": "https://finnhub.io/api/news?id=c2c785b752f5872ff1a14e0d82f7cccc36525291de509108200cab3498054a31"
+      },
+      {
+        "datetime": "2026-08-04T12:00:00Z",
+        "headline": "Thredd and Pliant Expand Partnership to Launch U.S. Commercial Credit Program, Accelerate Embedded Finance for Businesses",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "AUSTIN, Texas, August 04, 2026--Thredd, the AI-first issuer processing platform, today announced the expansion of its partnership with Pliant, bringing the company\u2019s commercial credit and embedded finance platform capabilities to the U.S. market for the first time.",
+        "url": "https://finnhub.io/api/news?id=b83ed460f628768788da3f2df901da18412b366b869344311be2b280288e0566"
+      },
+      {
+        "datetime": "2026-08-04T10:50:00Z",
+        "headline": "Stock Markets Had a Perfect Summer\u2019s Day, Now the Heat Is On",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Palantir beats expectations, White House to review AI security risks, Snap gathering optimism, and more news to start your day.",
+        "url": "https://finnhub.io/api/news?id=204362b9354f07326a4d1bb6674d03d81a330fbc6e7bd5e347971fa7fe5c8201"
+      },
+      {
+        "datetime": "2026-08-04T10:29:49Z",
+        "headline": "Trump backs card bill, again",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The president called card interchange fees a\u00a0\u201cripoff\u201d in a social media post backing the Republican co-sponsor of a bill aimed at reducing them.",
+        "url": "https://finnhub.io/api/news?id=ee29aeac173b960fce120957f1a62d382c6e679e6fac4122a0b9613e7fe9fc2a"
+      },
+      {
+        "datetime": "2026-08-04T09:46:59Z",
+        "headline": "SCHD-Inspired 4-Factor Dividend Growth Strategy Selections For August 2026",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "The 4-Factor Dividend Growth Strategy, inspired by SCHD, targets high-quality, growth-oriented dividend stocks using four key metrics for selection.",
+        "url": "https://finnhub.io/api/news?id=4886ad9f03b09da7279f69a49c8985a0598f2ff3ec690a423ee3ea4802c71af6"
+      },
+      {
+        "datetime": "2026-08-04T05:42:18Z",
+        "headline": "Visa agrees to buy fraud intelligence provider BioCatch for $2.4bn",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa said the acquisition \u201ccomplements\u201d its cyber, fraud, risk and security offering as the threat from scams increases.",
+        "url": "https://finnhub.io/api/news?id=c07eec5da20dcf061cc7f6bb0af09e3bff6ab59f77a79f2f16b6078de4bc41cb"
+      },
+      {
+        "datetime": "2026-08-04T03:51:00Z",
+        "headline": "Yes Please: Visa is Official Payment Partner for the Maroon 5 Asia 2027 Tour",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa, a global leader in digital payments, today announced that it will be the Official Payment Partner for the Maroon 5 Asia 2027 Tour. The partnership reinforces Visa's deepening commitment to Asia Pacific's vibrant music and cultural scene, delivering presale access and elevated experiences for fans in the region.",
+        "url": "https://finnhub.io/api/news?id=a7d638fe292bceb0774b11a72d87d4d24c8822553af5e4ae949f08a993a91d3a"
+      },
+      {
+        "datetime": "2026-08-03T20:31:00Z",
+        "headline": "Visa\u2019s Latest Deal Signals New Era in Fighting Digital Scams",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa\u2019s  latest deal could signal a new era in fighting digital scams as artificial intelligence-enabled fraud spreads.  The payments giant plans to buy BioCatch, a provider of fraud intelligence technology, for $2.4 billion in cash.  Visa said the addition of BioCatch will complement its current security efforts and help clients better protect themselves and their customers from the growing threat of account takeovers, scams, money mules, and application fraud.",
+        "url": "https://finnhub.io/api/news?id=0f69106360aa1af2ee592e0d2ca87d8ec8d8e31a1a812861fc57a8dd38e73ddf"
+      },
+      {
+        "datetime": "2026-08-03T19:55:24Z",
+        "headline": "Sector Update: Financial Stocks Advance Late Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Financial stocks were higher in late Monday afternoon trading, with the NYSE Financial Index up 0.6%",
+        "url": "https://finnhub.io/api/news?id=8c1029184165a5ae13d4c1933fd1a180b6b54d313a7f5d286e45abafa139400e"
+      },
+      {
+        "datetime": "2026-08-03T19:19:49Z",
+        "headline": "Visa Stock Rises as $2.4 Billion Cybersecurity Deal Targets Fraud",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa is acquiring BioCatch as artificial intelligence increases the scale and sophistication of account-takeover scams.",
+        "url": "https://finnhub.io/api/news?id=837fc1138f68fa927ca8d8c1eb1bfdbf6cefc34c2598bf2e38e36d71fdd7b31b"
+      },
+      {
+        "datetime": "2026-08-03T18:13:22Z",
+        "headline": "2 Cash-Producing Stocks with Exciting Potential and 1 We Ignore",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Generating cash is essential for any business, but not all cash-rich companies are great investments. Some produce plenty of cash but fail to allocate it effectively, leading to missed opportunities.",
+        "url": "https://finnhub.io/api/news?id=96d1afc380741b6a83d4a0b212f5446bfd58855f7d3f35d4cb4de9c90d57fcfc"
+      },
+      {
+        "datetime": "2026-08-03T17:44:25Z",
+        "headline": "Sector Update: Financial Stocks Advance Monday Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Financial stocks were higher in Monday afternoon trading, with the NYSE Financial Index and the Stat",
+        "url": "https://finnhub.io/api/news?id=56841dc168634231faa5f9c79a470a1c7cc21ee9b383f031a7797a2d15202d73"
+      },
+      {
+        "datetime": "2026-08-03T16:40:04Z",
+        "headline": "Top dow jones movers in Monday's session",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Wondering what's happening in today's session for the dow jones index? Stay informed with the top movers within the dow jones index on Monday.",
+        "url": "https://finnhub.io/api/news?id=c3effdf47636ff5cbe8c243812847c1cb7215361a84c36afbba1e09ca9287946"
+      },
+      {
+        "datetime": "2026-08-03T16:10:09Z",
+        "headline": "Elon Musk introduces money transfer service to social media app X",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Elon Musk is rolling out X Money, a new banking feature offering debit cards and high interest rates for select users.",
+        "url": "https://finnhub.io/api/news?id=23509cc32a2095b696721424110882aef7439c7889919d7371529f7bd9a9de0a"
+      },
+      {
+        "datetime": "2026-08-03T15:50:17Z",
+        "headline": "Top Midday Stories: Amazon Market Cap Hits $3 Trillion; AstraZeneca, Bristol Myers Squibb Reportedly Discuss $400 Billion Combination",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "All three major US stock indexes were up in late-morning trading Monday after President Donald Trump",
+        "url": "https://finnhub.io/api/news?id=328f8eb0fac14373adbb5d94792207d4d9484192445c818ec599e147eeddb166"
+      },
+      {
+        "datetime": "2026-08-03T15:08:57Z",
+        "headline": "Visa (V) Stock May Be Fully Priced On AI Driven Job Cuts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa stock has delivered a 57.4% total return over the past five years, yet the current checks suggest the shares no longer look obviously cheap. One framework points to roughly fair intrinsic value, while market multiples lean expensive. Over five years Visa has returned 57.4%, which reflects a steady reward for shareholders over a multi year holding period. Recent news around AI driven efficiency efforts and workforce cuts can support expectations for sustained profitability. At the same...",
+        "url": "https://finnhub.io/api/news?id=542c27afe34f1613d5858fd3b0a73c245ebc20b779861109b3793d5640fed82d"
+      },
+      {
+        "datetime": "2026-08-03T14:43:50Z",
+        "headline": "Tom Lee Predicts AI-Powered Crypto Payments Will Go Mainstream in Under Five Years",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Tom Lee predicts AI-powered crypto payments will become mainstream within the next five years. He believes Ethereum will be the backbone of AI-driven payments, tokenization, ...",
+        "url": "https://finnhub.io/api/news?id=5d87ae83d9eb198918708437154ab672bb040296743b48599cdc8ee091cd43fc"
+      },
+      {
+        "datetime": "2026-08-03T14:35:00Z",
+        "headline": "Western Union Q2 Earnings Miss Estimates on CMT Retail Weakness",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "WU's Q2 earnings miss estimates as Consumer Money Transfer retail weakness and higher expenses hurt margins, even as digital and consumer services show growth.",
+        "url": "https://finnhub.io/api/news?id=75afa3dca4ea2717b4f79ae396a33fac60285ead607bdc610637b2224f18f9e5"
+      },
+      {
+        "datetime": "2026-08-03T13:58:40Z",
+        "headline": "Visa to acquire fraud detection firm BioCatch for $2.4 billion",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The card giant is purchasing the Israeli company from investment firm Permira to bolster its fraud and cybersecurity offerings",
+        "url": "https://finnhub.io/api/news?id=2ed8f68400e1e015497caf9e992d7d673d306cd95ce947fab96ca705f2929e41"
+      },
+      {
+        "datetime": "2026-08-03T13:40:53Z",
+        "headline": "Visa Acquires BioCatch For $2.4B \u2013 President Andrew Torre Says It Will Help Clients Stop Fraud Before It Reaches The Point Of Payment",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The firm uses AI and machine-learning models to detect signs of coercion or manipulation in digital transactions, helping banks distinguish criminal activity from legitimate ones in real time.",
+        "url": "https://finnhub.io/api/news?id=683e205b3c756f980492bc80381d1c2cd18e92816b8101ce632a6f9eda509abd"
+      },
+      {
+        "datetime": "2026-08-03T13:22:10Z",
+        "headline": "Visa Buys BioCatch for $2.4 Billion to Fight AI Fraud",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Visa to acquire fraud tech firm BioCatch for $2.4B to boost AI cybersecurity and block financial scams in real time.",
+        "url": "https://finnhub.io/api/news?id=3662762ba928c6da7153e0123d4f59005ede6de9ba46be32af47505ec8f1b96c"
+      },
+      {
+        "datetime": "2026-08-03T12:34:38Z",
+        "headline": "Visa beefs up cybersecurity offerings with $2.4 billion BioCatch deal",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa said on Monday it would buy fraud intelligence provider BioCatch for $2.4 billion in cash \u200cfrom investment firm Permira and other investors, marking the \u200ccard giant's latest effort to beef up its cybersecurity offerings.  The deal would help \u200bthe world's largest payment processor further bolster its existing cyber, fraud, risk and security offerings and enable it to help clients better protect themselves in an increasingly complex threat environment, Visa said.",
+        "url": "https://finnhub.io/api/news?id=f56061126ee96510fea62131ea38b52ba89d919aaf3a0095282226ec3b17cdb3"
+      },
+      {
+        "datetime": "2026-08-03T12:30:00Z",
+        "headline": "Visa to Acquire BioCatch",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SAN FRANCISCO & TEL AVIV, Israel, August 03, 2026--Visa (NYSE: V) today announced it has signed a definitive agreement to acquire BioCatch, a leading provider of behavioral-first, multi-signal fraud intelligence, from funds advised by Permira and other shareholders for $2.4 billion in cash. The acquisition of BioCatch complements Visa\u2019s existing cyber, fraud, risk and security solutions and is expected to help clients better protect themselves and their customers from the growing threat of accou",
+        "url": "https://finnhub.io/api/news?id=13586873d8df0e8d61e2c20d49eddd388f50e2eeda0142929dc4d85e730d2501"
+      },
+      {
+        "datetime": "2026-08-03T11:28:35Z",
+        "headline": "GCash to expand payment options with Visa and Mastercard card linking",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The feature is scheduled to roll out within August.",
+        "url": "https://finnhub.io/api/news?id=801dc488d6452f306a6e778d5aeba9324233a0075cd7a9a337ee6b476e8686af"
+      },
+      {
+        "datetime": "2026-08-03T10:10:26Z",
+        "headline": "Visa to buy cybersecurity firm BioCatch for $2.4 billion amid surge in AI-powered scams",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "It is also the latest move by Visa to expand its value-added services business, which has become one of the company's fastest-growing divisions.",
+        "url": "https://finnhub.io/api/news?id=af15c682255d8bd1c3139abaa892e21ed6dbc0dfb20718cf28549b7033198b83"
+      },
+      {
+        "datetime": "2026-08-03T09:15:00Z",
+        "headline": "Visa to buy BioCatch for $2.4B",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The card network giant plans to scoop up the Israeli firm to strengthen its defenses in a fight against fraud fueled by artificial intelligence.",
+        "url": "https://finnhub.io/api/news?id=0a62af96e84be7f20d48620c2e2d8985e2cc833e3f3fad6e1ee76cccd7d23560"
+      },
+      {
+        "datetime": "2026-08-03T08:58:57Z",
+        "headline": "Cantor Fitzgerald Maintains Overweight on Visa, Raises Price Target to $445",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Cantor Fitzgerald  analyst Ramsey El-Assal   maintains Visa (NYSE:V) with a Overweight and raises the price target from $410 to $445.",
+        "url": "https://finnhub.io/api/news?id=202d93dfc3ba4803eef475a81a8c7fa95190742f676030e7b690ada144ab98be"
+      },
+      {
+        "datetime": "2026-08-02T10:20:49Z",
+        "headline": "Top 25 High-Growth Dividend Stocks For August 2026",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Discover August 2026\u00e2\u0080\u0099s Top 25 high-growth dividend stocks trading below intrinsic value, with yield, growth, and return forecasts\u00e2\u0080\u0094research the list now.",
+        "url": "https://finnhub.io/api/news?id=029774edf61c80fb92e2cc87f454bb45e5fbaeb0b947089442175e57684b2ede"
+      },
+      {
+        "datetime": "2026-08-02T07:19:04Z",
+        "headline": "Wall Street Week Ahead",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Wall Street catalyst week preview: July jobs report, SpaceX debut earnings, and AI semiconductor spending.",
+        "url": "https://finnhub.io/api/news?id=6a9e8400d7341f9a25b45a9c8952c859d2f92fe0d0bc5c12a951ccc2c8e93cbf"
+      },
+      {
+        "datetime": "2026-08-01T15:35:10Z",
+        "headline": "Visa Stock Looks Attractive After Layoffs, Strong Earnings",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa's investments should meaningfully boost its top and bottom lines in the longer term.",
+        "url": "https://finnhub.io/api/news?id=ce0c221267b15c282742fd0bf8267b039cc5edceaaaddd8fd33fab37bc0ddab9"
+      },
+      {
+        "datetime": "2026-08-01T11:47:00Z",
+        "headline": "Visa plans to cut 2,600 jobs as new AI phase reshapes company",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The burden of those decisions often falls on workers.",
+        "url": "https://finnhub.io/api/news?id=ae55a49dac06fe544f28a0b363b28ec47810e3943d8dc692d39a370a1904727e"
+      },
+      {
+        "datetime": "2026-07-31T22:14:12Z",
+        "headline": "Elon Musk launches X Money, X-branded Visa card. See new feature",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The social media platform is creating a way for users to send money to each other. How to access X Money and obtain an X Visa debit card.",
+        "url": "https://finnhub.io/api/news?id=b56f09942c7aed096c3b0658462029b8ca27082e4d385e133350ec89c68f795c"
+      },
+      {
+        "datetime": "2026-07-31T19:57:53Z",
+        "headline": "Circle\u2019s NYDFS Trust Charter Completes a Regulatory Depth Moat No Other Stablecoin Issuer Can Match",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The stablecoin wars are currently bifurcating into two distinct strategic architectures: the scale-at-all-costs model and the regulatory depth moat. While the Open USD consortium\u2014a coalition of 140-plus members including Visa, Mastercard, Stripe, BlackRock, and BNY\u2014bets on massive distribution and a revenue-sharing model to capture market share, Circle Internet Group, Inc. (NYSE: CRCL) is doubling down [\u2026]",
+        "url": "https://finnhub.io/api/news?id=3dfe10f1782392c5115fc274c02ff534881f6b16c6fa69b670378e0c7321dd6f"
+      },
+      {
+        "datetime": "2026-07-31T19:20:26Z",
+        "headline": "The lessons Chime and Visa's layoffs have for banks",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Digital lender Chime and Visa this week became the latest firms to cite AI as part of a downsizing. While bots usually aren't directly replacing workers, machine learning changes customer access to financial products in a way that's increasingly making some work less necessary.",
+        "url": "https://finnhub.io/api/news?id=b18687871e94a78a4d990543263b27c83f4c7b902bda8db1b2063c5af78abc52"
+      },
+      {
+        "datetime": "2026-07-31T18:35:00Z",
+        "headline": "Capital One's Purchase Volume Grew 26%, but Legacy Discover Volume Rose Less Than 2%. Only One Number Describes the Franchise It Bought.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Capital One's Discover acquisition is going as planned, which is important to keep in mind as you examine the combined company's results.",
+        "url": "https://finnhub.io/api/news?id=6f54a66c773582a4cad05a399ce7c897f3cf7d4b73af050579e6cbff3342e400"
+      },
+      {
+        "datetime": "2026-07-31T18:30:18Z",
+        "headline": "$100 Invested In Visa 15 Years Ago Would Be Worth This Much Today",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Visa (NYSE:V) has outperformed the market over the past 15 years by 8.0% on an annualized basis producing an average annual return of 21.46%. Currently, Visa has a market capitalization of $681.47 billion. \nBuying $100",
+        "url": "https://finnhub.io/api/news?id=18a029486c100763cb2e4087114c9ff09ab3deb9ba0a575076fad65a2b472ff2"
+      },
+      {
+        "datetime": "2026-07-31T16:10:11Z",
+        "headline": "Best Long-Term Investment Stocks to Buy",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The best long-term investment stocks are characterized by solid financial standing, consistent dividend growth and steady buybacks of their own shares.",
+        "url": "https://finnhub.io/api/news?id=a1226102fedf497b0082df25a4a134f65ffb97e9992f1ebb9ec91961ab2f59ca"
+      },
+      {
+        "datetime": "2026-07-31T15:19:00Z",
+        "headline": "Will Rising Costs Overshadow Global Payments' Q2 Earnings?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "GPN's Q2 revenues may surge due to the Worldpay deal, but rising costs and a lower EBITDA margin could pressure profits. Here's what to watch in its Aug. 5 results.",
+        "url": "https://finnhub.io/api/news?id=d2f0c9aae0a6f8497e236e30eaf15cf30c676cab9bbd3950531a478f06cfa711"
+      },
+      {
+        "datetime": "2026-07-31T13:29:00Z",
+        "headline": "Euronet Q2 Earnings Miss Estimates on Cross-Border Payments Weakness",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "EEFT misses Q2 earnings and revenue estimates as Cross-Border Payments weakens, while growth in Payments Infrastructure and epay, along with digital initiatives, helps offset some of the pressure.",
+        "url": "https://finnhub.io/api/news?id=6932c5d019ebf8d70c4a3efab89cd1f930e1b39d2fc43e64c52cad07837e8829"
+      },
+      {
+        "datetime": "2026-07-31T09:09:20Z",
+        "headline": "Visa (V) Stock Sees Modest Fair Value Lift After Strong Q3 Analyst Revisions",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa\u2019s fair value estimate has shifted from US$398.83 to US$411.63, giving investors fresh context for where some analysts now see the stock\u2019s long term potential. The change sits alongside bullish commentary that focuses on recent fiscal Q3 results, payments volume trends, and what these analysts view as growth opportunities in value added services and stablecoin related products. Read on to see how these moving targets are shaping the current Visa story and how you can keep track as the...",
+        "url": "https://finnhub.io/api/news?id=fe84f3a8d0a63af0bb3b1da94813529cdfcc69080b52dbed37d10d6d585e41d5"
+      },
+      {
+        "datetime": "2026-07-31T01:40:53Z",
+        "headline": "PayPal's $17 Billion Bet Against Wall Street",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A large bet on its own shares has so far been a losing one, creating a quiet standoff between management's conviction and the market's deep-seated skepticism.",
+        "url": "https://finnhub.io/api/news?id=29b56ea06efcb52e392625e078c7767f091c69446625372ebf254f078c0c497b"
+      },
+      {
+        "datetime": "2026-07-30T18:33:00Z",
+        "headline": "Elon Musk aims at Venmo with one bold perk",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "X, the platform formerly known as Twitter, rolled out X Money on July 27 to all US Premium and Premium+ subscribers, bundling a branded Visa debit card, peer-to-peer transfers, and 3% cashback on purchases, the Associated Press reported. The service runs on banking infrastructure from Cross River ...",
+        "url": "https://finnhub.io/api/news?id=6345b69127bf288303050d4e991857c2d42bceb62239c1a536820abef9f6e222"
+      },
+      {
+        "datetime": "2026-07-30T18:30:00Z",
+        "headline": "Mastercard\u2019s Earnings Beat Shows It\u2019s Much More Than a Card Company",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Mastercard giant posts second-quarter earnings that comfortably top expectations, fueled by growth in its payments network.",
+        "url": "https://finnhub.io/api/news?id=d7b4ca26e340bad59d012161e29427af531a35748e267ee4b97d47af26164836"
+      },
+      {
+        "datetime": "2026-07-30T17:00:16Z",
+        "headline": "Visa vs PayPal: The Post Earnings Winner",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa crossed $4 trillion in global payments volume the same quarter PayPal brought in a new CEO to salvage branded checkout, and the two earnings reports could not paint a more different picture of where fintech power is actually concentrating.",
+        "url": "https://finnhub.io/api/news?id=a70118245322ddc0b5e0b108277f6367ccf86f3298ad32d4647f92ebf61f86aa"
+      },
+      {
+        "datetime": "2026-07-30T16:56:00Z",
+        "headline": "PB's Q2 Earnings Beat Estimates as Revenues Rise, Stellar Deal Closed",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Prosperity Bancshares tops Q2 earnings estimates as revenues grow on merger contributions and no credit loss provision. The company completes the Stellar Bancorp buyout.",
+        "url": "https://finnhub.io/api/news?id=59b21b6e22e63f595fc4ab3350f562c48165836109c6f3fca34b1ac402e0c1b4"
+      },
+      {
+        "datetime": "2026-07-30T16:23:00Z",
+        "headline": "Mastercard Beats Q2 Earnings on Solid Cross-Border Volume Growth",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "MA tops Q2 earnings and revenue estimates as cross-border volume growth, switched transactions and value-added services fuel results.",
+        "url": "https://finnhub.io/api/news?id=323a0823117e772e865ee8c7b9d41c870369618da1a741126dfd515550b12a05"
+      },
+      {
+        "datetime": "2026-07-30T15:43:54Z",
+        "headline": "Visa, Mastercard make bank on swipe fees, report claims",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Swipe fees have risen astronomically since COVID, with merchants passing costs on to the customer.",
+        "url": "https://finnhub.io/api/news?id=a0d244b15ab7d54f8d742e1da1fd326339a026403403be6d6399f043356be53c"
+      },
+      {
+        "datetime": "2026-07-30T15:24:00Z",
+        "headline": "Banking Solutions Offer Hope for Fidelity National's Q2 Results",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "FIS heads into Q2 earnings with Banking Solutions expected to drive growth as the Issuer Solutions acquisition boosts results.",
+        "url": "https://finnhub.io/api/news?id=fe21df681600a8b56a967a8db53a52c6b5d2f9b53085e30d386e12e215169d0e"
+      },
+      {
+        "datetime": "2026-07-30T15:01:24Z",
+        "headline": "Visa Vs. Mastercard: The Duel Just Got More Interesting",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Visa Inc. vs. Mastercard Incorporated: earnings beat, but adjusted organic growth converges. Click for a comparison, which may work best in your portfolio.",
+        "url": "https://finnhub.io/api/news?id=d413b5c4245dcf25544d29e6b7e95d5d2dcee6feb689fb9ed3708950fb44723f"
+      },
+      {
+        "datetime": "2026-07-30T13:28:33Z",
+        "headline": "World Cup Cross-Border Acceleration and AI Workforce Pivot Anchor Visa\u2019s Fiscal Q3 Beat",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The global payments ecosystem in 2026 is being defined by two merging macro tailwinds: staggering growth in international travel and an aggressive corporate push for AI-driven operational efficiency. As high-value global events, most notably the 2026 FIFA World Cup, drive cross-border consumer spending, payment networks are seeing increased transaction flows in entertainment, hotels, and retail. [\u2026]",
+        "url": "https://finnhub.io/api/news?id=5d9e27f8071306eb7e5ca74f00d09e6b7c5ca1d2c62ebd4eb647e7d91ca80c2b"
+      },
+      {
+        "datetime": "2026-07-30T12:39:00Z",
+        "headline": "Mastercard Stock Rises as Earnings Get Boost From Growth in Payments Network",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Mastercard giant posts second-quarter earnings that comfortably top expectations, fueled by growth in its payments network.",
+        "url": "https://finnhub.io/api/news?id=58f892e8885cfff0a76fa95f7a1e307ac6161fc83e7136f8792e4c674100b762"
+      },
+      {
+        "datetime": "2026-07-30T12:14:00Z",
+        "headline": "This Value Investor Favors Global Stocks With Low Valuations, High Yields",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Rupal Bhansali, CEO of Double Duty Money Management, finds bargains in France, Denmark, and Brazil. Why she likes UPS.",
+        "url": "https://finnhub.io/api/news?id=23836a9561852ff7641c794bf6d5586511e3fb534d92ee77af2e273bc62baecb"
+      },
+      {
+        "datetime": "2026-07-30T12:05:00Z",
+        "headline": "2026 Full Swing Rebate: Hankook Tire Offers Up to $80 in Savings",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "NASHVILLE, Tenn., July 30, 2026 (GLOBE NEWSWIRE) -- Hankook\u2019s 2026 Fall Consumer Rebate puts savings in \u201cFull Swing\u201d on popular Hankook Tire and Laufenn brand tiresUp to $80 in Visa Reward Cards available on select 4-tire set purchases through Sept. 30Hankook offers wide-ranging options for SUV, CUV, passenger, and all-weather driving ahead of the fall season As drivers prepare to head into the fall in \u201cFull Swing,\u201d leading global tire maker Hankook Tire announced its upcoming Fall Consumer Reba",
+        "url": "https://finnhub.io/api/news?id=6587af64d9a74a6566fd52d6a4dfdcd32fa2e19bc2f8237032c63b5dd83ecadf"
+      },
+      {
+        "datetime": "2026-07-30T11:13:18Z",
+        "headline": "Visa Stock Is Being Repriced For Something Other Than Card Volume",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Revenue is now growing well ahead of the volume crossing its rails, and that gap is the real case for Visa stock from here.",
+        "url": "https://finnhub.io/api/news?id=344b6c3a87b9d651d9291a9a6f34748b7684d2287c586cf68f1fc94f9cff3ae9"
+      },
+      {
+        "datetime": "2026-07-30T10:43:56Z",
+        "headline": "Wells Fargo Maintains Overweight on Visa, Raises Price Target to $432",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Wells Fargo  analyst Jason Kupferberg   maintains Visa (NYSE:V) with a Overweight and raises the price target from $412 to $432.",
+        "url": "https://finnhub.io/api/news?id=6bba213c39127f1f439272c4171552e944abe640c677edd50ee61a71a9544bc6"
+      },
+      {
+        "datetime": "2026-07-30T10:16:15Z",
+        "headline": "Exclusive: Bitget Wallet to launch Assetback, with cashback pays out in BTC, Gold",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- Bitget Wallet is launching Assetback, a new asset cashback program that allows Bitget Wallet Card users to earn rewards in Bitcoin, gold or tokenized U.S. stocks and ETFs rather than fiat currency or airline miles, Investing.com has learned.",
+        "url": "https://finnhub.io/api/news?id=6326623f6712345df7f838050a5e57b23293f135beaa7f8fc367c86b5d0cf149"
+      },
+      {
+        "datetime": "2026-07-30T09:55:26Z",
+        "headline": "Mastercard CFO Says Diversified Business Is Winning Through Global Uncertainty",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Mastercard Q2 2026 earnings top estimates: Adj. EPS hits $5.04 on 14% revenue growth to $9.28B. Get full stock &amp; financial details.",
+        "url": "https://finnhub.io/api/news?id=b9d456a33b36018c0e11c6d62e1c10793a2c411e5bf02375894c214783ef8278"
+      },
+      {
+        "datetime": "2026-07-30T03:18:20Z",
+        "headline": "Will Visa's (V) Job Cuts and Stablecoin Platform Launch Change Its Core Investment Narrative?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Earlier this week, Visa reported fiscal third-quarter 2026 results showing net revenue of US$11.63 billion and net income of US$5.63 billion, alongside plans to cut about 2,600 jobs and continue large-scale share repurchases under an existing buyback program. At the same time, Visa launched its new Stablecoin Platform to help institutions mint, store, and move stablecoins, signaling a push to pair cost efficiencies with onchain payment innovation. We\u2019ll now look at how this combination of...",
+        "url": "https://finnhub.io/api/news?id=4a3dce4b9c2ea160970ebb7adf20b55378f5198d8364424057218ec23bcb565b"
+      },
+      {
+        "datetime": "2026-07-29T23:04:05Z",
+        "headline": "GBank Financial Q2 Earnings Call Highlights",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "GBank Financial (NASDAQ:GBFH) outlined leadership changes, continued SBA lending growth, pressure on credit quality and gaming-card revenue, and progress in its gaming fintech strategy during its second-quarter 2026 earnings call. Jeff Newgard, the company\u2019s new President and CEO of GBank, said his",
+        "url": "https://finnhub.io/api/news?id=b52d6df1e7509888956b70e4e32ed3ac76f747040bb72c9113fe136ac1658a1b"
+      },
+      {
+        "datetime": "2026-07-29T20:44:20Z",
+        "headline": "Visa and other California companies announce almost another 3,000 layoffs",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa, Uber, Patreon and Intel announced more than 2,800 layoffs in the Bay Area, from Santa Clara engineering hubs to San Francisco offices, citing restructurings, automation and shifting business priorities.",
+        "url": "https://finnhub.io/api/news?id=96e3795b6d21684539e1f14253ca64315a0c1da1fb6b203aeb60d44ec8e0dd43"
+      },
+      {
+        "datetime": "2026-07-29T20:24:58Z",
+        "headline": "Visa slashes thousands of jobs in efficiency push",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa CEO Ryan McInerney cited efficiency and AI-driven shifts in a staff memo as the payments giant moves to cut 2,600 jobs across its workforce.",
+        "url": "https://finnhub.io/api/news?id=bdb460c61bb1d250b1733346dbc2d4653479f48408093b757572b6d94b019d98"
+      },
+      {
+        "datetime": "2026-07-29T19:50:34Z",
+        "headline": "Sector Update: Financial Stocks Decline Late Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Financial stocks were lower in late Wednesday afternoon trading, with the NYSE Financial Index down",
+        "url": "https://finnhub.io/api/news?id=708cae3663920c055181099153e16bbf3b41dc4f512a3e98f54b6e21abe91155"
+      },
+      {
+        "datetime": "2026-07-29T19:38:47Z",
+        "headline": "Stock Market Today: Nasdaq Tumbles As Fed's Warsh Notes Two Trends; Meta Losing Gains (Live Coverage)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Nasdaq erased a brief venture into the black Wednesday afternoon following the Federal Reserve's decision to keep its benchmark rate unchanged while Fed Chair Kevin Warsh addressed a press conference on the rate decision.",
+        "url": "https://finnhub.io/api/news?id=2bb6ecde898613915ee6f575b189a9f9c9918cb2c9d5a081663f12872cd18668"
+      },
+      {
+        "datetime": "2026-07-29T19:10:55Z",
+        "headline": "Visa's Implied Q4 Exit Rate Bodes Well for 2027 Guidance, UBS Says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa's (V) implied fiscal Q4 exit rate bodes well for initial fiscal 2027 forecast, despite lapping",
+        "url": "https://finnhub.io/api/news?id=ee2fdc693500ac5130174a88d23a2d926854b739588e3bad516d5f23e907a5d3"
+      },
+      {
+        "datetime": "2026-07-29T19:10:04Z",
+        "headline": "Wednesday's session: top gainers and losers in the dow jones index",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Wondering what's happening in today's session for the dow jones index? Stay informed with the top movers within the dow jones index on Wednesday.",
+        "url": "https://finnhub.io/api/news?id=637a7a8fadaf10d44efb7c0c6bf9b51ef54f207f12d1a8f77ec01d29e4101ba3"
+      },
+      {
+        "datetime": "2026-07-29T18:50:49Z",
+        "headline": "Visa Stock Rises 1.5% as Earnings Beat Meets 2,600 Job Cuts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa exceeded profit and revenue forecasts while restructuring technology and product teams around efficiency and AI.",
+        "url": "https://finnhub.io/api/news?id=9a3e4ad3e1e3b42eaacf4fe993ea13fd9eb2c7a266b783487febd11ac820d726"
+      },
+      {
+        "datetime": "2026-07-29T18:03:38Z",
+        "headline": "Visa CEO discloses dynamic investment plan during earnings call",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The payment services giant Visa Inc. (NYSE: V) reported the earnings for the fiscal third quarter 2026 on July 28. The company generated $11.6 billion in net revenue and $3.32 in non-GAAP earnings per share (EPS) during the quarter, beating estimates of $11.3 billion revenue and ...",
+        "url": "https://finnhub.io/api/news?id=340b635aee07742cf53f2f49fba6f25285a69db1cfc57b93144131beafe24323"
+      },
+      {
+        "datetime": "2026-07-29T17:56:48Z",
+        "headline": "V, SNOW Stocks Hit Fresh 52-Week Highs Today \u2013 What\u2019s Got Investors Buzzing?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa received a fresh round of support from Wall Street after reporting stronger-than-expected third-quarter results and raising its full-year outlook, while Wells Fargo raised its price target on Snowflake by more than 56%.",
+        "url": "https://finnhub.io/api/news?id=ddd4b6e38f9b2f691747d3d72d8d973014aa33675a4068fdd262864ffc83af2f"
+      },
+      {
+        "datetime": "2026-07-29T17:44:20Z",
+        "headline": "Sector Update: Financial Stocks Decline Wednesday Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Financial stocks were lower in Wednesday afternoon trading, with the NYSE Financial Index down 1.1%",
+        "url": "https://finnhub.io/api/news?id=0cb10f876afe3617d6f5c07565f099d3d31c774f0fe4c3b38b9210f1236c460b"
+      },
+      {
+        "datetime": "2026-07-29T17:28:27Z",
+        "headline": "Stock Market Today: Dow Sinks As Fed Rate Decision, Warsh Comments Loom; KLA Tumbles (Live Coverage)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stock Market Today: The Dow Jones index drops Wednesday ahead of the Fed decision and Fed Chair Warsh's comments. KLA stock is hit.",
+        "url": "https://finnhub.io/api/news?id=1de214fe9ad67d05df63157ee92a931ac6368b96549e2053353844784b6afc43"
+      },
+      {
+        "datetime": "2026-07-29T17:20:00Z",
+        "headline": "3 Dividend Stocks to Buy for a Lifetime of Passive Income",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "These companies' recent headwinds shouldn't lead to decreased payouts.",
+        "url": "https://finnhub.io/api/news?id=4bdcbdcccbefe151b98b99e92ec8d6e2d9b714429e0ae583139f67088aaba865"
+      },
+      {
+        "datetime": "2026-07-29T15:35:00Z",
+        "headline": "Visa Q3 Earnings Beat Estimates on Cross-Border Volume Strength",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "V posts Q3 earnings and revenue beats as cross-border volumes, spending trends and network activity drive double-digit growth.",
+        "url": "https://finnhub.io/api/news?id=b24a4e0c86301286004ac6df9431ddb3cc72a0d794eda11121d72174a3adea81"
+      },
+      {
+        "datetime": "2026-07-29T15:20:22Z",
+        "headline": "Stock Market Today: Dow Dives 800 Points As Fed Rate Call Looms; GE HealthCare Soars (Live Coverage)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Stock Market Today: The Dow Jones index drops Wednesday ahead of the Fed decision and Fed Chair Warsh's comments. SK Hynix sells off.",
+        "url": "https://finnhub.io/api/news?id=938972e54de1c10ed2e1cbb41b4419b09b2f76a6ff27fd311a70a7f9369dec56"
+      },
+      {
+        "datetime": "2026-07-29T15:15:00Z",
+        "headline": "The new AI trade: Visa, Shopify, and more",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Host Kenny Polcari, Robinhood CIO Stephanie Guild, and Payne Capital Management President Ryan Payne discuss why they believe the AI trade is still alive, and how investors can reduce spending risk by looking beyond hyperscalers and semiconductors.",
+        "url": "https://finnhub.io/api/news?id=ec38063149f2d389816c298503482820d1f1fa803884cc7ed8bbc492e26605e5"
+      },
+      {
+        "datetime": "2026-07-29T14:06:00Z",
+        "headline": "Bernstein Lowers Price Target On Circle Stock",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Wall Street brokerage Bernstein has lowered its price target on the stock of stablecoin issuer Circle Internet Grou...",
+        "url": "https://finnhub.io/api/news?id=266ce84e08a3b206dbf3c8ef7f781725f67551c26e2627f22d086bb13c0d20ff"
+      },
+      {
+        "datetime": "2026-07-29T14:00:00Z",
+        "headline": "Visa Q3 Earnings Call Highlights AI and Payments Growth",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "V highlights AI-driven innovation, resilient spending, stablecoins and value-added services as it advances payment growth and future product development.",
+        "url": "https://finnhub.io/api/news?id=ca01339c985890923eb37060d92dc4e64e1f4798de1036fcca959f83f233478a"
+      },
+      {
+        "datetime": "2026-07-29T13:34:00Z",
+        "headline": "Visa exceeds Wall Street estimates in fiscal third quarter",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa Inc (NYSE:V, XETRA:3V64) reported fiscal third quarter results that exceeded Wall Street expectations, but its shares fell in after-hours trading as investors weighed higher operating expenses. The payments company posted adjusted earnings of $3.32 per share for the quarter ended June...",
+        "url": "https://finnhub.io/api/news?id=d965f52acd179da50dd2f220f2852c001eb60579e27681f77699747c8e4433e3"
+      },
+      {
+        "datetime": "2026-07-29T13:32:36Z",
+        "headline": "Visa: Paying Too Much For A Great Business",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Visa (V) analysis: valuation vs fundamentals, macro & regulatory risks, and renewed summer momentum.",
+        "url": "https://finnhub.io/api/news?id=19470dd1ed7c02bb3fbffef2fce3a3e1905a4c04370453ccbb24bf5f15c9e8c4"
+      },
+      {
+        "datetime": "2026-07-29T13:24:18Z",
+        "headline": "Piper Sandler Maintains Overweight on Visa, Raises Price Target to $430",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Piper Sandler  analyst Bill Carcache   maintains Visa (NYSE:V) with a Overweight and raises the price target from $394 to $430.",
+        "url": "https://finnhub.io/api/news?id=6a81a28c0a9101f01c92d80ffc5b31aacf0493bf497f11d3c095e68bd92f3062"
+      },
+      {
+        "datetime": "2026-07-29T13:20:00Z",
+        "headline": "Visa Is Cutting 2,600 Jobs \u2014 AI Is Only Part of the Reason: \u2018We Must Continue Evolving How We Work\u2019",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The cuts hit tech and product teams hardest, and Visa isn't alone. PayPal and Block have made similar moves recently.",
+        "url": "https://finnhub.io/api/news?id=a70efbd438e4e25d2991e619a3c32631a6d59b8e967bc9f8536ec60294ad7ecf"
+      },
+      {
+        "datetime": "2026-07-29T13:16:30Z",
+        "headline": "Oil Spikes 7%, Nasdaq 100 Sinks Before Fed: Stock Market Today",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Crude surges 7% as Trump vows strikes on Iran and stocks slide ahead of the Fed&#39;s decision, with earnings crushing Parsons, Lennox, Watsco and Vertiv.",
+        "url": "https://finnhub.io/api/news?id=c0ca1776ec96e4d2223fb04b75d146fc39d3f6083234f7864558866e441ddd34"
+      },
+      {
+        "datetime": "2026-07-29T13:08:30Z",
+        "headline": "Visa (V) Plans 7% Workforce Cut As AI Reshapes Its Growth Priorities",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa (NYSE:V) plans to cut about 7% of its workforce as part of a new restructuring effort. The company aims to improve efficiency and expand its use of artificial intelligence in core operations. Capital is expected to be reallocated toward growth areas, including stablecoin and cross-border products. Visa is a global payments company, and the decision to reduce roughly 7% of its staff marks a clear reset in how it wants to run the business. The focus on AI-supported efficiency reflects...",
+        "url": "https://finnhub.io/api/news?id=5c8df95983d6e8caf77f5050588b2a1a54ec7df2ae93313e7b3197c6bbf610b9"
+      },
+      {
+        "datetime": "2026-07-29T13:05:12Z",
+        "headline": "Susquehanna Maintains Positive on Visa, Raises Price Target to $427",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Susquehanna  analyst James Friedman   maintains Visa (NYSE:V) with a Positive and raises the price target from $410 to $427.",
+        "url": "https://finnhub.io/api/news?id=c2ebd6c715a8264299c33a236b75405a8e8f6d7ce0940b3aaf79a5f8d8311544"
+      },
+      {
+        "datetime": "2026-07-29T12:53:55Z",
+        "headline": "Update: US Equity Futures Lower Pre-Bell as Middle East Hostilities Resume, Oil Prices Rise",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with economic data, recent oil price movement, world markets' overview and corporate stock",
+        "url": "https://finnhub.io/api/news?id=2aa644f6486dbc12cbd73f869943bd4f5b3d87d9e4104c1cf685b89ddfd112cc"
+      },
+      {
+        "datetime": "2026-07-29T12:39:39Z",
+        "headline": "Bernstein Slashes Circle Target to $140: Is 118% Upside Still Realistic?",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Bernstein cuts Circle\u2019s price target to $140 but sees 118% upside as Open USD risks fade and USDC growth continues.",
+        "url": "https://finnhub.io/api/news?id=642e2889ee7670bce73ec182d08d5c19315ce62028bc0cafd1fd392302d4b557"
+      },
+      {
+        "datetime": "2026-07-29T12:33:23Z",
+        "headline": "Visa Beats on Q3, Raises Revenue Outlook as Analyst Points to Healthy Spending",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Visa shares rose after strong Q3 results, with Cantor Fitzgerald reaffirming Overweight rating and $410 PT. Revenue beat and raised guidance.",
+        "url": "https://finnhub.io/api/news?id=ea3b5f51b6e2938055c5e5e57d140e68acc43a4f06191d055c1d1939041af144"
+      },
+      {
+        "datetime": "2026-07-29T12:30:03Z",
+        "headline": "Dow Jones Futures Fall, Oil Jumps On Iran News; Seagate, SK Hynix, KLA, Bloom Energy Earnings Late",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Futures fell as oil prices jumped on an Iran news. Seagate, SK Hynix, KLA, Bloom Energy are key earnings late. Will the Fed surprise?",
+        "url": "https://finnhub.io/api/news?id=cb859fe1a1b4a4a7cd3703d4b8ba266d12137d378e4ccefcf96170b476e21b4d"
+      },
+      {
+        "datetime": "2026-07-29T12:30:00Z",
+        "headline": "Visa Inc. Q3 2026 Earnings Call Summary",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Moby summary of Visa Inc.'s Q3 2026 earnings call",
+        "url": "https://finnhub.io/api/news?id=09ad50732c5ed6324e238084bbd01fff01bc9d5b1d402c120c634c1a472b80ee"
+      },
+      {
+        "datetime": "2026-07-29T12:13:00Z",
+        "headline": "Dow Jones down over 800 points as Trump lashes out ahead of Fed decision",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A busy afternoon of earnings from Meta and Microsoft comes as the Fed is expected to hold rates",
+        "url": "https://finnhub.io/api/news?id=44c001b8eb09651befca60290bb06b4467e6a5de6f1f89228a1a7bf643fd5e53"
+      },
+      {
+        "datetime": "2026-07-29T12:08:00Z",
+        "headline": "Can Markets Survive Big Tech Earnings, Fed Rate Call, Iran Fears Today?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Oil prices rise, Visa is streamlining, Corning has worst day in four months, and more news to start your day.",
+        "url": "https://finnhub.io/api/news?id=92c745bbc4678571afe8d9d354923716b4f73a0f2446c7242dac73e9474a992a"
+      },
+      {
+        "datetime": "2026-07-29T12:06:06Z",
+        "headline": "Visa Beats Third-Quarter Expectations as Consumer Spending Drives Revenue Growth",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa (NYSE:V) reported stronger-than-expected fiscal third-quarter results on Tuesday, with double-digit revenue growth supported by resilient consumer spending and continued strength in cross-border payment activity. The global payments company posted adjusted earnings of $3.",
+        "url": "https://finnhub.io/api/news?id=299c9e8e026d1f0993db2b03f6c9d0f6806ec13c21ec3b52818cbc4c57893c50"
+      },
+      {
+        "datetime": "2026-07-29T11:59:52Z",
+        "headline": "Stocks Mostly Up Pre-Bell Ahead of Fed Rate Decision, Big Tech Earnings",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The main US stock measures were mostly trending higher in Wednesday's premarket activity as traders",
+        "url": "https://finnhub.io/api/news?id=c73ec1e45071df7ab6cf027726410cb65ae0a0f6ec8c56db89e4703ca4176140"
+      },
+      {
+        "datetime": "2026-07-29T11:48:03Z",
+        "headline": "Visa to cut 2,600 jobs in 7% workforce reduction- report",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The roles affected are expected to be concentrated in technology and product teams.",
+        "url": "https://finnhub.io/api/news?id=d1f80972137f402de2df2967137bf327670f9d37b3727338fa78610a3f23e544"
+      },
+      {
+        "datetime": "2026-07-29T11:24:22Z",
+        "headline": "UBS Maintains Buy on Visa, Raises Price Target to $420",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "UBS  analyst Timothy Chiodo   maintains Visa (NYSE:V) with a Buy and raises the price target from $410 to $420.",
+        "url": "https://finnhub.io/api/news?id=858ff78ec302128961cf853d99d5cf1a3298bf403b25ca9d5b9f0b621b83361c"
+      },
+      {
+        "datetime": "2026-07-29T11:11:59Z",
+        "headline": "Visa Delivers Reassuring Read on the US Consumer: No Signs of Spending Weakness",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa Inc. (NYSE:V) stock traded lower in premarket trading Wednesday after the payments giant reported fiscal third-quarter results that topped Wall Street estimates and issued guidance in line with its long-term growth outlook. Earnings Beat Estimates Visa reported adjusted earnings of $3.32 per share, beating the analyst consensus estimate of $3.23, according to Benzinga Pro. Revenue increased to $11.63 billion, above the Street estimate of $11.39 billion. The company recorded $563 million in",
+        "url": "https://finnhub.io/api/news?id=e22c2dd23cad56c7830c05c38bd5b3b0c39f069a7f34cee88907dfa3df3dd099"
+      },
+      {
+        "datetime": "2026-07-29T11:10:43Z",
+        "headline": "Visa\u2019s revenue momentum slows",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The card network\u2019s recent revenue growth slowed in July, relative to last year, but customer spending remains healthy, the company said.",
+        "url": "https://finnhub.io/api/news?id=edce94d0ea64fe4b1f7665fd1c99648604d3ccc44fce54533926c35842b7167c"
+      },
+      {
+        "datetime": "2026-07-29T10:32:37Z",
+        "headline": "BMO Capital Maintains Outperform on Visa, Raises Price Target to $405",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "BMO Capital  analyst Andrew Bauch   maintains Visa (NYSE:V) with a Outperform and raises the price target from $387 to $405.",
+        "url": "https://finnhub.io/api/news?id=4721b37f892a8105f23c9fc361431f956dc31cd641daa599ae8d8408f65680df"
+      },
+      {
+        "datetime": "2026-07-29T09:53:17Z",
+        "headline": "RBC Capital Maintains Outperform on Visa, Raises Price Target to $412",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "RBC Capital  analyst Daniel Perlin   maintains Visa (NYSE:V) with a Outperform and raises the price target from $395 to $412.",
+        "url": "https://finnhub.io/api/news?id=1d03c3b023ff9a623283b8c4421657ce3e3756f97da38710e7919d877ad28b89"
+      },
+      {
+        "datetime": "2026-07-29T09:34:31Z",
+        "headline": "Visa To Rally Around 23%? Here Are 10 Top Analyst Forecasts For Wednesday",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "\nJP Morgan raised the price target for Visa from $400 to $450 and Mizuho increased PayPal&#39;s target from $50 to $60. Other analysts also raised targets for Xylem, RLI, ITW, DLR, STX, and PCAR.",
+        "url": "https://finnhub.io/api/news?id=7b0dbb4f2058a84be2fe02f2bc50db41af86a737c5f7ece8d5f806d2fe044f6a"
+      },
+      {
+        "datetime": "2026-07-29T09:12:44Z",
+        "headline": "Chips Sell First, Ask Questions Later - And SK Hynix Just Handed Them the Answer",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "US chip stocks were sold hard on Tuesday in nervous positioning ahead of SK Hynix's print and the overnight results confirmed the fear, with the Korean giant announcing a 2026 capex plan north of $24 billion. Meanwhile, Boeing and Coca-Cola powered the Dow to a 1% gain and Ford lit up after-hours with an earnings beat, all a day before the Fed decides.",
+        "url": "https://finnhub.io/api/news?id=2dd0609fece9b7df7d96e884291a99b4db8c8f2618b80ae5cd0c2bffda101783"
+      },
+      {
+        "datetime": "2026-07-29T09:07:27Z",
+        "headline": "Wolfe Research Maintains Outperform on Visa, Raises Price Target to $435",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Wolfe Research  analyst Darrin Peller   maintains Visa (NYSE:V) with a Outperform and raises the price target from $430 to $435.",
+        "url": "https://finnhub.io/api/news?id=9ffe0cdd6740db4d1e89cc2e540285db07780983ef9f1325ce2126a9b14b57c4"
+      },
+      {
+        "datetime": "2026-07-29T09:05:48Z",
+        "headline": "Citigroup Maintains Buy on Visa, Raises Price Target to $440",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Citigroup  analyst Bryan Keane   maintains Visa (NYSE:V) with a Buy and raises the price target from $400 to $440.",
+        "url": "https://finnhub.io/api/news?id=1910f2e1310ff8174ef1eecae5b7e9006db0effdece860b5e9a62f16d04fc0a7"
+      },
+      {
+        "datetime": "2026-07-29T08:26:06Z",
+        "headline": "Cantor Fitzgerald Reiterates Overweight on Visa, Maintains $410 Price Target",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Cantor Fitzgerald  analyst Ramsey El-Assal   reiterates Visa (NYSE:V) with a Overweight and maintains $410 price target.",
+        "url": "https://finnhub.io/api/news?id=82ba0479e864cdcbc6933cd4d41f136aaeddb984e25a4162f05e6ea8b0092fa4"
+      },
+      {
+        "datetime": "2026-07-29T07:36:24Z",
+        "headline": "Baird Maintains Outperform on Visa, Raises Price Target to $420",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Baird  analyst David Koning   maintains Visa (NYSE:V) with a Outperform and raises the price target from $412 to $420.",
+        "url": "https://finnhub.io/api/news?id=a1f75043f10c4e45c9912f805b33a6ddf23ff8fe09f26a24af43369d510fb1a0"
+      },
+      {
+        "datetime": "2026-07-29T07:20:18Z",
+        "headline": "JP Morgan Maintains Overweight on Visa, Raises Price Target to $450",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "JP Morgan  analyst Tien-Tsin Huang   maintains Visa (NYSE:V) with a Overweight and raises the price target from $400 to $450.",
+        "url": "https://finnhub.io/api/news?id=4e15fe0c1ca4549e8b671f166bc047c8958f3c06b3734472fc4c943456d3ba6e"
+      },
+      {
+        "datetime": "2026-07-29T05:00:51Z",
+        "headline": "Visa Inc (V) Q3 2026 Earnings Call Highlights: Record Revenue and Strategic Innovations Propel ...",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa Inc (V) reports a robust 14% increase in net revenue, driven by strong payments volume and innovative solutions, despite rising expenses and market uncertainties.",
+        "url": "https://finnhub.io/api/news?id=9ed527ac2d8488d1490a15ff1d0a242177f51e3f709c9dc1f49012ab096f7fdd"
+      },
+      {
+        "datetime": "2026-07-29T01:13:10Z",
+        "headline": "Visa Inc. (V) Q3 2026 Earnings Call Transcript",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Visa Inc. (V) Q3 2026 Earnings Call July 28, 2026 5:00 PM EDTCompany ParticipantsJennifer Como - Head of Investor RelationsRyan McInerney - CEO &...",
+        "url": "https://finnhub.io/api/news?id=82a7ce5eb4003c92830a52324bfa48804acbd25dc462292e62bf7b4b1fe3c0e1"
+      },
+      {
+        "datetime": "2026-07-29T00:03:57Z",
+        "headline": "Visa Q3 Earnings Call Highlights",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa (NYSE:V) reported fiscal third-quarter 2026 net revenue of $11.6 billion, up 14% from a year earlier, while earnings per share rose 11% to $3.32. Chief Executive Officer Ryan McInerney said both measures exceeded the company\u2019s expectations as payments volume surpassed $4 trillion for the first",
+        "url": "https://finnhub.io/api/news?id=871d7b925c80d46b330fc7213a0e5c98fa20ea9c60ac0cbe50e30c3ce0aaeb21"
+      },
+      {
+        "datetime": "2026-07-29T00:01:00Z",
+        "headline": "X, Visa Launch Payments App For U.S. Subscribers",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Paid X subscribers based in the U.S. now have access to \"X Money,\" Elon Musk's stand-alone money-transferring app - another step in the development of a burgeoning \"everything app\" ecosystem.",
+        "url": "https://finnhub.io/api/news?id=7f37002f9a932b11b6edb00e7ab2f515411ad6ea37f0d51a4a5af8269db69111"
+      },
+      {
+        "datetime": "2026-07-28T23:30:03Z",
+        "headline": "Visa (V) Q3 Earnings: How Key Metrics Compare to Wall Street Estimates",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Although the revenue and EPS for Visa (V) give a sense of how its business performed in the quarter ended June 2026, it might be worth considering how some key metrics compare with Wall Street estimates and the year-ago numbers.",
+        "url": "https://finnhub.io/api/news?id=21ca329e321242e66265263b88776779109c425a1927b71a2ad64ec545f51798"
+      },
+      {
+        "datetime": "2026-07-28T23:24:26Z",
+        "headline": "V Stock Slips After-Hours \u2014 Visa Reports $563M Job Cut-Related Costs Amid Resilient Consumer Spending",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa Inc. posted strong fiscal third-quarter results that surpassed Wall Street expectations, strengthened by resilient payment volumes and cross-border travel growth.",
+        "url": "https://finnhub.io/api/news?id=620f77c6a7729f8540851527e166ddd63001be65f278a648206729c54207a6d0"
+      },
+      {
+        "datetime": "2026-07-28T21:32:13Z",
+        "headline": "Sk Hynix, Bloom Energy, Seagate, Micron Technology and Visa: Why These 5 Stocks Are on Investors' Radars Today",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "SKHY, BE, STX, MU, V were among the stocks seen trending on Tuesday, July 28, 2026.",
+        "url": "https://finnhub.io/api/news?id=46bc9613048660ff385b24e301faf0aee2ccc8f723813bd3bc4c6328a8166dd8"
+      },
+      {
+        "datetime": "2026-07-28T21:29:39Z",
+        "headline": "Visa (NYSE:V) Posts Better-Than-Expected Sales In Q2 CY2026",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Global payments technology company Visa (NYSE:V) reported revenue ahead of Wall Street\u2019s expectations in Q2 CY2026, with sales up 14.4% year on year to $11.63 billion. Its non-GAAP profit of $3.32 per share was 2.8% above analysts\u2019 consensus estimates.",
+        "url": "https://finnhub.io/api/news?id=7d573b43f887e188ebe0026d0a0641dabc7988cdc895297983ab4167c4224222"
+      },
+      {
+        "datetime": "2026-07-28T21:20:17Z",
+        "headline": "Elon Musk launches invite-only X Money with a Visa debit card, 6% yield and real-time transfers",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Elon Musk's social media company X, formerly known as Twitter, launched its own bank account-like product where users can send money to one another.  X Money is using technology and banking services provided by Cross River Bank, and branding that backbone as X Money.",
+        "url": "https://finnhub.io/api/news?id=7cb050ad3a2c5439bab7db5c9178932ac0576c7779f2bc7de75852a28faff256"
+      },
+      {
+        "datetime": "2026-07-28T21:20:06Z",
+        "headline": "Visa (V) Surpasses Q3 Earnings and Revenue Estimates",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa (V) delivered earnings and revenue surprises of +2.79% and +2.28%, respectively, for the quarter ended June 2026. Do the numbers hold clues to what lies ahead for the stock?",
+        "url": "https://finnhub.io/api/news?id=97063a3126c17fd36dc0a3fd202ea70b611ba5f17ebcb5941c7f7bd4760849b0"
+      },
+      {
+        "datetime": "2026-07-28T21:12:00Z",
+        "headline": "Visa Announced Layoffs Ahead of Earnings Beat, as AI and Restructuring Accelerate",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa CEO Ryan McInerney says artificial intelligence is helping \u2018shape the way work gets done.\u2019 The payments giant reports earnings after the closing bell Tuesday.",
+        "url": "https://finnhub.io/api/news?id=e6ebd39224f5d6f05a22559bb3414e8895de1582e83e91f87adaa98680fb1324"
+      },
+      {
+        "datetime": "2026-07-28T21:05:01Z",
+        "headline": "Which S&P500 stocks are showing activity after the closing bell on Tuesday?",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Wondering what's happening in today's after-hours session with S&P500 stocks? Stay tuned for the latest updates on movers and shakers.",
+        "url": "https://finnhub.io/api/news?id=7dbdd12c241a1f8edd2c5568a21a0808617a4e57fb96b76f2a5fd1c24769ed2d"
+      },
+      {
+        "datetime": "2026-07-28T20:58:35Z",
+        "headline": "Visa Third-Quarter Results Outpace Expectations as Payments Volume Increases",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa (V) reported fiscal third-quarter results above Wall Street's estimates as consumer and busines",
+        "url": "https://finnhub.io/api/news?id=0c867524d01a78b4705b51a96217798ca8f910c1c11ab9d4ef876fbb68bca2fc"
+      },
+      {
+        "datetime": "2026-07-28T20:57:46Z",
+        "headline": "Visa posts double-digit revenue growth on resilient consumer spending",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- Visa reported better-than-expected fiscal third-quarter earnings and revenue on Tuesday, driven by resilient consumer spending and strong cross-border payment volumes.",
+        "url": "https://finnhub.io/api/news?id=f476a3136bcbb37c0eeb0d0761255d76444f2151f6316d84a301a084b2012071"
+      },
+      {
+        "datetime": "2026-07-28T20:50:51Z",
+        "headline": "Visa (NYSE:V) Reports Inline Q3 Earnings, Maintains Quality Stock Status",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Visa reports inline Q3 FY2026 earnings: revenue $11.63B, EPS $3.32. Shares slip 1.4% after hours on restructuring news and lack of upside surprise.",
+        "url": "https://finnhub.io/api/news?id=dda630549713d7f287aacd90c35e4c3c31745a2dfc7b250fe29317081901296d"
+      },
+      {
+        "datetime": "2026-07-28T20:23:03Z",
+        "headline": "Visa fiscal Q3 2026 earnings: revenue up 14%, EPS rises",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The payments company reported net revenue of $11.6 billion and non-GAAP earnings per share of $3.32 for the quarter ended June 30",
+        "url": "https://finnhub.io/api/news?id=88cef2f052a5d5ad19354f64b5488f8317e592e0a945232e73e5f9c59bcbbcba"
+      },
+      {
+        "datetime": "2026-07-28T20:22:51Z",
+        "headline": "Visa Stock Rises as Report Signals 2,600 Job Cuts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The reported workforce reduction will primarily affect Visa's technology and product operations.",
+        "url": "https://finnhub.io/api/news?id=befa09ee3aad7426e51e672aea3f8d95d6b725df6eebc9b28ace2e52cef99860"
+      },
+      {
+        "datetime": "2026-07-28T20:14:20Z",
+        "headline": "V Stock Layoffs: What to Know About the Latest Visa Job Cuts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa shares rally on plans to lower its global headcount by 7%. Here\u2019s how you should play V stock ahead of the company\u2019s Q3 earnings today after market close.",
+        "url": "https://finnhub.io/api/news?id=e617a132b7724707b29b5dffa5e6ff2723fef8f7ff04bd461255fd68a3fe81e3"
+      },
+      {
+        "datetime": "2026-07-28T20:05:00Z",
+        "headline": "Visa Fiscal Third Quarter 2026 Financial Results",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SAN FRANCISCO, July 28, 2026--Visa (NYSE: V) today announced its fiscal third quarter 2026 financial results through an earnings release that will be furnished with the Securities and Exchange Commission on a Form 8-K and available on its Investor Relations website at investor.visa.com/financial-information/quarterly-earnings/default.aspx.",
+        "url": "https://finnhub.io/api/news?id=61a815f98aff89211ea8d7e7468501ff79465d4c0ab3b0e3c3c7a6ce13cf8d31"
+      },
+      {
+        "datetime": "2026-07-28T19:46:57Z",
+        "headline": "Sector Update: Financial Stocks Rise Late Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Financial stocks rose in late Tuesday afternoon trading with the NYSE Financial Index advancing 0.7%",
+        "url": "https://finnhub.io/api/news?id=50f4e1440b1fd5712928074a93b4bbc2ac92189b0b2bf6530257b76c0981d61f"
+      },
+      {
+        "datetime": "2026-07-28T19:09:00Z",
+        "headline": "Forget the Mag 7. Watch These 5 Top Earnings Charts Instead",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Lots of popular stocks like Starbucks and Lam Research will report this week.",
+        "url": "https://finnhub.io/api/news?id=30124137a44f522735fe5bdd04025a5428b204a90a579cd1e6f2a9b725094106"
+      },
+      {
+        "datetime": "2026-07-28T18:07:16Z",
+        "headline": "Update: Equities Mostly Rise Intraday as Fed Meeting Begins",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with latest market prices and developments.) US benchmark equity indexes were mostly hig",
+        "url": "https://finnhub.io/api/news?id=9eb63bb815531215ea5d6abbee6919fd42f8724921b50d18f8c9a734a13aa14a"
+      },
+      {
+        "datetime": "2026-07-28T18:02:39Z",
+        "headline": "Dow falls more than 700 points as oil rises ahead of Fed decision: Live updates",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "The Dow is coming off its third straight winning day.",
+        "url": "https://finnhub.io/api/news?id=af225958a6e90dea1bce3e89e151f1d41858e84fc534d0cd99cb597285121846"
+      },
+      {
+        "datetime": "2026-07-28T18:01:03Z",
+        "headline": "Visa Inc. 2026 Q3 - Results - Earnings Call Presentation",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "2026-07-28. The following slide deck was published by Visa Inc.",
+        "url": "https://finnhub.io/api/news?id=26fece2806174117e9b1144c4813369184a59cf07041ad53c6ec96ff9b5e0bb8"
+      },
+      {
+        "datetime": "2026-07-28T17:41:45Z",
+        "headline": "Sector Update: Financial Stocks Higher Tuesday Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Financial stocks rose in Tuesday afternoon trading with the NYSE Financial Index advancing 0.6% and",
+        "url": "https://finnhub.io/api/news?id=656d5e9dd063fefddcd2db31f03eb50b904f1f532dda27f12a5c21244177062e"
+      },
+      {
+        "datetime": "2026-07-28T17:11:27Z",
+        "headline": "Stocks making the biggest moves after hours: Ford, Teradyne, Visa, KLA Corp and more",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "These are the stocks posting the largest moves in after-hours trading.",
+        "url": "https://finnhub.io/api/news?id=62924e36d0ef10a201071a13f601cc3f1ee075a96cdebaf8f0a59998116febcc"
+      },
+      {
+        "datetime": "2026-07-28T17:00:00Z",
+        "headline": "PIX and Stablecoins Are Not Rivals, Says Visa\u2019s Digital Currencies Chief for Latin America",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa's Ant\u00f4nia Souza says PIX and stablecoins are not rivals but solve different problems. See her take on cross-border payments and bank adoption.",
+        "url": "https://finnhub.io/api/news?id=d05f263d771edcfd95704c903e74674b45262adb6a61150b7652d40995fda99f"
+      },
+      {
+        "datetime": "2026-07-28T16:34:52Z",
+        "headline": "Visa Posts Strong Q3 Results: CEO Says 'Consumer and Business Spending Remains Resilient'",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Here&#39;s a look at the key figures inside Visa&#39;s Q3 earnings report.",
+        "url": "https://finnhub.io/api/news?id=46820199f5c724022572edfb52be1fcc6c91c7463bf72b884a5f8cf5cdd9ce86"
+      },
+      {
+        "datetime": "2026-07-28T16:30:02Z",
+        "headline": "Visa Reports $563M As Severance Expenses",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "https://s1.q4cdn.com/050606653/files/doc_financials/2026/q3/Q3-2026-Earnings-Release_vF.pdf",
+        "url": "https://finnhub.io/api/news?id=df548f5b7bf098e42e69928483c16b5d7f139a6d52658d43c3bec84a224f67c9"
+      },
+      {
+        "datetime": "2026-07-28T16:08:00Z",
+        "headline": "Visa Announces Layoffs Ahead of Earnings as AI and Restructuring Accelerate",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa CEO Ryan McInerney says artificial intelligence is helping \u2018shape the way work gets done.\u2019 The payments giant reports earnings after the closing bell Tuesday.",
+        "url": "https://finnhub.io/api/news?id=ccc2a840b5daf10b7448e17a34e42d5022f6149a48a8866d9030e9c763529702"
+      },
+      {
+        "datetime": "2026-07-28T16:07:18Z",
+        "headline": "Visa Q3 Adj. EPS $3.32 Beats $3.23 Estimate, Sales $11.633B Beat $11.388B Estimate",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Visa (NYSE:V) reported quarterly earnings of $3.32 per share which beat the analyst consensus estimate of $3.23 by 2.79 percent. This is a 11.41 percent increase over earnings of $2.98 per share from the same period",
+        "url": "https://finnhub.io/api/news?id=286e1bc293b07cdc8dcaafa6c4ced1488530417009ac8c34cbacb36870c670bb"
+      },
+      {
+        "datetime": "2026-07-28T15:56:58Z",
+        "headline": "Top Midday Stories: Corning Shares Fall on Tepid Q3 Sales Guidance; Coca-Cola Rases EPS, Revenue Outlook, Shares Rise",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The Dow Jones Industrial Average and S&P 500 were up in late-morning trading Tuesday, while the Nasd",
+        "url": "https://finnhub.io/api/news?id=4bedf884695789af3facd8e185baebfef3d05791186b4b77d3ef5045b3e76e33"
+      },
+      {
+        "datetime": "2026-07-28T15:32:00Z",
+        "headline": "Mastercard Nears Q2 Earnings With Beat Potential, but Should You Buy?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "MA heads into Q2 earnings with signs of another beat, but regulatory risks could make investors think twice before buying now.",
+        "url": "https://finnhub.io/api/news?id=77045e226f225c922098c0d403fdedc207e253b2b14b7eabc3fdaf1cbbb08147"
+      },
+      {
+        "datetime": "2026-07-28T13:57:19Z",
+        "headline": "Billionaire Investor Andreas Halvorsen\u2019s Top 5 Picks: Are They a Buy Now?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Andreas Halvorsen\u2019s Viking Global just gave retail investors a five-name research list. The latest 13F filing, holdings as of March 31, 2026 and filed May 15, 2026, discloses the fund\u2019s five largest long US-listed common stock and ADR positions. Every one of them carries a specific 2026 catalyst, and four of the five carry a ... Billionaire Investor Andreas Halvorsen\u2019s Top 5 Picks: Are They a Buy Now?",
+        "url": "https://finnhub.io/api/news?id=e44307ee9a5e37fb742958c663f443902cadf58d5d27b17cff187c4132d76e71"
+      },
+      {
+        "datetime": "2026-07-28T13:33:15Z",
+        "headline": "Visa's Reported Revamp Includes 2,600 Job Cuts In Workforce Shake-Up Across Payments Firms",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "According to a Bloomberg report, CEO Ryan McInerney said the restructuring is intended to improve efficiency, with AI playing a central role in the transformation.",
+        "url": "https://finnhub.io/api/news?id=2aa90a28b198991901d758ef744784f502eb5fd88ccfd70941d37a6f73c7c81c"
+      },
+      {
+        "datetime": "2026-07-28T13:32:01Z",
+        "headline": "Visa Shares Rise as Company Plans Workforce Reduction",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa Inc. (NYSE:V) shares gained around 2% on Tuesday after reports that the global payments company intends to reduce its workforce by approximately 7% as part of a broader restructuring programme.",
+        "url": "https://finnhub.io/api/news?id=6e27b5aa2e705ff08642fe2eb1a0ba6898016119abefef8aad7956a530a3c5e5"
+      },
+      {
+        "datetime": "2026-07-28T13:23:38Z",
+        "headline": "Visa trims 7% of workforce as fintech belt-tightening spreads",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- Visa Inc. (NYSE: V) shares gained 2% on Tuesday following reports that the payments behemoth plans to trim approximately 7% of its workforce. The restructuring will eliminate roughly 2,600 roles\u2014primarily concentrated in tech and product divisions\u2014according to an internal memo from CEO Ryan McInerney obtained by Bloomberg. The move follows a decade of massive expansion that saw Visa\u2019s workforce more than triple to 34,100 employees. Capital freed up by the reductions will be rein",
+        "url": "https://finnhub.io/api/news?id=997ca7969e4e12fdb4eeeab5e01d9726b4d60b81cee4e7427b4969fe56fa2450"
+      },
+      {
+        "datetime": "2026-07-28T13:23:30Z",
+        "headline": "Visa layoffs 2026: company cutting 7% of workforce",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The payments company said the cuts will fall on technology and product teams as CEO Ryan McInerney pushes to make the firm more efficient",
+        "url": "https://finnhub.io/api/news?id=b8a8095186ae6b10db55437b8a86dc5be859d05ad9149591cb24bf8fe401265b"
+      },
+      {
+        "datetime": "2026-07-28T13:21:06Z",
+        "headline": "Nasdaq 100 Enters Correction, SanDisk Sinks Over 50% From Peak: Stock Market Today",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "A deepening chip rout drags the Nasdaq while Coca-Cola and Sherwin-Williams beats power the Dow; oil dives 5% on Iran diplomacy as the Fed meets.",
+        "url": "https://finnhub.io/api/news?id=3c4f2118fecab317dd2f02063642b4d41f4475fd1d3ee559a5000ef9c79f2978"
+      },
+      {
+        "datetime": "2026-07-28T12:56:35Z",
+        "headline": "Stablecoin Banking Competition Expands Beyond Settlement",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Wirex CEO Pavel Matveev discusses stablecoin payments, card issuance, DeFi yield, customer ownership and agent-led transactions.",
+        "url": "https://finnhub.io/api/news?id=25ad4c172bdb593e705bc2f68d57ceabb975c3b7f2a67871941c76629711abcd"
+      },
+      {
+        "datetime": "2026-07-28T12:50:35Z",
+        "headline": "Visa to Cut 7% of Workforce as CEO Seeks to Revamp Company",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Bloomberg) -- Visa Inc. is eliminating about 2,600 jobs as Chief Executive Officer Ryan McInerney seeks to make the firm more efficient as it competes in an increasingly tough payments industry.Most Read from BloombergNvidia\u2019s $750 Billion in Deals Reignite Circular AI FearsChip Rout Deepens on Circular Funding, China Competition FearsCitadel Securities Sees Warsh Delivering Surprise Fed HikeDeepSeek Suspends Fundraising After Viral US-China PostsS&P 500 Wobbles as AI Angst Offsets Oil Decline:",
+        "url": "https://finnhub.io/api/news?id=d07bf5e53106177f31c5f2fdfcfccf5b4aa0f0be84680ac5a71056b40d8972fc"
+      },
+      {
+        "datetime": "2026-07-28T12:48:48Z",
+        "headline": "Update: US Equity Futures Mixed Pre-Bell as Halt in Middle East Hostilities Holds, Semiconductor Stocks Drop",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with economic data, recent oil price movement, world markets' overview and corporate stock",
+        "url": "https://finnhub.io/api/news?id=59060173665b3ce3bf4c99ca302085c1e7654dd8911dd0b30cfd94e86f271b4d"
+      },
+      {
+        "datetime": "2026-07-28T12:46:52Z",
+        "headline": "Visa to lay off 7% of staff as efficiency push deepens",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa plans to cut 7% of its workforce, or about 2,600 jobs, a company spokesperson said \u200con Tuesday, about six months after a similar step \u200cby its closest peer as the payments processor seeks to become more efficient.  \"To capture the opportunities ahead and best position Visa to lead this transformation, we must continue evolving how we work,\u201d CEO Ryan McInerney wrote in a \u200cstaff memo, excerpts from \u2060which were confirmed by the company spokesperson.  Artifical Intelligence is also speeding up this shift and influencing how \u2060work is carried out at Visa, he added.",
+        "url": "https://finnhub.io/api/news?id=8f8304a6c9c2340925635aa2f8ebd8c2e52fba469b5977e4d37f7826d52e03ee"
+      },
+      {
+        "datetime": "2026-07-28T12:11:08Z",
+        "headline": "5 Things to Know Before the Stock Market Opens on Tuesday",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "News of the day for July 28, 2026",
+        "url": "https://finnhub.io/api/news?id=1e054b1c032f48cfb8949979d287fa5cabd10011be417f135d81b261b5363396"
+      },
+      {
+        "datetime": "2026-07-28T11:54:17Z",
+        "headline": "US Equity Futures Mixed as Halt in Middle East Hostilities Holds, Semiconductor Stocks Drop",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "US equity futures were mixed pre-bell Tuesday as the pause in hostilities between the US and Iran ap",
+        "url": "https://finnhub.io/api/news?id=83d4b316d3e839a100b80e9c6bfb7a776deef940493a53cb28300cb96d382c43"
+      },
+      {
+        "datetime": "2026-07-28T11:53:57Z",
+        "headline": "Stocks Mostly Down Pre-Bell Amid Chip Sell-Off; Traders Await More Earnings",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "US equity futures were mostly tracking in the red on Tuesday amid a selloff in chip stocks over conc",
+        "url": "https://finnhub.io/api/news?id=7ebaff5c7ca4f61be6e4acd410b53a8ba676ff49ff6277211ce649074e0840df"
+      },
+      {
+        "datetime": "2026-07-28T11:08:53Z",
+        "headline": "Options Action: Visa shares jump on layoffs",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC\u2019s Oliver Renick reports on the latest action in options market.",
+        "url": "https://finnhub.io/api/news?id=00d903514de0e9d41c6601030e86b654467e6cdde8cf73a35ef43dbba7336bc6"
+      },
+      {
+        "datetime": "2026-07-28T11:07:00Z",
+        "headline": "Scotiabank Digital Banking Update: New Tools to Make Everyday Banking Faster, Simpler and More Secure",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Scotiabank's latest suite of digital banking updates includes key enhancements to the mobile banking app, providing clients with an even more seamless digital experience. This includes:",
+        "url": "https://finnhub.io/api/news?id=1920efa80e07056f68fbe54269533a31dab5d4034c8c23487986c3b3936da4f2"
+      },
+      {
+        "datetime": "2026-07-28T10:51:05Z",
+        "headline": "Is Elon Musk Borrowing Amazon Prime's Playbook for X Money?",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "X Money&#39;s Premium-only rollout suggests it maybe Elon Musk&#39;s Prime strategy\u2013 using financial perks to build a stickier subscription business.",
+        "url": "https://finnhub.io/api/news?id=487548ce0cc426dc2167ec41573a42bc4b5bcf570508d51b2109cc3334b3d4e8"
+      },
+      {
+        "datetime": "2026-07-28T10:28:12Z",
+        "headline": "Visa is cutting 7% of employees in efficiency push as AI reshapes work",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Visa plans to cut about 7% of its workforce, or roughly 2,600 employees, as CEO Ryan McInerney seeks to streamline the payments giant.",
+        "url": "https://finnhub.io/api/news?id=600514bad73e3b7b1299adc91ec57213a6a8602979c14d06f6646a6ab5d668ec"
+      },
+      {
+        "datetime": "2026-07-28T08:46:55Z",
+        "headline": "Nasdaq, S&P 500 Futures Slip As Korea Chip Shock Dents AI Memory Heavyweights Ahead Of Fed Decision: Why NVDA, SNDK, MU, APLD, SPCX, SLS, CAPR Are In Focus",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Retail sentiment remains \u2018bearish\u2019 on SPY and deteriorated to \u2018extremely bearish\u2019 on QQQ, amid growing anxiety around technology stocks.",
+        "url": "https://finnhub.io/api/news?id=8c5527a2441fa03fab43768d2ef6cd2d81f00770981c207391d0f9fa03a9aec4"
+      },
+      {
+        "datetime": "2026-07-28T08:41:28Z",
+        "headline": "'Visa to Cut 7% of Workforce as CEO Seeks to Revamp Payments Firm' - Bloomberg",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "https://www.bloomberg.com/news/articles/2026-07-28/visa-to-cut-7-of-workforce-as-ceo-seeks-to-revamp-payments-firm",
+        "url": "https://finnhub.io/api/news?id=c6b8f32ee88b11f3369f9aafd298efb5ecafefc0cad44708345767be19af0165"
+      },
+      {
+        "datetime": "2026-07-28T07:32:13Z",
+        "headline": "Visa Earnings Are Imminent; These Most Accurate Analysts Revise Forecasts Ahead Of Earnings Call",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Visa Inc. (V) will release its third quarter earnings on Tuesday, July 28. Analysts expect earnings of $3.23 per share and revenue of $11.4 billion. Visa shares gained 1.9% on Monday.",
+        "url": "https://finnhub.io/api/news?id=5738047e3b7bd47c778623c457b50cf965faef6047d56e202fd7cd241f47779c"
+      },
+      {
+        "datetime": "2026-07-27T23:48:00Z",
+        "headline": "Visa and Mastercard Earnings: How Quarterly Estimates Have Evolved",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The 2026 Q2 earnings season is in full swing, with this week's reporting docket jam-packed with notable companies. Among them are two peers: Mastercard (MA) and Visa (V).",
+        "url": "https://finnhub.io/api/news?id=5aff4f2b89ea6c42cadf3d0fba27dfd2d5a2dc0f596d18146ed04dbabeed32e6"
+      },
+      {
+        "datetime": "2026-07-27T21:14:54Z",
+        "headline": "Boeing & Ford earnings, July consumer confidence: What to Watch",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Yahoo Finance's Josh Lipton takes a closer look at the top stories for investors to watch on Tuesday, Jul. 28, including the July consumer confidence reading and quarterly earnings from Ford (F), Visa (V), and Boeing (BA).",
+        "url": "https://finnhub.io/api/news?id=a550b67de5326c80ca786e4e33eec177cab03425ce01898d3fd1d70350acda6e"
+      },
+      {
+        "datetime": "2026-07-27T20:47:59Z",
+        "headline": "Update: Wall Street Wavers as Oil Slides; Fed Decision, Major Earnings in Focus",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with market moves at the end of the day.) US stocks ended mixed in what turned out to be",
+        "url": "https://finnhub.io/api/news?id=5a7a4b80897018ea3dfa1ac5b7e7b67158737739c6cc8f943dd3b8d76e6e8e98"
+      },
+      {
+        "datetime": "2026-07-27T19:36:49Z",
+        "headline": "Tuesday's big stock stories: What\u2019s likely to move the market in the next trading session",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "The Dow Industrials rose more than 260 points on Monday. Tune in to CNBC on Tuesday for Boeing CEO Kelly Ortberg and JetBlue CEO Joanna Geraghty.",
+        "url": "https://finnhub.io/api/news?id=a3fbb4433f2f3a8874abbe62a481d97aa1627dfaf5ebd744de135edfc146014b"
+      },
+      {
+        "datetime": "2026-07-27T19:10:05Z",
+        "headline": "Monday's session: top gainers and losers in the dow jones index",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Let's have a look at the top dow jones gainers and losers one hour before the close of the markets of today's session.",
+        "url": "https://finnhub.io/api/news?id=cb78fd5b6d971beed68ff684ddaa78ca399ac0d5c1918fac5995e99449126988"
+      },
+      {
+        "datetime": "2026-07-27T17:54:38Z",
+        "headline": "Update: Equities Mixed Intraday as Markets Await Fed Decision, More Earnings Reports",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with latest market prices and developments.) US stocks were mixed intraday amid a sharp",
+        "url": "https://finnhub.io/api/news?id=039207139fd0f0d3272078cfd07aae8b0fb3efd623dcc3fce2410240b9b3f939"
+      },
+      {
+        "datetime": "2026-07-27T17:47:37Z",
+        "headline": "In Scrambled Market, Avoid Putting All Your Financial Eggs In One Basket. Here's How.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The XLF ETF lets investors tap into the power of giants like JPMorgan, BofA and Berkshire with a single trade and less risk.",
+        "url": "https://finnhub.io/api/news?id=69df3489ea9a021c8b8ba636941eb1288f4af96f5d958e52a953e08807908d7c"
+      },
+      {
+        "datetime": "2026-07-27T17:16:10Z",
+        "headline": "S&P 500 Second-Quarter Earnings Growth Reaches 70%, Oppenheimer Says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "S&P 500 companies' second-quarter earnings growth reached 70%, driven by the information technology",
+        "url": "https://finnhub.io/api/news?id=ea501f01f1f94e7fc4f83cb68bde7d8193d75c7629f1a619e9a4ba20eeb05a5f"
+      },
+      {
+        "datetime": "2026-07-27T16:05:00Z",
+        "headline": "Could Buying Visa Stock Today Set You Up for Life?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The payments enterprise has seen its share price soar 2,410% since its initial public offering in 2008.",
+        "url": "https://finnhub.io/api/news?id=339dec14a23ed9010ae792bcf0cdac5925be4f721859c1d4b2fc6f29327ffdf9"
+      },
+      {
+        "datetime": "2026-07-27T15:29:00Z",
+        "headline": "TT Gears Up to Report Q2 Earnings: What's in the Cards?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Trane Technologies heads into Q2 results with a strong earnings beat streak as demand for commercial HVAC & data center cooling solutions fuels expectations.",
+        "url": "https://finnhub.io/api/news?id=514fef9e60ca57fe2e52e46253ed85ffb481d486504ac21dcf982bd8c03b7835"
+      },
+      {
+        "datetime": "2026-07-27T14:30:00Z",
+        "headline": "Week ahead: Wall Street's biggest summer test is here with Big Tech, Fed on deck",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Wall Street is heading for a pivotal week as Big Tech earnings, the Federal Reserve's rate decision and key inflation data test a market hovering near record highs. The busiest stretch begins on Wednesday, when Microsoft and Meta Platforms report earnings before the focus quickly shifts to...",
+        "url": "https://finnhub.io/api/news?id=2a1b192dba9661ce0046ef537c7fb5a57c2de731a8928d17065289d014dabaa0"
+      },
+      {
+        "datetime": "2026-07-27T13:50:16Z",
+        "headline": "JPMorgan and Goldman Posted Record Quarters \u2014 Their Own CEOs Aren\u2019t Sure It Lasts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "July 14 was one of the most concentrated single-day events of Wall Street\u2019s Q2 2026 earnings season, with all five of America\u2019s largest banks reporting results on the same morning, alongside the June CPI report and Federal Reserve Chair Kevin Warsh\u2019s inaugural Congressional testimony. Combined, those five firms have more than $13 trillion in assets, [\u2026]",
+        "url": "https://finnhub.io/api/news?id=04d396fbf8f5b5d6ab3bfb22159b5a32096a63095c3b2ceff5ecdd357ee5fecd"
+      },
+      {
+        "datetime": "2026-07-27T13:46:37Z",
+        "headline": "Bank of Hawaii Second-Quarter Earnings Top Views, Revenue Falls Short",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Bank of Hawaii (BOH) reported higher-than-expected second-quarter earnings on Monday, while revenue",
+        "url": "https://finnhub.io/api/news?id=fd254d65ad48cb32940cbc1d0f42ec6f76b091c5cf935488e980cc8c3fcbf3f8"
+      },
+      {
+        "datetime": "2026-07-27T13:38:19Z",
+        "headline": "Qualcomm downgraded, Rivian upgraded: Wall Street's top analyst calls",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Qualcomm downgraded, Rivian upgraded: Wall Street's top analyst calls",
+        "url": "https://finnhub.io/api/news?id=e73548ee05d3edc3a1a07177b5271c3768a983d18ac7b20a7fe693a3d77147f9"
+      },
+      {
+        "datetime": "2026-07-27T12:52:12Z",
+        "headline": "Update: US Equity Futures Rise Pre-Bell as Oil Prices Drop Amid Pause in Middle East Hostilities",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "US equity futures rose pre-bell Monday as oil prices declined amid a pause in hostilities between th",
+        "url": "https://finnhub.io/api/news?id=adf0f46b707356684ded63f97397b9d564eb8141d3d6f2ecdff3efade763a882"
+      },
+      {
+        "datetime": "2026-07-27T12:01:46Z",
+        "headline": "Stocks Rise Pre-Bell as US, Iran Pause Strikes; Fed Policy Decision, Inflation Report on Deck",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The benchmark US stock measures were pointing higher before the opening bell Monday after the US and",
+        "url": "https://finnhub.io/api/news?id=27a2a5d4664277bf3df3fbcfbd5c96757556fa20c7844c29316704945e7bef3a"
+      },
+      {
+        "datetime": "2026-07-27T11:57:15Z",
+        "headline": "US Equity Futures Rise Pre-Bell as Oil Prices Drop Amid Pause in Middle East Hostilities",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "US equity futures rose pre-bell Monday as oil prices declined amid a pause in hostilities between th",
+        "url": "https://finnhub.io/api/news?id=f423389dc51817dd6c1c1d4c507cff77618ff977d62c5fb4680b645dde5e925c"
+      },
+      {
+        "datetime": "2026-07-27T11:52:07Z",
+        "headline": "Earnings live: LVMH sales grow as US luxury shoppers boost results",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Earnings season kicks into high gear this week.",
+        "url": "https://finnhub.io/api/news?id=821b4c9d505c4d99f934834668e2a3c5bf3291b563063985294c11eb53929dfd"
+      },
+      {
+        "datetime": "2026-07-27T11:52:07Z",
+        "headline": "Earnings live: AstraZeneca stock rises to kick off a busy earnings week",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Earnings season kicks into high gear this week.",
+        "url": "https://finnhub.io/api/news?id=a879e9997dc6ee371ff3fdd33f419384a071c9443d1063bbfdff922013a619c1"
+      },
+      {
+        "datetime": "2026-07-27T11:20:37Z",
+        "headline": "Sinking Oil Lifts Wall Street Pre-Bell; Asia, Europe Up",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Wall Street futures pointed higher pre-bell Monday on softer oil prices and statements from Tehran a",
+        "url": "https://finnhub.io/api/news?id=4aa806b23c8e492f14b990a6032ce5ae295159fba5f37c33e5050fc734c0ad1a"
+      },
+      {
+        "datetime": "2026-07-27T05:49:02Z",
+        "headline": "Visa (V) Reports Q2: Everything You Need To Know Ahead Of Earnings",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Global payments technology company Visa (NYSE:V) will be reporting earnings this Tuesday after market hours. Here\u2019s what investors should know.",
+        "url": "https://finnhub.io/api/news?id=a4587dff2e6c54b65a977605178406b1d8e31d0e0d2fa13476820a20c10f69d0"
+      },
+      {
+        "datetime": "2026-07-26T19:08:30Z",
+        "headline": "Tracking Lone Pine Capital Portfolio - Q1 2026 Update",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Lone Pine Capital\u00e2\u0080\u0099s Q1 2026 13F update: portfolio fell to $12.54B, new stakes and big exits.",
+        "url": "https://finnhub.io/api/news?id=be41904ebdcc5bca5c274b445a00f402da10ab95c9fff40563b47912a70c691e"
+      },
+      {
+        "datetime": "2026-07-26T18:00:00Z",
+        "headline": "Fed Meeting, Inflation, Boeing, Meta, Apple, Exxon, and More to Watch This Week",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "This is a huge earnings week, with nearly a third of S&P 500 companies reporting. The Fed is expected to hold rates steady after its confab ends Wednesday, and we\u2019ll see key inflation data on Thursday.",
+        "url": "https://finnhub.io/api/news?id=063caae182b53b5cfa5bf5335b445579d39efe33c8b2f7c5a64a34b5a4cd2ea2"
+      },
+      {
+        "datetime": "2026-07-26T15:05:00Z",
+        "headline": "These 4 Earnings Reports Expose the Market\u2019s Growing Economic Divide",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Northrop Grumman, D.R. Horton, Capital One and Charles Schwab reported Q2 earnings beats on July 21, revealing diverging trends in defense, housing and financials sectors.",
+        "url": "https://finnhub.io/api/news?id=ce69b01b9b10e1f907866a38de68e45aa9b4dda6c424ca66e37aa3d37e9cf93a"
+      },
+      {
+        "datetime": "2026-07-26T14:59:31Z",
+        "headline": "Tracking Ole Andreas Halvorsen's Viking Global Portfolio - Q1 2026 Update",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Viking Global\u00e2\u0080\u0099s Q1 2026 13F: new stakes in Apple, Meta & FedEx, big Visa add, and exits like AMD & DKNG.",
+        "url": "https://finnhub.io/api/news?id=8e8fa4d223ad5a2aa5e8232d0023938544c3ad8c4fad52c33e670c1bcd4d404f"
+      },
+      {
+        "datetime": "2026-07-26T08:30:23Z",
+        "headline": "Earnings Volatility Watch: 12 Stocks With Double-Digit Implied Moves This Week",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Apple, Microsoft, Amazon and Meta report this week, but options traders expect bigger swings from Bloom Energy, KLA and 10 other names.",
+        "url": "https://finnhub.io/api/news?id=311932cac57a427174119777bdc64152d87f55570840778cb9388262d9f662eb"
+      },
+      {
+        "datetime": "2026-07-26T08:15:00Z",
+        "headline": "Earn 10-15% Potential Income: Monthly Options Series (Aug. 2026)",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "The series targets generating 12\u00e2\u0080\u009315% annualized income through disciplined selling of PUT and BUY-WRITE CALL options on large-cap stocks. Check out the strategy here.",
+        "url": "https://finnhub.io/api/news?id=2c5db92c8ab827ee6f3b90cbf33fde6ea6c56be2eb02d39168027e8407bb46f0"
+      },
+      {
+        "datetime": "2026-07-25T23:03:10Z",
+        "headline": "Visa's Strong Growth Doesn't Justify An Upgrade",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Visa (V) shows strong revenue/transaction growth and stablecoin innovation, but valuation looks rich.",
+        "url": "https://finnhub.io/api/news?id=3414f987274f31382d60dd3f6b23beaf15946079bb7f87177eb80d481df888ce"
+      },
+      {
+        "datetime": "2026-07-25T11:00:00Z",
+        "headline": "Big Tech Earnings, Fed's Interest Rate Decision To Keep Next Week Busy",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Wall Street Week Ahead: key earnings (AAPL, MSFT, META), Fed decision, GDP/PCE and IPOs\u00e2\u0080\u0094plus volatility, dividends and RSI screens. See more here.",
+        "url": "https://finnhub.io/api/news?id=2a9a468b4cda06411e0b3358a8f32ec8ca05e55f439a793c6c9ac9170bb0c9f1"
+      },
+      {
+        "datetime": "2026-07-25T04:21:28Z",
+        "headline": "Visa (V) Just Completed Greater China\u2019s First AI Powered B2B Agentic Payment",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa (NYSE:V) and Lianlian completed Greater China's first AI powered B2B agentic payment. The transaction used Visa's Agentic Directory to run an end to end cross border payment autonomously within preset controls. The move highlights Visa's push into agentic commerce and machine to machine financial transactions. For investors tracking Visa at a share price of $355.74, this AI powered B2B payment with Lianlian puts fresh attention on the company's role in digital payment infrastructure...",
+        "url": "https://finnhub.io/api/news?id=3f38b7dd775dfd45cc948d99e2822e308da768e35e9a03f2b6781fe259473759"
+      },
+      {
+        "datetime": "2026-07-24T21:45:02Z",
+        "headline": "Why Visa (V) Outpaced the Stock Market Today",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In the closing of the recent trading day, Visa (V) stood at $355.74, denoting a +1.18% move from the preceding trading day.",
+        "url": "https://finnhub.io/api/news?id=602e267ecf4c5878716c7f6f9068b2d50094a131bf0b934f5d038dedc4d7c73f"
+      },
+      {
+        "datetime": "2026-07-24T21:22:00Z",
+        "headline": "Visa and Apple: Cash-Generating Machines",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "For those seeking cash-generators, both Visa (V) and Apple (AAPL) fit the criteria nicely, with each also soon to report quarterly results.",
+        "url": "https://finnhub.io/api/news?id=fb1cc3a721ed10244cb3ebb64b8e7266209394062f2d75d919d575de2932f34f"
+      },
+      {
+        "datetime": "2026-07-24T18:11:00Z",
+        "headline": "PayPal to Report Q2 Earnings: What Should Investors Do?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "PYPL heads into Q2 earnings with TPV growth and platform expansion in focus but faces margin pressure, competition and macroeconomic uncertainty.",
+        "url": "https://finnhub.io/api/news?id=62266ae8fce4eab1397655975736a8363d3580c4ca046c7c2d01571ce19af74f"
+      },
+      {
+        "datetime": "2026-07-24T16:40:04Z",
+        "headline": "Explore the top gainers and losers within the dow jones index in today's session.",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Curious about the dow jones stocks that are in motion on Friday? Join us as we explore the top movers within the dow jones index during today's session.",
+        "url": "https://finnhub.io/api/news?id=4997b4df2c1439dc08aeccb21803747beb7d511fe544df611dff9e6b9aa18a2c"
+      },
+      {
+        "datetime": "2026-07-24T16:36:00Z",
+        "headline": "Veralto Gears Up to Report Q2 Earnings: What's in the Cards?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "VLTO heads into Q2 results with a strong earnings beat streak as demand, acquisitions and segment growth set expectations for higher sales and profit.",
+        "url": "https://finnhub.io/api/news?id=c25d6282e66e45e2472dfff84e313ee869014799e4a290562c3dfa3e4e5a0327"
+      },
+      {
+        "datetime": "2026-07-24T14:04:03Z",
+        "headline": "American Express Sinks 6% After Q2 Earnings Beat as Visa, Mastercard Hold Steady",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "American Express just posted a clear earnings beat, yet its stock is cratering while Visa and Mastercard barely flinch. The divergence points to a specific tension inside the report that traders are punishing hard.",
+        "url": "https://finnhub.io/api/news?id=b5d8bbaaf325ebd16219cbe815e20ef90fc8a45e5adb2dcd05d09629a1f895dd"
+      },
+      {
+        "datetime": "2026-07-24T12:00:00Z",
+        "headline": "Why investors should be 'really excited' about this form of agentic AI trading",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Franklin Templeton executive vice president and head of digital assets and innovation, Sandy Kaul, discusses how she sees the future of AI agentic trading. \"The Daily Wolf with Scott Melker\" airs every day at 12:00 p.m. Tune in for your daily dose of all things crypto. Make sure to also check out Yahoo Finance's new crypto hub to find the latest crypto-related news.",
+        "url": "https://finnhub.io/api/news?id=70f1451a33e932887fdb9e91e8873643f34f0b9e80d7e592e639fb9dff3f16cb"
+      },
+      {
+        "datetime": "2026-07-24T11:09:03Z",
+        "headline": "Visa: I Am Expecting A 'Business As Usual' Earnings Beat Next Week",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Visa stock remains a \"Buy\" as the future looks bright for the financial payments company. Here's what investors need to know.",
+        "url": "https://finnhub.io/api/news?id=65765df8e1c27948a4879ae952d4779e9be7d412ce16dc4b5ac1c5d694b3c3bd"
+      },
+      {
+        "datetime": "2026-07-24T09:55:56Z",
+        "headline": "Robinhood, Hyperliquid Could Lead Crypto's Next Bull Market, Says Matthew Sigel: 'Wall Street Is Going Onchain'",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "The next crypto bull market is likely to be driven by blockchain and traditional finance convergence. HYPE and HOOD are the early leaders while winners in next cycle could be Uniswap, Aave, Morpho, Coinbase, Figure, BlackRock, Visa.",
+        "url": "https://finnhub.io/api/news?id=5257b1ab1ff4eec1aaf03ee0f3b0978755332afb32fe1392133ffdfa3ffc9df6"
+      },
+      {
+        "datetime": "2026-07-24T09:30:00Z",
+        "headline": "Why Dividend Investing Often Wins",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Dividend growers beat the S&P 500 with lower volatility. Click for a look at my investing strategy and my current top income picks.",
+        "url": "https://finnhub.io/api/news?id=83c2461bcf3e54837747f3251ab2778c666c21e7da621a9e9f206f7150e563a8"
+      },
+      {
+        "datetime": "2026-07-24T08:16:39Z",
+        "headline": "Truist Securities Maintains Buy on Visa, Raises Price Target to $394",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Truist Securities  analyst Matthew Coad   maintains Visa (NYSE:V) with a Buy and raises the price target from $371 to $394.",
+        "url": "https://finnhub.io/api/news?id=6c6ed5a1cdab6c6f0c4884857a0ce985e8be61d8dd49dd2568ef687681c59639"
+      },
+      {
+        "datetime": "2026-07-24T06:47:09Z",
+        "headline": "Visa and Lianlian complete Greater China\u2019s first live agentic B2B payment",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Transaction marks a milestone for small businesses where procurement can now be delegated to an agent to be managed entirely",
+        "url": "https://finnhub.io/api/news?id=3ea1411ecb454c019d93495c985249c6ef2ae3111fc6b238c41c034b8db493f7"
+      },
+      {
+        "datetime": "2026-07-24T04:00:00Z",
+        "headline": "Visa and Lianlian Advance Trusted B2B Agentic Commerce Through LoopXPay's First Live B2B Agentic Transaction",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Visa (NYSE: V), a global leader in digital payments, and Lianlian DigiTech Co., Ltd. (\"Lianlian\"), an AI-native global financial infrastructure provider, today announced the first live B2B agentic transaction completed using LoopXPay, Lianlian's AI agent.",
+        "url": "https://finnhub.io/api/news?id=d1b086dece5160c11cf2205ba18f9d538a93987ed978d2df40691e72ba2d7b4c"
+      },
+      {
+        "datetime": "2026-07-24T00:49:32Z",
+        "headline": "Stablecoin Supply Nears $310 Billion as XDC Integrates Stripe-Owned Bridge",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "XDC Tech integrates Bridge to add fiat access, virtual accounts, custody, and stablecoin settlement for businesses and future AI agent payments.",
+        "url": "https://finnhub.io/api/news?id=367f737d37fa5bf7e4b6c6884ef506e92dfba08d52f12dcfe7240ca8844eb832"
+      },
+      {
+        "datetime": "2026-07-23T22:06:22Z",
+        "headline": "Boyd Gaming Q2 Earnings Call Highlights",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Boyd Gaming (NYSE:BYD) reported comparable second-quarter growth as strength in its Midwest and South properties, online operations and managed business helped offset continued softness tied to Las Vegas destination travel and construction disruption at Suncoast. President and Chief Executive Offic",
+        "url": "https://finnhub.io/api/news?id=82a10d87a81aae5fb55a7087fe8ddb75d5f2f69cc8df5a6455fe20e87a766be3"
+      },
+      {
+        "datetime": "2026-07-23T20:22:00Z",
+        "headline": "MoonPay Now Accepts Discover Cards For Crypto Purchases",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Privately held MoonPay has adopted the Discover Network, allowing its customers to buy and sell cryptocurrencies th...",
+        "url": "https://finnhub.io/api/news?id=82716f2819d53fb056ecacab5d0c4f944fc80269ff86427d6ed3fc437c7aa163"
+      },
+      {
+        "datetime": "2026-07-23T17:07:04Z",
+        "headline": "Pool Q2 Earnings Call Highlights",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Pool (NASDAQ:POOL) reported a modest increase in second-quarter 2026 sales while maintaining its adjusted earnings outlook, as recurring maintenance demand and gains in building materials helped offset continued weakness in new pool construction and discretionary spending. President and CEO John Wa",
+        "url": "https://finnhub.io/api/news?id=c283ef471633553f1f3e792d7f357108eb21554f46830ed972a81243d69ae30e"
+      },
+      {
+        "datetime": "2026-07-23T16:27:00Z",
+        "headline": "Visa's Q3 Earnings Could be a Catalyst: Should You Buy Now?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "V heads into fiscal Q3 earnings with a strong beat history, rising payment volumes and digital payments growth, but can results justify its premium valuation?",
+        "url": "https://finnhub.io/api/news?id=064d20b54994ca5bbf603903e4e7aff223eaa60988831b36b7f25442a88931f5"
+      },
+      {
+        "datetime": "2026-07-23T15:01:56Z",
+        "headline": "Is Visa (V) an Overlooked Opportunity?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Montaka Global Investments, an investment management company, released its second-quarter 2026 investor letter. A copy of the update is available to download here. Montaka manages a concentrated portfolio of high\u2013conviction, long-term, competitively advantaged businesses bought when prices are attractive. While it delivered positive returns in the June quarter, its 12-month performance was largely negative due to [\u2026]",
+        "url": "https://finnhub.io/api/news?id=2e460d628d1e909014c7b4bb75f02c49d38fcea9c4f916c26490faac61586ec7"
+      },
+      {
+        "datetime": "2026-07-23T15:00:00Z",
+        "headline": "Callen Adds Creative, Account Staffers, Reports Strong Revenue Growth",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The agency reported an 80.5% revenue increase in the past 12 months.",
+        "url": "https://finnhub.io/api/news?id=9d742800f9b02634958b758a8cc4e5f7db0cb9d8096cf6ef03f0d876407b9a5e"
+      },
+      {
+        "datetime": "2026-07-23T14:49:47Z",
+        "headline": "PayPal Trades at an 11x P/E and Repurchases 8% of Shares Annually. Should You Buy Before July 28 Q2 Earnings?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A rejected buyout offer, an aggressive buyback program, and a valuation half that of its closest rival paint an unusual picture for PayPal heading into its July 28 earnings report.",
+        "url": "https://finnhub.io/api/news?id=075e1dd0a70f75684c9f1c7321430028499f5b613b4675ea0d494bc652b353e5"
+      },
+      {
+        "datetime": "2026-07-23T14:44:07Z",
+        "headline": "1 Surging  Stock with Impressive Fundamentals and 2 We Turn Down",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Each stock in this article is trading near its 52-week high. These elevated prices usually indicate some degree of investor confidence, business improvements, or favorable market conditions.",
+        "url": "https://finnhub.io/api/news?id=a50865ce16c76925acaf8882a59d2e497b45e50409b54769e4d57c059bca47cd"
+      },
+      {
+        "datetime": "2026-07-23T14:19:22Z",
+        "headline": "Mastercard (NYSE:MA): Jim Cramer\u2019s \u201cTech Company in Bank Clothing\u201d",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "During the July 21 episode of CNBC\u2019s Mad Money, host Jim Cramer reviewed Mastercard Incorporated (NYSE:MA) using options trader Bob Lang\u2019s analysis of the daily chart of the stock. Pointing to the company as a premier vehicle for investors seeking to rebalance away from pure tech without sacrificing growth or high-margin processing power, Cramer highlighted [\u2026]",
+        "url": "https://finnhub.io/api/news?id=aedb3fb922365c3731475f1206705ade1514d6a8609eebb2ff4f8ce0ac2f7337"
+      },
+      {
+        "datetime": "2026-07-23T14:06:05Z",
+        "headline": "Jim Cramer Highlights Visa (V) as Consumer Credit Demand Soars",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "During the Tuesday episode of Mad Money, host Jim Cramer discussed the major credit card networks as he noted that consumer spending remains resilient. He began by highlighting the broader economic data and noted that roughly 81% of Americans hold a credit card, averaging three to four cards per consumer, with cardholders using about 29% [\u2026]",
+        "url": "https://finnhub.io/api/news?id=9771f8d477383a6ed077725e78931c06746fa4de63fafb9dd12f7a8dac5606ed"
+      },
+      {
+        "datetime": "2026-07-23T14:00:27Z",
+        "headline": "Euronet Worldwide (EEFT) Earnings Expected to Grow: What to Know Ahead of Next Week's Release",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Euronet Worldwide (EEFT) doesn't possess the right combination of the two key ingredients for a likely earnings beat in its upcoming report. Get prepared with the key expectations.",
+        "url": "https://finnhub.io/api/news?id=83b32410c01b40f30fede5e6b423a27a6bf353e0726645bfad4ca6cfe4da7193"
+      }
+    ],
+    "ticker": "V"
+  },
+  "recorded_at": "2026-08-06T01:15:14.357577+00:00",
+  "status": "ok"
+}

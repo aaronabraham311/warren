@@ -1,0 +1,1858 @@
+{
+  "data": {
+    "days": 30,
+    "items": [
+      {
+        "datetime": "2026-08-05T17:04:00Z",
+        "headline": "Shake Shack Sizzles After Starboard Reveals a Stake",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The move extended a smaller premarket gain after the company\u2019s better-than-expected second quarter earnings release.",
+        "url": "https://finnhub.io/api/news?id=b16c43fa83668c301a732a177945d705b931b4021a9dfc88f80814c8ebfde0d5"
+      },
+      {
+        "datetime": "2026-08-05T16:23:29Z",
+        "headline": "Chipotle Stock Carries A Premium Built On New Restaurants",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chipotle Mexican Grill stock is valued above the market on earnings while running a thinner margin, and the growth paying for that gap now comes mostly from opening restaurants.",
+        "url": "https://finnhub.io/api/news?id=4bf1392c75b915de71db1cc8779486e70d5aeece2df2e87ec2c6a5bfc1e80fe8"
+      },
+      {
+        "datetime": "2026-08-05T15:59:21Z",
+        "headline": "Update: Market Chatter: Starbucks  Korea Headquarters Raided Over 'Tank Day' Marketing Campaign",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates to include a statement from Starbucks Korea in the last paragraph.) Starbucks (SBUX) hea",
+        "url": "https://finnhub.io/api/news?id=1e1d31599bf1c6440fb426ebef7ceb88b6b7954946c9bf3d875b936f5efe2d91"
+      },
+      {
+        "datetime": "2026-08-05T11:45:22Z",
+        "headline": "Brian Niccol\u2019s Turnaround Is Working, and Starbucks Has Rewarded Long-Term Believers",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Brian Niccol walked into a struggling Starbucks with a deceptively simple plan, and the numbers are starting to prove the skeptics wrong. Here is what a $10,000 bet at the 2011 logo rebrand looks like today, and whether the rally has more room to run.",
+        "url": "https://finnhub.io/api/news?id=563c6756a343b1588c18510ffdbd457d2203f8136182bc9ed228d29dd7f71594"
+      },
+      {
+        "datetime": "2026-08-04T19:31:21Z",
+        "headline": "Starbucks Revives Fan Favorite as Traffic Slips",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks is widening its lineup as rivals crowd in",
+        "url": "https://finnhub.io/api/news?id=50ae62d7eb0200fa50a57db1ef8ba12aafcb2fed74ea1d3205d531bf926c21c1"
+      },
+      {
+        "datetime": "2026-08-04T14:39:00Z",
+        "headline": "The Zacks Analyst Blog Highlights Amazon, Marvell, Starbucks, Preformed Line Products  and Crown Crafts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Amazon's AI expansion, AWS strength and diversified businesses support growth, while Marvell and Starbucks post strong momentum despite key challenges.",
+        "url": "https://finnhub.io/api/news?id=a2703b8a7e069616e6b9a6309813259f5aff3e62259774f9f0a3d24c43d56540"
+      },
+      {
+        "datetime": "2026-08-04T11:00:02Z",
+        "headline": "Covered Call Screener Results for August 4th",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Covered Call Screener Results for August 4th",
+        "url": "https://finnhub.io/api/news?id=72a524ed5e92aa5298476080327921ad2c10a62ad3e475418bacfacbff99fcca"
+      },
+      {
+        "datetime": "2026-08-03T20:51:00Z",
+        "headline": "Top Research Reports for Amazon, Marvell & Starbucks",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Amazon, Marvell and Starbucks lead today's featured research reports, highlighting AI, growth trends and key opportunities and risks.",
+        "url": "https://finnhub.io/api/news?id=3f231fb0754dcef3f53539197539aba7ecf9fd6ca6848ff7424b606918926ce7"
+      },
+      {
+        "datetime": "2026-08-03T19:46:24Z",
+        "headline": "Coca-Cola Stock Keeps Pace With The Market Without Following It",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The five-day run is not the story; the story is how little of Coke's long-run return has actually come from the market you already own.",
+        "url": "https://finnhub.io/api/news?id=a3c9d8a615a222e4622f76cb11e675ba6fa822a43a9e1dfe22b684c2eacf0531"
+      },
+      {
+        "datetime": "2026-08-03T15:10:00Z",
+        "headline": "Can Starbucks' Raised 2026 Outlook Drive a Durable Earnings Recovery?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SBUX raised its fiscal 2026 outlook after stronger sales and margins, but lasting earnings gains still hinge on sustaining growth and managing costs.",
+        "url": "https://finnhub.io/api/news?id=2da0504507ef2d5a057f616ec8517440b05d3533b002eb88534d539204372a0d"
+      },
+      {
+        "datetime": "2026-08-03T14:52:00Z",
+        "headline": "Is Starbucks Stock a Buy as Growth Rebounds but Valuation Stays High?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SBUX shows stronger sales, traffic and earnings as management lifts fiscal 2026 outlook, but its premium valuation keeps the turnaround under close watch.",
+        "url": "https://finnhub.io/api/news?id=f0c8c4428fdcb9a05dbb343745ef6abd9c01f88a4b0d1cf5e4b1fea47ead0c95"
+      },
+      {
+        "datetime": "2026-08-03T14:00:00Z",
+        "headline": "SBUX Q3 Earnings Call Highlights Durable Traffic Recovery",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks raises its fiscal 2026 outlook as broader traffic gains, faster service and store upgrades strengthen its turnaround.",
+        "url": "https://finnhub.io/api/news?id=2eed5badd563bd0c507010bafdcb920f516a2f9497cfff7d51fa441d24fd6ce0"
+      },
+      {
+        "datetime": "2026-08-03T11:53:18Z",
+        "headline": "Here Are Monday\u2019s Top Wall Street Analyst Research Calls: Best Buy, Circle Internet, Corning, Eaton Corporation, eBay, Ingersoll-Rand, NXP Semiconductors, Starbucks, and More",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Wall Street analysts are reshuffling their bets heading into August, and some of the calls on Monday target names that range from a crypto giant to a coffee behemoth to a semiconductor darling. Find out which stocks just got slapped with new downgrades and which ones earned fresh upgrades.",
+        "url": "https://finnhub.io/api/news?id=08e58037fd418f30224d28465e98d0d98c2360b58f5a3ff2685c03b2dd17b798"
+      },
+      {
+        "datetime": "2026-08-03T11:16:13Z",
+        "headline": "Luckin Coffee: Clear Softness Beneath Ambitious Growth",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Luckin Coffee Inc. expands fast in China, but same-store sales fell 5.3% in Q2, hinting weaker performance. Click for more on LKNCY earnings.",
+        "url": "https://finnhub.io/api/news?id=62e6da5eaf795998d7ea5a4623a95ec301e928c8cd756f5a058de196b53181b9"
+      },
+      {
+        "datetime": "2026-08-03T09:34:08Z",
+        "headline": "Cramer\u2019s Mad Dash: Starbucks",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC\u2019s Jim Cramer delivers his daily Mad Dash.",
+        "url": "https://finnhub.io/api/news?id=9ffccbc6a7d3d66f3f36809b873ecf54d37880ce8b3c5e34e23c6eac602262e7"
+      },
+      {
+        "datetime": "2026-08-03T00:37:00Z",
+        "headline": "Starbucks CEO says your local store may not survive",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Your neighborhood Starbucks (SBUX) might look bulletproof, especially if it survived ballooning rents, changing commutes, and years of customers ordering the same morning drink. However, Starbucks is no longer looking at treating every existing caf\u00e9 as untouchable. The chain is becoming much ...",
+        "url": "https://finnhub.io/api/news?id=d061ffdcadc15ff1ed65bbdc64480329bdc5f97c1bd69f88a15c4bd9ff16d956"
+      },
+      {
+        "datetime": "2026-08-02T12:30:00Z",
+        "headline": "The tech stock dumpster fire should remind you of this important investing lesson",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Nothing wrong with a comeback story.",
+        "url": "https://finnhub.io/api/news?id=f30c7ffd1545224e0b6fd99fe0439a7be0b35f8f5f4512e3c3fac8785795449e"
+      },
+      {
+        "datetime": "2026-08-01T06:30:32Z",
+        "headline": "Starbucks' Turnaround Is Gaining Steam, But The Stock Isn't A Buy",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Starbucks\u00e2\u0080\u0099 turnaround boosts comp sales and margins; FY2026 guidance rises as AI cost cuts help. Read here for a detailed analysis of SBUX stock.",
+        "url": "https://finnhub.io/api/news?id=a28ace9ad25ea0a14b2415ea1a2589bd179a7e9d294d7e32c4b531899cddc8d2"
+      },
+      {
+        "datetime": "2026-08-01T06:25:00Z",
+        "headline": "Starbucks vs. Chipotle: Both Restaurants Are Seeing Turnarounds, but Which Stock Is the Better Buy Today?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chipotle shares shot up after strong Q2 earnings, but Starbucks stock could be the better buy.",
+        "url": "https://finnhub.io/api/news?id=c531df0e1f7c84e64a3e5e39a7ea2d7bc399cd704a041121227d9e8ca4878f6b"
+      },
+      {
+        "datetime": "2026-08-01T02:03:00Z",
+        "headline": "Starbucks' turnaround has secret weapon beyond pumpkin spice",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "While Starbucks has had stumbles over the past few years, it seems to have finally found its footing. That's thanks to CEO Brian Niccol, who joined the company in September 2024 to take the reins of a major overhaul. Niccol's plan, called \"Back to Starbucks,\" prioritized investing in baristas and ...",
+        "url": "https://finnhub.io/api/news?id=dc3e4e32132c962588da53022d5a6318f5f9083101dc513a7d8bf156ddbaf8c6"
+      },
+      {
+        "datetime": "2026-07-31T17:48:17Z",
+        "headline": "Activist Investors Shift Back to Basics: ICR Global Head of Governance Gabriel Hasson, Live at NYSE",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "CorpGov hosted a fireside chat on July 28 from the floor of the New York Stock Exchange with Gabriel Hasson, Global Head of Governance, Shareholder and Activism Advisory, Managing Director at ICR. The in-person interview was joined by Editor-in-Chief John Jannarone and they discussed the back to fundamentals for corporate governance as shareholder activism reaches [\u2026] The post Activist Investors Shift Back to Basics: ICR Global Head of Governance Gabriel Hasson, Live at NYSE appeared first on Co",
+        "url": "https://finnhub.io/api/news?id=435095702cfeb95c19122ca847c40e7c70175e91b3f4dc1530f348d33198b494"
+      },
+      {
+        "datetime": "2026-07-31T16:41:41Z",
+        "headline": "Starbucks keeps its U.S. growth measured as it rethinks development",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The coffee shop giant expects more modest domestic growth next year as it looks to \u201cfix\u201d its expansion strategy.",
+        "url": "https://finnhub.io/api/news?id=ff3ceaba1ec1829f33cc823c18db48e3b709d2f8724ce4829e084fd8b0e9a966"
+      },
+      {
+        "datetime": "2026-07-31T15:30:50Z",
+        "headline": "Why Starbucks CEO says the pumpkin spice latte won't be on the menu year-round",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks will keep its fall favorite a fall favorite.",
+        "url": "https://finnhub.io/api/news?id=46e5f12db14dfe88b2ea05e7a7e1d14b59be24a44ecd756a66a75d22bcf9a186"
+      },
+      {
+        "datetime": "2026-07-31T15:30:44Z",
+        "headline": "A Turnaround Is Brewing At Starbucks. Here\u2019s Where It\u2019ll End The Year",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks just posted numbers that silenced the skeptics, but the real question now is whether the momentum can hold long enough to justify a valuation that leaves almost no margin for error.",
+        "url": "https://finnhub.io/api/news?id=9f3354ba0efe6b62e13e54a87afc424eeeeb26850f83ddfa4c1a8d4d103eabec"
+      },
+      {
+        "datetime": "2026-07-31T14:11:49Z",
+        "headline": "2 Cash-Producing Stocks to Research Further and 1 We Ignore",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Generating cash is essential for any business, but not all cash-rich companies are great investments. Some produce plenty of cash but fail to allocate it effectively, leading to missed opportunities.",
+        "url": "https://finnhub.io/api/news?id=8654ffa3a3d67d8115382c3abb48f2f01797af19c06d2d0b017d8e19f6aa6760"
+      },
+      {
+        "datetime": "2026-07-31T09:22:31Z",
+        "headline": "Starbucks Stock Trading Near 52-Week High: What's Driving the Upbeat Guidance?",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks shares are trading flat during Friday&#39;s premarket as investors digest the company\u2019s recent earnings-driven pop and updated outlook.",
+        "url": "https://finnhub.io/api/news?id=ec4e68dcef5fa6acbe9d0ea419be00125ff309bbb5ebc92d3957f4ab26a5d88a"
+      },
+      {
+        "datetime": "2026-07-31T08:08:56Z",
+        "headline": "Is Starbucks\u2019 Margin-Driven Q3 Beat And Guidance Hike Reshaping The Turnaround Case For SBUX?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In late July 2026, Starbucks reported fiscal third-quarter revenue of US$9,322.7 million, net income of US$1,045.3 million, and sharply higher earnings per share, while also raising full-year guidance to expect flat to slightly higher consolidated net revenues and diluted GAAP EPS of US$2.14 to US$2.24. Behind the headline numbers, a 7.9% rise in global comparable-store sales, margin expansion and early benefits from store remodels and international licensing moves pointed to the early...",
+        "url": "https://finnhub.io/api/news?id=2c6ea1ed3c8cefb152fc7a0567bc639e5b19b55bbe2d3564d645ff3b90851cd1"
+      },
+      {
+        "datetime": "2026-07-31T07:56:00Z",
+        "headline": "Panera to relocate HQ to Massachusetts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The fast casual chain said the move to Weston is part of its Panera\u00a0RISE strategy and will help foster more collaboration and decision-making.",
+        "url": "https://finnhub.io/api/news?id=e98b28bc73fe364d879ccff61a1afab0b7851aa1e9142d91598d9681ae674860"
+      },
+      {
+        "datetime": "2026-07-31T05:30:41Z",
+        "headline": "BTIG Reiterates Buy on Starbucks, Maintains $115 Price Target",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "BTIG  analyst Peter Saleh   reiterates Starbucks (NASDAQ:SBUX) with a Buy and maintains $115 price target.",
+        "url": "https://finnhub.io/api/news?id=96d4fb7a3d579fec7ee46d3eeed8bfcbbfaa7228034981e8e7cea5a6d286d1bd"
+      },
+      {
+        "datetime": "2026-07-31T01:13:26Z",
+        "headline": "Starbucks Stock to $120? Cramer Says Turnaround Is Accelerating",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Jim Cramer raises his Starbucks price target to $120, saying shares could hold above $100 as Niccol's turnaround plan gains traction.",
+        "url": "https://finnhub.io/api/news?id=5e1548e8539a9aa9cc2e9ecf36fa0f2016d613ddbb3a59e486807c5d310a56af"
+      },
+      {
+        "datetime": "2026-07-30T19:47:48Z",
+        "headline": "Starbucks Stock Jumps 3.7% as Turnaround Lifts Forecasts Again",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks raised its annual sales and earnings outlook after comparable growth and margins exceeded expectations.",
+        "url": "https://finnhub.io/api/news?id=82de96ce791d1c44b0c7cbadc2ee1aae85f97c709bda7a44475ed5ffcc4f3bf2"
+      },
+      {
+        "datetime": "2026-07-30T18:04:15Z",
+        "headline": "Fast-Casual Chain Tops Buy Point, While Lettuce Crisis Fades For Taco Bell. Starbucks Is Turning Around.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Better-than-expected earnings sent Chipotle Mexican Grill past a buy point Thursday while Yum Brands seemed to be overcoming a lettuce-linked illness that hurt its Taco Bell chain.  Starbucks showed signs its turnaround was taking effect.  Chipotle shares jumped more than 12% to the highest level since early February.",
+        "url": "https://finnhub.io/api/news?id=b3bad2be381ef672584529a8d63eea8a818631921e2c63e35ec26c6a9019711c"
+      },
+      {
+        "datetime": "2026-07-30T17:05:00Z",
+        "headline": "In today's session, there are S&P500 stocks with remarkable trading volume.",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Let's take a look at the S&P500 stocks that are experiencing unusual volume in today's session.",
+        "url": "https://finnhub.io/api/news?id=3c7658d74fb5791e167902d4595eaf473b33967617b977ceda3f488ef18cd3ab"
+      },
+      {
+        "datetime": "2026-07-30T16:15:00Z",
+        "headline": "Should You Buy Shake Shack Stock Before Aug. 5?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Location expansion remains strong, but margins for this restaurant chain deserve close attention.",
+        "url": "https://finnhub.io/api/news?id=fef5a47747bff76fa04333b454fcf7acdf63cceb025ce0ad903ff25f221a9154"
+      },
+      {
+        "datetime": "2026-07-30T15:51:45Z",
+        "headline": "UBS Maintains Neutral on Starbucks, Raises Price Target to $112",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "UBS  analyst Dennis Geiger   maintains Starbucks (NASDAQ:SBUX) with a Neutral and raises the price target from $105 to $112.",
+        "url": "https://finnhub.io/api/news?id=8c156adfd960c73094cdeaf555e405587dda39dac6ab05f70a307870d35a7807"
+      },
+      {
+        "datetime": "2026-07-30T15:46:38Z",
+        "headline": "Starbucks Is \u2018Just Starting to Play Offense\u2019 in Turnaround Effort, Analyst Says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Shares of Starbucks are rising Thursday as investors buy into the company\u2019s turnaround progress.",
+        "url": "https://finnhub.io/api/news?id=d8f3721a70b4f481a905fc9eddcc0aecef3a378193ddccff8ffabfa0f33bbebf"
+      },
+      {
+        "datetime": "2026-07-30T15:20:00Z",
+        "headline": "Starbucks Q3 profit beats on US turnaround, lifts full-year guidance",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks Corp (NASDAQ:SBUX, XETRA:SRB) beat Wall Street estimates for fiscal third-quarter revenue and profit as its turnaround plan drove stronger-than-expected US sales growth. Adjusted earnings per share came in at $0.85, above the $0.66 analyst estimate and up 70% year-over-year. Revenue...",
+        "url": "https://finnhub.io/api/news?id=47558a951fd32c8f93c0330ceb4b1017a45686c58eb2d5b17cb67ffee9748f8a"
+      },
+      {
+        "datetime": "2026-07-30T15:05:06Z",
+        "headline": "Citigroup Maintains Neutral on Starbucks, Raises Price Target to $112",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Citigroup  analyst Jon Tower   maintains Starbucks (NASDAQ:SBUX) with a Neutral and raises the price target from $108 to $112.",
+        "url": "https://finnhub.io/api/news?id=b03c9f9107a101676139a26b3f392473da2c162a77f8abbca7f5f74fe80212fc"
+      },
+      {
+        "datetime": "2026-07-30T15:04:09Z",
+        "headline": "Customers are Finding Worth and Value in Starbucks Again",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "If there\u2019s a particular track Starbucks fell off during its multi-year struggles, it was the equation of whether customers saw worth and value in their purchase. CEO Brian Niccol, who in September will lap two years with the brand, addressed this early on during investor calls. Did Starbucks have a pricing problem? Was it larger [\u2026]",
+        "url": "https://finnhub.io/api/news?id=356218087e8c2fb8d0ae6ae73973f25cadfc0d070ac011a3759760ed63858c96"
+      },
+      {
+        "datetime": "2026-07-30T14:59:18Z",
+        "headline": "BNP Paribas Maintains Underperform on Starbucks, Raises Price Target to $92",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "BNP Paribas  analyst Steve McManus   maintains Starbucks (NASDAQ:SBUX) with a Underperform and raises the price target from $87 to $92.",
+        "url": "https://finnhub.io/api/news?id=6de3e77f3af4277934af6309d67ab3ee8e164951fc595e756879e96d0e2746b6"
+      },
+      {
+        "datetime": "2026-07-30T14:40:26Z",
+        "headline": "RBC Capital Maintains Sector Perform on Starbucks, Raises Price Target to $115",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "RBC Capital  analyst Logan Reich   maintains Starbucks (NASDAQ:SBUX) with a Sector Perform and raises the price target from $110 to $115.",
+        "url": "https://finnhub.io/api/news?id=ef96feb8a637ea715da1da7a008bb6cb316e568f0900f7aae9b36fe4502e51ad"
+      },
+      {
+        "datetime": "2026-07-30T14:24:49Z",
+        "headline": "Carvana Sinks on Forecast; Chipotle Raises Guidance | Stock Movers",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "On this episode of Stock Movers: - Carvana (CVNA) is sinking after the online car retailer gave an annual adjusted Ebitda forecast with a midpoint below analyst estimates. - Chipotle (CMG) and Starbucks (SBUX) raised their guidance after stronger-than-expected quarters, with sales bolstered by new menu items and revamped loyalty programs. - Crocs (CROX) shares are sinking after a soft outlook for this quarter pointed to a weak second half, pushing some investors to sell following a big rally in the company's shares this year.",
+        "url": "https://finnhub.io/api/news?id=3b4f01c5fa32539d4494b5a635b6a1b2cfe738f90321604c5f216c45aa4daef2"
+      },
+      {
+        "datetime": "2026-07-30T14:23:00Z",
+        "headline": "Starbucks Stock Up as Q3 Earnings Beat Estimates, Comp Sales Rise",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SBUX's shares jump after fiscal third-quarter adjusted earnings beat estimates, comparable sales rise and management lifts fiscal 2026 guidance.",
+        "url": "https://finnhub.io/api/news?id=1ac744366d6b23bec4032c2ab57eadffe053cc120c87d808c237fe2565092693"
+      },
+      {
+        "datetime": "2026-07-30T14:20:39Z",
+        "headline": "Starbucks CEO: Store location contributes to making a 'great coffee house'",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks stock (SBUX) took a shot of espresso and is running with it since reporting fiscal third quarter earnings on Wednesday, the coffee giant topping estimates while outpacing same-store sales growth forecasts and raising its full-year outlook. Starbucks CEO Brian Niccol sits down with Yahoo Finance Executive Editor Brian Sozzi and Senior Reporter Brooke DiPalma to talk more about the earnings print and why location matters so much to making the chain's franchises a \"great coffee house.\"",
+        "url": "https://finnhub.io/api/news?id=cfae744df0435b4d996874d0f9f9d5985dea7c9e297e3602f804dc215f20433a"
+      },
+      {
+        "datetime": "2026-07-30T13:35:16Z",
+        "headline": "10 Consumer Discretionary Stocks With Whale Alerts In Today\u2019s Session",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity scanner.\nTraders will",
+        "url": "https://finnhub.io/api/news?id=a62692926cd1419a1cd918e3ea0907c4edb102ccaba016f9cef450184368880b"
+      },
+      {
+        "datetime": "2026-07-30T13:23:56Z",
+        "headline": "Starbucks is unlocking a major untapped part of its business",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks' afternoon business is picking up.",
+        "url": "https://finnhub.io/api/news?id=495f50748bb57b1beb3b0484017bf992e3aacbe3158e9ba0a1637fb97042aa24"
+      },
+      {
+        "datetime": "2026-07-30T13:00:29Z",
+        "headline": "Update: US Equity Futures Rise Pre-Bell Amid Latest Big Tech Earnings, Fed Rate Decision",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Updates with economic data, recent oil price movement, world markets' overview and corporate stock",
+        "url": "https://finnhub.io/api/news?id=f38f46c935203655316c230021774f7aa2c7abbc5b84599938451334da61145d"
+      },
+      {
+        "datetime": "2026-07-30T12:53:57Z",
+        "headline": "Starbucks Jumps After Strong Third-Quarter Results and Higher Full-Year Outlook",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks Corporation (NASDAQ:SBUX) reported third-quarter results that comfortably exceeded Wall Street expectations, supported by stronger customer traffic in North America and continued progress under its turnaround strategy. The coffee chain also raised its financial outlook for the full fiscal year.",
+        "url": "https://finnhub.io/api/news?id=1ba0fb9530de13db3472b407e5b9ef8cf312e5e8ad197a86f4828a1bf19414e7"
+      },
+      {
+        "datetime": "2026-07-30T12:38:56Z",
+        "headline": "Starbucks Stock Rises 7% as Free Cash Flow Triples",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Fourth straight quarter of comp growth, with full-year EPS guidance lifted to $2.55 to $2.65",
+        "url": "https://finnhub.io/api/news?id=cfef04720189cca4fcfd5cb956fc4ec515c27fe0dd747e4c208f8e2e21309871"
+      },
+      {
+        "datetime": "2026-07-30T12:35:09Z",
+        "headline": "Starbucks Stock Soars After Massive Q3 Earnings Beat and Higher Outlook",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks Delivers Blowout Quarter, Stock Pops on Strong Sales Growth",
+        "url": "https://finnhub.io/api/news?id=97527ecdf7d222045cf6c69abab209e9e8da8bd65d78bc20feca8b7b2914cfa4"
+      },
+      {
+        "datetime": "2026-07-30T12:29:19Z",
+        "headline": "Starbucks\u2019 experience refinements are \u2018turning engagement into rituals,\u2019 CEO says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "According to CEO Brian Niccol, better customer service and a revamped loyalty program are building trust with customers and making the brand more visible.",
+        "url": "https://finnhub.io/api/news?id=8e4d45eeeda6c08789ba3fd18d9dc59e9eefe3f46cf1553317fbd360dc4a73f3"
+      },
+      {
+        "datetime": "2026-07-30T11:40:02Z",
+        "headline": "Starbucks Posts Q2 EPS Beat On Strong North America Sales Momentum; FY26 Guidance Raised Again",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "SBUX reports upbeat Q3 results, with strong same-store sales and raised guidance. DA Davidson and TD Cowen analysts have mixed ratings.",
+        "url": "https://finnhub.io/api/news?id=7a7349b2ebbab569ab1548ccbac817ee8841c5ec145c0d6cc4ec83c3f08a2bf1"
+      },
+      {
+        "datetime": "2026-07-30T11:35:38Z",
+        "headline": "If You Invested $100 In Starbucks Stock 20 Years Ago, You Would Have This Much Today",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks (NASDAQ:SBUX) has outperformed the market over the past 20 years by 1.04% on an annualized basis producing an average annual return of 10.2%. Currently, Starbucks has a market capitalization of $122.04",
+        "url": "https://finnhub.io/api/news?id=96a803092209141388a7d369a1dcec37aa6713139209f831abeec8aa545f497b"
+      },
+      {
+        "datetime": "2026-07-30T11:23:00Z",
+        "headline": "DA Davidson Maintains Neutral on Starbucks, Raises Price Target to $110",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "DA Davidson  analyst Matt Curtis   maintains Starbucks (NASDAQ:SBUX) with a Neutral and raises the price target from $102 to $110.",
+        "url": "https://finnhub.io/api/news?id=443fd7033fe8d3aab94ba54a513372b28fc211b497761b62b0b067a64c094d0a"
+      },
+      {
+        "datetime": "2026-07-30T11:18:11Z",
+        "headline": "Starbucks Q3 2026 earnings beat as same-store sales jump 7.9%",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The coffee chain posted its fourth straight quarter of comparable sales growth and now expects adjusted EPS of $2.55 to $2.65 for fiscal 2026",
+        "url": "https://finnhub.io/api/news?id=cb493864f50a6cfe574a053dfe54de60b7776cb1425277e983b27b4ea1578d64"
+      },
+      {
+        "datetime": "2026-07-30T10:51:12Z",
+        "headline": "Evercore ISI Group Maintains Outperform on Starbucks, Raises Price Target to $120",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Evercore ISI Group  analyst David Palmer   maintains Starbucks (NASDAQ:SBUX) with a Outperform and raises the price target from $115 to $120.",
+        "url": "https://finnhub.io/api/news?id=12f8403437b0f8d5a3a873041d7fb989190ab8eab590c2361ea2ad543f7ac5af"
+      },
+      {
+        "datetime": "2026-07-30T10:39:00Z",
+        "headline": "Starbucks remodels, service tweaks are paying off",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The coffee giant gained same-store sales momentum in the U.S. market with its third consecutive quarter of comps growth.",
+        "url": "https://finnhub.io/api/news?id=fbbd8f0aec73d2c52325e9a6015ddf98727c08be846ca154214ffb0242a4f442"
+      },
+      {
+        "datetime": "2026-07-30T10:00:00Z",
+        "headline": "Matternet Appoints Starbucks EVP Sanjay Shah to Board of Directors",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "MOUNTAIN VIEW, Calif., July 30, 2026--Matternet, the world's only FAA Type-Certified drone delivery platform, today announced the appointment of Sanjay Shah to its Board of Directors. Mr. Shah currently serves as Executive Vice President and Chief Supply Chain Officer at Starbucks and has held senior operations and supply-chain leadership positions at Gopuff, Beyond Meat, Tesla, Amazon, and Dell.",
+        "url": "https://finnhub.io/api/news?id=e2f63662620fdac9c4642931f79633503be95c5f2742d320a3fba1987762af7f"
+      },
+      {
+        "datetime": "2026-07-30T09:43:27Z",
+        "headline": "Starbucks CEO Brian Niccol on Q3 earnings",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Brian Niccol, Starbucks CEO and chairman, joins 'Squawk on the Street' to discuss the company raising its full-year outlook after reporting its fourth straight quarter of same-store sales growth, the benefits of technology around its business, and more.",
+        "url": "https://finnhub.io/api/news?id=c4a5da4406a7f2dedc0c39c44850c8a5b3a3d3ed3c596ea5b56df1d746c8520a"
+      },
+      {
+        "datetime": "2026-07-30T09:43:18Z",
+        "headline": "The Fed Held, The Bond Market Called The Bluff, and Oil Did The Rest",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Wall Street sold off hard on Wednesday even after the Fed held rates steady, as three dissenters wanting a hike, a 30-year yield at its highest in years, and a 7% jump in oil combined into one messy tape. Microsoft and Meta reported after the bell, one delivered the AI proof-point investors wanted, the other reopened the capex debate.",
+        "url": "https://finnhub.io/api/news?id=c03aa034f7183ba315351079e3750cfd6125f5d0581fb59d54ddaa47c4748398"
+      },
+      {
+        "datetime": "2026-07-30T09:37:40Z",
+        "headline": "Starbucks Q3: Fully Brewed Operating Performance, Shares Fairly Valued",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Starbucks reported stellar Q3 results that included an easy beat on comparable sales growth expectations and raised guidance. Click for more on SBUX stock.",
+        "url": "https://finnhub.io/api/news?id=b8a3841dc847a1d71a289a4a61990edca5e2848d1291fd0da5801cbc8a790c33"
+      },
+      {
+        "datetime": "2026-07-30T09:20:32Z",
+        "headline": "Starbucks Stock Climbs After Q3 Beat as 'Back to Starbucks' Plan Shows Results",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks shares are trading higher Thursday after it reported upbeat Q3 results and raised its fiscal-year EPS guidance above estimates.",
+        "url": "https://finnhub.io/api/news?id=b70f4da42b6dffe07abe3acbee84e95d87726484a1c418e6a67f282d0a9b93ed"
+      },
+      {
+        "datetime": "2026-07-30T09:15:17Z",
+        "headline": "Wells Fargo Maintains Overweight on Starbucks, Raises Price Target to $125",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Wells Fargo  analyst Zachary Fadem   maintains Starbucks (NASDAQ:SBUX) with a Overweight and raises the price target from $120 to $125.",
+        "url": "https://finnhub.io/api/news?id=0037a531a96a725dfbfc1b53f757ad2575fe82dc10798f7a9dde3fce5323647f"
+      },
+      {
+        "datetime": "2026-07-30T09:09:00Z",
+        "headline": "The Zacks Analyst Blog Highlights Meta Platforms, Microsoft, Qualcomm, Starbucks and Chipotle Mexican Grill",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Microsoft topped earnings estimates while the Fed held rates steady, as mixed results from Meta and Qualcomm and upbeat reports from Starbucks and Chipotle shaped trading.",
+        "url": "https://finnhub.io/api/news?id=ade851e603ba1f092390f97ec55e48d2206b240d1f80cada45cb3eeb35a5447b"
+      },
+      {
+        "datetime": "2026-07-30T08:59:15Z",
+        "headline": "Nasdaq, S&P 500 Futures Rise: Microsoft Lifts AI Mood, Meta Sinks, Investors Brace For Apple, Amazon And PCE \u2013 Why MU, IBRX, CAPR, SBUX Are In Focus",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Data on Stocktwits showed that retail sentiment remains \u2018bearish\u2019 on SPY and QQQ.",
+        "url": "https://finnhub.io/api/news?id=c4aea7ef575ed4779d517dc9a77209dad76dcdac4804c3532111e7cb41985c8b"
+      },
+      {
+        "datetime": "2026-07-30T08:16:06Z",
+        "headline": "Starbucks: The Turnaround Has Arrived",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Starbucks is rated a Buy due to accelerating comps, renewed U.S. unit growth, and margin gains despite inflation/tariffs. Click for this SBUX stock update.",
+        "url": "https://finnhub.io/api/news?id=5b482762b2367f5cc7253937c56b5156496ead2ab41a766c72dc3663f9ff9485"
+      },
+      {
+        "datetime": "2026-07-30T08:10:17Z",
+        "headline": "Morgan Stanley Maintains Overweight on Starbucks, Raises Price Target to $115",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Morgan Stanley  analyst Brian Harbour   maintains Starbucks (NASDAQ:SBUX) with a Overweight and raises the price target from $111 to $115.",
+        "url": "https://finnhub.io/api/news?id=4418d7350d0ee858bee9bd4445659b61adad5679bd667aaf9dd0f58f0a25fad5"
+      },
+      {
+        "datetime": "2026-07-30T07:15:55Z",
+        "headline": "SBUX Stock Jumps Overnight As Brian Niccol\u2019s Turnaround Gains Traction \u2013 But Retail Debates If Recovery Is Already Priced In",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks reported a 7.9% increase in comparable sales in the third quarter.",
+        "url": "https://finnhub.io/api/news?id=53261b9a1d83df205723cf4354b4ae2f8da4af7a039f87be7cefc75b454cef2d"
+      },
+      {
+        "datetime": "2026-07-30T06:40:00Z",
+        "headline": "Wall Street Breakfast Podcast: Jersey Mike's Prices At $23",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "From one Jersey sub shop to a $7.3B market debut. Meta is feeding AI\u00e2\u0080\u0094and starving free cash flow. Starbucks stock perks up after an earnings beat.",
+        "url": "https://finnhub.io/api/news?id=7ce73a973d6c53b65e27154066c86466e74ed30493f54f9c51519fdc8e66fed3"
+      },
+      {
+        "datetime": "2026-07-30T06:20:08Z",
+        "headline": "Starbucks: Upgrading To Hold As U.S. Accelerates And China JV De-Risks",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Starbucks delivered strong FY3Q2026 results, with 8% global comp growth, and raised FY2026 EPS outlook to $2.55\u00e2\u0080\u0093$2.65. Learn more about SBUX stock here.",
+        "url": "https://finnhub.io/api/news?id=7ec6341788d42884ea03113603f2c634ca4d775bbd33d606f531cb437a5cd76b"
+      },
+      {
+        "datetime": "2026-07-30T06:00:01Z",
+        "headline": "TD Cowen Reiterates Buy on Starbucks, Maintains $120 Price Target",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "TD Cowen  analyst Andrew M. Charles   reiterates Starbucks (NASDAQ:SBUX) with a Buy and maintains $120 price target.",
+        "url": "https://finnhub.io/api/news?id=08aa0acf6d3b7ad10f26d8d2cc2d4a9bc6948e3db2604a2c961f681d2473b294"
+      },
+      {
+        "datetime": "2026-07-30T05:04:08Z",
+        "headline": "Starbucks Corp (SBUX) (Q3 2026) Earnings Call Highlights: Strong Global Comps and Raised ...",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks Corp (SBUX) delivered a 7.9% global comparable sales increase and raised its full-year 2026 EPS guidance to $2.55-$2.65, driven by the 'Back to Starbucks' plan and operational improvements.",
+        "url": "https://finnhub.io/api/news?id=34a520da83e2a1b8f1eadfbf97a49f2ce8d6de2fbd85752bebdc6a8b060130f8"
+      },
+      {
+        "datetime": "2026-07-30T04:11:00Z",
+        "headline": "Starbucks Just Raised Starbucks' Full-Year Profit Guidance by About 10%. Here's the Number Behind It.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The upgrade leans more on customer traffic than on price increases. The market repriced the stock immediately.",
+        "url": "https://finnhub.io/api/news?id=f961052a67e6e0aca4cc305c52fde9bd90bab28f768e78a9c1bb2810d500eb6e"
+      },
+      {
+        "datetime": "2026-07-30T02:34:28Z",
+        "headline": "Chipotle Raises Full-Year Guidance After 9.3% Revenue Jump. Is the Turnaround Finally Here?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chipotle jumped after hours, but is the recovery sustainable?",
+        "url": "https://finnhub.io/api/news?id=53c9b31c75b8d7163d18cb00b1465ed0024b0961aaf17843e53dc79f885d562a"
+      },
+      {
+        "datetime": "2026-07-30T01:51:16Z",
+        "headline": "Dow Jones Futures Rise; Microsoft, Meta Lead Big Earnings After Market Tumbles, Oil Prices Soar",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The stock market sold off as oil prices surged on Trump's Iran threats. Microsoft, Meta and Fortinet were key earnings movers late.",
+        "url": "https://finnhub.io/api/news?id=94786af6cadf7380be1e5ecf722be2c923978d6e0e07e5e4eb2541e5b99a799f"
+      },
+      {
+        "datetime": "2026-07-30T00:36:56Z",
+        "headline": "OpenAI and Anthropic now out-earn Starbucks and McDonald\u2019s",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "For generations, global giants like McDonald\u2019s and Starbucks symbolized the pinnacle of business success, serving millions of customers every day. But a dramatic shift is underway as artificial intelligence (AI) companies rewrite the rules of corporate growth at an astonishing pace. OpenAI and Anthropic have surged past the iconic consumer brands in revenue, underscoring just [\u2026] Read the original article here: OpenAI and Anthropic now out-earn Starbucks and McDonald\u2019s",
+        "url": "https://finnhub.io/api/news?id=39c0b1bc58f943a465af318d7445b60345732c3127d66eb729683e023390fc1e"
+      },
+      {
+        "datetime": "2026-07-30T00:30:02Z",
+        "headline": "Compared to Estimates, Starbucks (SBUX) Q3 Earnings: A Look at Key Metrics",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The headline numbers for Starbucks (SBUX) give insight into how the company performed in the quarter ended June 2026, but it may be worthwhile to compare some of its key metrics to Wall Street estimates and the year-ago actuals.",
+        "url": "https://finnhub.io/api/news?id=3d903fdcb54f554a68dfbc2276714dfe8db490b69687f03db73a8a95ccd47615"
+      },
+      {
+        "datetime": "2026-07-30T00:04:00Z",
+        "headline": "Starbucks Q3 Earnings Call Highlights",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (NASDAQ:SBUX) reported third-quarter fiscal 2026 results that management said reflected continued progress in its \u201cBack to Starbucks\u201d turnaround plan, including a fourth consecutive quarter of positive global comparable-sales growth and a second straight quarter of operating-margin expansi",
+        "url": "https://finnhub.io/api/news?id=db644ba8aa4b83c0f0363e65230aa6b1ba8079bb6b923a9b208444e7550ce0d9"
+      },
+      {
+        "datetime": "2026-07-29T23:30:01Z",
+        "headline": "Allspring on Chipotle, Starbucks Earnings",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Abby Roach, Allspring Global Investments Senior Portfolio Analyst, reacts to earnings from Starbucks and Chipotle as the companies focus on the consumer experience in challenging times. She speaks to Romaine Bostick and Emily Graffeo on Bloomberg's 'The Close.'",
+        "url": "https://finnhub.io/api/news?id=33c66bda3524ccb7226a418d60e8b1000641d36df8e5e2b62f80acde77d99821"
+      },
+      {
+        "datetime": "2026-07-29T23:22:05Z",
+        "headline": "Starbucks Raises Its Full-Year Guidance as Comparable Store Sales Jump 7.9%. Here\u2019s What Investors Need to Know.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Shareholders just got a caffeinated jolt from the coffee purveyor.",
+        "url": "https://finnhub.io/api/news?id=82ab98d00f747bc5e1725bf1c0c32e39ad4561df9034a753cdd158cdb17683bb"
+      },
+      {
+        "datetime": "2026-07-29T21:40:29Z",
+        "headline": "Dow Jones Futures: Stock Market Tumbles, Oil Prices Soar On Trump's Iran Threats; Microsoft, Meta, Fortinet Earnings Late",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The stock market sold off as oil prices surged on Trump's Iran threats. Microsoft, Meta and Fortinet were key earnings movers late.",
+        "url": "https://finnhub.io/api/news?id=01fe27467941134d7e2cbb7400e8d5b55991c1d2533e6a48da199e7649b60186"
+      },
+      {
+        "datetime": "2026-07-29T21:27:00Z",
+        "headline": "Starbucks Stock Jumps After Earnings Beat and Strong Outlook",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks  shares jumped in after-hours trading after the company reported third-quarter earnings and revenue that beat expectations and raised its fill-year outlook, suggesting its turnaround is under way.  For the fiscal quarter ended June 28, Starbucks reported adjusted earnings of 85 cents a share, well above the 66 cents analysts expected.  Revenue fell 1.4% from a year earlier to $9.32 billion\u2014partially due to the conversion of Starbucks\u2019 China operations into a licensed joint venture\u2014but still topped the roughly $9.17 billion consensus estimate.",
+        "url": "https://finnhub.io/api/news?id=773ee3d917fa763a4b771b3cdfb417a8ccc513fc6caabc983e4a59efcc1f5714"
+      },
+      {
+        "datetime": "2026-07-29T21:25:07Z",
+        "headline": "Starbucks (SBUX) Q3 Earnings Surpass Estimates",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) delivered earnings and revenue surprises of +28.79% and -1.22%, respectively, for the quarter ended June 2026. Do the numbers hold clues to what lies ahead for the stock?",
+        "url": "https://finnhub.io/api/news?id=6712508f3f2b4de34e0e95a1bd00f506da2084634668643d19a611e6e888f631"
+      },
+      {
+        "datetime": "2026-07-29T21:09:13Z",
+        "headline": "Starbucks (SBUX) Stock May Be Expensive On Its 23% Run",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks stock has climbed 22.8% year to date, yet a fresh look at its current price against intrinsic value estimates and market multiples suggests the shares may now be trading at a premium rather than offering clear value. The 22.8% year to date gain sets a constructive backdrop for Starbucks, which puts more pressure on the current price to be supported by future cash flows. Optimism around a turnaround in US sales, highlighted by recent UBS commentary, can support higher expectations,...",
+        "url": "https://finnhub.io/api/news?id=3e41844e959b42c51a3881b98dce912a15f10ae7baa10b8dcf168be58fc135d0"
+      },
+      {
+        "datetime": "2026-07-29T21:07:09Z",
+        "headline": "Starbucks reports strong quarterly sales and raises annual outlook",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks shares soared Wednesday after the coffee giant reported better-than-expected quarterly revenue and profit and raised its financial outlook for the year.  The Seattle company said global same-store sales in its fiscal third quarter rose 7.9%, which was well above the 5.7% increase Wall Street was expecting, according to analysts polled by FactSet.  Starbucks said it now expects global same-store sales to grow 6% for its full fiscal year.",
+        "url": "https://finnhub.io/api/news?id=4334faf6107ca1a336aa3739f61820d677788d3b06c2327a93568300c2dc7806"
+      },
+      {
+        "datetime": "2026-07-29T21:05:01Z",
+        "headline": "Stay updated with the S&P500 stocks that are on the move in today's after-hours session.",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "After the conclusion of the US market's regular session on Wednesday, let's examine the after-hours session and unveil the notable S&P500 performers among the top gainers and losers.",
+        "url": "https://finnhub.io/api/news?id=c5ee996c576f6df3d9c444296f09781a3bf26682006a6d61d06e93694f9fc620"
+      },
+      {
+        "datetime": "2026-07-29T20:58:07Z",
+        "headline": "Chipotle beats Q2 expectations, sees same-store sales growth",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Yahoo Finance Senior Business Reporter Brooke DiPalma joins Josh Lipton on Asking for a Trend to break down Chipotle's (CMG) second quarter earnings results, including the company's latest performance, consumer trends, and what investors should watch next.",
+        "url": "https://finnhub.io/api/news?id=78a19b2b7d2bd8636cb507bea4d4c3edf00a1d4fcb4566a1225ba7660e20b647"
+      },
+      {
+        "datetime": "2026-07-29T20:56:38Z",
+        "headline": "Starbucks stock gains as sales growth outpaces expectations",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) is out with its fiscal third quarter results, topping earnings ($0.85 vs. estimates of $0.65) and net revenue expectations ($9.3 billion vs. estimates of $9.16 billion). The stock is jumping in Wednesday's after-hours trading. Yahoo Finance Senior Reporter Brooke DiPalma dives into the coffee giant's same-store sales growth and its decision to raise its full-year 2026 guidance.",
+        "url": "https://finnhub.io/api/news?id=45f9effb9f7ecb440b1015ac3be6c737a0ae9cf6882903794c765014fb65c9ba"
+      },
+      {
+        "datetime": "2026-07-29T20:54:11Z",
+        "headline": "Starbucks surges as turnaround plan drives earnings beat and raised guidance",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- Starbucks Corporation (NASDAQ:SBUX) reported third-quarter results that surpassed Wall Street expectations, bolstered by accelerating traffic growth in its core North American market and operational improvements under its strategic turnaround effort. The Seattle-based coffee giant lifted its full-year financial outlook, signaling growing momentum in its core operations despite broader macroeconomic uncertainties. Shares of the company rallied 9% in extended trading following the",
+        "url": "https://finnhub.io/api/news?id=ba095519e7455e0e692e7dc067114380ff1f047040d984d9a3a9faf980a564e0"
+      },
+      {
+        "datetime": "2026-07-29T20:49:08Z",
+        "headline": "Starbucks (SBUX) Earnings Beat and Raised Guidance Send Shares Higher",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Starbucks Q3 earnings beat estimates with EPS of $0.85, sending shares up 9%. Revenue at $9.32B. Raised full-year guidance above Street expectations.",
+        "url": "https://finnhub.io/api/news?id=4e1518218d8248d60285ecb6e51388feb0b2f10881fbae07aee085dd8fc77e9d"
+      },
+      {
+        "datetime": "2026-07-29T20:34:27Z",
+        "headline": "Starbucks (NASDAQ:SBUX) Exceeds Q2 CY2026 Expectations, Stock Soars",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Coffeehouse chain Starbucks (NASDAQ:SBUX) reported Q2 CY2026 results exceeding the market\u2019s revenue expectations, but sales fell by 1.4% year on year to $9.32 billion. Its non-GAAP profit of $0.85 per share was 30.8% above analysts\u2019 consensus estimates.",
+        "url": "https://finnhub.io/api/news?id=9c72a6c3935dd957f239fa0602884355aa50c864753e53a9edc9e65c3e22404c"
+      },
+      {
+        "datetime": "2026-07-29T20:33:45Z",
+        "headline": "Starbucks stock soars as company\u2019s sales accelerate",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The coffee shop giant\u2019s stock rose more than 7% late on Wednesday after it raised its sales expectations for the rest of the year.",
+        "url": "https://finnhub.io/api/news?id=1e2ace6a61c132a4f432f07e0b9450d209d2eefeb0c38c5bf980a0eaef30275e"
+      },
+      {
+        "datetime": "2026-07-29T20:05:00Z",
+        "headline": "Starbucks Reports Q3 Fiscal Year 2026 Results",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SEATTLE, July 29, 2026--Starbucks Corporation (Nasdaq: SBUX) today reported financial results for its 13-week fiscal third quarter ended June 28, 2026. GAAP results in fiscal 2026 include items that are excluded from non-GAAP results. Please refer to the reconciliation of GAAP measures to non-GAAP measures at the end of this release for more information.",
+        "url": "https://finnhub.io/api/news?id=68a6580a4b2a3d76b5e641120b4aa64d3e291694878df35d2035284f248768e3"
+      },
+      {
+        "datetime": "2026-07-29T19:43:20Z",
+        "headline": "Starbucks Corporation (SBUX) Q3 2026 Earnings Call Transcript",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Starbucks Corporation (SBUX) Q3 2026 Earnings Call July 29, 2026 4:15 PM EDTCompany ParticipantsCatherine Park - Vice President of Investor RelationsBrian...",
+        "url": "https://finnhub.io/api/news?id=7592cc0dce0cac5e1c0ce8280f088693c714bedb01ec55fcef4cee0fef340fbd"
+      },
+      {
+        "datetime": "2026-07-29T17:34:58Z",
+        "headline": "Starbucks Sees FY26 Consolidated Net Revenue Flat To Slightly Up YoY",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks (NASDAQ:SBUX) expects FY2026 consolidated net revenue to be flat to slightly up year over year.",
+        "url": "https://finnhub.io/api/news?id=35a7e4e3a7b76f00a991e73b6854d7420158d45692bcacd2288ba27bf0669ff6"
+      },
+      {
+        "datetime": "2026-07-29T17:28:33Z",
+        "headline": "Starbucks Says Total Capital Expenditures For Fiscal 2026 Are Expected To Be Lower Than Fiscal 2025",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Other than normal operating expenses, cash requirements for the remainder of fiscal 2026 are expected to consist primarily of capital expenditures for investments in our new and existing stores, our supply chain, and",
+        "url": "https://finnhub.io/api/news?id=e145e7e873b009fda136a9f8865562b6843e7a8327611f26f3d91c3c7a5cde02"
+      },
+      {
+        "datetime": "2026-07-29T17:06:31Z",
+        "headline": "Starbucks CFO Says Pricing Contributed Less Than A Point Of Ticket Growth In The Quarter; International Division Store Count To Grow \"Meaningfully\" In Fiscal Year 2027; Tariff Refund Received In Q3 'Largely Offset' Tariffs Incurred In The First Three Quarters Of Fiscal 2026",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "-Conference Call",
+        "url": "https://finnhub.io/api/news?id=b644de9dda5c710f62b9e6f98e51013a525c9626c97a42d528ee0d038bc00443"
+      },
+      {
+        "datetime": "2026-07-29T17:06:05Z",
+        "headline": "12 Consumer Discretionary Stocks Moving In Wednesday's After-Market Session",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Gainers\n\nLinkage Global (NASDAQ:UZX) stock increased by 9277.8% to $21.25 during Wednesday&#39;s after-market session. The market value of their outstanding shares is at $14.4 million. \nDigital Currency X (NASDAQ:DCX)",
+        "url": "https://finnhub.io/api/news?id=e4a66126ba3221f724bc96ab8e638bdf0dc77856115cf6dd6aad5b954dabce38"
+      },
+      {
+        "datetime": "2026-07-29T17:03:32Z",
+        "headline": "Starbucks Raises FY2026 Adj EPS Guidance from $2.25-$2.45 to $2.55-$2.65 vs $2.40 Est",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks (NASDAQ:SBUX) raises FY2026 Adj EPS guidance from $2.25-$2.45 to $2.55-$2.65 vs $2.40 analyst estimate..",
+        "url": "https://finnhub.io/api/news?id=da97ac84faaab48512a84619b96a4ce14ceb771303de74a21ff86a473a27428e"
+      },
+      {
+        "datetime": "2026-07-29T16:37:06Z",
+        "headline": "Starbucks Stock Surges to 52-Week High Following Q3 Double Beat",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks Corp (NASDAQ:SBUX) reports third-quarter financial results for fiscal 2026 after the closing bell on Wednesday.",
+        "url": "https://finnhub.io/api/news?id=60c24c025cb3f9d1faa08dd78d77664d87932620e47d467b2380e0305484c908"
+      },
+      {
+        "datetime": "2026-07-29T16:34:36Z",
+        "headline": "Starbucks beats Wall Street expectations, stock pops in extended trading",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC's Brandon Gomez joins 'Closing Bell Overtime' with Starbucks quarterly results.",
+        "url": "https://finnhub.io/api/news?id=17a32b70c22fc7722429e6c63d9924217d6130e54af38286efef7173552f0bdd"
+      },
+      {
+        "datetime": "2026-07-29T16:25:19Z",
+        "headline": "Starbucks Raises FY2026 GAAP EPS Guidance from $1.73-$1.93 to $2.14-$2.24 vs $2.03 Est",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks (NASDAQ:SBUX) raises FY2026 GAAP EPS guidance from $1.73-$1.93 to $2.14-$2.24 vs $2.03 analyst estimate..",
+        "url": "https://finnhub.io/api/news?id=a677c6230bacf8bb7cacc26f48a5abb089bcb6584f8964bb635cbe58e97d7b67"
+      },
+      {
+        "datetime": "2026-07-29T16:06:04Z",
+        "headline": "Starbucks Q3 Adj. EPS $0.85 Beats $0.66 Estimate, Sales $9.323B Beat $9.157B Estimate",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks (NASDAQ:SBUX) reported quarterly earnings of $0.85 per share which beat the analyst consensus estimate of $0.66 by 28.79 percent. This is a 70 percent increase over earnings of $0.50 per share from the same",
+        "url": "https://finnhub.io/api/news?id=b206f11bc1972dca4432fd0ccc8da12aadad75a7f384d077f818b460de7fea35"
+      },
+      {
+        "datetime": "2026-07-29T15:45:57Z",
+        "headline": "Starbucks stock pops as efforts to revive 'third place' pay off, 2026 outlook improves",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks kept its growth story piping hot in the third quarter as CEO Brian Niccol leads the company into year three of its turnaround plan.",
+        "url": "https://finnhub.io/api/news?id=c3e18d56c6346bb79d29bdabce72b88726c2e389c4ac54f501f26cec5fd381a4"
+      },
+      {
+        "datetime": "2026-07-29T15:45:57Z",
+        "headline": "Starbucks expected to post another solid quarter with sustained turnaround momentum",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks aims to keep its growth story piping hot when it reports third quarter results as CEO Brian Niccol leads the company into year three of its turnaround plan.",
+        "url": "https://finnhub.io/api/news?id=f4edff8c442d91c87b1fcf9e70d203feca054bba57da0f29f0c450b68ea2b8b5"
+      },
+      {
+        "datetime": "2026-07-29T15:35:01Z",
+        "headline": "Starbucks raises full-year outlook as CEO tells CNBC the chain is winning back customer loyalty",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Starbucks posted its fourth straight quarter of same-store sales growth, as it continues a turnaround under CEO Brian Niccol.",
+        "url": "https://finnhub.io/api/news?id=dcbe226fac6b168122a14329db85b96ada26e76bf44fc246822f2d70b9c99f34"
+      },
+      {
+        "datetime": "2026-07-29T13:46:25Z",
+        "headline": "How Much Track Is Left For KO Stock?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Coca-Cola's stock is running hot on the back of a genuinely powerful business, forcing investors to decide if they are looking at a mid-race surge or the finish line.",
+        "url": "https://finnhub.io/api/news?id=90c270f00bf449a0f469d01a5196d34867625c0296307019bfd1a6996b198288"
+      },
+      {
+        "datetime": "2026-07-29T11:59:52Z",
+        "headline": "Stocks Mostly Up Pre-Bell Ahead of Fed Rate Decision, Big Tech Earnings",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The main US stock measures were mostly trending higher in Wednesday's premarket activity as traders",
+        "url": "https://finnhub.io/api/news?id=c73ec1e45071df7ab6cf027726410cb65ae0a0f6ec8c56db89e4703ca4176140"
+      },
+      {
+        "datetime": "2026-07-29T11:00:23Z",
+        "headline": "Cracker Barrel CEO Julie Masino Steps Down Nearly a Year After 'Woke' Logo Backlash That Left Her Feeling 'Fired By America'\u2014 Former Yum! Executive David Deno to Take Over",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Cracker Barrel Old Country Store Inc. CEO Julie Masino is stepping down, the company announced Monday, nearly a year after its controversial branding modernization sparked political backlash. David Deno will become the chain\u2019s CEO on August 10, with Masino staying...",
+        "url": "https://finnhub.io/api/news?id=dde885c154042680e5cb121abebb41169a5e8ceafc1e7c6055bd2d2abaaf670a"
+      },
+      {
+        "datetime": "2026-07-29T03:00:00Z",
+        "headline": "Taiwan's Largest EV Charging Operator EVALUE Enters Indonesia, Opens Jakarta Office",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "EVALUE, Taiwan's largest electric vehicle (EV) charging network operator, today announced the launch of its Jakarta subsidiary, marking its first overseas expansion. The company will also establish a technical service center in Jakarta, bringing Taiwan's proven charging technology and expertise directly to Indonesia's fast-growing EV market, as the country accelerates its national EV and green energy transition.",
+        "url": "https://finnhub.io/api/news?id=af8324b4f333335df99dd4ffb68198b6283a28d6790621ca23872664fa67b711"
+      },
+      {
+        "datetime": "2026-07-28T19:09:00Z",
+        "headline": "Forget the Mag 7. Watch These 5 Top Earnings Charts Instead",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Lots of popular stocks like Starbucks and Lam Research will report this week.",
+        "url": "https://finnhub.io/api/news?id=30124137a44f522735fe5bdd04025a5428b204a90a579cd1e6f2a9b725094106"
+      },
+      {
+        "datetime": "2026-07-28T18:07:46Z",
+        "headline": "Is Starbucks's Stock a Buy Ahead of Its Q3 Earnings Report Tomorrow?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "As a group, analysts tracking the coffee giant are expecting a dip in revenue, but an improved earnings per share figure.",
+        "url": "https://finnhub.io/api/news?id=312c06c4739e6781974aa5353e232a65324c3edb6a0389a69ab8fe2012be4933"
+      },
+      {
+        "datetime": "2026-07-28T15:30:23Z",
+        "headline": "Microsoft Could Swing $189 Billion in Value After Earnings",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Markets expect big reaction from earnings Wed, with big names like Microsoft and Starbucks reporting.",
+        "url": "https://finnhub.io/api/news?id=a56a9270583f16653189d46179f45a8225bcfa855ecde44199d32d13bc8e1d3c"
+      },
+      {
+        "datetime": "2026-07-28T15:04:37Z",
+        "headline": "Brown & Brown Q2 Earnings Call Highlights",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Brown & Brown (NYSE:BRO) reported second-quarter revenue of $1.7 billion, up 30.4% from a year earlier, as acquisition activity and higher contingent commissions helped offset pressure from declining catastrophe-property insurance rates. Chief Executive Officer Powell Brown said the company\u2019s resul",
+        "url": "https://finnhub.io/api/news?id=6787e0266a87b01c805b356bc29283ef1370cc975ac99265ab2717f0a3ab1738"
+      },
+      {
+        "datetime": "2026-07-28T14:35:14Z",
+        "headline": "Can Starbucks Afford Its Prized Dividend While Fixing the Business?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Brian Niccol's turnaround is showing real signs of life at Starbucks, but the dividend streak that income investors depend on is running on thinner coverage than at any point in recent memory. Something has to give, and the answer reveals a lot about where this recovery actually stands.",
+        "url": "https://finnhub.io/api/news?id=811b32addda6a70a3ba5878d8a65ff9947d4629c03d39474ce99682a582821af"
+      },
+      {
+        "datetime": "2026-07-28T12:21:02Z",
+        "headline": "Starbucks (SBUX) Q2 Earnings: What To Expect",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Coffeehouse chain Starbucks (NASDAQ:SBUX) will be announcing earnings results this Wednesday after market close. Here\u2019s what to look for.",
+        "url": "https://finnhub.io/api/news?id=796573005fcb704d6d4122040ddffc9ee6daf232c47d833e4241fd5a58808dd8"
+      },
+      {
+        "datetime": "2026-07-28T08:07:00Z",
+        "headline": "Why I Believe Dutch Bros Stock Will Double by the End of the Decade",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A rapid expansion will help, but internal factors will foster increasing sales.",
+        "url": "https://finnhub.io/api/news?id=f6cd7b82e5f704737922fab5c32abc35f0940c6157923e7344456266c32240eb"
+      },
+      {
+        "datetime": "2026-07-27T23:17:00Z",
+        "headline": "McDonald's decided you are not worth helping anymore",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks has found the perfect mix of digital and human ordering. You can use the company's app to place your complicated order and know it will be made exactly the way you want. And people who don't want to use the app can stand in line or go through the drive-through to order from an actual ...",
+        "url": "https://finnhub.io/api/news?id=daa256a7fc307c814e4e8a32ea780067dd1a8fcd69e6b7b759897523b12de22c"
+      },
+      {
+        "datetime": "2026-07-27T17:04:43Z",
+        "headline": "US Futures Rise as Megacap Earnings and Fed Decision Headline Quarter's Busiest Week",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Dow and S&P 500 futures gain 0.8% and Nasdaq futures 1.4% ahead of Microsoft, Meta, Apple and Amazon results and Wednesday's Fed call.",
+        "url": "https://finnhub.io/api/news?id=05c4c239151ab7be91c966dbd7e5d02cb2a22a6444ea5b44450230ccca1e20a7"
+      },
+      {
+        "datetime": "2026-07-27T15:00:37Z",
+        "headline": "Cracker Barrel CEO steps down a year after logo debacle",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Cracker Barrel's CEO is stepping down nearly a year after an attempted rebrand of the chain led to a fierce customer backlash.  Cracker Barrel said Monday that CEO Julie Masino will step down next month but remain with the company until Oct. 9 in an advisory capacity.  David Deno will succeed Masino on Aug. 10 as CEO.",
+        "url": "https://finnhub.io/api/news?id=b44bcd07e95bb43a8df792d6ae34c97e80c9010b6f015b030cefa65db9f8341c"
+      },
+      {
+        "datetime": "2026-07-27T14:30:00Z",
+        "headline": "Week ahead: Wall Street's biggest summer test is here with Big Tech, Fed on deck",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Wall Street is heading for a pivotal week as Big Tech earnings, the Federal Reserve's rate decision and key inflation data test a market hovering near record highs. The busiest stretch begins on Wednesday, when Microsoft and Meta Platforms report earnings before the focus quickly shifts to...",
+        "url": "https://finnhub.io/api/news?id=2a1b192dba9661ce0046ef537c7fb5a57c2de731a8928d17065289d014dabaa0"
+      },
+      {
+        "datetime": "2026-07-27T13:35:09Z",
+        "headline": "2 Consumer Discretionary Stocks With Whale Alerts In Today\u2019s Session",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "This whale alert can help traders discover the next big trading opportunities.\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity scanner.\nTraders will",
+        "url": "https://finnhub.io/api/news?id=49b5495498755b7dbbea30faa9ba7d066464c2eb3b468952aabd7deddf4971bc"
+      },
+      {
+        "datetime": "2026-07-27T11:52:07Z",
+        "headline": "Earnings live: Humana stock falls, Procter & Gamble dips, with Big Tech earnings on deck",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Earnings season kicks into high gear this week.",
+        "url": "https://finnhub.io/api/news?id=7043adeae041cf21f37d02e1bb6cd835bc9ea1447c64a086dfc789612b0beffe"
+      },
+      {
+        "datetime": "2026-07-27T11:00:02Z",
+        "headline": "Option Volatility And Earnings Report For July 27-31",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "It is a mammoth week on the earnings front with a plethora of important companies reporting. This week could make or break the market. This week we have Apple, Microsoft, Amazon, Meta Platforms, Exxon Mobil, Starbucks, Robinhood and Coinbase all reporting in what shapes as a busy and pivotal week for stocks.",
+        "url": "https://finnhub.io/api/news?id=93298a0a487ce27c02e0858ee49df917d8903ab87f82f9beb72e0077201f212f"
+      },
+      {
+        "datetime": "2026-07-27T08:00:00Z",
+        "headline": "One-third of Seattle\u2019s downtown is empty: Here\u2019s how America\u2019s boomtown turned into one of the toughest places to find a job",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "What exactly has happened to work in the Emerald City?",
+        "url": "https://finnhub.io/api/news?id=a897157dba73b90ef3074a3998d454e2e13855c9df1ab1e59649e17c8ba04088"
+      },
+      {
+        "datetime": "2026-07-26T18:00:00Z",
+        "headline": "Fed Meeting, Inflation, Boeing, Meta, Apple, Exxon, and More to Watch This Week",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "This is a huge earnings week, with nearly a third of S&P 500 companies reporting. The Fed is expected to hold rates steady after its confab ends Wednesday, and we\u2019ll see key inflation data on Thursday.",
+        "url": "https://finnhub.io/api/news?id=063caae182b53b5cfa5bf5335b445579d39efe33c8b2f7c5a64a34b5a4cd2ea2"
+      },
+      {
+        "datetime": "2026-07-26T06:40:21Z",
+        "headline": "Wall Street Week Ahead",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Track this week\u00e2\u0080\u0099s market catalysts: Big Tech earnings, Fed rate decision, and core PCE inflation data\u00e2\u0080\u0094plus IPOs and key reports.",
+        "url": "https://finnhub.io/api/news?id=aa93f6b650dcda9f8826f3f7390c5a02e2548ec74e81335b1ebe7541cf3f7d9d"
+      },
+      {
+        "datetime": "2026-07-25T16:09:28Z",
+        "headline": "Starbucks (SBUX) Nears Q3 Earnings, Is The Upside Already Priced In?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) is back in focus as Wall Street sets expectations for its upcoming fiscal Q3 report, with analysts projecting earnings of $0.66 per share and slightly lower revenue. See our latest analysis for Starbucks. At a share price of $103.25, Starbucks has seen its 1 year to date share price return of 22.96% contrast with a 12.24% 1 year total shareholder return, with recent headlines around its turnaround plans and expectations for Q3 earnings keeping sentiment focused on whether...",
+        "url": "https://finnhub.io/api/news?id=9f8fbf1682659d671230072739ab6133bc1aacae7eaf79af92058c1112f76f5f"
+      },
+      {
+        "datetime": "2026-07-24T21:01:29Z",
+        "headline": "Tata Consumer Products Ltd (BOM:500800) Q1 2027 Earnings Call Highlights: Strong Revenue Growth ...",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Tata Consumer Products Ltd (BOM:500800) reports a 12% revenue growth and unveils 14 new products, while navigating challenges in international markets.",
+        "url": "https://finnhub.io/api/news?id=b35be75063dc52a701d844d7bed7b6325b428dab0428d8f6ce79f984cc52da39"
+      },
+      {
+        "datetime": "2026-07-24T20:29:57Z",
+        "headline": "Starbucks' Turnaround Strategy Could Drive US Comparable Sale Upside, UBS Says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks' (SBUX) progress on its turnaround strategy could drive US comparable sales above consensu",
+        "url": "https://finnhub.io/api/news?id=89ea8cd96e67a7dbfe75d1e62b655891d7113bc1e5a8874b7cda3a1dce9f86a5"
+      },
+      {
+        "datetime": "2026-07-24T20:24:00Z",
+        "headline": "Elon Musk Has Lost This Much Money as SpaceX, Tesla Stock Tank",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Tesla and SpaceX stock, as investors know, have gotten hammered this week, and the drops have cost Elon Musk a boatload of money.",
+        "url": "https://finnhub.io/api/news?id=38c529029d2b3f84db6e1099b4ba73a95b51ee072594afa02bccf709c959123f"
+      },
+      {
+        "datetime": "2026-07-24T19:41:09Z",
+        "headline": "Sector Update: Consumer Stocks Rise Late Afternoon",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Consumer stocks advanced late Friday afternoon, with the State Street Consumer Staples Select Sector",
+        "url": "https://finnhub.io/api/news?id=052af1f708d152f8091803fe815f044f8290107c54d67a350bc5e419ea9d2f59"
+      },
+      {
+        "datetime": "2026-07-24T18:48:36Z",
+        "headline": "Starbucks Sales Momentum Likely Continued in Fiscal Q3, UBS Says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) is expected to report continued sales momentum in fiscal Q3 as its turnaround plans",
+        "url": "https://finnhub.io/api/news?id=3bf9a106f4fe65911c04c007e50cf3fd4aee68038d5e128193ece70a8d29931b"
+      },
+      {
+        "datetime": "2026-07-24T14:11:00Z",
+        "headline": "Starbucks Q3 Earnings Ahead: Buy, Sell or Hold the Stock?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SBUX heads into Q3 earnings with improving traffic, loyalty momentum and product innovation, while investors await greater clarity on near-term growth.",
+        "url": "https://finnhub.io/api/news?id=7771ad8841379a838302feb9833cca1c3c974e8e5d585570ce348012efdfb959"
+      },
+      {
+        "datetime": "2026-07-24T13:15:10Z",
+        "headline": "Unveiling Starbucks (SBUX) Q3 Outlook: Wall Street Estimates for Key Metrics",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Beyond analysts' top-and-bottom-line estimates for Starbucks (SBUX), evaluate projections for some of its key metrics to gain a better insight into how the business might have performed for the quarter ended June 2026.",
+        "url": "https://finnhub.io/api/news?id=225462ca0e0cb29dd28bfe1b4e7c7d7cc5833cdf4f50e86960f16df62cfe7a61"
+      },
+      {
+        "datetime": "2026-07-23T21:47:00Z",
+        "headline": "Starbucks CEO silently repeats Chipotle's playbook",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks CEO Brian Niccol built his reputation at Chipotle Mexican Grill by following one formula: fix operations, rebuild customer traffic, and wait for margins to follow. That playbook produced a stock return of more than 770% during a six-year tenure that more than doubled annual revenue and ...",
+        "url": "https://finnhub.io/api/news?id=20718825a0f93d60be2eb37b22eb550106a9a301f062b964a2996ac80b150174"
+      },
+      {
+        "datetime": "2026-07-23T10:17:00Z",
+        "headline": "Starbucks Is on Track to Beat the Nasdaq-100 for the First Time Since 2022. Is There More Room to Run?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The retail coffee giant is giving investors reasons to be optimistic.",
+        "url": "https://finnhub.io/api/news?id=726dd06debdd87176581d7d1afc312e5c9950075903864e9b033d7ceb56fbc12"
+      },
+      {
+        "datetime": "2026-07-22T16:00:00Z",
+        "headline": "Cheiron Raises $8M Seed Led by Menlo Ventures to Build the Operating System for Drug Programs",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Cheiron Founders Cheiron co-founders (from left): Harshit Gupta, co-founder and chief technology officer; Minseok Bae, co-founder and CEO; and Jason Park, co-founder and chief product officer. LOS ALTOS, Calif., July 22, 2026 (GLOBE NEWSWIRE) -- Cheiron, the operating system for drug programs, today announced an $8 million seed round led by Menlo Ventures, with the backing and strategic support of industry veterans including Moderna co-founder and MIT Institute Professor Robert Langer; former Pf",
+        "url": "https://finnhub.io/api/news?id=121dee6eb5b95230890bc77a0fb432c067d167b2adb9237f093d012c795d3f33"
+      },
+      {
+        "datetime": "2026-07-22T15:05:08Z",
+        "headline": "Starbucks\u2019 Stock Down 17% In Five Years",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Brian Niccol has brought fresh energy to Starbucks, but a recovering brand still faces a relentless army of rivals and a stock that trails the broader market by a wide margin over five years. Can momentum alone close that gap?",
+        "url": "https://finnhub.io/api/news?id=411663135466d30b7536caea82ff4f4e9c6e2131048a203dd3f9bf49fdbf5e62"
+      },
+      {
+        "datetime": "2026-07-22T14:00:31Z",
+        "headline": "Starbucks (SBUX) Earnings Expected to Grow: Should You Buy?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) doesn't possess the right combination of the two key ingredients for a likely earnings beat in its upcoming report. Get prepared with the key expectations.",
+        "url": "https://finnhub.io/api/news?id=e054549fe9eb46c63c52bfb1bdbf1a4cb83e3a002d4182f7432d04c5fd80615b"
+      },
+      {
+        "datetime": "2026-07-22T13:00:03Z",
+        "headline": "Starbucks Corporation (SBUX) Is a Trending Stock: Facts to Know Before Betting on It",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Zacks.com users have recently been watching Starbucks (SBUX) quite a bit. Thus, it is worth knowing the facts that could determine the stock's prospects.",
+        "url": "https://finnhub.io/api/news?id=c6401b91118b4733ea6022e5b34b2d0f9b274690be5fa590651128aec070a3b0"
+      },
+      {
+        "datetime": "2026-07-21T21:34:00Z",
+        "headline": "Brian Niccol's Starbucks Turnaround Is Quietly Working -- Even With Profit Cut in Half. The July 29 Test Comes Next.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Shares sit near a 52-week high even though profit was cut in half last year. Here's what the market sees.",
+        "url": "https://finnhub.io/api/news?id=1d293234f7b97045a9b00665e8fc66fd7a7f503936d39686487f3aff70e1d36a"
+      },
+      {
+        "datetime": "2026-07-21T17:00:00Z",
+        "headline": "SecureSpace University Place Opens in University Place, WA",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SecureSpace Self Storage (\"SecureSpace\"), a leading self-storage platform with locations across key urban markets in the U.S., has opened its newest location at 7701 40th Street West in University Place, WA.",
+        "url": "https://finnhub.io/api/news?id=c392fb22d015071051cff632232c4aeb5ab0b33b89637fd34b8a48c1cbef2bad"
+      },
+      {
+        "datetime": "2026-07-21T14:45:00Z",
+        "headline": "Can Starbucks Turn Traffic Gains Into Sustainable Earnings Growth?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SBUX raises its fiscal 2026 outlook as traffic growth, margin recovery and cost savings strengthen the turnaround.",
+        "url": "https://finnhub.io/api/news?id=0eb2d5a427ee5fdde7d675577a839a04ff429148cf375a12410a75e69ee0429c"
+      },
+      {
+        "datetime": "2026-07-21T12:27:17Z",
+        "headline": "Coffee Drinkers Get Encouraging Health News",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "New guidance links moderate caffeine intake to lower cardiovascular risk",
+        "url": "https://finnhub.io/api/news?id=9c28acedd0e5223502e6336e4c07c3718681608ff5e34b8b5b55b2aacef12821"
+      },
+      {
+        "datetime": "2026-07-21T09:09:53Z",
+        "headline": "Luckin Coffee (OTCPK:LKNC.Y) Enters New York, Is The Stock Still Cheap?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Luckin Coffee (OTCPK:LKNC.Y) is stepping into New York City, adding a fresh competitor to an already crowded US coffee market and putting its cashless, high-volume model directly up against Starbucks and other established chains. See our latest analysis for Luckin Coffee. At a share price of US$32.05, Luckin Coffee has seen short term momentum pick up, with a 1 day share price return of 4.74% and 30 day share price return of 5.05%, while its year to date share price return is down 9.49%. Over...",
+        "url": "https://finnhub.io/api/news?id=acea095744455d97e6cde0f28ecff02deec5aa990556d2e1347011161f78e745"
+      },
+      {
+        "datetime": "2026-07-20T23:40:10Z",
+        "headline": "Wingstop added more restaurants than any US chain in 2025, report says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "QSR Magazine reported that Wingstop opened more restaurants than any U.S. chain in 2025, topping Chipotle, Dunkin' and others.",
+        "url": "https://finnhub.io/api/news?id=51533fd9ba2e2942171d2e0936a13b39e7da6852a95c54c65ccbee4ea2352e68"
+      },
+      {
+        "datetime": "2026-07-20T14:22:30Z",
+        "headline": "China\u2019s Luckin Coffee Comes To New York and Starbucks Should Worry",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A Chinese coffee giant with tens of thousands of locations worldwide is quietly planting its flag in New York City, and the timing could not be worse for a Starbucks already struggling to keep pace with the broader market.",
+        "url": "https://finnhub.io/api/news?id=8de2a89e8b4561a6ead8a133e60987605dfd3f30503c05c57c6d36d638380487"
+      },
+      {
+        "datetime": "2026-07-20T12:00:00Z",
+        "headline": "2 'big' misconceptions about AI's long-term impact on the software sector",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "RBC Capital Markets managing director, Rishi Jaluria, shares a few of his thoughts on the software sector and the fear of AI disruption.",
+        "url": "https://finnhub.io/api/news?id=57eaed4fdc0e8971aacf4964a55a4d81370df353bd7223dc03fbdbe8f32257f8"
+      },
+      {
+        "datetime": "2026-07-20T09:05:00Z",
+        "headline": "DETPAK OPENS U.S. MANUFACTURING FACILITY IN SPARTANBURG, SOUTH CAROLINA",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Global packaging supplier Detpak today announced the opening of its new manufacturing facility in Spartanburg, South Carolina, strengthening its ability to support major Quick Service Restaurant (QSR) customers with locally produced, paper-based packaging solutions.",
+        "url": "https://finnhub.io/api/news?id=d7728af0bcd2e8763072a7100d53f2dba62fd909fc08c2dd2318214393c3a311"
+      },
+      {
+        "datetime": "2026-07-19T17:17:00Z",
+        "headline": "Kroger supermarkets land exclusive Coca-Cola soda",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Limited-time-offers (LTOs) bring consumers back to stores they may not have visited in a while and in rare cases, they may get a shopper to go someplace they rarely, or never, visit. In other cases, an LTO simply gets a customer to spend more than they otherwise might have. Starbucks, for example, ...",
+        "url": "https://finnhub.io/api/news?id=84171e43db2e295fc5408b220b669a24fc32faabb03dda3c9bfa1e1dc1f12aee"
+      },
+      {
+        "datetime": "2026-07-18T10:35:00Z",
+        "headline": "Can Starbucks Continue Obliterating Dutch Bros in the Second Half?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks is winning the comeback battle in 2026, but Dutch Bros' recent pullback could be a compelling long-term buying opportunity.",
+        "url": "https://finnhub.io/api/news?id=2daf7851a3cddc061cee75c60a20113eea19cd72c3083ff63f93cf96f42474a1"
+      },
+      {
+        "datetime": "2026-07-17T20:25:00Z",
+        "headline": "How Starlink is SpaceX's key to making big 'star bucks'",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SpaceX (SPCX) canceled the test launch of its latest Starship rocket on Thursday due to engine ignition failure. The space venture's stock sinks lower ahead of Friday's close after already dropping below its mega-IPO price earlier this week. William Blair research analyst of industrials Louie DiPalma \u2014 whose firm maintains an Outperform rating on SpaceX's stock \u2014 comes on to talk more about the opportunities and risks ahead for Elon Musk's company.",
+        "url": "https://finnhub.io/api/news?id=f239ade09041bbff56478b4173e5b92413787b74e1a01280bfac2e9ccec4bd20"
+      },
+      {
+        "datetime": "2026-07-17T14:19:31Z",
+        "headline": "Starbucks Fiscal Q3 North America Same-Store Sales Poised to be In-Line With Consensus, RBC Says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) fiscal Q3 North America same-store sales are poised to be in-line with consensus, w",
+        "url": "https://finnhub.io/api/news?id=86a984fcf6d3cfce9e0b18ab6f91336b7e8a9a7092be7ab96054e00e50a2f7ae"
+      },
+      {
+        "datetime": "2026-07-17T13:38:00Z",
+        "headline": "MasTec and Papa John's International have been highlighted as Zacks Bull and Bear of the Day",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "MasTec is the Zacks Bull of the Day as infrastructure and energy demand support growth, while Papa John's is the Bear amid sales and margin pressures.",
+        "url": "https://finnhub.io/api/news?id=9b417fbc24eb0324c176e5aa2d69abc0cc5979d36c71fb220423257155df21e3"
+      },
+      {
+        "datetime": "2026-07-17T11:05:01Z",
+        "headline": "IBM\u2019s Warning Is a \u2018Hammer\u2019 Slamming Down on Tech\u2019s AI Outsiders",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Bloomberg) -- International Business Machines Corp.\u2019s warning this week that its sales are falling well short of expectations highlights a growing divide between artificial intelligence winners and everyone else in the tech universe.Most Read from BloombergThailand Scraps Plan to End Visa-Free Entry for Indian TouristsGoogle Gemini Launch Delayed as Tech Falls Short of Internal GoalsBeckham\u2019s IM8 Gets $1 Billion From General Catalyst for GrowthNasdaq Futures Tumble 1.5% as Chip Rout Deepens: Ma",
+        "url": "https://finnhub.io/api/news?id=3cf136581fa4ff5e2243fabd23670bd70883dd050b8981f9cdb006a4b870a7e4"
+      },
+      {
+        "datetime": "2026-07-17T02:32:10Z",
+        "headline": "Starbucks wins a shareholder lawsuit over its sales slump",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A federal judge has dismissed a lawsuit filed against the coffee shop giant, agreeing that its former CEO did not make \u201cflagrantly false\u201d statements about its sales results.",
+        "url": "https://finnhub.io/api/news?id=501e9ebfcd930acf469458a7cf4dbc1518100636279546b383987054fa601397"
+      },
+      {
+        "datetime": "2026-07-16T15:46:33Z",
+        "headline": "Cinnabon Had a Growth Eruption in 2025",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Among the chains in this year\u2019s QSR Contenders list, which will be fully unveiled in August alongside the QSR 50, and sorts 50 brands by systemwide sales outside the top group, there was one that flashed from a growth perspective: Cinnabon. The 1984-founded treat concept, part of GoTo Foods\u2019 seven-brand lineup (the company bought it [\u2026]",
+        "url": "https://finnhub.io/api/news?id=a9a5b8ecb31aa53af295cd00614dbd2f95767db5a66a5fe14e2191611fda9109"
+      },
+      {
+        "datetime": "2026-07-16T15:30:43Z",
+        "headline": "Starbucks spends $400 million a year on software \u2014 now it's using AI to build its own and cut out the middleman",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Traditional software systems may have an expiration date, sooner than big technology development companies may expect.",
+        "url": "https://finnhub.io/api/news?id=c7050738988fadcd766676c520436117d2e0b59b4fbc9a11d45427b278f95139"
+      },
+      {
+        "datetime": "2026-07-16T14:31:00Z",
+        "headline": "Starbucks vs. McDonald's: Which Restaurant Stock Has the Edge Now?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SBUX and MCD are strengthening customer engagement through loyalty, value offerings and operational improvements as they compete for growth.",
+        "url": "https://finnhub.io/api/news?id=970f83a9bf831a6c3fa18aad3ebb4649d75d91aeb6b782f5ac5be1b486880b3b"
+      },
+      {
+        "datetime": "2026-07-16T13:55:00Z",
+        "headline": "US cyclospora outbreak linked to lettuce, fresh produce",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Health experts have linked a recent US outbreak of the cyclospora parasite to fresh produce, such as lettuce. Morning Brief Host Julie Hyman is joined by Yahoo Finance Tech Editor Dan Howley and Business Insider Today executive editor Dan DeFrancesco to talk further about the source of this outbreak in US crops and how fast-food companies are reacting to this.",
+        "url": "https://finnhub.io/api/news?id=63d8aa67bb53c687a8d2f077d7d754b8cfd0eefd65b463f7f7c355d9f6054e65"
+      },
+      {
+        "datetime": "2026-07-16T13:21:44Z",
+        "headline": "CNBC Halftime Report Final Trades: Quanta Services, TJX Companies, Digital Realty Trust, Republic Services",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "",
+        "url": "https://finnhub.io/api/news?id=9c8b2c3c12896628f4bae7dbc1a66b9f1fcf5511131dc0077343b1ddec42da0d"
+      },
+      {
+        "datetime": "2026-07-16T10:32:00Z",
+        "headline": "Prediction: Dutch Bros Will Hit $130 by 2031 for This Obvious Reason",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The key tailwind that has propelled this business in the past will drive its success in the future.",
+        "url": "https://finnhub.io/api/news?id=107f0bc9c8b59a3b9cf35ac71b6182df6c9b43bb661a65198691737b26fc0cfa"
+      },
+      {
+        "datetime": "2026-07-16T10:24:23Z",
+        "headline": "Wells Fargo Maintains Overweight on Starbucks, Raises Price Target to $120",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Wells Fargo  analyst Zachary Fadem   maintains Starbucks (NASDAQ:SBUX) with a Overweight and raises the price target from $115 to $120.",
+        "url": "https://finnhub.io/api/news?id=98d31edff0644e097f73b7487441a4bd57b6a34d498f1ff7682917556f73d781"
+      },
+      {
+        "datetime": "2026-07-16T09:38:15Z",
+        "headline": "Morgan Stanley Maintains Overweight on Starbucks, Raises Price Target to $111",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Morgan Stanley  analyst Brian Harbour   maintains Starbucks (NASDAQ:SBUX) with a Overweight and raises the price target from $110 to $111.",
+        "url": "https://finnhub.io/api/news?id=4e9526ff849e562cfaaf02ee67ea93ed7da238e007d8601853f2ae0b98d96a0c"
+      },
+      {
+        "datetime": "2026-07-16T03:41:00Z",
+        "headline": "SaaSpocalypse Part II? IBM's Preliminary Earnings Report Rattles Software",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "IBM\u00e2\u0080\u0099s bearish pre-announcement reignited fears about AI\u00e2\u0080\u0099s impact on enterprise tech spending.",
+        "url": "https://finnhub.io/api/news?id=436cf3d1be40180ea66e27f766dda011278527a99cd622503321298764969997"
+      },
+      {
+        "datetime": "2026-07-15T20:05:00Z",
+        "headline": "Starbucks Announces Q3 Fiscal Year 2026 Results Conference Call",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SEATTLE, July 15, 2026--Starbucks Corporation (Nasdaq: SBUX) plans to release its third quarter fiscal year 2026 financial results after market close on Wednesday, July 29, 2026, with a conference call to follow at 1:15 p.m. Pacific Time. The conference call will be webcast, including closed captioning, and can be accessed on the company\u2019s website at https://investor.starbucks.com/. A replay of the webcast will be available on the company\u2019s website until the end of day, Friday, September 11, 202",
+        "url": "https://finnhub.io/api/news?id=fcf1c209f1241252cf49b4acbdfef8e858485c82c23e4e89054620318c7aba41"
+      },
+      {
+        "datetime": "2026-07-15T19:59:24Z",
+        "headline": "Restaurants, Food Distributors Poised for Mixed Second Quarter, Morgan Stanley Says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "US restaurant and food distribution companies likely saw a mixed second quarter, with largely stable",
+        "url": "https://finnhub.io/api/news?id=a43255f1c6084831f8105aac658860582048806b0ec17bc919c457aa6f232f99"
+      },
+      {
+        "datetime": "2026-07-15T18:15:27Z",
+        "headline": "Earnings Preview: What To Expect From Starbucks' Report",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks is scheduled to report its third-quarter results soon, and analysts expect a double-digit earnings increase.",
+        "url": "https://finnhub.io/api/news?id=0414f8aa4594dd55ed66590516f7d7f761e713ed4f762a80e4c7c4f53b420e78"
+      },
+      {
+        "datetime": "2026-07-15T18:14:43Z",
+        "headline": "Is Starbucks (SBUX) Overvalued Even With Its AI Cost Cuts?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks stock has delivered a strong 26.4% gain year to date, while both the Discounted Cash Flow (DCF) intrinsic value estimate and earnings based multiples currently point to the shares trading at a premium rather than as a clear bargain. The 26.4% year to date return suggests investors have already priced in a meaningful part of the turnaround story and cost savings potential. Efforts to cut software spending through in house AI tools and wider cost reductions can support future cash...",
+        "url": "https://finnhub.io/api/news?id=105c3bc1a341a7871900a8af5051fb74891cb18aa4049d09ac245891efd23c1b"
+      },
+      {
+        "datetime": "2026-07-15T15:08:54Z",
+        "headline": "Restaurant Sector Remains Mixed as Stronger Operators Outperform, Morgan Stanley Says",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Restaurant and food companies continue to see mixed performance, as stronger operators outperform wh",
+        "url": "https://finnhub.io/api/news?id=0e62df68cc1dc977f4e4a4822dc7217510634db9b140e79f71148169ee1ccadd"
+      },
+      {
+        "datetime": "2026-07-15T15:00:30Z",
+        "headline": "MCD at $268, Starbucks at $106: Buy, Sell or Hold?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "McDonald's and Starbucks have moved in sharply opposite directions this year, and the gap between their valuations tells a story that surprises most investors who assume the turnaround story is the safer bet.",
+        "url": "https://finnhub.io/api/news?id=3a120684e4330e5db8d1175d837a20cbe12a946002aca6674b6694657533f7d8"
+      },
+      {
+        "datetime": "2026-07-15T11:34:33Z",
+        "headline": "Jim Cramer Continued To Believe In International Business Machines (IBM)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "We recently published Jim Cramer Discussed These 22 Stocks Including A Hidden Oil & Energy Play. International Business Machines Corp. (NYSE:IBM) is one of the stocks discussed by Jim Cramer. Technology company International Business Machines Corp. (NYSE:IBM) is one of Jim Cramer\u2019s favorite stocks. Throughout 2025 he continued to support the firm despite relatively modest [\u2026]",
+        "url": "https://finnhub.io/api/news?id=eba2efbf79375132af9a03fc1eebbc9c3b4dd860b4fba6475baaeb4f4867ee6d"
+      },
+      {
+        "datetime": "2026-07-15T11:14:20Z",
+        "headline": "What Starbucks (SBUX)'s Dividend Affirmation and Software Cost Cuts Mean For Shareholders",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Earlier this month, Starbucks Corporation confirmed its Board approved a quarterly cash dividend of US$0.62 per share, payable on August 28, 2026, to shareholders of record as of August 14, 2026. Alongside this dividend affirmation, Starbucks is pushing an intensive turnaround that combines US$400 million in targeted software cost savings with new bonus and pay structures for cafe workers. Next, we\u2019ll explore how Starbucks\u2019 push to cut US$400 million in annual software expenses could...",
+        "url": "https://finnhub.io/api/news?id=0a91b120a2560986520392f3431aa3c21a09d89ca65c781253eedfecc9eb4130"
+      },
+      {
+        "datetime": "2026-07-15T08:14:34Z",
+        "headline": "Starbucks (SBUX) Introduces Worker Bonuses And Weekly Pay In Frontline Overhaul",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (NasdaqGS:SBUX) is rolling out a new bonus program and pay structure for cafe workers. The package includes quarterly cash bonuses tied to store performance. Workers gain expanded tipping options and a move to weekly pay cycles. The company indicates these changes could lift hourly pay by roughly 5% to 8%. For investors tracking Starbucks, this pay overhaul sits at the intersection of operations, labor relations, and brand strength. The company runs a large global cafe network...",
+        "url": "https://finnhub.io/api/news?id=c72c4a71655229941a7a067fb7a36588912da913bfd46d6b5ef55e72d3aa2ec8"
+      },
+      {
+        "datetime": "2026-07-14T23:30:29Z",
+        "headline": "PBJ: Food And Beverage Stocks Are Cheap But Come With A Hidden Quality Cost",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "PBJ ETF earns a hold rating: attractive GARP valuation and EPS growth, but quality, debt, and turnover risks persist. Read here for a detailed analysis.",
+        "url": "https://finnhub.io/api/news?id=76c1dd9aa19b36f003c49df95fe8f595e283ba12f45f4444f1092c16a5535fbf"
+      },
+      {
+        "datetime": "2026-07-14T21:45:03Z",
+        "headline": "Starbucks (SBUX) Stock Slides as Market Rises: Facts to Know Before You Trade",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In the latest trading session, Starbucks (SBUX) closed at $106.17, marking a -1.09% move from the previous day.",
+        "url": "https://finnhub.io/api/news?id=f1cfad6d9606f512292169e160fc0a7bae6ef4257f788f2193e62110e62111b0"
+      },
+      {
+        "datetime": "2026-07-14T21:40:11Z",
+        "headline": "Chipotle Opens First Mexico Store, Targets Mexico City Expansion by 2027",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chipotle Mexican Grill (NYSE:CMG), a U.S. restaurant chain offering customizable Mexican-inspired food, is expanding into Mexico with its first location scheduled to open Thursday in the Monterrey metropolitan area.  The company is entering the market in partnership with Alsea, a Latin American restaurant operator that manages brands including Starbucks across the region.  Chipotle plans to open additional restaurants in Nuevo Leon later this year before expanding into Mexico City in 2027, suggesting the company is taking a phased approach to building its presence in the country.",
+        "url": "https://finnhub.io/api/news?id=64cd1c4d40843f15a3667e01475787864006adc1209885c5b587a2040c8f0d9c"
+      },
+      {
+        "datetime": "2026-07-14T20:37:35Z",
+        "headline": "Jim Cramer Shares Why Starbucks Corporation (SBUX) Went \u201cNuts\u201d",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "We recently published Jim Cramer Discussed These 22 Stocks Including A Hidden Oil & Energy Play. Starbucks Corporation (NASDAQ:SBUX) is one of the stocks discussed by Jim Cramer. Starbucks Corporation (NASDAQ:SBUX) is a frequent feature on Jim Cramer\u2019s radar. Most of his remarks have focused on the firm\u2019s ongoing turnaround. In 2025, when the turnaround [\u2026]",
+        "url": "https://finnhub.io/api/news?id=45705bbb927e44daf7d78ba95166a7cf64f613680b852ebbdfc3a9d8771c35ef"
+      },
+      {
+        "datetime": "2026-07-14T14:02:00Z",
+        "headline": "Can Starbucks' 39% Channel Development Growth Add a New Revenue Lever?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SBUX's Channel Development revenues jump 39% YoY in Q2, adding momentum beyond company-operated stores through packaged coffee and ready-to-drink products.",
+        "url": "https://finnhub.io/api/news?id=6c5c20ce8062e368118a9645d2a857d87e2549af1d7018d801ad0123e067d101"
+      },
+      {
+        "datetime": "2026-07-14T13:30:20Z",
+        "headline": "Chipotle Opens First Restaurant in Mexico as Global Expansion Continues (CMG)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Chipotle Mexican Grill (NYSE:CMG) is preparing to open its first restaurant in Mexico this week, marking a major milestone in the company\u2019s international growth strategy as it enters the country that inspired much of its menu. The restaurant chain, which operates more than 4,100 locations worldwide, described the launch as a significant step in its global expansion plans.",
+        "url": "https://finnhub.io/api/news?id=6573e1157299127bef1dd44b8ca2ee8717f144ec689739bbc2f3873761aaa3c7"
+      },
+      {
+        "datetime": "2026-07-14T13:00:00Z",
+        "headline": "First Washington Realty Deepens Pacific Northwest Presence with Acquisition of Evergreen Village",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "BETHESDA, Md., July 14, 2026--First Washington Realty (FWR) has acquired Evergreen Village, a 123,562-square-foot premier grocery-anchored community shopping center in Bellevue, Washington, expanding FWR's existing Pacific Northwest portfolio to ~2.3 million square feet. Anchored by a Safeway supermarket, Evergreen Village features a diverse mix of fitness and dining tenants, including Edgeworks Climbing, Puetz Golf Superstore, and Starbucks, creating a vibrant hub that draws consistent traffic",
+        "url": "https://finnhub.io/api/news?id=caefbeaa1cf992c00a0c250cf95f15be85d966453e4b16a9bab44b57d63d59ae"
+      },
+      {
+        "datetime": "2026-07-14T11:51:19Z",
+        "headline": "Citigroup Maintains Neutral on Starbucks, Raises Price Target to $108",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Citigroup  analyst Jon Tower   maintains Starbucks (NASDAQ:SBUX) with a Neutral and raises the price target from $101 to $108.",
+        "url": "https://finnhub.io/api/news?id=df9d107315640c672726deac1735e34c78dc52698ed5152d5283f8b21db86bab"
+      },
+      {
+        "datetime": "2026-07-13T15:37:14Z",
+        "headline": "Starbucks rolls out quarterly bonuses for high-performing workers",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The latest perks could help the chain attract and retain workers needed to sustain its turnaround drive.",
+        "url": "https://finnhub.io/api/news?id=9bfd48bb894a8b11844f49d256b1c2ffcdc2e0362800fa769d30c1824cb0ea97"
+      },
+      {
+        "datetime": "2026-07-13T15:33:00Z",
+        "headline": "Starbucks Wants to Cut $400 Million in Software Costs. Toast Investors Should Pay Attention.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks is ditching legacy software vendors for homegrown AI tools. Here's why that could eventually benefit companies like Toast.",
+        "url": "https://finnhub.io/api/news?id=f4b4a30532608ef8b362265bbfbc2a6c248f2efeb5cb70310e2afdea54a27c6d"
+      },
+      {
+        "datetime": "2026-07-13T14:41:00Z",
+        "headline": "BROS Trades at a Premium, Stock Up 30% in 3 Months: Buy Now or Wait?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Dutch Bros has rallied on strong growth, store expansion and digital momentum, leaving investors weighing its premium valuation.",
+        "url": "https://finnhub.io/api/news?id=b54f51177a45c101c6e97b75b16c7c00c4921e8c43e50b0b5972007b6ba88779"
+      },
+      {
+        "datetime": "2026-07-13T09:00:00Z",
+        "headline": "Starbucks: Using AI To Cut Costs While Compounding Dividends And EPS",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Starbucks (SBUX) Q2 beats and raised FY2026 guidance signal a strong turnaround.",
+        "url": "https://finnhub.io/api/news?id=258630bfc27ee642ebf427ab956fc888872e972cf6f8233b30e3aea7b4549218"
+      },
+      {
+        "datetime": "2026-07-12T13:45:02Z",
+        "headline": "Starbucks Is Serving Up Your Coffee with a Side of AI. What That Means for SBUX Stock.",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks is reportedly developing in-house AI software to replace the ones it currently relies on.",
+        "url": "https://finnhub.io/api/news?id=ea6f1bf0fd147ff83f48824334b18a3388abecd0d4f8b18d60b129401c587651"
+      },
+      {
+        "datetime": "2026-07-11T14:35:00Z",
+        "headline": "Starbucks Builds Sovereign AI to Cut $400 Million in Software Costs",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) is building internal AI tools to replace Microsoft and IBM software, targeting $400 million in annual vendor spend and cutting $30 million from its tech budget.",
+        "url": "https://finnhub.io/api/news?id=708b1f42ca0f2967ce7ad0f433b0accc0e6e7e6122e47c1e1fedba6189e28056"
+      },
+      {
+        "datetime": "2026-07-11T11:55:00Z",
+        "headline": "Pushing the Edge: Super Micro Computer Reboots the AI Landscape",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Super Micro Computer launched a Kubernetes edge AI appliance with Red Hat and Portworx targeting sovereign AI demand, even as shares fell 30% and short interest rose to about 19% of its float.",
+        "url": "https://finnhub.io/api/news?id=a0c606617a19da406ef236ee9d60b487b516fa60c3bd23623216e89526b33cec"
+      },
+      {
+        "datetime": "2026-07-10T20:07:00Z",
+        "headline": "Starbucks tries something it failed at before",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Ten months ago, in September 2025, Starbucks walked into 11,000 stores with NomadGo\u2019s inventory Artificial Intelligence (AI) tool that promised 99% accuracy and counted up to eight times faster than a human. After 9 months, in May 2026, according to Reuters, an internal newsletter retired the ...",
+        "url": "https://finnhub.io/api/news?id=18f5c5a5d3b891805572b06e89a0a9c696e94264714cc031c8590acceca6883c"
+      },
+      {
+        "datetime": "2026-07-10T16:17:00Z",
+        "headline": "Jim Cramer recommends buying these 5 stocks",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "A single weak jobs report moved more money on Wall Street on Monday than any independent company's earnings ever could. That is what played out on Monday, July 6, 2026, and Jim Cramer thinks it handed patient investors a rare opening. The CNBC host argues that big investment funds sold off shares ...",
+        "url": "https://finnhub.io/api/news?id=c0977290006aa0018f206464a75fad8cbde03b207ba5408dea5f24fccec7059c"
+      },
+      {
+        "datetime": "2026-07-10T15:47:52Z",
+        "headline": "Wingstop Was the Fastest-Growing Restaurant in America Last Year",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In a preview of August\u2019s upcoming QSR 50, it was not Starbucks (as was the case in recent years), Chipotle, 7 Brew, Chick-fil-A, Taco Bell, Dutch Bros, or any other buzzing restaurant brand clocking in as the fastest-growing in the U.S.\u2014it was Wingstop, by nearly 100 locations. Despite a 2025 that didn\u2019t lack for challenges, [\u2026]",
+        "url": "https://finnhub.io/api/news?id=ce789afe05a1eb996efa798fdff7b2da96102820b8397b102b0f1debfdd72f43"
+      },
+      {
+        "datetime": "2026-07-10T12:00:00Z",
+        "headline": "Why Microsoft is not this portfolio manager's stock pick",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Niles Investment Management founder and portfolio manager Dan Niles shares his perspective on Microsoft (MSFT) in the AI landscape.",
+        "url": "https://finnhub.io/api/news?id=be1ea5c67eb3e537b31672248dcb3cb20c4d7f00eaa78b10be5818db30963968"
+      },
+      {
+        "datetime": "2026-07-10T05:13:12Z",
+        "headline": "Starbucks (SBUX) Is Replacing Microsoft And IBM Software To Cut $400 Million Spend",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks is rolling out new proprietary artificial intelligence platforms to replace key Microsoft and IBM inventory and maintenance systems. The company is tying this technology shift to a wider $2b cost reduction plan, including a targeted cut to its $400m annual software budget. The overhaul is aimed at gaining more control over operations and could influence how other global consumer brands approach enterprise technology. Starbucks, traded as NasdaqGS:SBUX, is layering this AI push on...",
+        "url": "https://finnhub.io/api/news?id=3f1733bd61d08ea9d4ed0e8429f3955c14f8fc650dcc4859353aa15bebcfc302"
+      },
+      {
+        "datetime": "2026-07-10T00:03:00Z",
+        "headline": "Starbucks taps childhood nostalgia with 5 new drinks",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) is looking to chase a feeling that doesn\u2019t start in a coffee shop. In fact, it typically starts with summer, orange-and-vanilla frozen treats, and the sort of dessert most people remember from childhood before they ever knew what espresso was. That\u2019s what makes the coffee-shop ...",
+        "url": "https://finnhub.io/api/news?id=4876a925052e03a1669ac7fa0284cde4078eda8964078123c836d90bc46c236e"
+      },
+      {
+        "datetime": "2026-07-09T21:28:17Z",
+        "headline": "S&P 500, Nasdaq, Dow End Higher Led By Chipmaker Stocks As Investors Look Past US-Iran Hostility \u2014 ORCL, SBUX, WULF, PANW, FATE In Focus",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The United States carried out a second consecutive day of new military operations against Iran.",
+        "url": "https://finnhub.io/api/news?id=686c560b0a8617f924c28daef7a556f675cb90bc2747e458ce95b511b6050e69"
+      },
+      {
+        "datetime": "2026-07-09T20:47:42Z",
+        "headline": "Starbucks (SBUX) Stock Is Up, What You Need To Know",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Shares of coffeehouse chain Starbucks (NASDAQ:SBUX) jumped 3.1% in the afternoon session after reports revealed it is developing in-house artificial intelligence (AI) tools to cut costs and reduce its reliance on software from vendors like Microsoft and IBM.",
+        "url": "https://finnhub.io/api/news?id=b61222696daffda0b9e519bba567f4893c2f4d0ba76e8b3a2d15ebb8933b7e6c"
+      },
+      {
+        "datetime": "2026-07-09T18:28:06Z",
+        "headline": "Jim Cramer: \u201cAnthropic Is the Winner Now\u201d as Enterprises Move to Slash Tech Budgets in Half",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "On CNBC\u2019s Squawk on the Street on July 9, 2026, Jim Cramer argued that the real profit engine of the enterprise AI wave sits at the model layer, which is collecting the checks hyperscalers are writing. \u201cAnthropic is the one that\u2019s actually making a lot of money doing some work on Salesforce,\u201d Cramer said, going ... Jim Cramer: \u201cAnthropic Is the Winner Now\u201d as Enterprises Move to Slash Tech Budgets in Half",
+        "url": "https://finnhub.io/api/news?id=587e3a7da201a4b5c1325181a5314795e7b593fd94279db92cec1f52fcb975e4"
+      },
+      {
+        "datetime": "2026-07-09T18:00:00Z",
+        "headline": "Lendistry Receives a $100 Million Credit Facility from East West Bank",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "These funds provide access to capital for airport concessions, an unsung and undercapitalized niche in the small business community LOS ANGELES, CA / ACCESS Newswire / July 9, 2026 / Lendistry today announced that it has received a $100 million credit ...",
+        "url": "https://finnhub.io/api/news?id=2a8ecbfb313432f15a17e8943953d7b06c2d3f1d967c2d0c7f515a568592f954"
+      },
+      {
+        "datetime": "2026-07-09T17:15:34Z",
+        "headline": "SBUX Stock Set For Best Day In Two Months \u2014 Starbucks Steps Up AI Push To Cut Reliance On MSFT, IBM",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks is building its own artificial intelligence tools to replace software it currently buys from tech giants such as Microsoft and IBM as part of a sweeping $2-billion cost-reduction initiative.",
+        "url": "https://finnhub.io/api/news?id=e09e922c5df6a50b1d0132511fea060266612fa40e4feb25b4af51f563dbc1ea"
+      },
+      {
+        "datetime": "2026-07-09T16:14:03Z",
+        "headline": "Starbucks Targets $400 Million Software Spend With AI Shift",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks is building AI-assisted in-house tools that could replace Microsoft, IBM, and Oracle software.",
+        "url": "https://finnhub.io/api/news?id=1a5bb0347f5c5167be9ea37ac9606bc0c8ad484c4482af8f24a3ef647281b33b"
+      },
+      {
+        "datetime": "2026-07-09T14:14:01Z",
+        "headline": "Starbucks Develops AI Software to Reduce Reliance on Microsoft and IBM, Report Says (SBUX)",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks Expands Internal AI DevelopmentStarbucks Corp. (NASDAQ:SBUX) is reportedly developing artificial intelligence-powered software that could replace several enterprise applications currently supplied by Microsoft Corp.",
+        "url": "https://finnhub.io/api/news?id=14bd8d4b5fcfeef4734a69daa905ef9c7a2e5b82d8be1783fe31bd380a8bd036"
+      },
+      {
+        "datetime": "2026-07-09T13:53:46Z",
+        "headline": "Starbucks Stock Rises Amid In-House Software Push",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks Corp (NASDAQ:SBUX) is climbing Thursday after reports revealed the coffee giant is building its own AI-assisted software tools that could replace applications it currently buys from outside vendors including Microsoft Corp (NASDAQ:MSFT) and IBM. ",
+        "url": "https://finnhub.io/api/news?id=7baf6259d058c97f77252367d11e0866b8c7994b6b3491f688b7d3f35616eec7"
+      },
+      {
+        "datetime": "2026-07-09T13:30:39Z",
+        "headline": "3 Beaten-Down Consumer Stocks to Buy in July",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Consumer sentiment just hit 44.8 in May 2026, down 5 points from April and firmly in recessionary territory. Yet the actual spending data tells a different story: Total personal consumption expenditures climbed to $22,059.8 billion in May 2026, with recreational goods, clothing and food services all showing year-over-year growth. That gap between mood and money ... 3 Beaten-Down Consumer Stocks to Buy in July",
+        "url": "https://finnhub.io/api/news?id=1ca2de1a6e379b2a6d59d1b0178e067e880a117affd54ac6e9085525efff3585"
+      },
+      {
+        "datetime": "2026-07-09T12:23:11Z",
+        "headline": "IBM Falls as a Coffee Chain Decides to Build Its Own Software",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks' plan to replace IBM and Microsoft tools with in-house AI highlights",
+        "url": "https://finnhub.io/api/news?id=eed8b7695bce2e622e0b73cdef690fe593fec2a23089575faaec55fca45acb76"
+      },
+      {
+        "datetime": "2026-07-09T12:18:45Z",
+        "headline": "Jim Cramer on Starbucks: \u201cCEO Brian Niccol Has Been Working Hard on the Turnaround\u201d",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks Corporation (NASDAQ:SBUX) was among Jim Cramer\u2019s stock calls on Mad Money, as he highlighted the AI opportunities in neoclouds. Cramer highlighted that he likes the company\u2019s new product, as he remarked: Next, we know that a cup of coffee at Starbucks might not be such a bargain, but oh, I like that new protein [\u2026]",
+        "url": "https://finnhub.io/api/news?id=91b7b8bedd1897eb8fe590220de7c4b8239c8417a706cd0504a3d98e174e7fbe"
+      },
+      {
+        "datetime": "2026-07-09T11:44:22Z",
+        "headline": "Software stocks slide as Starbucks builds AI tools to replace vendor software",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- IBM, ServiceNow, and Salesforce shares are down in premarket trading on Thursday after a report that Starbucks is developing in-house software using artificial intelligence that could replace applications it currently buys from outside vendors.",
+        "url": "https://finnhub.io/api/news?id=2be2376f795577a7e72907383fdf4212543d3077eeadd5d4ba9c1dc8f22d6f7d"
+      },
+      {
+        "datetime": "2026-07-09T10:59:54Z",
+        "headline": "Starbucks working on AI tools to replace Microsoft and IBM software - report",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Investing.com -- Starbucks Corp. is creating its own software tools using artificial intelligence that could replace applications it currently purchases from Microsoft Corp. and International Business Machines Corp., Bloomberg reported Thursday citing an internal company presentation.",
+        "url": "https://finnhub.io/api/news?id=48b43971dd7109f5da35fb91c35e05d4e46014c5df88b27c4d4aa7eed08d0e03"
+      },
+      {
+        "datetime": "2026-07-09T10:15:00Z",
+        "headline": "Starbucks Taps AI to Reduce Reliance on Microsoft, IBM Software",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "(Bloomberg) -- Starbucks Corp. is developing in-house tools with the help of artificial intelligence that could replace some software applications it now buys from companies such as Microsoft Corp. and International Business Machines Corp.Most Read from BloombergMicrosoft\u2019s Xbox to Shift Obsidian Studio to New \u2018Fallout\u2019 Video GameNvidia\u2019s $1 Trillion Slide Sends Valuation to Pre-AI Boom LevelsTrump Vents Anger With Iran and Warns Ceasefire May Be \u2018Over\u2019US Military Launches Strikes on Iran for Se",
+        "url": "https://finnhub.io/api/news?id=c1133d38491dea2425e193236c0996dd4c6ecd430a207a44db4e424b4dd6e867"
+      },
+      {
+        "datetime": "2026-07-09T06:32:29Z",
+        "headline": "'Starbucks Taps AI to Reduce Reliance on Microsoft, IBM Software' - Bloomberg",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "https://www.bloomberg.com/news/articles/2026-07-09/starbucks-taps-ai-to-reduce-reliance-on-microsoft-ibm-software",
+        "url": "https://finnhub.io/api/news?id=3726d221e893d5d706cdb35a1fb96fe7268b5af2f5d8090ae0721b0667eac0fd"
+      },
+      {
+        "datetime": "2026-07-08T21:26:00Z",
+        "headline": "Dunkin\u2019 Teams Up With Kylie Jenner as the Drinks War Rages On",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Everyone from coffee chains to fast-food giants are boosting drinks menus to bring in more customers.",
+        "url": "https://finnhub.io/api/news?id=6d9da78145dc34b892572cd56e37f0ad4f7e5b98590bc41ffe0cad09c181b70c"
+      },
+      {
+        "datetime": "2026-07-08T19:19:02Z",
+        "headline": "Blue Tokai Targets 800 Stores, Sees Revenue Jump Over 50%",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "India's coffee chain plans rapid expansion, Dubai debut, and a potential IPO within five to seven years.",
+        "url": "https://finnhub.io/api/news?id=90d5c9672bea675bd338fa994884fa1f8223d75724ac7c77ad18cff9da9f537f"
+      },
+      {
+        "datetime": "2026-07-08T14:46:00Z",
+        "headline": "Starbucks Near Its 52-Week High: Can the Stock Sustain the Rally?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SBUX is nearing its 52-week high as stronger traffic, loyalty growth and turnaround efforts keep investors focused on the next move.",
+        "url": "https://finnhub.io/api/news?id=9e3b2fa1fe66df7511dbaf73757486d1c5ad31b386b0818f9cdd2fc168b745ff"
+      },
+      {
+        "datetime": "2026-07-08T13:00:04Z",
+        "headline": "Investors Heavily Search Starbucks Corporation (SBUX): Here is What You Need to Know",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) has received quite a bit of attention from Zacks.com users lately. Therefore, it is wise to be aware of the facts that can impact the stock's prospects.",
+        "url": "https://finnhub.io/api/news?id=744b149a16cbbdb766495910ec27a4675a0faeafbf084a3d92029acd37a6b126"
+      },
+      {
+        "datetime": "2026-07-08T07:42:40Z",
+        "headline": "Top 50 High-Quality Dividend Growth Stocks For July 2026",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "I track a curated universe of 50 high-quality dividend growth stocks to identify opportune entry points based on valuation and future return potential.",
+        "url": "https://finnhub.io/api/news?id=dd881bcabc2bb19487918ffbc9709eff68916225493c5faeff1ce53c02d8bc5e"
+      },
+      {
+        "datetime": "2026-07-08T03:00:55Z",
+        "headline": "Singapore's Temasek boosts China exposure by $7.7 billion, biggest rise in five years, in AI-driven pivot",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Temasek is repositioning its China portfolio toward AI-related hardware and infrastructure, robotics, biotech, energy transition.",
+        "url": "https://finnhub.io/api/news?id=9c6f4d387cde4e4a606961dc443bb5c116722304e882d57981cc8b962693bfa9"
+      },
+      {
+        "datetime": "2026-07-07T15:16:47Z",
+        "headline": "Starbucks (SBUX) Could Be 4% Undervalued As Dividend News Keeps Valuation In Focus",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks (SBUX) has affirmed a quarterly cash dividend of $0.62 per share, payable on August 28, 2026, to shareholders of record on August 14, 2026, which may keep income-focused investors attentive. See our latest analysis for Starbucks. At a share price of $102.11, Starbucks has seen short term pressure with a 1 day share price return of 2.07% and a 7 day return of 1.87%. However, the 30 day and year to date share price returns of 7.16% and 21.60% suggest momentum has been building. Over...",
+        "url": "https://finnhub.io/api/news?id=1f764acc9b76181ba747021aafeafbdaadef1f603902f41cd945a8bdf5e2c799"
+      },
+      {
+        "datetime": "2026-07-07T13:45:52Z",
+        "headline": "3 Reasons to Sell SBUX and 1 Stock to Buy Instead",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Starbucks has had an impressive run over the past six months as its shares have beaten the S&P 500 by 9.9%. The stock now trades at $102.24, marking a 17.9% gain. This was partly due to its solid quarterly results, and the performance may have investors wondering how to approach the situation.",
+        "url": "https://finnhub.io/api/news?id=645064a414bde815b9af9b0f239c5805e0db2aa7f8bf837ad8d5ec09d83259e5"
+      },
+      {
+        "datetime": "2026-07-07T12:15:00Z",
+        "headline": "NX3 Commercial Group Closes $27.5 Million Five-Property NNN Portfolio in Florida 1031 Exchange",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "New York apartment seller trades multifamily for a diversified portfolio of 7-Eleven, Chipotle, Wawa, Starbucks and multi-tenant retail assets - the latest sign of capital migrating from high-tax states into passive triple net lease property. FORT ...",
+        "url": "https://finnhub.io/api/news?id=83fec099b042df70527bc4016a65b2bff6421e678867d4699c49e4ae42a8fe25"
+      },
+      {
+        "datetime": "2026-07-07T11:43:38Z",
+        "headline": "Restaurant Brands International Price Target Lowered to $85 at RBC",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "RBC Capital Markets lowered its price target on Restaurant Brands International (QSR.TO, QSR) to $85",
+        "url": "https://finnhub.io/api/news?id=70489cd3daff9861d84d4d7f2cc09bf15729b2d906bc52c2afb576f75617dffc"
+      },
+      {
+        "datetime": "2026-07-06T22:00:00Z",
+        "headline": "Are fast food chains using collectible cups to hide a 30% price hike?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Fast food chains are turning to a booming $32 billion collectibles market and limited-edition merchandise to drive customer loyalty and distract from menu price hikes that have risen 30% since 2019.",
+        "url": "https://finnhub.io/api/news?id=f11064c2deeaa63afab445fb455455bd1513b1560138d35b2d2dc6f05ac58db5"
+      },
+      {
+        "datetime": "2026-07-06T21:45:03Z",
+        "headline": "Starbucks (SBUX) Stock Dips While Market Gains: Key Facts",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "In the latest trading session, Starbucks (SBUX) closed at $102.11, marking a -2.07% move from the previous day.",
+        "url": "https://finnhub.io/api/news?id=6bc8868f914d061b2260b5f9c1ff640792b0938151c2796a973004065b40e2e3"
+      },
+      {
+        "datetime": "2026-07-06T19:27:09Z",
+        "headline": "If you can spy a rotation and theme, you can find some incredible bargains: Cramer",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC's Jim Cramer discusses the day's market action, the stocks he's watching and more.",
+        "url": "https://finnhub.io/api/news?id=9ce6511b530cefc027b673588d40c431455d9b6ec92b8b9007205225a2fedb73"
+      },
+      {
+        "datetime": "2026-07-06T19:17:18Z",
+        "headline": "You may want to start a position in Constellation Brands, says Jim Cramer",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "CNBC's Jim Cramer discusses the day's market action, the stocks he's watching and more.",
+        "url": "https://finnhub.io/api/news?id=bcbbe3b83e63577e6144d430c1d4a234a94328e307c78cfa7237fe0cbeccced5"
+      },
+      {
+        "datetime": "2026-07-06T14:33:00Z",
+        "headline": "Is Starbucks' Loyalty Strategy Fueling More Store Traffic?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "SBUX's loyalty program, personalization and faster service are helping drive higher store traffic and customer engagement.",
+        "url": "https://finnhub.io/api/news?id=043e22f7a8f549e896820b01be242945f66651eacd7f44da2ff06eab4f127a25"
+      },
+      {
+        "datetime": "2026-07-06T14:25:00Z",
+        "headline": "WEN Stock Up 28% in a Month: Should Investors Chase the Rally or Wait?",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "Wendy's 28% gain in a month is fueled by retail-trader buzz, Project Fresh optimism and valuation appeal, but weak U.S. sales and cost inflation loom.",
+        "url": "https://finnhub.io/api/news?id=cf2e9271971d9fdadc8e6e2e80dd34ae54f5eb8b1f647b0442721efe95e26caa"
+      },
+      {
+        "datetime": "2026-07-06T14:20:11Z",
+        "headline": "Starbucks Stock Slips Under 50-Day Moving Average as Bearish Crossover Looms",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Starbucks Corp (NASDAQ: SBUX) shares are trading lower Monday, despite a lack of company-specific news for the session.",
+        "url": "https://finnhub.io/api/news?id=b6e17cd591711a4ce3973a9a39efa9c99a7bf9b84c20d1daf493a97d09b377b2"
+      },
+      {
+        "datetime": "2026-07-06T13:50:00Z",
+        "headline": "These 3 Stocks Offer Investors Exposure to the Functional Beverage Boom",
+        "sentiment": null,
+        "source": "Yahoo",
+        "summary": "The functional beverage market is projected to reach $235 billion by 2031. BellRing Brands, Starbucks, and Celsius Holdings offer investors varying levels of exposure to the trend.",
+        "url": "https://finnhub.io/api/news?id=d90e3735e9160a521ca224f5eb36b039033ab558eb873005d858d2764e8e7509"
+      },
+      {
+        "datetime": "2026-07-06T13:13:55Z",
+        "headline": "Soft Landing Myth: How This Week's Data Exposed The Hidden Recession",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Soft landing signals emerge as services stay strong and inflation cools.",
+        "url": "https://finnhub.io/api/news?id=98b8715e41517c020b29a9fcc47ec39b431d7149bebc8aab3c8e00aca753830b"
+      },
+      {
+        "datetime": "2026-07-06T12:10:51Z",
+        "headline": "Rivian's latest SUV targets Tesla's most popular models. Here's how to trade it",
+        "sentiment": null,
+        "source": "CNBC",
+        "summary": "Mike Khouw, strategist at YieldMaxETFs, discusses demand for electric vehicles and how Rivian can compete as the company launches its R2 SUV.",
+        "url": "https://finnhub.io/api/news?id=a3b14a16673fa5f19b185410d57671bdc3fab8ec1aa1391d83bfd4daa8c339f3"
+      }
+    ],
+    "ticker": "SBUX"
+  },
+  "recorded_at": "2026-08-06T01:15:14.249203+00:00",
+  "status": "ok"
+}

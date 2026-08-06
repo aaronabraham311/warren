@@ -102,6 +102,37 @@ def test_news_windows_are_never_aliased(tmp_path: Path) -> None:
     assert seven_days != thirty_days
 
 
+def test_fixture_runner_records_exact_success_observation(tmp_path: Path, ctx: RunContext) -> None:
+    tool = TOOL_REGISTRY["get_quote"]
+    tool_input = tool.input_schema.model_validate({"ticker": "AAPL"})
+    record_tool_result(
+        "AAPL",
+        tool.name,
+        tool_input.model_dump(mode="json"),
+        ToolResultOk(data=_price()),
+        tmp_path,
+    )
+    runner = FixtureToolRunner("AAPL", tmp_path)
+
+    result = runner.run(tool, tool_input, ctx)
+
+    assert runner.observations[0].tool_name == "get_quote"
+    assert runner.observations[0].canonical_input == {"ticker": "AAPL"}
+    assert runner.observations[0].result is result
+
+
+def test_fixture_runner_records_missing_observation(tmp_path: Path, ctx: RunContext) -> None:
+    tool = TOOL_REGISTRY["get_quote"]
+    tool_input = tool.input_schema.model_validate({"ticker": "AAPL"})
+    runner = FixtureToolRunner("AAPL", tmp_path)
+
+    result = runner.run(tool, tool_input, ctx)
+
+    assert isinstance(result, ToolResultError)
+    assert runner.observations[0].result is result
+    assert runner.observations[0].input_hash == runner.misses[0].input_hash
+
+
 def test_replay_rejects_toc_fragment_as_unusable_evidence(tmp_path: Path, ctx: RunContext) -> None:
     tool = TOOL_REGISTRY["read_filing"]
     raw_input = {"ticker": "SBUX", "filing_type": "10-K", "section": "mdna"}
