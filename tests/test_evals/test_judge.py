@@ -1,21 +1,23 @@
-"""Unit tests for the Sonnet-5-backed thesis judge — offline, via a stub client.
+"""Offline unit tests for blinded semantic judges.
 
 Covers the determinism guarantees that matter: no sampling params (Sonnet 5 rejects them),
 thinking disabled, a forced record_verdict tool, and verdict caching so re-runs are free.
 """
 
+import json
 import sqlite3
 from unittest.mock import MagicMock
 
 import anthropic
 import pytest
 
-from agent.models import SONNET_5
+from agent.models import LUNA_5_6, SONNET_5
 from data_sources.cache import CacheStore
 from eval.judge import (
     HumanVerdictJudge,
     JudgeUnavailableError,
     JudgeVerdict,
+    OpenAIThesisJudge,
     SemanticRequest,
     SonnetThesisJudge,
     canonical_request_key,
@@ -46,6 +48,18 @@ def _verdict_response(
 def _stub_client(response: MagicMock) -> MagicMock:
     client = MagicMock()
     client.messages.create.return_value = response
+    return client
+
+
+def _openai_response(records: list[dict[str, object]]) -> MagicMock:
+    response = MagicMock()
+    response.output_parsed = {"verdicts": records}
+    return response
+
+
+def _stub_openai_client(response: MagicMock) -> MagicMock:
+    client = MagicMock()
+    client.responses.parse.return_value = response
     return client
 
 
@@ -99,6 +113,110 @@ def test_multiple_checks_are_sent_in_one_live_request() -> None:
     verdicts = SonnetThesisJudge(client).judge_many(requests)
     assert set(verdicts) == {"risk", "thesis"}
     assert client.messages.create.call_count == 1
+
+
+def test_sonnet_judge_accepts_json_encoded_verdict_list_with_trailing_text() -> None:
+    records = [
+        {"check_id": "risk", "passes": True, "reasoning": "engages leverage"},
+        {"check_id": "thesis", "passes": False, "reasoning": "does not support moat"},
+    ]
+    response = MagicMock()
+    response.content = [
+        anthropic.types.ToolUseBlock(
+            id="toolu_1",
+            name="record_verdicts",
+            input={"verdicts": json.dumps(records) + "}\n"},
+            type="tool_use",
+        )
+    ]
+    requests = [
+        SemanticRequest(check_id="risk", text="risk", concept=["x"], ticker="AAPL"),
+        SemanticRequest(check_id="thesis", text="thesis", concept=["y"], ticker="AAPL"),
+    ]
+
+    verdicts = SonnetThesisJudge(_stub_client(response)).judge_many(requests)
+
+    assert verdicts["risk"].passes
+    assert not verdicts["thesis"].passes
+
+
+def test_openai_judge_batches_strict_blinded_requests() -> None:
+    requests = [
+        SemanticRequest(
+            check_id="risk", text="leveraged balance sheet", concept=["leverage"], ticker="AAPL"
+        ),
+        SemanticRequest(
+            check_id="thesis", text="durable switching costs", concept=["moat"], ticker="AAPL"
+        ),
+    ]
+    client = _stub_openai_client(
+        _openai_response(
+            [
+                {"check_id": "risk", "passes": True, "reasoning": "engages leverage"},
+                {"check_id": "thesis", "passes": True, "reasoning": "supports moat"},
+            ]
+        )
+    )
+
+    verdicts = OpenAIThesisJudge(client).judge_many(requests)
+
+    assert set(verdicts) == {"risk", "thesis"}
+    assert all(verdict.passes for verdict in verdicts.values())
+    assert client.responses.parse.call_count == 1
+    kwargs = client.responses.parse.call_args.kwargs
+    assert kwargs["model"] == LUNA_5_6
+    assert kwargs["reasoning"] == {"effort": "medium"}
+    assert kwargs["text_format"].__name__ == "_VerdictBatch"
+    assert kwargs["store"] is False
+    wire_items = json.loads(kwargs["input"].split("\n", 1)[1])
+    assert all(
+        set(item) == {"check_id", "company", "rubric", "acceptable_framings", "candidate_text"}
+        for item in wire_items
+    )
+    assert wire_items[0]["candidate_text"] == "leveraged balance sheet"
+    assert wire_items[1]["candidate_text"] == "durable switching costs"
+
+
+def test_openai_judge_reuses_canonical_cache() -> None:
+    client = _stub_openai_client(
+        _openai_response(
+            [{"check_id": "semantic_concept", "passes": False, "reasoning": "unsupported"}]
+        )
+    )
+    cache = CacheStore(sqlite3.connect(":memory:"))
+    judge = OpenAIThesisJudge(client, cache, reasoning_effort="medium")
+
+    first = judge.judge(thesis="same thesis", concept=["moat"], ticker="AAPL")
+    second = judge.judge(thesis="same thesis", concept=["moat"], ticker="AAPL")
+
+    assert first == second
+    assert not first.passes
+    assert client.responses.parse.call_count == 1
+    assert judge.judge_id.startswith(f"openai:{LUNA_5_6}:medium:")
+
+
+@pytest.mark.parametrize(
+    "records",
+    [
+        [{"check_id": "risk", "passes": True, "reasoning": "only one"}],
+        [
+            {"check_id": "risk", "passes": True, "reasoning": "first"},
+            {"check_id": "risk", "passes": False, "reasoning": "duplicate"},
+        ],
+    ],
+    ids=["omitted", "duplicate"],
+)
+def test_openai_judge_rejects_incomplete_or_duplicate_ids(
+    records: list[dict[str, object]],
+) -> None:
+    requests = [
+        SemanticRequest(check_id="risk", text="risk", concept=["x"], ticker="AAPL"),
+        SemanticRequest(check_id="thesis", text="thesis", concept=["y"], ticker="AAPL"),
+    ]
+    judge = OpenAIThesisJudge(_stub_openai_client(_openai_response(records)))
+
+    with pytest.raises(JudgeUnavailableError, match="verdict ids mismatch"):
+        judge.judge_many(requests)
 
 
 def test_human_verdicts_use_canonical_collision_safe_keys() -> None:

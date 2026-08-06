@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 
@@ -34,6 +35,10 @@ def write_usage_sidecar(
     reasoning_values = [_as_int(event.get("reasoning_tokens")) for event in calls]
     observed_reasoning = [value for value in reasoning_values if value is not None]
     reasoning_tokens = sum(observed_reasoning) if observed_reasoning else None
+    visible_output_tokens = max(0, output_tokens - (reasoning_tokens or 0))
+    latencies = sorted(
+        value for event in calls if (value := _as_int(event.get("latency_ms"))) is not None
+    )
     total_cost_usd = sum(_as_float(event.get("cost_usd")) for event in calls)
 
     cache_denominator = input_tokens + cache_read_tokens + cache_creation_tokens
@@ -54,6 +59,7 @@ def write_usage_sidecar(
             "cache_read_tokens": cache_read_tokens,
             "cache_creation_tokens": cache_creation_tokens,
             "output_tokens": output_tokens,
+            "visible_output_tokens": visible_output_tokens,
             "reasoning_tokens": reasoning_tokens,
             "tool_use_tokens": tool_use_tokens,
             "cost_usd": total_cost_usd,
@@ -64,6 +70,16 @@ def write_usage_sidecar(
                 reasoning_tokens / output_tokens
                 if reasoning_tokens is not None and output_tokens
                 else None
+            ),
+            "latency_ms": (
+                None
+                if not latencies
+                else {
+                    "mean": sum(latencies) / len(latencies),
+                    "p50": _nearest_rank(latencies, 0.50),
+                    "p95": _nearest_rank(latencies, 0.95),
+                    "max": latencies[-1],
+                }
             ),
         },
     }
@@ -100,3 +116,8 @@ def _as_float(value: object) -> float:
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         return float(value)
     return 0.0
+
+
+def _nearest_rank(sorted_values: list[int], percentile: float) -> int:
+    index = max(0, math.ceil(percentile * len(sorted_values)) - 1)
+    return sorted_values[index]

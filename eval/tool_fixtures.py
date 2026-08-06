@@ -111,6 +111,16 @@ class FixtureEvidenceIssue:
     reason: str
 
 
+@dataclass(frozen=True)
+class FixtureObservation:
+    """The exact validated input/result pair exposed to the agent during replay."""
+
+    tool_name: str
+    canonical_input: dict[str, object]
+    input_hash: str
+    result: ToolResult
+
+
 @dataclass
 class FixtureToolRunner:
     """Serves recorded tool results from disk instead of calling the real tool."""
@@ -120,6 +130,7 @@ class FixtureToolRunner:
     misses: list[FixtureMiss] = field(default_factory=list)
     served: dict[str, ToolResultOk] = field(default_factory=dict)
     evidence_issues: list[FixtureEvidenceIssue] = field(default_factory=list)
+    observations: list[FixtureObservation] = field(default_factory=list)
 
     def run(self, tool: Tool, tool_input: BaseModel, ctx: RunContext) -> ToolResult:
         # Recompute the one deterministic arithmetic contract directly through its pure
@@ -147,7 +158,7 @@ class FixtureToolRunner:
         path = tool_fixture_path(self.ticker, tool.name, canonical_input, self.root)
         if not path.exists():
             self.misses.append(FixtureMiss(tool.name, tool_input_hash(canonical_input)))
-            return ToolResultError(
+            result: ToolResult = ToolResultError(
                 error_code="not_found",
                 message=(
                     f"no recorded fixture for {tool.name}({self.ticker}); "
@@ -155,6 +166,15 @@ class FixtureToolRunner:
                 ),
                 retryable=False,
             )
+            self.observations.append(
+                FixtureObservation(
+                    tool.name,
+                    canonical_input,
+                    tool_input_hash(canonical_input),
+                    result,
+                )
+            )
+            return result
         payload: dict[str, object] = json.loads(path.read_text())
         warn_if_stale(payload, path)
         result = _deserialize(payload, tool)
@@ -164,13 +184,30 @@ class FixtureToolRunner:
             self.evidence_issues.append(
                 FixtureEvidenceIssue(tool.name, tool_input_hash(canonical_input), str(exc))
             )
-            return ToolResultError(
+            result = ToolResultError(
                 error_code="not_found",
                 message=f"recorded fixture is unusable: {exc}",
                 retryable=False,
             )
+            self.observations.append(
+                FixtureObservation(
+                    tool.name,
+                    canonical_input,
+                    tool_input_hash(canonical_input),
+                    result,
+                )
+            )
+            return result
         if isinstance(result, ToolResultOk):
             self.served[tool.name] = result
+        self.observations.append(
+            FixtureObservation(
+                tool.name,
+                canonical_input,
+                tool_input_hash(canonical_input),
+                result,
+            )
+        )
         return result
 
 

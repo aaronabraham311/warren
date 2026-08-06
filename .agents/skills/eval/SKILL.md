@@ -24,6 +24,9 @@ uv run python -m agent.eval --golden-set                              # grade ev
 uv run python -m agent.eval --golden-set --output runs/eval-2026-05-10.json
 uv run python -m agent.eval --golden-set --eval-run-id eval-baseline  # pin the id so two runs diff
 uv run python -m agent.eval --golden-set --provider openai --model gpt-5.6-luna --service-tier flex --reasoning-effort medium
+uv run python -m agent.eval --golden-set --tickers AAPL BRK.B LUMN SBUX V CIRSA.MC
+uv run python -m agent.eval --golden-set --tickers AAPL BRK.B LUMN SBUX V CIRSA.MC --agreement-judge openai
+uv run python -m eval.staged --output-dir local/eval-followup --repetitions 3
 ```
 
 `uv run python -m eval.runner` is the same entrypoint; `agent/eval.py` is a shim so the command
@@ -33,6 +36,10 @@ For each `eval/examples/{ticker}.yaml` the runner replays `analyze_ticker` again
 tool outputs, grades the result into an `EvalGrade`, writes one `eval_runs` row, and prints a
 per-ticker line. It never triggers a real analysis run and never writes `analyses`.
 Any fixture miss or invalid evidence fixture is a mandatory run-invalidating failure.
+`--tickers` selects a controlled subset in request order and rejects unknown or duplicate names.
+`--agreement-judge openai` panels the blinded Sonnet judge with Luna-medium and emits explicit
+agreement checks. The staged command defaults to the same six-name subset, Luna-medium fixture
+collection, Sonnet synthesis, standard service tiers, and dual blinded judges.
 
 ---
 
@@ -135,6 +142,14 @@ validates output schemas and filing substance before overwriting an existing fix
   fixture parity, schema failures, and judge disagreement. Full prompts, provider blocks, raw
   finals, validated outputs/failures, fixture diagnostics, and grades go to the owner-only
   private JSONL audit companion; do not publish or commit it.
+- **Staged collection is intentionally interrupted before parsing.** `eval.staged` raises its
+  private `EvidenceCollectionComplete` signal from `response_observer` after the first non-tool
+  collector response has reached the WAL. It then builds a deterministic, bounded packet from
+  successful fixture observations. Any miss or evidence issue skips synthesis.
+- **Synthesis is a fresh request.** The synthesizer receives no collector messages, opaque
+  provider replay, tools, or golden labels—only the generic self-check and compact evidence
+  packet. It gets one schema-only repair attempt. The owner-only staged result retains full
+  observations/responses plus stage token, reasoning, cost, latency, planning, and grade metrics.
 
 ---
 

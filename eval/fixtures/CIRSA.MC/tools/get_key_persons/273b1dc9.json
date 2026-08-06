@@ -1,0 +1,76 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "controlling_holder_identified": false,
+    "data_age_hours": 5233,
+    "persons": [
+      {
+        "name": "Mr. Joaquim  Agut Bonsfills",
+        "ownership_pct": null,
+        "role": "Executive Chairman",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Antonio Hostench Feu",
+        "ownership_pct": null,
+        "role": "CEO & Executive Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Antonio Grau Folguera",
+        "ownership_pct": null,
+        "role": "Chief Financial Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Juan Ignacio Grau Trullas",
+        "ownership_pct": null,
+        "role": "Chief Information Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Miguel Vizca\u00edno Prat",
+        "ownership_pct": null,
+        "role": "Chief Legal Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Rafael  Echevarria Olabarria",
+        "ownership_pct": null,
+        "role": "Corporate Image & Communications Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Ruben Bastida Martinez",
+        "ownership_pct": null,
+        "role": "M&A and Corporate Development Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Francisco Javier Cots Vega",
+        "ownership_pct": null,
+        "role": "Chief People & Talent Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Carlos  Duelo Riu",
+        "ownership_pct": null,
+        "role": "Sustainability Corporate Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "name": "Mr. Roger  Vidal Contreras",
+        "ownership_pct": null,
+        "role": "Corporate Controlling Director",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [
+      "EDGAR SC 13G/D unavailable (not_found): ticker CIRSA-MC not found in EDGAR"
+    ],
+    "ticker": "CIRSA.MC"
+  },
+  "recorded_at": "2026-08-06T01:33:29.228878+00:00",
+  "status": "ok"
+}

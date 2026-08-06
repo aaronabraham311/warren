@@ -56,7 +56,13 @@ from eval.artifacts import (
 )
 from eval.golden_set import EvalExample, load_all_examples
 from eval.grader import CheckResult, EvalGrade, failed_grade, grade_analysis
-from eval.judge import SonnetThesisJudge, ThesisJudge
+from eval.judge import (
+    JUDGE_PROMPT_VERSION,
+    JudgePanel,
+    OpenAIThesisJudge,
+    SonnetThesisJudge,
+    ThesisJudge,
+)
 from eval.reporting import write_eval_report
 from eval.tool_fixtures import FIXTURES_DIR, FixtureToolRunner, has_tool_fixtures
 from eval.usage import write_usage_sidecar
@@ -120,6 +126,18 @@ class TickerEvaluation:
 
 def _new_eval_run_id() -> str:
     return f"eval-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%f')}"
+
+
+def select_examples(tickers: Sequence[str], examples: Sequence[EvalExample]) -> list[EvalExample]:
+    """Select named examples in request order, rejecting unknown or duplicate tickers."""
+    normalized = [ticker.upper() for ticker in tickers]
+    if len(set(normalized)) != len(normalized):
+        raise ValueError("--tickers must not contain duplicates")
+    by_ticker = {example.ticker: example for example in examples}
+    unknown = [ticker for ticker in normalized if ticker not in by_ticker]
+    if unknown:
+        raise ValueError(f"Unknown golden-set ticker(s): {', '.join(unknown)}")
+    return [by_ticker[ticker] for ticker in normalized]
 
 
 def resolve_persona(example: EvalExample) -> DefaultPersona | DirtPersona:
@@ -496,6 +514,12 @@ def run_eval(
                     grade=grade,
                     result=outcome.result,
                     failure=outcome.failure,
+                    judge_model=(
+                        None
+                        if judge is None
+                        else str(getattr(judge, "judge_id", type(judge).__name__))
+                    ),
+                    judge_prompt_version=JUDGE_PROMPT_VERSION if judge is not None else None,
                 )
             )
             write_eval_run(
@@ -569,6 +593,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         help="Pin the run_id (default: eval-<UTC timestamp>) so two runs can be diffed",
     )
     parser.add_argument(
+        "--tickers",
+        nargs="+",
+        default=None,
+        help="Run only these golden-set tickers, in the supplied order",
+    )
+    parser.add_argument(
         "--provider", choices=("anthropic", "openai", "gemini"), default="anthropic"
     )
     parser.add_argument(
@@ -579,6 +609,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         "--reasoning-effort",
         choices=("none", "minimal", "low", "medium", "high"),
         default="none",
+    )
+    parser.add_argument(
+        "--agreement-judge",
+        choices=("none", "openai"),
+        default="none",
+        help="Add an independently blinded judge and measure inter-rater agreement",
     )
     args = parser.parse_args(argv)
 
@@ -593,6 +629,11 @@ def main(argv: Sequence[str] | None = None) -> int:
             reasoning_effort=cast(ReasoningEffort, args.reasoning_effort),
         )
         validate_api_keys(config, os.environ)
+        if args.agreement_judge == "openai" and not os.environ.get("OPENAI_API_KEY", "").strip():
+            raise ValueError("Missing required API key(s): OPENAI_API_KEY")
+        examples = (
+            select_examples(args.tickers, load_all_examples()) if args.tickers is not None else None
+        )
     except ValueError as exc:
         parser.error(str(exc))
 
@@ -601,9 +642,17 @@ def main(argv: Sequence[str] | None = None) -> int:
     # re-runs are stable and free. Built here (not in run_eval) so tests stay offline.
     judge_client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     cache = CacheStore(sqlite3.connect(os.environ.get("WARREN_DB", "warren.db")))
-    judge = SonnetThesisJudge(judge_client, cache)
+    sonnet_judge = SonnetThesisJudge(judge_client, cache)
+    judge: ThesisJudge = sonnet_judge
+    if args.agreement_judge == "openai":
+        openai_judge = OpenAIThesisJudge(
+            OpenAI(api_key=os.environ["OPENAI_API_KEY"]),
+            cache,
+        )
+        judge = JudgePanel((("sonnet", sonnet_judge), ("openai", openai_judge)))
     grades = run_eval(
         output_path=args.output,
+        examples=examples,
         provider=create_provider(config, os.environ),
         config=config,
         eval_run_id=args.eval_run_id,

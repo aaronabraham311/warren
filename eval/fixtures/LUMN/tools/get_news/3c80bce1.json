@@ -1,0 +1,58 @@
+{
+  "data": {
+    "days": 14,
+    "items": [
+      {
+        "datetime": "2026-08-05T13:34:15Z",
+        "headline": "Goldman Sachs Maintains Neutral on Lumen Technologies, Lowers Price Target to $7.25",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Goldman Sachs  analyst Michael Ng   maintains Lumen Technologies (NYSE:LUMN) with a Neutral and lowers the price target from $8.5 to $7.25.",
+        "url": "https://finnhub.io/api/news?id=089bcdf2707644421c437ddf49dd2c80c7529bf0e11cd89d3b3f830781676af6"
+      },
+      {
+        "datetime": "2026-08-05T11:19:03Z",
+        "headline": "Wells Fargo Maintains Equal-Weight on Lumen Technologies, Lowers Price Target to $7.5",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Wells Fargo  analyst Eric Luebchow   maintains Lumen Technologies (NYSE:LUMN) with a Equal-Weight and lowers the price target from $9 to $7.5.",
+        "url": "https://finnhub.io/api/news?id=05c327d5030e796dc9a75a9b617792ad447e188ffe58e8680d74bfab28266a98"
+      },
+      {
+        "datetime": "2026-08-05T04:44:36Z",
+        "headline": "Lumen Q2: Another Step Forward",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Lumen Technologies delivered a second straight revenue beat, with Q2 revenues beating estimates despite a 9% YoY decline. Learn why LUMN stock is a buy.",
+        "url": "https://finnhub.io/api/news?id=6aea598f167a401cf04cc148ba6df3dcc6161100a1fbef0ed864b18166ca1466"
+      },
+      {
+        "datetime": "2026-08-05T01:26:29Z",
+        "headline": "Lumen Technologies (NYSE:LUMN) Posts Narrower Q2 Loss but Revenue Decline Weighs on Shares",
+        "sentiment": null,
+        "source": "ChartMill",
+        "summary": "Lumen (LUMN) Q2 revenue falls 9% to $2.805B, slightly missing estimates, but adjusted EPS beat. Shares dip as legacy declines offset digital growth.",
+        "url": "https://finnhub.io/api/news?id=b6ca49e71afcf91f4d39c2359ee9895efc53d37b3a31933646de666a8f40f25d"
+      },
+      {
+        "datetime": "2026-08-04T20:50:01Z",
+        "headline": "Lumen Technologies, Inc. (LUMN) Q2 2026 Earnings Call Transcript",
+        "sentiment": null,
+        "source": "SeekingAlpha",
+        "summary": "Lumen Technologies, Inc. (LUMN) Q2 2026 Earnings Call August 4, 2026 5:00 PM EDTCompany ParticipantsJames Breen - Senior Vice President of Investor...",
+        "url": "https://finnhub.io/api/news?id=44d0ec6335897ad4292d9cb63d89a32126276efa136a47f49fa4dde42c54590e"
+      },
+      {
+        "datetime": "2026-08-04T16:05:16Z",
+        "headline": "Lumen Technologies Q2 Adj. EPS $(0.07) Beats $(0.14) Estimate, Sales $2.805B Beat $2.766B Estimate",
+        "sentiment": null,
+        "source": "Benzinga",
+        "summary": "Lumen Technologies (NYSE:LUMN) reported quarterly losses of $(0.07) per share which beat the analyst consensus estimate of $(0.14) by 50 percent. This is a 133.33 percent decrease over losses of $(0.03) per share from",
+        "url": "https://finnhub.io/api/news?id=6317b36c5192f6f3e7c1d3e611fd3fbbae17c7fdd7edefd39ae96eb4cd483f50"
+      }
+    ],
+    "ticker": "LUMN"
+  },
+  "recorded_at": "2026-08-06T01:15:14.132603+00:00",
+  "status": "ok"
+}

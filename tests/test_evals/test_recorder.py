@@ -21,6 +21,7 @@ from agent.tools.base import ToolResult, ToolResultError, ToolResultOk
 from data_sources.edgar_client import FilingSection
 from data_sources.yfinance_client import PriceData, ValuationHistory
 from eval.fixture_evidence import (
+    CONTROLLED_FOLLOWUP_TICKERS,
     CURATED_FILING_CONCEPTS,
     FILING_CALLS,
     NEWS_WINDOWS,
@@ -304,6 +305,203 @@ def test_regional_valuation_history_fixture_completeness(ticker: str) -> None:
         TOOL_REGISTRY["get_valuation_history"].input_schema(ticker=ticker).model_dump(mode="json")
     )
     assert tool_fixture_path(ticker, "get_valuation_history", payload, FIXTURES_DIR).exists()
+
+
+@pytest.mark.parametrize("ticker", CONTROLLED_FOLLOWUP_TICKERS)
+@pytest.mark.parametrize("days", NEWS_WINDOWS)
+def test_controlled_followup_has_every_supported_news_window(ticker: str, days: int) -> None:
+    tool = TOOL_REGISTRY["get_news"]
+    tool_input = tool.input_schema.model_validate({"ticker": ticker, "days": days})
+
+    assert tool_fixture_path(
+        ticker,
+        tool.name,
+        tool_input.model_dump(mode="json"),
+        FIXTURES_DIR,
+    ).exists()
+
+
+@pytest.mark.parametrize(
+    ("ticker", "tool_name", "raw_input"),
+    [
+        (
+            "BRK.B",
+            "estimate_intrinsic_value",
+            {
+                "ticker": "BRK.B",
+                "discount_rate": 0.1,
+                "growth_rate": 0.07,
+                "terminal_growth_rate": 0.025,
+            },
+        ),
+        (
+            "BRK.B",
+            "read_filing",
+            {"ticker": "BRK.B", "filing_type": "10-K", "section": "financial_statements"},
+        ),
+        (
+            "BRK.B",
+            "read_filing",
+            {
+                "ticker": "BRK.B",
+                "filing_type": "10-K",
+                "fiscal_year": 2025,
+                "section": "business",
+            },
+        ),
+        (
+            "BRK.B",
+            "estimate_intrinsic_value",
+            {
+                "ticker": "BRK.B",
+                "discount_rate": 0.09,
+                "growth_rate": 0.07,
+                "terminal_growth_rate": 0.025,
+            },
+        ),
+        (
+            "SBUX",
+            "estimate_intrinsic_value",
+            {
+                "ticker": "SBUX",
+                "discount_rate": 0.1,
+                "growth_rate": 0.12,
+                "terminal_growth_rate": 0.03,
+            },
+        ),
+        (
+            "LUMN",
+            "read_filing",
+            {"ticker": "LUMN", "filing_type": "10-Q", "section": "mdna"},
+        ),
+        (
+            "LUMN",
+            "read_filing",
+            {
+                "ticker": "LUMN",
+                "filing_type": "10-K",
+                "fiscal_year": 2025,
+                "section": "business",
+            },
+        ),
+        *(
+            ("CIRSA.MC", tool_name, {"ticker": "CIRSA.MC"})
+            for tool_name in (
+                "get_financial_strength",
+                "get_quality_metrics",
+                "get_capital_allocation",
+                "get_key_persons",
+            )
+        ),
+        ("CIRSA.MC", "get_insider_activity", {"ticker": "CIRSA.MC", "window_days": 180}),
+        (
+            "CIRSA.MC",
+            "read_filing",
+            {"ticker": "CIRSA.MC", "filing_type": "10-K", "section": "financial_statements"},
+        ),
+        (
+            "CIRSA.MC",
+            "get_adverse_media",
+            {"entity_name": "CIRSA", "entity_type": "company", "lookback_days": 90},
+        ),
+        (
+            "CIRSA.MC",
+            "get_adverse_media",
+            {
+                "entity_name": "CIRSA",
+                "native_name": "CIRSA",
+                "entity_type": "company",
+                "lookback_days": 90,
+            },
+        ),
+        (
+            "CIRSA.MC",
+            "get_adverse_media",
+            {
+                "entity_name": "Joaquim Agut Bonsfills",
+                "entity_type": "person",
+                "lookback_days": 90,
+            },
+        ),
+        (
+            "CIRSA.MC",
+            "get_adverse_media",
+            {
+                "entity_name": "Antonio Grau Folguera",
+                "entity_type": "person",
+                "lookback_days": 90,
+            },
+        ),
+        (
+            "CIRSA.MC",
+            "get_adverse_media",
+            {
+                "entity_name": "Cirsa Enterprises",
+                "native_name": "Cirsa",
+                "entity_type": "company",
+                "lookback_days": 90,
+            },
+        ),
+        (
+            "CIRSA.MC",
+            "get_adverse_media",
+            {
+                "entity_name": "Cirsa Enterprises",
+                "entity_type": "company",
+                "lookback_days": 90,
+            },
+        ),
+        (
+            "CIRSA.MC",
+            "get_adverse_media",
+            {
+                "entity_name": "CIRSA Gaming Corporation",
+                "entity_type": "company",
+                "lookback_days": 90,
+            },
+        ),
+        (
+            "CIRSA.MC",
+            "get_adverse_media",
+            {
+                "entity_name": "Antonio Hostench Feu",
+                "entity_type": "person",
+                "lookback_days": 90,
+            },
+        ),
+        (
+            "CIRSA.MC",
+            "screen_watchlists",
+            {"country_hint": "es", "entity_name": "CIRSA", "entity_type": "company"},
+        ),
+        *(
+            (
+                "CIRSA.MC",
+                "screen_watchlists",
+                {"country_hint": "es", "entity_name": entity_name, "entity_type": entity_type},
+            )
+            for entity_name, entity_type in (
+                ("CIRSA Gaming Corporation", "company"),
+                ("Cirsa Enterprises", "company"),
+                ("Joaquim Agut Bonsfills", "person"),
+                ("Antonio Hostench Feu", "person"),
+                ("Antonio Grau Folguera", "person"),
+            )
+        ),
+    ],
+)
+def test_observed_controlled_followup_inputs_are_committed(
+    ticker: str, tool_name: str, raw_input: dict[str, object]
+) -> None:
+    tool = TOOL_REGISTRY[tool_name]
+    tool_input = tool.input_schema.model_validate(raw_input)
+
+    assert tool_fixture_path(
+        ticker,
+        tool.name,
+        tool_input.model_dump(mode="json"),
+        FIXTURES_DIR,
+    ).exists()
 
 
 def test_curated_filing_expectations_have_usable_evidence(tmp_path: Path) -> None:

@@ -1,0 +1,7 @@
+{
+  "error_code": "network",
+  "message": "429 Client Error: Too Many Requests for url: https://api.gdeltproject.org/api/v2/doc/doc?query=CIRSA+Gaming+Corporation+tone%3C-2&mode=ArtList&format=json&maxrecords=250&sort=ToneAsc&timespan=90d",
+  "recorded_at": "2026-08-06T02:02:56.766485+00:00",
+  "retryable": true,
+  "status": "error"
+}

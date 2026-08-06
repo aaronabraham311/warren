@@ -1,0 +1,24 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "assumptions": {
+      "discount_rate": 0.09,
+      "growth_rate": 0.07,
+      "projection_years": 10,
+      "terminal_growth_rate": 0.025
+    },
+    "current_price": 518.85,
+    "data_age_hours": 5233,
+    "intrinsic_equity_value": 554624419481,
+    "intrinsic_value_per_share": 334494.96,
+    "margin_of_safety": 0.9984,
+    "owner_earnings_base": 25042000000,
+    "owner_earnings_source": "free_cash_flow",
+    "reverse_dcf_implied_growth": null,
+    "shares_outstanding": 1658095,
+    "source": "yfinance",
+    "ticker": "BRK.B"
+  },
+  "recorded_at": "2026-08-06T02:02:43.473471+00:00",
+  "status": "ok"
+}

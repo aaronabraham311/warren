@@ -456,7 +456,8 @@ class EDGARClient:
 
     def _extract_section(self, html: str, section: str, filing_type: str = "") -> str:
         try:
-            text = BeautifulSoup(html, "lxml").get_text("\n")
+            soup = BeautifulSoup(html, "lxml")
+            text = soup.get_text("\n")
         except Exception as exc:  # noqa: BLE001 — bs4 may raise varied parser errors
             raise _ParseError(f"failed to parse filing HTML: {exc}") from exc
 
@@ -486,4 +487,48 @@ class EDGARClient:
         if not candidates:
             # Header not located — return the whole document rather than nothing.
             return text.strip()
-        return max(candidates, key=lambda candidate: len(candidate.split()))
+        best = max(candidates, key=lambda candidate: len(candidate.split()))
+        if section == "mdna" and len(best.split()) < 75:
+            linked = _linked_financial_mdna(soup)
+            if len(linked.split()) > len(best.split()):
+                return linked
+        return best
+
+
+def _linked_financial_mdna(soup: BeautifulSoup) -> str:
+    """Follow issuer-specific financial-table links when Item 7 is only an index stub.
+
+    Some issuers place the substantive MD&A before the formal Item 7 wrapper and link back
+    to it as a separate financial section. Text-only Item boundaries then see only the short
+    wrapper. The internal anchor is deterministic and stays within the filed document.
+    """
+    for link in soup.find_all("a", href=True):
+        label = " ".join(link.get_text(" ", strip=True).casefold().split())
+        href = link.get("href")
+        if label != "financial table of contents" or not isinstance(href, str):
+            continue
+        if not href.startswith("#"):
+            continue
+        target = soup.find(id=href[1:])
+        if target is None:
+            continue
+        parts: list[str] = []
+        started = False
+        for sibling in target.find_next_siblings():
+            sibling_text = sibling.get_text("\n", strip=True)
+            normalized = " ".join(sibling_text.casefold().split())
+            if not started:
+                started = normalized.startswith("management’s discussion") or normalized.startswith(
+                    "management's discussion"
+                )
+                if not started:
+                    continue
+            if normalized.startswith("item 7."):
+                break
+            parts.append(sibling_text)
+            if sum(len(part) for part in parts) >= MAX_CHARS * 2:
+                break
+        candidate = "\n".join(parts).strip()
+        if len(candidate.split()) >= 75:
+            return candidate
+    return ""
