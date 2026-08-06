@@ -4,7 +4,8 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
 
 ## Project map
 
-- `agent/`: agent loop, routing, personas, budgets, portfolio/universe screening, and typed tools.
+- `agent/`: shared run service, lifecycle events/cancellation/locking, agent loop, routing,
+  personas, budgets, portfolio/universe screening, and typed tools.
 - `data_sources/`: all external API clients and cache behavior, including typed
   junior-market identity sources used by universe refresh and regional filings.
 - `storage/`: SQLAlchemy models, SQLite engine, Alembic migrations, JSONL WAL recovery.

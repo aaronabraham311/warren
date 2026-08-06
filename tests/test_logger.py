@@ -2,8 +2,10 @@
 
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import anthropic
+import pytest
 from sqlalchemy.orm import Session
 
 from agent.models import SONNET_4_6
@@ -159,6 +161,63 @@ def test_flush_to_db_is_idempotent(db_engine: object, db_session: Session, tmp_p
 
     rows = db_session.query(ToolCall).filter_by(run_id="r_idem").all()
     assert len(rows) == 1
+
+
+def test_cancelled_trace_projects_cancelled_status(
+    db_engine: object, db_session: Session, tmp_path: Path
+) -> None:
+    logger = RunLogger("r-cancelled", tmp_path)
+    logger.log("run_started", tickers=["AAPL"])
+    logger.log("run_completed", status="cancelled")
+    logger.flush_to_db(db_session)
+
+    run = db_session.get(Run, "r-cancelled")
+    assert run is not None
+    assert run.status == "cancelled"
+
+
+def test_large_tool_sidecar_uses_configured_log_directory(tmp_path: Path) -> None:
+    logger = RunLogger("configured-sidecar", tmp_path)
+    output = json.dumps({"payload": "x" * 9_000})
+    logger.log_tool_call(
+        tool_name="get_quote",
+        tool_input={"ticker": "AAPL"},
+        output=output,
+        cached=False,
+        latency_ms=12,
+        status="ok",
+        ticker="AAPL",
+        error_msg=None,
+    )
+    logger.close()
+
+    event = json.loads(logger.path.read_text(encoding="utf-8"))
+    marker = json.loads(event["output"])
+    sidecar = Path(marker["path"])
+    assert sidecar == tmp_path / "configured-sidecar" / "tool_outputs" / "0.json"
+    assert sidecar.read_text(encoding="utf-8") == output
+
+
+def test_sidecar_fsync_failure_never_appends_a_durable_marker(tmp_path: Path) -> None:
+    logger = RunLogger("sidecar-failure", tmp_path)
+    output = json.dumps({"payload": "x" * 9_000})
+    with (
+        patch("storage.engine.os.fsync", side_effect=OSError("disk failure")),
+        pytest.raises(OSError, match="disk failure"),
+    ):
+        logger.log_tool_call(
+            tool_name="get_quote",
+            tool_input={"ticker": "AAPL"},
+            output=output,
+            cached=False,
+            latency_ms=12,
+            status="ok",
+            ticker="AAPL",
+            error_msg=None,
+        )
+    logger.close()
+    assert logger.path.read_text(encoding="utf-8") == ""
+    assert not list((tmp_path / "sidecar-failure" / "tool_outputs").glob("*.json"))
 
 
 def test_incomplete_trace_marked_failed(

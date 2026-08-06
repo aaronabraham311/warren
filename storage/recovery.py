@@ -89,7 +89,7 @@ def reconcile_run(session: Session, run_id: str, jsonl_path: Path) -> None:
     status: RunStatus = "failed"
     if completed is not None:
         completed_status = _as_str(completed.get("status"))
-        if completed_status in ("success", "cost_aborted", "failed", "running"):
+        if completed_status in ("success", "cost_aborted", "failed", "running", "cancelled"):
             status = completed_status  # type: ignore[assignment]  # narrowed above
 
     run = session.get(Run, run_id)

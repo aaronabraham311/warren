@@ -10,10 +10,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from agent.cancellation import CancellationToken, RunCancelledError
 from agent.screening import (
     DEFAULT_SCREEN_CRITERIA,
     GEM_HUNT_SCREEN_CRITERIA,
     ScreeningResult,
+    TickerScore,
     _closability_checks,
     _deep_value_score,
     _fundamentals_checks,
@@ -210,6 +212,28 @@ def test_run_screening_empty_universe() -> None:
     assert result.candidates == []
     assert result.pass_rate == 0.0
     assert isinstance(result, ScreeningResult)
+
+
+def test_screening_cancels_between_live_sequential_items() -> None:
+    token = CancellationToken()
+    calls: list[str] = []
+
+    def screen_once_then_cancel(
+        ticker: str, client: object, criteria: Mapping[str, float | int | bool]
+    ) -> TickerScore:
+        del client, criteria
+        calls.append(ticker)
+        token.cancel()
+        return TickerScore("candidate")
+
+    with pytest.raises(RunCancelledError):
+        run_screening_pass(
+            ["AAPL", "MSFT"],
+            client=MagicMock(),
+            screen_fn=screen_once_then_cancel,
+            cancellation=token,
+        )
+    assert calls == ["AAPL"]
 
 
 def test_run_screening_uses_singleton_when_no_client() -> None:

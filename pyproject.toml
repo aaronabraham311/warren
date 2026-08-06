@@ -50,6 +50,7 @@ plugins = ["pydantic.mypy"]
 module = [
     "agent.models",
     "agent.loop",
+    "agent.service",
     "agent.portfolio",
     "agent.tools.base",
     "agent.tools.quote",

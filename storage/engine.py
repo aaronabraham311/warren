@@ -7,6 +7,7 @@ from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 from typing import Protocol
+from uuid import uuid4
 
 from sqlalchemy import Engine, create_engine, delete, event, text
 from sqlalchemy.orm import Session
@@ -274,14 +275,33 @@ def write_tool_call(
         session.commit()
 
 
-def truncate_tool_output(output_json: str, run_id: str, tool_call_id: int) -> str:
+def truncate_tool_output(
+    output_json: str,
+    run_id: str,
+    tool_call_id: int,
+    *,
+    base_dir: Path = Path("logs/runs"),
+) -> str:
     if len(output_json.encode()) <= _TOOL_OUTPUT_MAX_BYTES:
         return output_json
 
-    out_dir = Path(f"logs/runs/{run_id}/tool_outputs")
+    out_dir = base_dir / run_id / "tool_outputs"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{tool_call_id}.json"
-    out_path.write_text(output_json)
+    temp_path = out_dir / f".{tool_call_id}.{uuid4().hex}.tmp"
+    try:
+        with temp_path.open("w", encoding="utf-8") as fh:
+            fh.write(output_json)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(temp_path, out_path)
+        directory_fd = os.open(out_dir, os.O_RDONLY)
+        try:
+            os.fsync(directory_fd)
+        finally:
+            os.close(directory_fd)
+    finally:
+        temp_path.unlink(missing_ok=True)
 
     sha256 = hashlib.sha256(output_json.encode()).hexdigest()
     return json.dumps({"truncated": True, "path": str(out_path), "sha256": sha256})

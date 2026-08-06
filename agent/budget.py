@@ -3,6 +3,8 @@ import json
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+from agent.cancellation import NeverCancelToken
+from agent.events import NullEventSink
 from agent.models import (
     PRICE_CACHE_CREATION_PER_TOKEN,
     PRICE_CACHE_READ_PER_TOKEN,
@@ -11,6 +13,8 @@ from agent.models import (
 )
 
 if TYPE_CHECKING:
+    from agent.cancellation import CancellationToken
+    from agent.events import EventSink
     from storage.logger import RunLogger
 
 
@@ -67,6 +71,10 @@ class RunContext:
     budget: Budget
     # The run's JSONL write-ahead log; every run has one (see storage.logger).
     logger: "RunLogger"
+    # Cooperative cancellation and safe display progress. Defaults retain the exact
+    # behavior of existing batch/eval callers.
+    cancellation: "CancellationToken" = field(default_factory=NeverCancelToken)
+    event_sink: "EventSink" = field(default_factory=NullEventSink)
     # Number of agent iterations spent on the current ticker (for ticker_completed).
     iterations: int = 0
     # key = (tool_name, input_hash_prefix) → call count; for tool-loop detection
