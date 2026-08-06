@@ -61,6 +61,7 @@ def test_artifact_store_detects_on_disk_corruption(tmp_path: Path) -> None:
 def test_artifact_store_detects_recorded_size_mismatch(tmp_path: Path) -> None:
     store = ArtifactStore(tmp_path)
     artifact = store.put(b"evidence", mime_type="text/plain")
+    assert artifact.byte_length is not None
     wrong_size = StoredArtifact(
         sha256=artifact.sha256,
         relative_key=artifact.relative_key,

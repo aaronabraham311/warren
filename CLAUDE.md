@@ -51,6 +51,9 @@ data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
   errors.py            # DataSourceError(error_code, message, stage, source) — shared typed failure boundary
   filing_models.py     # Source-neutral DocumentRef/DocumentText/FilingSection contracts and stable filing IDs
+  pdf_artifacts.py     # Streamed official PDF fetch, immutable manifests, page extraction, bounded selective OCR
+  filing_translation.py # Versioned page translation, ArtifactStore-backed cache, explicit limits/statuses
+  stored_filings.py    # Exact kind/year manifest selection backing source-neutral read_filing
   security_master.py   # Strict offline resolution of active/superseded G12 identities; no fuzzy ticker/ISIN guesses
   regional_http.py     # Shared allowlisted HTTPS, timeout/retry/rate-limit/cache policy for regional filing archives
   borsa_italiana_filings.py # Official Euronext Growth Milan corporate-document HTML adapter

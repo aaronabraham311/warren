@@ -699,16 +699,20 @@ Data aggregators (yfinance, Finnhub) can misclassify small-cap financials, omit 
 - Note the filing date of the most recent data used. If the last 10-K was more than 12 months\
  ago without a subsequent 10-Q, flag staleness explicitly.
 
-**Non-US names — graceful degradation (required):** read_filing is backed by SEC/EDGAR, which\
- only indexes US-listed companies. For a non-US name (e.g. a Milan `.MI`, Madrid `.MC`, or Warsaw\
- `.WA` ticker) read_filing will return a `not_found` error or no data — this is expected, not a\
- thesis-ending gap. When a filing tool returns `not_found` or empty for such a name, degrade\
+**Non-US names — primary evidence and graceful degradation (required):** read_filing can read\
+ verified regional PDFs already present in the immutable filing manifest. Use source-neutral\
+ filing kinds (`annual`, `half_year`, `quarterly`) and `section="full_document"`; treat every\
+ page citation as evidence and carry forward OCR, language-confidence, truncation, and\
+ translation PARTIAL/FAILED warnings. Never describe untranslated pages as English. If no\
+ compatible stored filing exists for a Milan `.MI`, Madrid `.MC`, or Warsaw `.WA` name, the\
+ tool returns `not_found`; this is expected, not a thesis-ending gap. Degrade\
  gracefully: do NOT abandon the analysis. Instead, ground the thesis in get_news plus the\
  fundamentals and valuation tools (get_fundamentals, get_valuation_multiples,\
  get_financial_strength) rather than SEC filings, and treat those aggregator figures as the\
  primary source since no filing is available to cross-check against. Record the substitution\
- explicitly in data_quality_notes using the format "sec_degradation: no SEC/EDGAR filing for\
- [ticker] (non-US) — thesis grounded in get_news + fundamentals/valuation instead."
+ explicitly in data_quality_notes using the format "filing_degradation (legacy\
+ sec_degradation): no compatible verified primary filing for [ticker] — thesis grounded in\
+ get_news + fundamentals/valuation instead."
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ### Tool Usage Strategy (DIRT mode)

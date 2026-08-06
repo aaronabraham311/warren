@@ -33,6 +33,15 @@ def test_filing_manifest_migration_round_trip(
         "last_modified",
         "parser_version",
         "supersedes_checksum",
+        "upstream_id",
+        "document_kind",
+        "title",
+        "publication_date",
+        "reporting_period_end",
+        "extracted_text_checksum",
+        "extracted_text_artifact_key",
+        "translated_text_checksum",
+        "translated_text_artifact_key",
     }
     with engine.connect() as connection:
         index_rows = connection.exec_driver_sql(
@@ -54,6 +63,17 @@ def test_filing_manifest_migration_round_trip(
         foreign_key["constrained_columns"] == ["filing_id", "supersedes_checksum"]
         for foreign_key in foreign_keys
     )
+
+    command.downgrade(config, "a5e0b1e349aa")
+    base_manifest_columns = {
+        column["name"] for column in inspect(engine).get_columns("filing_manifests")
+    }
+    assert "document_kind" not in base_manifest_columns
+    assert "extracted_text_artifact_key" not in base_manifest_columns
+    command.upgrade(config, "head")
+    assert "document_kind" in {
+        column["name"] for column in inspect(engine).get_columns("filing_manifests")
+    }
 
     command.downgrade(config, _PREVIOUS_REVISION)
     assert "filing_manifests" not in inspect(engine).get_table_names()

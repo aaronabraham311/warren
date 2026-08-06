@@ -13,7 +13,7 @@ from urllib.parse import urlencode, urljoin, urlparse
 import requests
 
 from data_sources.cache import CacheStore, make_key
-from data_sources.errors import DataSourceError
+from data_sources.errors import DataSourceError, ErrorStage
 from data_sources.filing_models import SourceSystem
 
 
@@ -26,6 +26,20 @@ class HttpDocument:
     fetched_at: datetime
     etag: str | None
     last_modified: str | None
+    status_code: int
+    from_cache: bool = False
+
+
+@dataclass(frozen=True)
+class HttpBytesDocument:
+    """One fetched binary attachment with response provenance."""
+
+    url: str
+    content: bytes
+    fetched_at: datetime
+    etag: str | None
+    last_modified: str | None
+    content_type: str | None
     status_code: int
     from_cache: bool = False
 
@@ -99,7 +113,9 @@ class RegionalHttpClient:
 
         for attempt in range(self._max_attempts):
             try:
-                response_or_error = self._get_with_redirects(url, params=dict(normalized_params))
+                response_or_error = self._get_with_redirects(
+                    url, params=dict(normalized_params), stream=True
+                )
             except requests.RequestException as exc:
                 if attempt + 1 < self._max_attempts:
                     self._sleep(2.0**attempt)
@@ -109,11 +125,13 @@ class RegionalHttpClient:
                 return response_or_error
             response = response_or_error
             if response.status_code == 429:
+                response.close()
                 if attempt + 1 < self._max_attempts:
                     self._sleep(self._retry_after(response, attempt))
                     continue
                 return self._error("rate_limit", "official archive rate limit exhausted")
             if response.status_code >= 500:
+                response.close()
                 if attempt + 1 < self._max_attempts:
                     self._sleep(2.0**attempt)
                     continue
@@ -122,9 +140,13 @@ class RegionalHttpClient:
                 )
             if response.status_code >= 400:
                 code = "not_found" if response.status_code == 404 else "network"
+                response.close()
                 return self._error(code, f"official archive returned HTTP {response.status_code}")
 
-            response_text = self._read_bounded_text(response)
+            try:
+                response_text = self._read_bounded_text(response)
+            finally:
+                response.close()
             if isinstance(response_text, DataSourceError):
                 return response_text
             document = HttpDocument(
@@ -141,8 +163,117 @@ class RegionalHttpClient:
 
         raise AssertionError("positive max_attempts guarantees a return")
 
+    def get_bytes(
+        self,
+        url: str,
+        *,
+        params: Mapping[str, str] | None = None,
+        max_bytes: int = 25_000_000,
+    ) -> HttpBytesDocument | DataSourceError:
+        """Fetch a bounded binary attachment through the same safe HTTP boundary."""
+        if max_bytes < 1:
+            raise ValueError("max_bytes must be positive")
+        host_error = self._validate_url(url, stage="download")
+        if host_error is not None:
+            return host_error
+        normalized_params = tuple(sorted((params or {}).items()))
+        request_url = url
+        if normalized_params:
+            request_url = f"{url}?{urlencode(normalized_params)}"
+        for attempt in range(self._max_attempts):
+            try:
+                response_or_error = self._get_with_redirects(
+                    url, params=dict(normalized_params), stage="download", stream=True
+                )
+            except requests.RequestException as exc:
+                if attempt + 1 < self._max_attempts:
+                    self._sleep(2.0**attempt)
+                    continue
+                return self._error(
+                    "network", f"official attachment request failed: {exc}", stage="download"
+                )
+            if isinstance(response_or_error, DataSourceError):
+                return response_or_error
+            response = response_or_error
+            try:
+                if response.status_code == 429:
+                    if attempt + 1 < self._max_attempts:
+                        self._sleep(self._retry_after(response, attempt))
+                        continue
+                    return self._error(
+                        "rate_limit", "official attachment rate limit exhausted", stage="download"
+                    )
+                if response.status_code >= 500:
+                    if attempt + 1 < self._max_attempts:
+                        self._sleep(2.0**attempt)
+                        continue
+                    return self._error(
+                        "network",
+                        f"official attachment returned HTTP {response.status_code}",
+                        stage="download",
+                    )
+                if response.status_code >= 400:
+                    code = "not_found" if response.status_code == 404 else "network"
+                    return self._error(
+                        code,
+                        f"official attachment returned HTTP {response.status_code}",
+                        stage="download",
+                    )
+                declared_length = response.headers.get("Content-Length")
+                if declared_length is not None:
+                    try:
+                        parsed_length = int(declared_length)
+                        if parsed_length < 0:
+                            return self._error(
+                                "parse",
+                                "attachment has invalid Content-Length",
+                                stage="download",
+                            )
+                        if parsed_length > max_bytes:
+                            return self._error(
+                                "parse",
+                                "attachment exceeds configured byte limit",
+                                stage="download",
+                            )
+                    except ValueError:
+                        return self._error(
+                            "parse", "attachment has invalid Content-Length", stage="download"
+                        )
+                content = bytearray()
+                for chunk in response.iter_content(chunk_size=64 * 1024):
+                    content.extend(chunk)
+                    if len(content) > max_bytes:
+                        return self._error(
+                            "parse", "attachment exceeds configured byte limit", stage="download"
+                        )
+                return HttpBytesDocument(
+                    url=str(response.url or request_url),
+                    content=bytes(content),
+                    fetched_at=datetime.now(timezone.utc),
+                    etag=response.headers.get("ETag"),
+                    last_modified=response.headers.get("Last-Modified"),
+                    content_type=response.headers.get("Content-Type"),
+                    status_code=response.status_code,
+                )
+            except requests.RequestException as exc:
+                if attempt + 1 < self._max_attempts:
+                    self._sleep(2.0**attempt)
+                    continue
+                return self._error(
+                    "network", f"official attachment stream failed: {exc}", stage="download"
+                )
+            finally:
+                response.close()
+
+        raise AssertionError("positive max_attempts guarantees a return")
+
     def _get_with_redirects(
-        self, url: str, *, params: dict[str, str]
+        self,
+        url: str,
+        *,
+        params: dict[str, str],
+        stage: ErrorStage = "discovery",
+        stream: bool = False,
     ) -> requests.Response | DataSourceError:
         current_url = url
         current_params: dict[str, str] | None = params
@@ -157,26 +288,44 @@ class RegionalHttpClient:
                 params=current_params,
                 timeout=self._timeout,
                 allow_redirects=False,
-                stream=True,
+                stream=stream,
             )
             response_url = str(response.url or current_url)
-            response_url_error = self._validate_url(response_url)
+            response_url_error = self._validate_url(response_url, stage=stage)
             if response_url_error is not None:
+                if stream:
+                    response.close()
                 return response_url_error
             if response.status_code not in {301, 302, 303, 307, 308}:
                 return response
             location = response.headers.get("Location")
             if not location:
-                return self._error("parse", "official archive redirect omitted Location")
+                if stream:
+                    response.close()
+                return self._error(
+                    "parse", "official archive redirect omitted Location", stage=stage
+                )
             next_url = urljoin(response_url, location)
-            next_url_error = self._validate_url(next_url)
+            next_url_error = self._validate_url(next_url, stage=stage)
             if next_url_error is not None:
+                if stream:
+                    response.close()
                 return next_url_error
             if next_url in visited:
-                return self._error("network", "official archive redirect loop detected")
+                if stream:
+                    response.close()
+                return self._error(
+                    "network", "official archive redirect loop detected", stage=stage
+                )
             if redirect_count == self._max_redirects:
-                return self._error("network", "official archive redirect limit exceeded")
+                if stream:
+                    response.close()
+                return self._error(
+                    "network", "official archive redirect limit exceeded", stage=stage
+                )
             visited.add(next_url)
+            if stream:
+                response.close()
             current_url = next_url
             # Location is a complete next request target. Reapplying the original
             # params can duplicate or alter its query string.
@@ -205,11 +354,13 @@ class RegionalHttpClient:
         """Validate a discovered landing or attachment URL against the host policy."""
         return self._validate_url(url)
 
-    def _validate_url(self, url: str) -> DataSourceError | None:
+    def _validate_url(self, url: str, *, stage: ErrorStage = "discovery") -> DataSourceError | None:
         parsed = urlparse(url)
         host = (parsed.hostname or "").lower()
         if parsed.scheme != "https" or host not in self._allowed_hosts:
-            return self._error("parse", f"refusing non-official or non-HTTPS archive URL: {url}")
+            return self._error(
+                "parse", f"refusing non-official or non-HTTPS archive URL: {url}", stage=stage
+            )
         return None
 
     def _throttle(self) -> None:
@@ -230,11 +381,13 @@ class RegionalHttpClient:
                 pass
         return 2.0**attempt
 
-    def _error(self, code: str, message: str) -> DataSourceError:
+    def _error(
+        self, code: str, message: str, *, stage: ErrorStage = "discovery"
+    ) -> DataSourceError:
         return DataSourceError(
             error_code=code,
             message=message,
-            stage="discovery",
+            stage=stage,
             source=self._source,
         )
 

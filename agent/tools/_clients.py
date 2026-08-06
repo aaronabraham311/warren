@@ -12,12 +12,22 @@ connection) between cases — see the autouse fixture in ``tests/conftest.py``.
 
 import os
 import sqlite3
+from decimal import Decimal
+
+import anthropic
 
 from data_sources.edgar_client import EDGARClient
+from data_sources.filing_translation import (
+    AnthropicPageTranslator,
+    AnthropicSdkTranslationTransport,
+    PageTranslator,
+)
 from data_sources.finnhub_client import FinnhubClient
 from data_sources.gdelt_client import GDELTClient
 from data_sources.ofac_client import OFACClient
+from data_sources.stored_filings import StoredFilingClient
 from data_sources.yfinance_client import YFinanceClient
+from storage.artifacts import ArtifactStore
 
 _conn: sqlite3.Connection | None = None
 _yf: YFinanceClient | None = None
@@ -26,6 +36,7 @@ _finnhub: FinnhubClient | None = None
 _finnhub_resolved = False
 _gdelt: GDELTClient | None = None
 _ofac: OFACClient | None = None
+_stored_filings: StoredFilingClient | None = None
 
 
 def _connection() -> sqlite3.Connection:
@@ -73,8 +84,31 @@ def ofac_client() -> OFACClient:
     return _ofac
 
 
+def stored_filing_client() -> StoredFilingClient:
+    global _stored_filings
+    if _stored_filings is None:
+        _stored_filings = StoredFilingClient(
+            _connection(), ArtifactStore(), translator=_translation_provider()
+        )
+    return _stored_filings
+
+
+def _translation_provider() -> PageTranslator | None:
+    model = os.environ.get("WARREN_TRANSLATION_MODEL", "").strip()
+    input_rate = os.environ.get("WARREN_TRANSLATION_INPUT_USD_PER_MILLION_TOKENS", "").strip()
+    output_rate = os.environ.get("WARREN_TRANSLATION_OUTPUT_USD_PER_MILLION_TOKENS", "").strip()
+    if not model or not input_rate or not output_rate:
+        return None
+    return AnthropicPageTranslator(
+        AnthropicSdkTranslationTransport(anthropic.Anthropic()),
+        model=model,
+        input_usd_per_million_tokens=Decimal(input_rate),
+        output_usd_per_million_tokens=Decimal(output_rate),
+    )
+
+
 def reset_clients() -> None:
-    global _conn, _yf, _edgar, _finnhub, _finnhub_resolved, _gdelt, _ofac
+    global _conn, _yf, _edgar, _finnhub, _finnhub_resolved, _gdelt, _ofac, _stored_filings
     if _conn is not None:
         _conn.close()
     _conn = None
@@ -84,3 +118,4 @@ def reset_clients() -> None:
     _finnhub_resolved = False
     _gdelt = None
     _ofac = None
+    _stored_filings = None

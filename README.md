@@ -47,7 +47,7 @@ The agent picks from 17 Claude tools per turn (`agent/tools/`), grouped by what 
 | Growth / quality | `get_growth_metrics`, `get_quality_metrics` (ROIC, ROA, margin stability, cash conversion), `get_financial_strength` |
 | Management & capital allocation | `get_capital_allocation` (buybacks, dividends, net-debt trajectory), `get_key_persons`, `get_insider_activity` |
 | Competitive context | `get_peer_comparison` (rank/percentile vs. peers) |
-| Filings / news / risk | `read_filing` (SEC 10-K/10-Q/8-K/DEF 14A), `get_news`, `get_adverse_media` (GDELT negative-tone screening), `screen_watchlists` (OFAC sanctions) |
+| Filings / news / risk | `read_filing` (SEC sections or verified stored regional PDFs with page citations and explicit OCR/translation coverage), `get_news`, `get_adverse_media` (GDELT negative-tone screening), `screen_watchlists` (OFAC sanctions) |
 | Portfolio / discovery | `get_holding_context`, `screen_universe` (Haiku PASS/FAIL screen over the S&P 500 + watchlist) |
 
 Model routing is phase-based (`agent/routing.py`): cheap Haiku screening → Sonnet for deep tool-use → Opus only for final synthesis, gated by explicit trigger conditions rather than always escalating. Every run is budget-capped (`agent/budget.py`) and aborts cleanly if a cost ceiling is hit mid-run.
@@ -139,5 +139,8 @@ crontab -e
 | `WARREN_DB` | Optional: override the SQLite path (default `warren.db`) |
 | `WARREN_LOGS_DIR` | Optional: override the JSONL run-log dir the dashboard reads (default `logs/runs`) |
 | `WARREN_FILINGS_DIR` | Optional: content-addressed raw filing/text artifacts (default `local/filings`; excluded from Git) |
+| `WARREN_TRANSLATION_MODEL` | Optional: explicit Anthropic model for filing-page translation; unset keeps translation fail-closed |
+| `WARREN_TRANSLATION_INPUT_USD_PER_MILLION_TOKENS` | Required with a translation model: current input-token price used by the estimated cost admission budget |
+| `WARREN_TRANSLATION_OUTPUT_USD_PER_MILLION_TOKENS` | Required with a translation model: current output-token price used by the estimated cost admission budget |
 
 Never commit `.env`. Use `.env.example` as the template.

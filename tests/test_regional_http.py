@@ -8,7 +8,7 @@ import requests
 
 from data_sources.errors import DataSourceError
 from data_sources.filing_models import SourceSystem
-from data_sources.regional_http import HttpDocument, RegionalHttpClient
+from data_sources.regional_http import HttpBytesDocument, HttpDocument, RegionalHttpClient
 
 
 def _response(
@@ -96,6 +96,62 @@ def test_chunked_oversized_response_is_rejected() -> None:
 
     assert isinstance(result, DataSourceError)
     assert "size limit" in result.message
+
+
+def test_binary_fetch_streams_with_hard_limit_and_does_not_use_sqlite_cache() -> None:
+    first = MagicMock(spec=requests.Response)
+    first.status_code = 200
+    first.url = "https://newconnect.pl/report.pdf"
+    first.headers = {"Content-Type": "application/pdf"}
+    first.iter_content.return_value = iter([b"1234", b"5678"])
+    second = MagicMock(spec=requests.Response)
+    second.status_code = 200
+    second.url = first.url
+    second.headers = first.headers
+    second.iter_content.return_value = iter([b"okay"])
+    session = MagicMock(spec=requests.Session)
+    session.get.side_effect = [first, second]
+    client = RegionalHttpClient(
+        source=SourceSystem.EBI,
+        allowed_hosts=frozenset({"newconnect.pl"}),
+        db_conn=sqlite3.connect(":memory:"),
+        session=session,
+        min_interval_seconds=0,
+    )
+
+    oversized = client.get_bytes("https://newconnect.pl/report.pdf", max_bytes=6)
+    fetched = client.get_bytes("https://newconnect.pl/report.pdf", max_bytes=6)
+
+    assert isinstance(oversized, DataSourceError)
+    assert oversized.stage == "download"
+    assert "byte limit" in oversized.message
+    assert isinstance(fetched, HttpBytesDocument)
+    assert fetched.content == b"okay"
+    assert session.get.call_count == 2
+    assert session.get.call_args_list[0].kwargs["stream"] is True
+    first.close.assert_called_once()
+    second.close.assert_called_once()
+
+
+def test_binary_stream_failure_retries_and_returns_typed_error() -> None:
+    responses = []
+    for _ in range(3):
+        response = MagicMock(spec=requests.Response)
+        response.status_code = 200
+        response.url = "https://newconnect.pl/report.pdf"
+        response.headers = {"Content-Type": "application/pdf"}
+        response.iter_content.side_effect = requests.exceptions.ChunkedEncodingError("truncated")
+        responses.append(response)
+    session = MagicMock(spec=requests.Session)
+    session.get.side_effect = responses
+
+    result = _client(session).get_bytes("https://newconnect.pl/report.pdf")
+
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "network"
+    assert result.stage == "download"
+    assert session.get.call_count == 3
+    assert all(response.close.call_count == 1 for response in responses)
 
 
 def test_rate_limit_retries_and_honors_bounded_retry_after() -> None:

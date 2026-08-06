@@ -219,6 +219,11 @@ class DocumentText(BaseModel):
             TranslationStatus.PARTIAL,
         }:
             raise ValueError("translation status cannot imply translation without translated pages")
+        elif self.translation_status is TranslationStatus.FAILED:
+            if self.translation_missing_pages != page_numbers:
+                raise ValueError("failed translation must list every source page as missing")
+            if not self.coverage_notes:
+                raise ValueError("failed translation requires an explicit coverage note")
         elif self.translation_missing_pages:
             raise ValueError("missing translation pages require partial translation status")
         return self
