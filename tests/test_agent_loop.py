@@ -550,16 +550,18 @@ def test_dirt_valuation_history_call_is_recorded_in_wal(
         [
             make_tool_use("get_valuation_history", {"ticker": "KPL.WA"}),
             make_end_turn(VALID_ANALYSIS_JSON),
+            make_end_turn(VALID_ANALYSIS_JSON),
         ]
     )
 
     with patch("agent.loop.TOOL_REGISTRY", {"get_valuation_history": mock_tool}):
-        analyze_ticker(
-            "KPL.WA",
-            DirtPersona(),
-            HardcodedSonnetRouting(),
-            _ctx("run-dirt-history", logger=logger),
-        )
+        with pytest.raises(SchemaRepairError, match="Schema repair failed"):
+            analyze_ticker(
+                "KPL.WA",
+                DirtPersona(),
+                HardcodedSonnetRouting(),
+                _ctx("run-dirt-history", logger=logger),
+            )
 
     events = _wal_tool_events(logger)
     assert [event["tool"] for event in events] == ["get_valuation_history"]

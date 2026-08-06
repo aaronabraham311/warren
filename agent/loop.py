@@ -20,6 +20,9 @@ class _Persona(Protocol):
     @property
     def system_prompt(self) -> str: ...
 
+    @property
+    def requires_dirt_decision(self) -> bool: ...
+
 
 class _RoutingPolicy(Protocol):
     def select(
@@ -124,6 +127,54 @@ def _parse_output(text: str) -> AnalysisOutput:
     return AnalysisOutput.model_validate_json(_extract_json(text))
 
 
+def _schema_repair_prompt(
+    persona: _Persona,
+    expected_dirt_decision: BaseModel | None,
+) -> str:
+    if getattr(persona, "requires_dirt_decision", False):
+        if expected_dirt_decision is None:
+            return (
+                "Before final synthesis, call model_dirt_scenarios successfully. Then output "
+                "only JSON matching the required schema, with dirt_decision copied exactly "
+                "from that tool result."
+            )
+        return (
+            "Output only JSON matching the required schema. dirt_decision must copy the most "
+            "recent model_dirt_scenarios result exactly; recommendation must be buy only for "
+            "outcome=buy and hold for watchlist/pass."
+        )
+    return (
+        "Output only a valid JSON object matching the required schema exactly, without "
+        "markdown fences or explanation."
+    )
+
+
+def _validate_persona_output(
+    result: AnalysisOutput,
+    persona: _Persona,
+    expected_dirt_decision: BaseModel | None,
+) -> AnalysisOutput:
+    """Enforce persona-only fields and the deterministic DIRT outcome mapping."""
+    requires_decision = getattr(persona, "requires_dirt_decision", False)
+    decision = getattr(result, "dirt_decision", None)
+    if not requires_decision:
+        if decision is not None:
+            raise ValueError("dirt_decision must be null for the default persona")
+        return result
+    if result.dirt_signals is None:
+        raise ValueError("dirt_signals is required for the DIRT persona")
+    if decision is None:
+        raise ValueError("dirt_decision is required for the DIRT persona")
+    if expected_dirt_decision is None:
+        raise ValueError("DIRT persona must call model_dirt_scenarios before synthesis")
+    if decision.model_dump(mode="json") != expected_dirt_decision.model_dump(mode="json"):
+        raise ValueError("dirt_decision must exactly match model_dirt_scenarios output")
+    expected_recommendation = "buy" if decision.outcome == "buy" else "hold"
+    if result.recommendation != expected_recommendation:
+        raise ValueError("DIRT recommendation must map buy to buy and watchlist/pass to hold")
+    return result
+
+
 def _last_text(content: list[anthropic.types.ContentBlock]) -> str:
     for block in reversed(content):
         if isinstance(block, anthropic.types.TextBlock):
@@ -210,6 +261,7 @@ def analyze_ticker(
     ]
     iteration = 0
     schema_repair_attempt = False
+    expected_dirt_decision: BaseModel | None = None
 
     while True:
         iteration += 1
@@ -241,7 +293,9 @@ def analyze_ticker(
                 temperature,
             )
             try:
-                result = _parse_output(_last_text(response.content))
+                result = _validate_persona_output(
+                    _parse_output(_last_text(response.content)), persona, expected_dirt_decision
+                )
                 result.termination_reason = force_label  # type: ignore[assignment]
                 return result
             except (ValidationError, ValueError, json.JSONDecodeError) as exc:
@@ -268,7 +322,9 @@ def analyze_ticker(
         if response.stop_reason == "end_turn":
             text = _last_text(response.content)
             try:
-                result = _parse_output(text)
+                result = _validate_persona_output(
+                    _parse_output(text), persona, expected_dirt_decision
+                )
                 if schema_repair_attempt:
                     result.termination_reason = "schema_repair_success"
                 return result
@@ -289,11 +345,7 @@ def analyze_ticker(
                         anthropic.types.MessageParam,
                         {
                             "role": "user",
-                            "content": (
-                                "Your response was not valid JSON matching the required schema. "
-                                "Please output ONLY a valid JSON object — no markdown fences, "
-                                "no explanation — matching the schema in your instructions exactly."
-                            ),
+                            "content": _schema_repair_prompt(persona, expected_dirt_decision),
                         },
                     )
                 )
@@ -345,6 +397,8 @@ def analyze_ticker(
                     if isinstance(tool_result, ToolResultOk):
                         result_content = tool_result.data.model_dump_json()
                         cached = tool_result.cached
+                        if block.name == "model_dirt_scenarios":
+                            expected_dirt_decision = tool_result.data
                     else:
                         result_content = json.dumps(
                             {
@@ -406,7 +460,11 @@ def analyze_ticker(
                     temperature,
                 )
                 try:
-                    result = _parse_output(_last_text(response.content))
+                    result = _validate_persona_output(
+                        _parse_output(_last_text(response.content)),
+                        persona,
+                        expected_dirt_decision,
+                    )
                     result.termination_reason = "tool_loop_broken"
                     return result
                 except (ValidationError, ValueError, json.JSONDecodeError) as exc:

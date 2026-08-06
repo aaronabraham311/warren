@@ -85,6 +85,10 @@ class AnalysisData(TypedDict):
     tool_calls_made: int | None
     tokens_used: int | None
     termination_reason: NotRequired[str | None]
+    dirt_signals: NotRequired[dict[str, object] | None]
+    dirt_decision: NotRequired[dict[str, object] | None]
+    decision_outcome: NotRequired[str | None]
+    probability_weighted_irr: NotRequired[float | None]
 
 
 class Analysis(Base):
@@ -105,6 +109,10 @@ class Analysis(Base):
     tool_calls_made: Mapped[int | None] = mapped_column(Integer)
     tokens_used: Mapped[int | None] = mapped_column(Integer)
     termination_reason: Mapped[str | None] = mapped_column(Text)
+    dirt_signals: Mapped[dict[str, object] | None] = mapped_column(JSON)
+    dirt_decision: Mapped[dict[str, object] | None] = mapped_column(JSON)
+    decision_outcome: Mapped[str | None] = mapped_column(Text)
+    probability_weighted_irr: Mapped[float | None] = mapped_column(Float)
     created_at: Mapped[datetime | None] = mapped_column(DateTime, default=_utcnow)
 
 

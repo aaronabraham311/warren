@@ -90,11 +90,25 @@ _TOOL_OUTPUT_MAX_BYTES = 8192
 
 
 def upsert_analysis(run_id: str, ticker: str, data: AnalysisData) -> None:
+    payload = dict(data)
+    decision = payload.get("dirt_decision")
+    if isinstance(decision, dict):
+        outcome = decision.get("outcome")
+        weighted_irr = decision.get("probability_weighted_irr")
+        payload["decision_outcome"] = outcome if isinstance(outcome, str) else None
+        payload["probability_weighted_irr"] = (
+            float(weighted_irr)
+            if isinstance(weighted_irr, (int, float)) and not isinstance(weighted_irr, bool)
+            else None
+        )
+    else:
+        payload["decision_outcome"] = None
+        payload["probability_weighted_irr"] = None
     with Session(get_engine()) as session:
         session.execute(
             delete(Analysis).where(Analysis.run_id == run_id, Analysis.ticker == ticker)
         )
-        session.add(Analysis(run_id=run_id, ticker=ticker, **data))
+        session.add(Analysis(run_id=run_id, ticker=ticker, **payload))
         session.commit()
 
 

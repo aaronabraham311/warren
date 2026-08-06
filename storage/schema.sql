@@ -51,6 +51,10 @@ CREATE TABLE IF NOT EXISTS analyses (
   data_quality_notes TEXT,       -- JSON array
   tool_calls_made INTEGER,
   tokens_used INTEGER,
+  dirt_signals JSON,             -- compact DIRT analysis signals
+  dirt_decision JSON,            -- complete G18 decision contract
+  decision_outcome TEXT,         -- scalar projection for dashboard/filtering
+  probability_weighted_irr REAL, -- scalar projection for dashboard/filtering
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE (run_id, ticker)
 );

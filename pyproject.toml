@@ -71,6 +71,7 @@ module = [
     "agent.tools.intrinsic_value",
     "agent.tools.adverse_media",
     "agent.tools.capital_allocation",
+    "agent.tools.dirt_scenarios",
     "agent.tools.persons",
     "agent.tools.watchlists",
     "eval.golden_set",

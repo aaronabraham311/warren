@@ -1,6 +1,7 @@
 from agent.tools.adverse_media import GetAdverseMediaTool
 from agent.tools.base import Tool
 from agent.tools.capital_allocation import GetCapitalAllocationTool
+from agent.tools.dirt_scenarios import ModelDirtScenariosTool
 from agent.tools.filings import ReadFilingTool
 from agent.tools.financial_strength import GetFinancialStrengthTool
 from agent.tools.forensics import GetForensicEvidenceTool
@@ -38,6 +39,7 @@ TOOL_REGISTRY: dict[str, Tool] = {
     "estimate_intrinsic_value": EstimateIntrinsicValueTool(),
     "get_capital_allocation": GetCapitalAllocationTool(),
     "get_key_persons": GetKeyPersonsTool(),
+    "model_dirt_scenarios": ModelDirtScenariosTool(),
     "screen_watchlists": ScreenWatchlistsTool(),
 }
 

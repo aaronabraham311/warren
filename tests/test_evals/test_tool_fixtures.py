@@ -129,6 +129,34 @@ def test_fixture_runner_never_calls_the_real_tool(tmp_path: Path, ctx: RunContex
     assert isinstance(result, ToolResultOk)
 
 
+def test_fixture_runner_executes_only_allowlisted_pure_tool(
+    tmp_path: Path, ctx: RunContext
+) -> None:
+    called = False
+
+    class _PureTool(Tool):
+        name = "model_dirt_scenarios"
+        description = "pure"
+        input_schema = _quote_tool().input_schema
+        output_schema = PriceData
+
+        def run(self, tool_input: object, ctx: object) -> ToolResultOk:
+            nonlocal called
+            called = True
+            return ToolResultOk(data=_price())
+
+    runner = FixtureToolRunner("AAPL", tmp_path)
+    result = runner.run(
+        _PureTool(), _quote_tool().input_schema.model_validate({"ticker": "AAPL"}), ctx
+    )
+
+    assert called is True
+    assert isinstance(result, ToolResultOk)
+    assert result.cached is True
+    assert runner.served["model_dirt_scenarios"] is result
+    assert runner.misses == []
+
+
 def test_recorded_file_is_deterministic_json(tmp_path: Path) -> None:
     path = record_tool_result(
         "AAPL", "get_quote", {"ticker": "AAPL"}, ToolResultOk(data=_price()), tmp_path
