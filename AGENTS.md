@@ -11,6 +11,8 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
   display-safe run diagnostics.
 - `agent/activity.py`: pure lifecycle-to-activity reducer shared by terminal rendering,
   active-run health, deterministic replay, and tests.
+- `agent/terminal/replay.py`: offline trace validation/replay and 0600 privacy-safe
+  failure-bundle export; it must never call models, agent tools, or remote telemetry.
 - `agent/terminal/`: prompt lifecycle, typed slash commands, local completion,
   control-safe rendering, deterministic semantic-screen reliability lab, non-secret
   settings, and read-only persisted-state queries.
@@ -59,6 +61,7 @@ uv run ruff format --check .
 uv run mypy .
 uv run pytest -q
 uv run warren
+uv run warren-terminal --help
 uv run python -m agent.run AAPL
 uv run python -m agent.eval --golden-set
 uv run streamlit run dashboard/app.py

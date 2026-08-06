@@ -85,6 +85,12 @@ class RunLogger:
         self._sequence = self._last_sequence()
         self._open_operations: dict[tuple[str, str | None, str | None], list[str]] = {}
 
+    def set_event_sink_if_unset(self, event_sink: "EventSink") -> None:
+        """Attach the run-context sink when the logger was built independently."""
+
+        if self._event_sink is None:
+            self._event_sink = event_sink
+
     def _last_sequence(self) -> int:
         """Continue a run-local sequence when a recovered process appends a trace."""
 

@@ -83,6 +83,24 @@ Ctrl-C during a run requests cooperative cancellation; a second Ctrl-C may exit
 immediately. EOF or `/quit` exits cleanly. Piped and `NO_COLOR` output is stable and
 line-oriented.
 
+### Offline terminal diagnostics
+
+Run traces can be validated and replayed without an API key or network access:
+
+```bash
+uv run warren-terminal validate logs/runs/RUN_ID.jsonl
+uv run warren-terminal replay logs/runs/RUN_ID.jsonl --width 60 --mode no_color
+uv run warren-terminal replay logs/runs/RUN_ID.jsonl --sequence 12
+uv run warren-terminal bundle logs/runs/RUN_ID.jsonl failure.json
+```
+
+Replay projects the authoritative trace through the typed display-safe event boundary
+and `pyte`; it never re-executes a model or agent tool. Bundles are local-only 0600
+files containing sanitized lifecycle metadata, integrity findings, and a semantic
+screen. They exclude prompts, model content, tool inputs/outputs, portfolio values,
+secret-like fields, and local usernames. Review a bundle before sharing it and delete
+it promptly with `rm -- failure.json` when the investigation is over.
+
 ## Stack
 
 | Layer | Tech |

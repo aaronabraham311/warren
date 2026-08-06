@@ -112,12 +112,14 @@ def test_partial_comparison_preserves_failed_ticker_position() -> None:
 
 
 def test_control_sequences_and_secret_values_are_inert() -> None:
-    unsafe = "bad\x1b[31m\u202esecret api_key=abc123 sk-ant-private"
+    unsafe = "bad\x1b[31m\u202esecret api_key=abc123 sk-ant-private /Users/private-user/secrets.txt"
     safe = sanitize_terminal_text(unsafe)
     assert "\x1b" not in safe
     assert "\u202e" not in safe
     assert "abc123" not in safe
     assert "sk-ant-private" not in safe
+    assert "private-user" not in safe
+    assert "<home>/secrets.txt" in safe
     assert safe.count("[redacted]") == 2
 
 

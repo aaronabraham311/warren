@@ -79,6 +79,7 @@ class TerminalScenario:
         tty: bool = True,
         color: ColorMode = "always",
         clock: FakeClock | None = None,
+        terminal_type: str | None = None,
     ) -> None:
         self.clock = clock or FakeClock()
         self.width = width
@@ -90,6 +91,7 @@ class TerminalScenario:
         self._stream = pyte.Stream(self._screen)
         self.stdout = _CaptureStream(tty=tty, writes=self._writes)
         self.stderr = _CaptureStream(tty=tty, writes=self._writes)
+        selected_terminal = terminal_type or ("xterm-256color" if tty else "dumb")
         self.renderer = renderer_factory(
             stdout=self.stdout,
             stderr=self.stderr,
@@ -97,7 +99,7 @@ class TerminalScenario:
             animation=tty,
             width=width,
             clock=self.clock,
-            terminal_type="xterm-256color" if tty else "dumb",
+            terminal_type=selected_terminal,
             no_color=color == "never",
         )
 

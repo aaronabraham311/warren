@@ -20,10 +20,12 @@ dependencies = [
     "pypdf>=6.14.2",
     "rich>=15.0.0",
     "prompt-toolkit>=3.0.53",
+    "pyte>=0.8.2",
 ]
 
 [project.scripts]
 warren = "agent.chat:main"
+warren-terminal = "agent.terminal.replay:main"
 
 [build-system]
 requires = ["hatchling"]
@@ -43,7 +45,6 @@ dev = [
     "mypy",
     "pre-commit>=4.6.0",
     "types-pyyaml>=6.0.12.20260518",
-    "pyte>=0.8.2",
     "pexpect>=4.9.0",
     "syrupy>=5.5.3",
     "hypothesis>=6.165.2",
