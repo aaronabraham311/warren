@@ -26,12 +26,12 @@ agent/
   budget.py       # Token / cost budget tracking
   models.py       # Model IDs + per-model PRICING table (single source of truth)
   tools/          # One file per Claude tool; __init__.py holds the registry
-    base.py       # Tool ABC, ToolResult (ToolResultOk/ToolResultError), error_from_data_source()
+    base.py       # Tool ABC, ToolResult (ToolResultOk/ToolResultError with source + pipeline stage), error_from_data_source()
     _clients.py   # Lazy data-source client singletons (yfinance/edgar/finnhub) + reset_clients()
     quote.py      # get_quote          → YFinanceClient.get_price → PriceData
     fundamentals.py  # get_fundamentals → yfinance, Finnhub fallback when stale → FundamentalsData
     growth.py     # get_growth_metrics → YFinanceClient.get_growth_metrics → GrowthData
-    filings.py    # read_filing        → EDGARClient.get_filing_section → FilingSection
+    filings.py    # read_filing → source-neutral FilingSection; current US route remains EDGAR-compatible
     news.py       # get_news           → FinnhubClient.get_news → NewsResult
     screen.py     # screen_universe    → portfolio∪watchlist filtered on fundamentals → ScreenResult
     holdings.py   # get_holding_context→ portfolio.csv + get_price → HoldingContext
@@ -49,7 +49,9 @@ agent/
 
 data_sources/
   cache.py             # CacheStore (shared SQLite cache) + make_key(tool_name, *parts)
-  errors.py            # DataSourceError(error_code, message) — shared by all clients
+  errors.py            # DataSourceError(error_code, message, stage, source) — shared typed failure boundary
+  filing_models.py     # Source-neutral DocumentRef/DocumentText/FilingSection contracts and stable filing IDs
+  security_master.py   # Strict offline resolution of active/superseded G12 identities; no fuzzy ticker/ISIN guesses
   yfinance_client.py   # Wraps yfinance for price quotes and fundamentals; get_financials → FinancialsHistory (multi-year income/balance/cash-flow rows) is the shared foundation that get_growth_metrics / get_quality_metrics / get_financial_strength all compute off via _build_financials + _series
   edgar_client.py      # EDGARClient — SEC 10-K/10-Q/8-K/DEF 14A filing sections + get_sc13_holders (EFTS SC 13G/D beneficial owner search) (cached, polite)
   finnhub_client.py    # FinnhubClient — news + fundamentals fallback (cached, rate-limited)
@@ -63,7 +65,8 @@ data_sources/
   security_identity.py # source-grounded SecurityIdentity and ConstituentSource boundary
 
 storage/
-  models.py       # ORM models (Base + all table classes + indexes) — no I/O
+  models.py       # ORM models, including append-only filing manifest versions/provenance
+  artifacts.py    # ArtifactStore — immutable SHA-256-addressed filing binaries/text under WARREN_FILINGS_DIR; SQLite stores only relative manifest keys
   engine.py       # Engine, WAL/FK pragmas, get_session, migrate(), helper fns
   logger.py       # RunLogger — JSONL per-run trace (the durable WAL) + flush_to_db
   cost.py         # compute_cost(model, …) — per-model LLM cost from models.PRICING
@@ -234,3 +237,4 @@ Before claiming a task complete, run and pass `ruff check .`, `mypy .`, and `pyt
 | `ANTHROPIC_API_KEY` | `agent/run.py` — constructs the Anthropic client |
 | `WARREN_DB` | `storage/engine.py` — SQLite path override (default: `warren.db`) |
 | `WARREN_LOGS_DIR` | `dashboard/data.py` — JSONL run-log dir for the reasoning trace (default: `logs/runs`) |
+| `WARREN_FILINGS_DIR` | `storage/artifacts.py` — content-addressed filing artifacts (default: `local/filings`) |

@@ -138,5 +138,6 @@ crontab -e
 | `FINNHUB_API_KEY` | Real-time quotes and news |
 | `WARREN_DB` | Optional: override the SQLite path (default `warren.db`) |
 | `WARREN_LOGS_DIR` | Optional: override the JSONL run-log dir the dashboard reads (default `logs/runs`) |
+| `WARREN_FILINGS_DIR` | Optional: content-addressed raw filing/text artifacts (default `local/filings`; excluded from Git) |
 
 Never commit `.env`. Use `.env.example` as the template.

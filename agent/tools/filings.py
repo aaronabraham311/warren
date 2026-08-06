@@ -12,8 +12,9 @@ from agent.tools.base import (
     ToolResultOk,
     error_from_data_source,
 )
-from data_sources.edgar_client import FilingSection, FilingType, SectionName
+from data_sources.edgar_client import FilingType, SectionName
 from data_sources.errors import DataSourceError
+from data_sources.filing_models import FilingSection, TranslationStatus
 
 _GROSS_MARGIN_RE = re.compile(
     r"gross\s+(?:profit\s+)?margin[^.]*?(\d+(?:\.\d+)?)\s*%",
@@ -75,8 +76,12 @@ class ReadFilingTool(Tool):
 
         updates: dict[str, object] = {
             "translate": tool_input.translate,
-            "source_language": tool_input.source_language,
+            "translation_status": (
+                TranslationStatus.REQUESTED if tool_input.translate else result.translation_status
+            ),
         }
+        if tool_input.source_language is not None:
+            updates["source_language"] = tool_input.source_language
         try:
             yf_fund = yfinance_client().get_fundamentals(tool_input.ticker)
             if not isinstance(yf_fund, DataSourceError) and yf_fund.gross_margin_pct is not None:

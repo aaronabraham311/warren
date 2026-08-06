@@ -86,6 +86,11 @@ def test_mdna_returns_content(
     assert result.truncated is False
     assert result.word_count > 0
     assert result.edgar_url.endswith("aapl-20230930.htm")
+    assert result.source_url == result.edgar_url
+    assert result.filing_id is not None
+    assert result.source_system == "edgar"
+    assert result.venue == "SEC"
+    assert result.extraction_method == "html"
 
 
 def test_truncation_caps_at_max_chars(
@@ -131,6 +136,8 @@ def test_invalid_ticker_returns_not_found(
     result = client.get_filing_section("ZZZZ", "10-K", "mdna")
     assert isinstance(result, DataSourceError)
     assert result.error_code == "not_found"
+    assert result.stage == "identity"
+    assert result.source == "edgar"
 
 
 def test_user_agent_header_always_present(edgar_conn: sqlite3.Connection) -> None:
@@ -173,6 +180,25 @@ def test_http_error_returns_network(
     result = client.get_filing_section("AAPL", "10-K", "mdna")
     assert isinstance(result, DataSourceError)
     assert result.error_code == "network"
+    assert result.stage == "identity"
+    assert result.source == "edgar"
+
+
+def test_http_429_returns_rate_limit_with_pipeline_context(
+    edgar_conn: sqlite3.Connection, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    client = EDGARClient(edgar_conn, _sleep=lambda _s: None)
+
+    def fake_get(url: str, timeout: int | None = None) -> _FakeResponse:
+        return _FakeResponse(429, "")
+
+    monkeypatch.setattr(client._session, "get", fake_get)
+    result = client.get_filing_section("AAPL", "10-K", "mdna")
+
+    assert isinstance(result, DataSourceError)
+    assert result.error_code == "rate_limit"
+    assert result.stage == "identity"
+    assert result.source == "edgar"
 
 
 def test_non_json_200_returns_parse(

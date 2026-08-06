@@ -106,6 +106,35 @@ CREATE TABLE IF NOT EXISTS security_identities (
   PRIMARY KEY (venue, isin)
 );
 
+CREATE TABLE IF NOT EXISTS filing_manifests (
+  filing_id TEXT NOT NULL,
+  checksum TEXT NOT NULL,
+  issuer_isin TEXT,
+  venue TEXT NOT NULL,
+  source_system TEXT NOT NULL,
+  landing_page_url TEXT,
+  direct_document_url TEXT NOT NULL,
+  mime_type TEXT NOT NULL,
+  byte_length INTEGER NOT NULL,
+  retrieved_at TIMESTAMP NOT NULL,
+  etag TEXT,
+  last_modified TEXT,
+  status TEXT NOT NULL,
+  source_language TEXT,
+  parser_version TEXT,
+  extraction_version TEXT,
+  translation_version TEXT,
+  artifact_key TEXT NOT NULL,
+  supersedes_checksum TEXT,
+  created_at TIMESTAMP NOT NULL,
+  PRIMARY KEY (filing_id, checksum),
+  CONSTRAINT ck_filing_manifests_checksum_length CHECK (length(checksum) = 64),
+  CONSTRAINT ck_filing_manifests_byte_length CHECK (byte_length >= 0),
+  CONSTRAINT fk_filing_manifests_supersedes
+    FOREIGN KEY (filing_id, supersedes_checksum)
+    REFERENCES filing_manifests(filing_id, checksum)
+);
+
 -- Performance indexes (Tech Spec §7.5)
 CREATE INDEX IF NOT EXISTS idx_analyses_ticker_created ON analyses(ticker, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_analyses_run             ON analyses(run_id);
@@ -115,3 +144,9 @@ CREATE INDEX IF NOT EXISTS idx_eval_runs_run            ON eval_runs(run_id);
 CREATE INDEX IF NOT EXISTS idx_security_identities_isin ON security_identities(isin);
 CREATE INDEX IF NOT EXISTS idx_security_identities_current_ticker
   ON security_identities(canonical_ticker, is_active);
+CREATE INDEX IF NOT EXISTS idx_filing_manifests_checksum
+  ON filing_manifests(checksum);
+CREATE INDEX IF NOT EXISTS idx_filing_manifests_issuer_date
+  ON filing_manifests(issuer_isin, retrieved_at DESC);
+CREATE INDEX IF NOT EXISTS idx_filing_manifests_document_versions
+  ON filing_manifests(filing_id, retrieved_at DESC);

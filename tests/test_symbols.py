@@ -78,9 +78,32 @@ def test_yfinance_and_finnhub_share_canonical_base() -> None:
 # ── G3: shared TICKER_PATTERN (the single source of truth for every model) ────────
 
 # Non-US exchange suffixes the gem-hunt slice must accept, plus US baselines.
-_VALID_TICKERS = ("DIR.MI", "CIRSA.MC", "KPL.WA", "AAPL", "BRK.B", "BRK-B")
+_VALID_TICKERS = (
+    "DIR.MI",
+    "CIRSA.MC",
+    "KPL.WA",
+    "480S.MC",
+    "4MB.WA",
+    "WAMI28.MI",
+    "AAPL",
+    "BRK.B",
+    "BRK-B",
+)
 # Things that must still be rejected as obvious garbage.
-_INVALID_TICKERS = ("aapl", "TOOLONG", "123", "BRK.b", "", "BRK.", ".MI", "DIR.MIL")
+_INVALID_TICKERS = (
+    "aapl",
+    "TOOLONG",
+    "123",
+    "123456.MC",
+    "ABC1234.MI",
+    "BRK.b",
+    "",
+    "BRK.",
+    ".MI",
+    "DIR.MIL",
+    "A_BC.WA",
+    "ABC!.MI",
+)
 
 
 @pytest.mark.parametrize("ticker", _VALID_TICKERS)
@@ -93,7 +116,10 @@ def test_ticker_pattern_rejects_garbage(ticker: str) -> None:
     assert re.match(TICKER_PATTERN, ticker) is None
 
 
-@pytest.mark.parametrize("ticker", ("DIR.MI", "CIRSA.MC", "KPL.WA", "AAPL", "BRK.B"))
+@pytest.mark.parametrize(
+    "ticker",
+    ("DIR.MI", "CIRSA.MC", "KPL.WA", "480S.MC", "4MB.WA", "WAMI28.MI", "AAPL", "BRK.B"),
+)
 def test_suffix_ticker_passes_all_three_validators(ticker: str) -> None:
     # The single shared pattern means AnalysisOutput, Holding/WatchlistEntry, and
     # EvalExample all accept the same non-US symbols — they can never drift again.

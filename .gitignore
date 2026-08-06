@@ -221,3 +221,5 @@ __marimo__/
 *.db
 logs/
 local/
+# Raw filings and derived text (default WARREN_FILINGS_DIR; keep only minimized fixtures).
+local/filings/

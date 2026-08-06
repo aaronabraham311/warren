@@ -24,7 +24,7 @@ from data_sources.symbols import TICKER_PATTERN as TICKER_PATTERN
 if TYPE_CHECKING:
     from agent.budget import RunContext
 
-ErrorCode = Literal["rate_limit", "not_found", "stale_data", "network", "unknown"]
+ErrorCode = Literal["rate_limit", "not_found", "stale_data", "network", "parse", "unknown"]
 
 
 class ToolResultOk(BaseModel):
@@ -41,6 +41,8 @@ class ToolResultError(BaseModel):
     error_code: ErrorCode
     message: str
     retryable: bool
+    stage: str | None = None
+    source: str | None = None
 
 
 ToolResult = ToolResultOk | ToolResultError
@@ -53,13 +55,19 @@ _DATA_SOURCE_ERROR_MAP: dict[str, tuple[ErrorCode, bool]] = {
     "network": ("network", True),
     "rate_limit": ("rate_limit", True),
     "stale_data": ("stale_data", False),
-    "parse": ("unknown", False),
+    "parse": ("parse", False),
 }
 
 
 def error_from_data_source(dse: DataSourceError) -> ToolResultError:
     code, retryable = _DATA_SOURCE_ERROR_MAP.get(dse.error_code, ("unknown", False))
-    return ToolResultError(error_code=code, message=dse.message, retryable=retryable)
+    return ToolResultError(
+        error_code=code,
+        message=dse.message,
+        retryable=retryable,
+        stage=dse.stage,
+        source=dse.source,
+    )
 
 
 class Tool(ABC):

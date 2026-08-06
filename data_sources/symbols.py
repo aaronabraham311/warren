@@ -29,11 +29,19 @@ KNOWN_EXCHANGE_SUFFIXES: frozenset[str] = frozenset({"MI", "MC", "WA"})
 # WatchlistEntry, eval.golden_set.EvalExample). Keeping one source of truth stops
 # the three regexes from drifting apart and rejecting valid non-US symbols.
 #
-# Base: 1–5 uppercase letters, plus an OPTIONAL ``.``/``-`` suffix of 1–2 letters.
-# This accepts both US share classes (``BRK.B``, ``BRK-B``) and the slice's
-# exchange suffixes (``DIR.MI`` Milan, ``CIRSA.MC`` Madrid, ``KPL.WA`` Warsaw).
-# Deliberately permissive — validation must not reject valid foreign symbols.
-TICKER_PATTERN: str = r"^[A-Z]{1,5}([.-][A-Z]{1,2})?$"
+# Base: 1–6 uppercase ASCII alphanumerics with at least one letter, matching the
+# actual G12 junior-market security master (for example ``480S``, ``4MB``, and
+# ``WAMI28``). An OPTIONAL ``.``/``-`` suffix contains 1–2 uppercase letters for
+# regional exchange suffixes or US share classes. Numeric-only bases, punctuation,
+# whitespace, and bases longer than six characters remain invalid.
+_LETTER_FIRST_BASE = r"[A-Z][A-Z0-9]{0,5}"
+_DIGIT_FIRST_BASE_WITH_LETTER = (
+    r"(?:[0-9][A-Z][A-Z0-9]{0,4}|[0-9]{2}[A-Z][A-Z0-9]{0,3}|"
+    r"[0-9]{3}[A-Z][A-Z0-9]{0,2}|[0-9]{4}[A-Z][A-Z0-9]?|[0-9]{5}[A-Z])"
+)
+TICKER_PATTERN: str = (
+    rf"^(?:{_LETTER_FIRST_BASE}|{_DIGIT_FIRST_BASE_WITH_LETTER})(?:[.-][A-Z]{{1,2}})?$"
+)
 
 
 def canonical_symbol(ticker: str) -> str:
