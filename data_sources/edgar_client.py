@@ -57,6 +57,11 @@ SECTION_BOUNDARIES: dict[str, tuple[str, tuple[str, ...]]] = {
     "compensation": ("Item 11", ("Item 12",)),
     "related_party": ("Item 13", ("Item 14", "Item 15")),
 }
+_10Q_SECTION_BOUNDARIES: dict[str, tuple[str, tuple[str, ...]]] = {
+    "financial_statements": ("Item 1", ("Item 2",)),
+    "mdna": ("Item 2", ("Item 3",)),
+    "risk_factors": ("Item 1A", ("Item 2",)),
+}
 EXEC_SUMMARY_LINES = 400
 
 # DEF 14A proxy statements use prose headings rather than Item numbers.
@@ -135,6 +140,31 @@ def _item_regex(item_label: str) -> re.Pattern[str]:
     # "Item 7" → matches "Item 7" / "ITEM 7." but NOT "Item 7A"; "Item 1A" → only "Item 1A".
     num = item_label.split()[-1].lower()
     return re.compile(rf"item\s+{re.escape(num)}(?![0-9a-z])", re.IGNORECASE)
+
+
+def _bounded_section_candidates(
+    text: str,
+    start_label: str,
+    end_labels: tuple[str, ...],
+) -> list[str]:
+    """Return every plausibly bounded occurrence of an Item section.
+
+    Filings commonly repeat an Item label in the table of contents and in later
+    cross-references.  Selecting the last occurrence therefore produces fragments such as
+    ``"Item 7 of this Report"``.  Bound each occurrence independently and let substance
+    (word count) choose the real body; TOC entries and cross-references are naturally tiny.
+    """
+    candidates: list[str] = []
+    for start in _item_regex(start_label).finditer(text):
+        end_pos = len(text)
+        for end_label in end_labels:
+            end = _item_regex(end_label).search(text, start.end())
+            if end is not None:
+                end_pos = min(end_pos, end.start())
+        candidate = text[start.start() : end_pos].strip()
+        if candidate:
+            candidates.append(candidate)
+    return candidates
 
 
 # ── EDGARClient ───────────────────────────────────────────────────────────────
@@ -448,17 +478,12 @@ class EDGARClient:
                     break
             return text[start_pos:end_pos].strip()
 
-        start_label, end_labels = SECTION_BOUNDARIES[section]
-        starts = list(_item_regex(start_label).finditer(text))
-        if not starts:
+        boundaries = _10Q_SECTION_BOUNDARIES if filing_type == "10-Q" else SECTION_BOUNDARIES
+        if section not in boundaries:
+            raise _ParseError(f"section {section!r} is not supported for {filing_type}")
+        start_label, end_labels = boundaries[section]
+        candidates = _bounded_section_candidates(text, start_label, end_labels)
+        if not candidates:
             # Header not located — return the whole document rather than nothing.
             return text.strip()
-
-        # Last occurrence skips the table-of-contents reference near the top.
-        start = starts[-1]
-        end_pos = len(text)
-        for end_label in end_labels:
-            m = _item_regex(end_label).search(text, start.end())
-            if m is not None:
-                end_pos = min(end_pos, m.start())
-        return text[start.start() : end_pos].strip()
+        return max(candidates, key=lambda candidate: len(candidate.split()))

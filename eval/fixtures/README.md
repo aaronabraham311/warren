@@ -8,9 +8,13 @@ recorded by different commands — don't mix them up.
 | `{TICKER}/{client}/{method}/{hash}.json` | the **raw upstream payload** a data-source client parses | data-fetcher unit tests (they exercise the real parsing path) | `python -m eval.fixtures --record AAPL` |
 | `{TICKER}/tools/{tool_name}/{hash}.json` | the **serialized `ToolResult`** a tool returns | the eval harness, via `eval.tool_fixtures.FixtureToolRunner` | `python -m eval.fixtures.recorder AAPL` |
 
-The filename stem is `sha256(json.dumps(input, sort_keys=True))[:8]` over the validated
-tool input, so `get_news(ticker="AAPL")` and `get_news(ticker="AAPL", days=7)` resolve to
-one file. Error cases recorded by hand use descriptive stems (`error_not_found.json`).
+The filename stem is `sha256(json.dumps(input, sort_keys=True))[:8]` over the validated,
+tool-aware canonical input. Ordinary Pydantic defaults are filled before hashing. The DCF's
+omitted behavioral defaults and the equivalent explicit values (`0.08`, `0.10`, `0.025`,
+`10`) intentionally resolve to one file; real overrides remain distinct. News windows are
+not aliases: 7-, 14-, and 30-day requests each have their own fixture because they return
+different evidence. Error cases recorded by hand use descriptive stems
+(`error_not_found.json`).
 
 ## Replaying
 
@@ -30,11 +34,26 @@ genuinely unavailable stays deterministic rather than leaving a hole.
 ```bash
 python -m eval.fixtures.recorder                # every golden-set ticker
 python -m eval.fixtures.recorder AAPL BRK.B     # named tickers
+python -m eval.fixtures.recorder --mandatory-evidence-only SBUX LUMN
 ```
 
 Hits live APIs once per `RECORDED_CALLS` entry and **overwrites** existing fixtures in
-place. Needs network; `get_news` and `get_insider_activity` additionally need
-`FINNHUB_API_KEY` (they record as errors without it).
+place. The recorder covers explicit 7/14/30-day news windows plus the supported 10-K,
+10-Q, 8-K, and DEF 14A section/form pairs. Needs network; `get_news` and
+`get_insider_activity` additionally need `FINNHUB_API_KEY` (they record as errors without
+it).
+
+Before replacing a successful fixture, the recorder validates it against the registered
+tool output schema. Filing output must also have enough substantive text, must not be only
+a table-of-contents/cross-reference fragment, and must contain any curated evidence concept
+needed by a mandatory golden expectation. An invalid new extraction is reported as a
+failure and the previous fixture is left untouched.
+
+`CORE_RECORDED_CALLS` is the compact completeness contract required for every default
+golden-set ticker. The broader `RECORDED_CALLS` matrix is available for targeted refreshes;
+it is intentionally not required as a full ticker × input cross-product. The
+`--mandatory-evidence-only` mode records just the filing calls that back curated qualitative
+expectations, which is the safest way to repair an evidence source without unrelated churn.
 
 ## Rotation policy
 
