@@ -56,7 +56,11 @@ data_sources/
   gdelt_client.py      # GDELTClient — GDELT DOC 2.0 ArtList adverse news (keyless, 7d cache). Note: ArtList does not return tone/themes in the response; tone<-2 is a server-side filter only.
   ofac_client.py       # OFACClient — OFAC SDN free public API (no key), 7-day cache; US sanctions only
   sp500_client.py      # SP500Client — keyless Wikipedia scrape of S&P 500 constituents → list[str] | DataSourceError (no cache; the UniverseSnapshot table is the weekly cache)
-  exchange_client.py   # ExchangeClient — keyless Wikipedia scrape of Milan/Madrid/Warsaw constituents (ExchangeSpec per exchange; Yahoo suffix .MI/.MC/.WA) → list[str] | DataSourceError; best-effort, always falls back to data/{milan,madrid,warsaw}.csv
+  exchange_client.py   # ExchangeClient — routes typed junior-market identity sources for EXGM/BME Growth/NewConnect; universe projects Yahoo tickers and falls back to data/{milan,madrid,warsaw}.csv
+  euronext_client.py   # Euronext Product Directory EXGM identities (ISIN/MIC/symbol/name), excluding warrants by name
+  bme_client.py        # BME Growth two-phase ListedCompanies + ISIN→ticker identity resolution
+  tradingview_client.py # NewConnect symbols from the TradingView Poland scanner; never fabricates missing ISINs
+  security_identity.py # source-grounded SecurityIdentity and ConstituentSource boundary
 
 storage/
   models.py       # ORM models (Base + all table classes + indexes) — no I/O
@@ -110,9 +114,9 @@ data/
   portfolio.csv   # ticker, shares, cost_basis, purchase_date
   watchlist.csv   # ticker, notes
   sp500.csv       # bootstrap S&P 500 constituents — fallback for agent/universe.py when the live Wikipedia fetch fails
-  milan.csv       # Euronext Growth Milan (.MI) constituents — gem-hunt fallback (incl. DIR.MI)
-  madrid.csv      # Bolsa de Madrid (.MC) constituents — gem-hunt fallback (incl. CIRSA.MC)
-  warsaw.csv      # GPW Warsaw (.WA) constituents — gem-hunt fallback (incl. KPL.WA)
+  milan.csv       # Euronext Growth Milan (.MI) identities — live-regenerated gem-hunt fallback
+  madrid.csv      # BME Growth (.MC) identities — live-regenerated gem-hunt fallback
+  warsaw.csv      # NewConnect (.WA) symbols — live-regenerated fallback (source has no ISIN)
 
 main.py           # Thin wrapper: delegates to agent.run.main
 agent/eval.py     # Entrypoint shim: `python -m agent.eval` → eval.runner.main
@@ -192,6 +196,7 @@ load; refresh quarterly.
 - Tools reach data-source clients only via the lazy singletons in `agent/tools/_clients.py` (bound to the `$WARREN_DB` cache); tests reset them with the autouse `_reset_tool_clients` fixture (which also points `WARREN_DB` at `:memory:`). The §5.4 loop-level retry/backoff is intentionally **not** in the loop yet — it's a separate W3 ticket.
 - Use SQLAlchemy 2.x style (`with Session(engine) as s:`, not legacy `Session()` context).
 - All external API calls live in `data_sources/`; `agent/tools/` calls into `data_sources/`, never directly into yfinance/finnhub.
+- TradingView's keyless scanner is an unofficial NewConnect source. Its terms/source risk require repository-owner approval before merge; the committed Warsaw snapshot remains the runtime fallback.
 - Environment variables are loaded once at startup via `dotenv.load_dotenv()` in `agent/run.py`. Everywhere else, read with `os.environ["KEY"]` — no repeated `load_dotenv()` calls.
 - Do not commit `.env`, `warren.db`, or anything under `logs/`.
 - `local/` is a gitignored scratch dir for review notes, findings, and throwaway artifacts — never shipped or imported by code.

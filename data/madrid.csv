@@ -1,30 +1,112 @@
-ticker
-ACS.MC
-ACX.MC
-AENA.MC
-AMS.MC
-ANA.MC
-BBVA.MC
-BKT.MC
-CABK.MC
-CIE.MC
-CIRSA.MC
-CLNX.MC
-COL.MC
-ELE.MC
-ENG.MC
-FER.MC
-GRF.MC
-IAG.MC
-IBE.MC
-ITX.MC
-LOG.MC
-MAP.MC
-MEL.MC
-NTGY.MC
-RED.MC
-REP.MC
-SAB.MC
-SAN.MC
-SLR.MC
-TEF.MC
+ticker,venue,mic,exchange_symbol,isin,legal_name,identity_source_url,resolved_at
+480S.MC,bme_growth,,480S,ES0105509006,"SOLUCIONES CUATROOCHENTA, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+AIG.MC,bme_growth,,AIG,ES0105744009,"ANDINO INVERSIONES GLOBAL, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+AKL.MC,bme_growth,,AKL,BG1100005179,"AKILES CORPORATION, SE",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+ALC.MC,bme_growth,,ALC,ES0113312021,"ALTIA CONSULTORES, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+ALQ.MC,bme_growth,,ALQ,ES0105366001,"ALQUIBER QUALITY, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+AMEN.MC,bme_growth,,AMEN,ES0105588000,AETERNAL MENTIS,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+APG.MC,bme_growth,,APG,ES0105659009,"AXON PARTNERS GROUP, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+ATSI.MC,bme_growth,,ATSI,ES0105691002,APLICACIONES Y TRATAMIENTOS DE SISTEMAS,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+BST.MC,bme_growth,,BST,ES0184980003,BIOTECHNOLOGY ASSETS S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+BYTE.MC,bme_growth,,BYTE,ES0105817003,"BYTETRAVEL, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+CITY.MC,bme_growth,,CITY,ES0105606190,"CLUB DE FUTBOL INTERCITY, S.A.D.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+CLR.MC,bme_growth,,CLR,ES0105121000,"CLERHP ESTRUCTURAS, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+COM.MC,bme_growth,,COM,ES0112320009,"CATENON, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+DOMO.MC,bme_growth,,DOMO,ES0105283008,"DOMO ACTIVOS, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+EBROM.MC,bme_growth,,EBROM,ES0105725008,EBRO EV MOTORS S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+EEP.MC,bme_growth,,EEP,ES0133421000,"EUROESPES, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+EIDF.MC,bme_growth,,EIDF,ES0105517025,"ENERGÍA, INNOVACIÓN Y DESARROLLO FOTOVOL",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+ELZ.MC,bme_growth,,ELZ,ES0105227013,"ASTURIANA DE LAMINADOS, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+END.MC,bme_growth,,END,ES0105589008,ENDURANCE MOTIVE S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+ENRS.MC,bme_growth,,ENRS,ES0105634002,"ENERSIDE ENERGY, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+ETC.MC,bme_growth,,ETC,ES0105687000,ENERGY SOLAR TECH,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+FACE.MC,bme_growth,,FACE,ES0105029005,"FACEPHI BIOMETRIA, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+GGC.MC,bme_growth,,GGC,ES0105195004,GRAL. DE GALERIAS COMERCIALES,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+GGR.MC,bme_growth,,GGR,ES0105709002,"GREENING GROUP GLOBAL, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+GIGA.MC,bme_growth,,GIGA,ES0105093001,"GIGAS HOSTING, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+GRI.MC,bme_growth,,GRI,ES0143328005,"GRIÑÓ ECOLOGIC, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+HAN.MC,bme_growth,,HAN,ES0105637005,"HANNUN, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+HLZ.MC,bme_growth,,HLZ,ES0105456026,"HOLALUZ-CLIDOM, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+IFLEX.MC,bme_growth,,IFLEX,ES0105684007,"IFLEX FLEXIBLE PACKAGING, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+IKM.MC,bme_growth,,IKM,ES0156303002,"1NKEMIA IUCT GROUP, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+INDXA.MC,bme_growth,,INDXA,ES0105702007,"INDEXA CAPITAL GROUP, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+KOM.MC,bme_growth,,KOM,ES0105425005,"PLASTICOS COMPUESTOS, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+LAB.MC,bme_growth,,LAB,ES0105638003,"LABIANA HEALTH, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+LLN.MC,bme_growth,,LLN,ES0105089009,"LLEIDANETWORKS SERVEIS TELEMATICS, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+LLYC.MC,bme_growth,,LLYC,ES0105591004,"LLORENTE Y CUENCA, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+MAKS.MC,bme_growth,,MAKS,ES0105463006,"MAKING SCIENCE GROUP, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+NAT.MC,bme_growth,,NAT,ES0171613005,"NATAC NATURAL INGREDIENTS, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+NBI.MC,bme_growth,,NBI,ES0105062022,"NBI BEARINGS EUROPE, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+NZI.MC,bme_growth,,NZI,ES0105804001,"NZI TECHNICAL PROTECTION, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+OPTS.MC,bme_growth,,OPTS,ES0105818019,"OPTARE SOLUTIONS, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+PANG.MC,bme_growth,,PANG,ES0105221008,"PANGAEA ONCOLOGY, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+PAR.MC,bme_growth,,PAR,ES0105561007,PARLEM TELECOM COMPANYIA DE TELECOMUNICA,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+RBT.MC,bme_growth,,RBT,ES0105225009,"ROBOT, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+RDG.MC,bme_growth,,RDG,ES0105857033,"REDEGAL, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+RSS.MC,bme_growth,,RSS,ES0105717005,REVENGA INGENIEROS S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+SAI.MC,bme_growth,,SAI,ES0105650008,"SUBSTRATE ARTIFICIAL INTELLIGENCE, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+SCO.MC,bme_growth,,SCO,ES0175589029,"SERESCO, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+SEC.MC,bme_growth,,SEC,ES0131703003,"SECUOYA GRUPO DE COMUNICACION, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+SNG.MC,bme_growth,,SNG,ES0105611000,"SINGULAR PEOPLE,S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+SPH.MC,bme_growth,,SPH,ES0105621009,"PROFITHOL, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+STNA.MC,bme_growth,,STNA,ES0105852000,"SANTA ANA GLOBAL ENTERPRISES, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+TQT.MC,bme_growth,,TQT,ES0105076006,"TECHNOMECA AEROSPACE, S.A",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+TRTK.MC,bme_growth,,TRTK,ES0105909008,"TREE TECHNOLOGY, S.A",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+UMB.MC,bme_growth,,UMB,ES0105670006,"UMBRELLA GLOBAL ENERGY, S.A",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+VANA.MC,bme_growth,,VANA,ES0105716130,VANADI COFFEE S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+VYT.MC,bme_growth,,VYT,ES0105618005,"VYTRUS BIOTECH, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YABA.MC,bme_growth,,YABA,ES0105098000,"JABA I INV. INMOBILIARIAS, SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YADR.MC,bme_growth,,YADR,ES0105405007,"ADRIANO CARE SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YADV.MC,bme_growth,,YADV,ES0105448007,"ADVERO PROPERTIES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YAI1.MC,bme_growth,,YAI1,ES0105495008,ALL IRON RE I SOCIMI S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YARP.MC,bme_growth,,YARP,ES0105383006,"ARRIENDA RENTAL PROPERTIES SOCIMI,S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YATO.MC,bme_growth,,YATO,ES0105318002,"ATOM HOTELES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YAZR.MC,bme_growth,,YAZR,ES0105373007,"AZARIA RENTAL SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YBAR.MC,bme_growth,,YBAR,ES0105284006,"BARCINO PROPERTY SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YCPS.MC,bme_growth,,YCPS,ES0105360004,"CASTELLANA PROPERTIES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YDOA.MC,bme_growth,,YDOA,ES0105120002,"INVERSIONES DOALCA, SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YEIS.MC,bme_growth,,YEIS,ES0105281002,"ELAIA INVESTMENT SPAIN SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YENT.MC,bme_growth,,YENT,ES0131172001,"ENTRECAMPOS CUATRO, SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YEPSA.MC,bme_growth,,YEPSA,ES0105685004,"EMPERADOR PROPERTIES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YEUR.MC,bme_growth,,YEUR,ES0105175006,"EURO CERVANTES, SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YFID.MC,bme_growth,,YFID,ES0105071007,"FIDERE PATRIMONIO, SOCIMI, S.A.U.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YGMP.MC,bme_growth,,YGMP,ES0105134011,"GMP PROPERTY SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YGO2.MC,bme_growth,,YGO2,ES0105436002,"GREENOAK SPAIN HOLDINGS SOCIMI II, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YGOP.MC,bme_growth,,YGOP,ES0105273009,"GOP PROPERTIES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YHCR.MC,bme_growth,,YHCR,ES0105465001,"HOME CAPITAL RENTALS SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YHSP.MC,bme_growth,,YHSP,ES0105379004,"HISPANOTELS INVERSIONES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YHTI.MC,bme_growth,,YHTI,ES0105407003,"HOTEI PROPERTIES GROUP SOCIMI, S.A",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YIBI.MC,bme_growth,,YIBI,ES0105633004,"IBI LION SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YINB1.MC,bme_growth,,YINB1,ES0105413001,"INBEST PRIME I INMUEBLES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YINB2.MC,bme_growth,,YINB2,ES0105414009,"INBEST PRIME II INMUEBLES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YINB3.MC,bme_growth,,YINB3,ES0105415006,"INBEST PRIME III INMUEBLES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YINB4.MC,bme_growth,,YINB4,ES0105416004,"INBEST PRIME IV INMUEBLES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YINB6.MC,bme_growth,,YINB6,ES0105556007,"INBEST PRIME VI INMUEBLES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YINB7.MC,bme_growth,,YINB7,ES0105557005,"INBEST PRIME VII INMUEBLES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YINB8.MC,bme_growth,,YINB8,ES0105558003,"INBEST PRIME VIII INMUEBLES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YIPS.MC,bme_growth,,YIPS,ES0105389003,INVERSA PRIME SOCIMI S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YIRG.MC,bme_growth,,YIRG,ES0105653002,"IRG10 SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YISC.MC,bme_growth,,YISC,ES0105153003,"ISC FRESH WATER INVESTMENT SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YKTS.MC,bme_growth,,YKTS,ES0105536009,"KTESIOS REAL ESTATE SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YLFG.MC,bme_growth,,YLFG,ES0105432001,"LAFINCA GLOBAL ASSETS SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YMAT.MC,bme_growth,,YMAT,ES0105656005,"MATRITENSE REAL ESTATE SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YMCS.MC,bme_growth,,YMCS,ES0105707006,MICISO REAL ESTATE SOCIMI S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YMIB.MC,bme_growth,,YMIB,ES0105445003,"MISTRAL IBERIA REAL ESTATE SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YMIL.MC,bme_growth,,YMIL,ES0105584009,MILEPRO LOGÍSTICA ÚLTIMA MILLA SOCIMI,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YMRE.MC,bme_growth,,YMRE,ES0105313003,"MERIDIA REAL ESTATE III SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YNPC.MC,bme_growth,,YNPC,ES0105475000,"NEXTPOINT CAPITAL SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YNUM.MC,bme_growth,,YNUM,ES0105265005,NUMULAE GESTION DE SERVICIOS SOCIMI S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YORE.MC,bme_growth,,YORE,ES0105224002,"OLIMPO REAL ESTATE SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YPSN.MC,bme_growth,,YPSN,ES0170756037,PREVISION SANITARIA NACIONAL GEST. S.A.,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YQUO.MC,bme_growth,,YQUO,ES0105150009,"QUONIA SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YSIL.MC,bme_growth,,YSIL,ES0105569000,"SILICIUS REAL ESTATE SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YSRR.MC,bme_growth,,YSRR,ES0105317004,"SERRANO 61 DESARROLLO SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YTAN.MC,bme_growth,,YTAN,ES0105314001,"TANDER INVERSIONES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YTCH.MC,bme_growth,,YTCH,ES0105775003,TECHO HOGAR SOCIMI SDAD. DE Bº INTERES C,https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YTRI.MC,bme_growth,,YTRI,ES0105421004,"TRIVIUM REAL ESTATE SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YTRM.MC,bme_growth,,YTRM,ES0105429007,"TORIMBIA SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YTST.MC,bme_growth,,YTST,ES0105210019,"TESTA  RESIDENCIAL SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YVCP.MC,bme_growth,,YVCP,ES0105330007,"VERACRUZ PROPERTIES SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YVIT.MC,bme_growth,,YVIT,ES0105139002,"VITRUVIO REAL ESTATE SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YVIV.MC,bme_growth,,YVIV,ES0105384004,"VIVENIO RESIDENCIAL SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
+YZBL.MC,bme_growth,,YZBL,ES0105080008,"ZAMBAL SPAIN SOCIMI, S.A.",https://apiweb.bolsasymercados.es/Market/v1/EQ/ShareDetailsInfo,2026-08-05T13:07:05.508856+00:00
