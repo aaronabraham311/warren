@@ -52,6 +52,9 @@ data_sources/
   errors.py            # DataSourceError(error_code, message, stage, source) — shared typed failure boundary
   filing_models.py     # Source-neutral DocumentRef/DocumentText/FilingSection contracts and stable filing IDs
   security_master.py   # Strict offline resolution of active/superseded G12 identities; no fuzzy ticker/ISIN guesses
+  regional_http.py     # Shared allowlisted HTTPS, timeout/retry/rate-limit/cache policy for regional filing archives
+  borsa_italiana_filings.py # Official Euronext Growth Milan corporate-document HTML adapter
+  newconnect_filings.py # Fail-closed PAP probe/raw periodic parser; no EBI/ESPI DocumentRefs pending verified browser transport
   yfinance_client.py   # Wraps yfinance for price quotes and fundamentals; get_financials → FinancialsHistory (multi-year income/balance/cash-flow rows) is the shared foundation that get_growth_metrics / get_quality_metrics / get_financial_strength all compute off via _build_financials + _series
   edgar_client.py      # EDGARClient — SEC 10-K/10-Q/8-K/DEF 14A filing sections + get_sc13_holders (EFTS SC 13G/D beneficial owner search) (cached, polite)
   finnhub_client.py    # FinnhubClient — news + fundamentals fallback (cached, rate-limited)
@@ -60,7 +63,7 @@ data_sources/
   sp500_client.py      # SP500Client — keyless Wikipedia scrape of S&P 500 constituents → list[str] | DataSourceError (no cache; the UniverseSnapshot table is the weekly cache)
   exchange_client.py   # ExchangeClient — routes typed junior-market identity sources for EXGM/BME Growth/NewConnect; universe projects Yahoo tickers and falls back to data/{milan,madrid,warsaw}.csv
   euronext_client.py   # Euronext Product Directory EXGM identities (ISIN/MIC/symbol/name), excluding warrants by name
-  bme_client.py        # BME Growth two-phase ListedCompanies + ISIN→ticker identity resolution
+  bme_client.py        # BME Growth identity source plus official Documents/FinancialInformation filing adapter
   tradingview_client.py # NewConnect symbols from the TradingView Poland scanner; never fabricates missing ISINs
   security_identity.py # source-grounded SecurityIdentity and ConstituentSource boundary
 
@@ -195,7 +198,7 @@ load; refresh quarterly.
 ## Code conventions
 
 - `__init__.py` files are empty, with one deliberate exception: `agent/tools/__init__.py` holds the `TOOL_REGISTRY` / `TOOL_DEFINITIONS`. Everywhere else import directly from the submodule, e.g. `from storage.engine import get_session`. Do not re-export through `__init__.py`.
-- **Tools return errors as data, never raise** (Tech Spec §5). A `Tool.run(tool_input, ctx)` returns `ToolResultOk(data=<BaseModel>)` or `ToolResultError(error_code, message, retryable)`; `error_code ∈ {rate_limit, not_found, stale_data, network, unknown}`. Map a `DataSourceError` with `error_from_data_source()` (in `agent/tools/base.py`); wrap the body in `try/except` so any stray exception becomes `ToolResultError(error_code="unknown")`. The loop validates `block.input` against the tool's `input_schema` and serializes the result back to the agent (ok → `data.model_dump_json()`; error → `{error_code,message,retryable}` with `is_error=True`).
+- **Tools return errors as data, never raise** (Tech Spec §5). A `Tool.run(tool_input, ctx)` returns `ToolResultOk(data=<BaseModel>)` or `ToolResultError(error_code, message, retryable, stage?, source?)`; `error_code ∈ {rate_limit, not_found, stale_data, network, parse, unknown}`. Map a `DataSourceError` with `error_from_data_source()` (in `agent/tools/base.py`); wrap the body in `try/except` so any stray exception becomes `ToolResultError(error_code="unknown")`. The loop validates `block.input` against the tool's `input_schema` and serializes the result back to the agent (ok → `data.model_dump_json()`; error → `{error_code,message,retryable,stage?,source?}` with `is_error=True`).
 - Tools reach data-source clients only via the lazy singletons in `agent/tools/_clients.py` (bound to the `$WARREN_DB` cache); tests reset them with the autouse `_reset_tool_clients` fixture (which also points `WARREN_DB` at `:memory:`). The §5.4 loop-level retry/backoff is intentionally **not** in the loop yet — it's a separate W3 ticket.
 - Use SQLAlchemy 2.x style (`with Session(engine) as s:`, not legacy `Session()` context).
 - All external API calls live in `data_sources/`; `agent/tools/` calls into `data_sources/`, never directly into yfinance/finnhub.
