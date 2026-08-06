@@ -156,6 +156,63 @@ def test_risk_factors_section_extracted(
     assert "Supply chain risk" in result.text
 
 
+def test_section_selection_ignores_toc_and_late_cross_reference(
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
+) -> None:
+    html = """<html><body>
+    <p>Table of Contents</p>
+    <p>Item 7. MD&amp;A .... Item 7A. Market Risk .... Item 8. Financial Statements</p>
+    <p>Item 7. Management's Discussion and Analysis</p>
+    <p>Revenue grew strongly because services demand expanded. Operating margin improved
+    and free cash flow funded investment. This substantive discussion contains enough
+    detail to distinguish the actual section from navigation and cross-references.</p>
+    <p>Item 7A. Quantitative and Qualitative Disclosures</p>
+    <p>Later footnote: refer to Item 7 of this Report.</p>
+    <p>Item 8. Financial Statements</p>
+    </body></html>"""
+    client, _urls = _build_client(edgar_conn, monkeypatch, edgar_fixture, filing_html=html)
+
+    result = client.get_filing_section("AAPL", "10-K", "mdna")
+
+    assert isinstance(result, FilingSection)
+    assert "Revenue grew strongly" in result.text
+    assert result.text != "Item 7 of this Report."
+
+
+def test_ten_q_mdna_uses_quarterly_item_boundaries(
+    edgar_conn: sqlite3.Connection,
+    monkeypatch: pytest.MonkeyPatch,
+    edgar_fixture: dict[str, object],
+) -> None:
+    html = """<html><body>
+    <p>Part I</p>
+    <p>Item 1. Financial Statements</p><p>Quarterly tables.</p>
+    <p>Item 2. Management's Discussion and Analysis</p>
+    <p>Quarterly revenue increased and management discussed operating trends.</p>
+    <p>Item 3. Quantitative and Qualitative Disclosures</p><p>Market risk.</p>
+    </body></html>"""
+    fixture = dict(edgar_fixture)
+    assert isinstance(fixture["submissions"], dict)
+    submissions = dict(fixture["submissions"])
+    assert isinstance(submissions["filings"], dict)
+    filings = dict(submissions["filings"])
+    assert isinstance(filings["recent"], dict)
+    recent = dict(filings["recent"])
+    recent["form"] = ["10-Q"]
+    filings["recent"] = recent
+    submissions["filings"] = filings
+    fixture["submissions"] = submissions
+    client, _urls = _build_client(edgar_conn, monkeypatch, fixture, filing_html=html)
+
+    result = client.get_filing_section("AAPL", "10-Q", "mdna")
+
+    assert isinstance(result, FilingSection)
+    assert "Quarterly revenue increased" in result.text
+    assert "Market risk" not in result.text
+
+
 def test_fiscal_year_selects_older_filing(
     edgar_conn: sqlite3.Connection,
     monkeypatch: pytest.MonkeyPatch,

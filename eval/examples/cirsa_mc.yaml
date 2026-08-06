@@ -10,7 +10,7 @@ notes: |
   `buy` and `hold` are both allowed — `hold` is the honest answer if the leverage or a
   controlling holder caps the realizable discount, `buy` if the cheapness plus cash generation
   wins out. The DIRT checks are what the eval pins: EV/EBIT and NCAV must be surfaced, the
-  value-trap / balance-sheet risk must be named explicitly (leverage makes this mandatory here),
+  value-trap / balance-sheet risk must be assessed substantively (leverage makes this mandatory here),
   and the universe note must appear in data_quality_notes.
 last_curated: 2026-08-04
 persona: dirt
@@ -33,14 +33,12 @@ expectations:
 
   key_risks:
     must_include_one_of:
-      - value trap
-      - leverage
-      - debt
-      - liquidity
-      - control
-      - catalyst
-      - balance sheet
-      - coverage
+      - concept: debt service
+        any_of: [leverage, refinancing, interest coverage, debt-service capacity]
+      - concept: value realization
+        any_of: [trading liquidity, lack of coverage, missing catalyst]
+      - concept: minority ownership
+        any_of: [control discount, controlling holder, minority shareholder protections]
 
   numerical_grounding:
     min_specific_numbers: 3
@@ -49,7 +47,7 @@ expectations:
   deep_value:
     require_ev_ebit: true
     require_ncav: true
-    require_value_trap_risk: true
+    require_value_trap_assessment: true
     require_universe_note: true
     require_decision_contract: true
     require_decision_recomputation: true

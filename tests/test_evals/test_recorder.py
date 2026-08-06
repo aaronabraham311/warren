@@ -15,12 +15,28 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from agent.budget import Budget, RunContext
 from agent.tools import TOOL_REGISTRY
 from agent.tools.base import ToolResult, ToolResultError, ToolResultOk
+from data_sources.edgar_client import FilingSection
 from data_sources.yfinance_client import PriceData, ValuationHistory
-from eval.fixtures.recorder import RECORDED_CALLS, REGIONAL_RECORDED_CALLS, record_ticker
+from eval.fixture_evidence import (
+    CURATED_FILING_CONCEPTS,
+    FILING_CALLS,
+    NEWS_WINDOWS,
+    validate_fixture_result,
+)
+from eval.fixtures.recorder import (
+    CORE_RECORDED_CALLS,
+    RECORDED_CALLS,
+    REGIONAL_RECORDED_CALLS,
+    RecordedCall,
+    mandatory_evidence_calls,
+    record_ticker,
+)
 from eval.golden_set import EvalExample, load_all_examples
-from eval.tool_fixtures import FIXTURES_DIR, tool_fixture_path
+from eval.tool_fixtures import FIXTURES_DIR, FixtureToolRunner, tool_fixture_path
+from storage.logger import RunLogger
 
 
 def _ok(price: float) -> ToolResultOk:
@@ -137,8 +153,116 @@ def test_record_ticker_can_target_one_tool(tmp_path: Path) -> None:
     )
 
 
-# Default examples require every recorded call. Regional DIRT examples remain partial overall,
-# but G15 separately pins live valuation-history coverage for both current and legacy tickers.
+def test_recorder_covers_explicit_news_windows_without_aliasing() -> None:
+    calls = [call for call in RECORDED_CALLS if call.tool == "get_news"]
+    assert [call.input["days"] for call in calls] == list(NEWS_WINDOWS)
+
+
+def test_recorder_covers_every_supported_filing_section_form_pair() -> None:
+    assert ("10-K", "business") in FILING_CALLS
+    assert ("10-K", "risk_factors") in FILING_CALLS
+    assert ("10-K", "mdna") in FILING_CALLS
+    assert ("10-K", "financial_statements") in FILING_CALLS
+    assert ("10-K", "executive_summary") in FILING_CALLS
+    assert ("10-Q", "financial_statements") in FILING_CALLS
+    assert ("10-Q", "mdna") in FILING_CALLS
+    assert ("10-Q", "risk_factors") in FILING_CALLS
+    assert ("10-Q", "executive_summary") in FILING_CALLS
+    assert ("8-K", "executive_summary") in FILING_CALLS
+    assert ("DEF 14A", "compensation") in FILING_CALLS
+    assert ("DEF 14A", "related_party") in FILING_CALLS
+    assert ("DEF 14A", "executive_summary") in FILING_CALLS
+
+
+def test_mandatory_evidence_calls_are_ticker_scoped() -> None:
+    assert mandatory_evidence_calls("sbux") == (
+        RecordedCall("read_filing", {"filing_type": "10-K", "section": "mdna"}),
+    )
+    assert mandatory_evidence_calls("AAPL") == ()
+
+
+def _filing(text: str, *, section: str = "mdna") -> FilingSection:
+    return FilingSection(
+        ticker="SBUX",
+        filing_type="10-K",
+        section=section,
+        fiscal_year=2025,
+        filing_date=datetime(2025, 11, 14, tzinfo=timezone.utc).date(),
+        text=text,
+        word_count=len(text.split()),
+        truncated=False,
+        edgar_url="https://www.sec.gov/example",
+    )
+
+
+def test_filing_validator_rejects_toc_fragment() -> None:
+    tool = TOOL_REGISTRY["read_filing"]
+    tool_input = tool.input_schema.model_validate(
+        {"ticker": "SBUX", "filing_type": "10-K", "section": "mdna"}
+    )
+    fragment = "Item 7 of this Report. Table of Contents"
+
+    with pytest.raises(ValueError, match="unusable filing evidence"):
+        validate_fixture_result("SBUX", tool, tool_input, ToolResultOk(data=_filing(fragment)))
+
+
+def test_filing_validator_requires_curated_evidence_concept() -> None:
+    tool = TOOL_REGISTRY["read_filing"]
+    tool_input = tool.input_schema.model_validate(
+        {"ticker": "SBUX", "filing_type": "10-K", "section": "mdna"}
+    )
+    text = " ".join(["Coffee stores generated healthy revenue and margins."] * 20)
+
+    with pytest.raises(ValueError, match="missing curated concept"):
+        validate_fixture_result("SBUX", tool, tool_input, ToolResultOk(data=_filing(text)))
+
+
+def test_filing_validator_accepts_substantive_curated_evidence() -> None:
+    tool = TOOL_REGISTRY["read_filing"]
+    tool_input = tool.input_schema.model_validate(
+        {"ticker": "SBUX", "filing_type": "10-K", "section": "mdna"}
+    )
+    text = " ".join(
+        [
+            "Comparable sales reflected lower traffic while management invested in store "
+            "throughput, loyalty, labor, and the customer experience."
+        ]
+        * 10
+    )
+
+    validate_fixture_result("SBUX", tool, tool_input, ToolResultOk(data=_filing(text)))
+
+
+def test_fixture_validator_rejects_wrong_success_schema() -> None:
+    tool = TOOL_REGISTRY["get_news"]
+    tool_input = tool.input_schema.model_validate({"ticker": "AAPL", "days": 7})
+    with pytest.raises(Exception, match="validation error"):
+        validate_fixture_result("AAPL", tool, tool_input, _ok(190.5))
+
+
+def test_invalid_filing_does_not_overwrite_existing_fixture(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    call = RecordedCall("read_filing", {"filing_type": "10-K", "section": "mdna"})
+    monkeypatch.setattr("eval.fixtures.recorder.RECORDED_CALLS", (call,))
+    tool = TOOL_REGISTRY["read_filing"]
+    tool_input = tool.input_schema.model_validate({"ticker": "SBUX", **call.input})
+    path = tool_fixture_path("SBUX", "read_filing", tool_input.model_dump(mode="json"), tmp_path)
+    path.parent.mkdir(parents=True)
+    path.write_text("previous-good-fixture")
+    fragment = ToolResultOk(data=_filing("Item 7 of this Report. Table of Contents"))
+
+    with patch.object(type(tool), "run", return_value=fragment):
+        summary = record_ticker("SBUX", tmp_path)
+
+    assert summary.failures
+    assert path.read_text() == "previous-good-fixture"
+
+
+# DIRT/deep-value gems (persona="dirt") carry small *synthetic* partial fixtures authored by
+# hand — their international tickers do not record cleanly from live APIs, and the live replay
+# they exercise is never run in CI. Completeness is asserted only for the default examples,
+# which are recorded from live data via the recorder.
 @pytest.mark.parametrize(
     "example",
     [e for e in load_all_examples() if e.persona != "dirt"],
@@ -149,7 +273,7 @@ def test_golden_set_fixture_completeness(example: EvalExample) -> None:
     ticker = example.ticker
     missing = [
         call.tool
-        for call in RECORDED_CALLS
+        for call in CORE_RECORDED_CALLS
         if not tool_fixture_path(
             ticker,
             call.tool,
@@ -180,3 +304,24 @@ def test_regional_valuation_history_fixture_completeness(ticker: str) -> None:
         TOOL_REGISTRY["get_valuation_history"].input_schema(ticker=ticker).model_dump(mode="json")
     )
     assert tool_fixture_path(ticker, "get_valuation_history", payload, FIXTURES_DIR).exists()
+
+
+def test_curated_filing_expectations_have_usable_evidence(tmp_path: Path) -> None:
+    """Every qualitative filing expectation has a valid committed replay source."""
+    ctx = RunContext(
+        run_id="fixture-evidence-test",
+        budget=Budget(),
+        logger=RunLogger("fixture-evidence-test", tmp_path),
+    )
+    failures: list[str] = []
+    tool = TOOL_REGISTRY["read_filing"]
+    for ticker, filing_type, section in CURATED_FILING_CONCEPTS:
+        runner = FixtureToolRunner(ticker)
+        tool_input = tool.input_schema.model_validate(
+            {"ticker": ticker, "filing_type": filing_type, "section": section}
+        )
+        result = runner.run(tool, tool_input, ctx)
+        if isinstance(result, ToolResultError):
+            failures.append(f"{ticker}/{filing_type}/{section}: {result.message}")
+
+    assert not failures, "\n".join(failures)

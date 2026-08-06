@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from data_sources.symbols import TICKER_PATTERN
 
@@ -60,6 +60,13 @@ class ThesisMention(_Strict):
     any_of: list[str] = Field(min_length=1)
 
 
+class RiskConcept(_Strict):
+    """One structured risk concept, with wording variants for semantic grading."""
+
+    concept: str = Field(min_length=1)
+    any_of: list[str] = Field(min_length=1)
+
+
 class RecommendationExpectation(_Strict):
     allowed: list[Recommendation] = Field(min_length=1)
     preferred: Recommendation | None = None
@@ -74,7 +81,17 @@ class RecommendationExpectation(_Strict):
 
 
 class KeyRisksExpectation(_Strict):
-    must_include_one_of: list[str] = []
+    must_include_one_of: list[RiskConcept] = []
+
+    @field_validator("must_include_one_of", mode="before")
+    @classmethod
+    def _upgrade_legacy_strings(cls, value: object) -> object:
+        """Keep older golden files valid while making the in-memory contract structured."""
+        if not isinstance(value, list):
+            return value
+        return [
+            {"concept": item, "any_of": [item]} if isinstance(item, str) else item for item in value
+        ]
 
 
 class NumericalGrounding(_Strict):
@@ -86,13 +103,13 @@ class DeepValueExpectation(_Strict):
     """Deep-value (DIRT) check toggles — each fires the matching grader check when true.
 
     Present only on ``persona: dirt`` examples; every check it configures is a ``must`` (a
-    DIRT thesis that never surfaces EV/EBIT, NCAV, value-trap risk, or the universe note is a
-    regression in the deep-value path, not a stylistic drift).
+    DIRT thesis that never surfaces EV/EBIT, NCAV, a substantive value-trap assessment, or
+    the universe note is a regression in the deep-value path, not a stylistic drift).
     """
 
     require_ev_ebit: bool = False
     require_ncav: bool = False
-    require_value_trap_risk: bool = False
+    require_value_trap_assessment: bool = False
     require_universe_note: bool = False
     # Opt-in because only examples with a grounded regional forensic fixture can assert it.
     # The check traces ownership/RPT/buyback/catalyst claims to compact EvidenceRef IDs.

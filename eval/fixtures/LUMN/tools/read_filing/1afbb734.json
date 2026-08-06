@@ -5,15 +5,29 @@
     "filing_date": "2026-02-20",
     "filing_type": "10-K",
     "fiscal_year": 2025,
-    "key_figures_extracted": [],
+    "key_figures_extracted": [
+      "$135 million",
+      "$62 million",
+      "$20 million",
+      "$18 million",
+      "$15 million",
+      "$169 million",
+      "$60 million",
+      "$36 million",
+      "$33 million",
+      "$10 million",
+      "56\u00a0\n%",
+      "55\u00a0\n%",
+      "52\u00a0\n%"
+    ],
     "section": "mdna",
     "source_language": null,
-    "text": "Item 7 and Note 11 \u2014 Employee Benefits in",
+    "text": "Item 7 for more information.\n48\nTable of Contents\nMass Markets Segment Expense\nMass Markets segment expense decreased $135 million in 2025 compared to 2024. This was primarily as a result of:\n\u2022\na decrease of $62 million in employee-related costs due to lower headcount;\n\u2022\na decrease of $20 million in overall network expense;\n\u2022\na decrease of $18 million in marketing and advertising expense; and\n\u2022\na decrease of $15 million decrease in professional fees.\nMass Markets segment expense decreased $169 million in 2024 compared to 2023. This was primarily as a result of:\n\u2022\na decrease of $60 million in employee-related costs;\n\u2022\na decrease of $36 million in other network related costs;\n\u2022\na decrease of $33 million in professional fees; and\n\u2022\na decrease of $10 million decrease in overall network expenses.\nMass Markets Segment Adjusted EBITDA\nAs a percentage of revenue, Mass Markets segment adjusted EBITDA was:\nYears Ended December 31,\n2025\n2024\n2023\nSegment adjusted EBITDA as a percent of segment revenue\n56\u00a0\n%\n55\u00a0\n%\n52\u00a0\n%\nLIQUIDITY AND CAPITAL RESOURCES\nOverview of Sources and Uses of Cash\nAs a holding company, we rely on cash flows and capital resources from our subsidiaries to meet our parent-level liquidity needs. Access to subsidiary cash may be limited by debt terms, tax considerations, legal restrictions or other limitations; see \"\u2014 Debt Instruments and Financing Arrangements\" below and Note 7 \u2014 Long-Term Debt and Credit Facilities in",
     "ticker": "LUMN",
     "translate": false,
     "truncated": false,
-    "word_count": 9
+    "word_count": 242
   },
-  "recorded_at": "2026-07-22T01:49:53.177925+00:00",
+  "recorded_at": "2026-08-06T00:29:27.652091+00:00",
   "status": "ok"
 }

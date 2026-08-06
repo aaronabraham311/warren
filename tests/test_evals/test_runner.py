@@ -10,6 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 
+from agent.loop import SchemaRepairError
 from agent.models import AnalysisOutput, LynchBuffettSignals
 from agent.persona import DefaultPersona, DirtPersona
 from agent.tools.base import ToolResultOk
@@ -344,6 +345,85 @@ def test_output_flag_writes_one_evalgrade_per_ticker(
     }
     assert usage["metrics"]["examples"] == 2
     assert usage["metrics"]["passed"] == 1
+    report = json.loads(Path(f"{out_path}.report").read_text())
+    assert report["strict_ticker_pass"] == {"passed": 1, "total": 2}
+
+
+def test_output_writes_private_audit_companion_with_full_model_output(
+    db_engine: Engine,
+    fixtures_root: Path,
+    log_dir: Path,
+    tmp_path: Path,
+    mock_claude: MockClaude,
+) -> None:
+    client = mock_claude([make_end_turn(_ANALYSIS_JSON)])
+    out_path = tmp_path / "eval.json"
+
+    run_eval(
+        output_path=out_path,
+        examples=[_example("AAPL")],
+        client=client,
+        eval_run_id="eval-audit",
+        fixtures_root=fixtures_root,
+    )
+
+    payload = json.loads(Path(f"{out_path}.audit.jsonl").read_text())
+    assert payload["ticker"] == "AAPL"
+    assert payload["provider"] == "anthropic"
+    assert payload["analysis_output"]["recommendation"] == "hold"
+    assert payload["raw_final_content"] == _ANALYSIS_JSON
+    assert payload["prompt_hash"]
+    assert payload["fixture_set_id"]
+    assert payload["tool_trace"].endswith("eval-audit.jsonl")
+
+
+def test_unexpected_fixture_miss_invalidates_otherwise_valid_analysis(
+    db_engine: Engine,
+    fixtures_root: Path,
+    log_dir: Path,
+    mock_claude: MockClaude,
+) -> None:
+    client = mock_claude(
+        [
+            make_tool_use("get_news", {"ticker": "AAPL", "days": 30}),
+            make_end_turn(_ANALYSIS_JSON),
+        ]
+    )
+
+    grade = run_eval(
+        examples=[_example("AAPL")],
+        client=client,
+        eval_run_id="eval-miss",
+        fixtures_root=fixtures_root,
+    )[0]
+
+    check = next(item for item in grade.checks if item.check_name == "fixture_completeness")
+    assert not check.passed
+    assert "get_news" in check.actual
+    assert not grade.passed
+
+
+def test_schema_repair_error_is_reported_separately_from_generic_run_failure(
+    db_engine: Engine,
+    fixtures_root: Path,
+    log_dir: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mock_claude: MockClaude,
+) -> None:
+    def _invalid(**_kw: object) -> None:
+        raise SchemaRepairError("forced final was truncated")
+
+    monkeypatch.setattr("eval.runner.analyze_ticker", _invalid)
+
+    grade = run_eval(
+        examples=[_example("AAPL")],
+        client=mock_claude([]),
+        eval_run_id="eval-schema",
+        fixtures_root=fixtures_root,
+    )[0]
+
+    assert grade.checks[0].check_name == "structured_output_valid"
+    assert "truncated" in grade.checks[0].actual
 
 
 def test_eval_runs_table_gets_one_row_per_ticker(

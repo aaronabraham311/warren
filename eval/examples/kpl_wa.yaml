@@ -9,8 +9,8 @@ notes: |
 
   `buy` is preferred here given net cash below the operating value, with `hold` allowed on a
   control-discount or catalyst-timing view. `sell` is out of the envelope. The eval pins the
-  DIRT path: EV/EBIT and NCAV surfaced, the value-trap / balance-sheet risk named even though
-  the answer leans buy (deep-value discipline requires stating it), and the G9 universe note
+  DIRT path: EV/EBIT and NCAV surfaced, the value-trap question assessed from net cash, NCAV,
+  liquidity, and realization evidence even when the answer leans buy, and the G9 universe note
   present in data_quality_notes.
 last_curated: 2026-08-04
 persona: dirt
@@ -34,14 +34,12 @@ expectations:
 
   key_risks:
     must_include_one_of:
-      - value trap
-      - liquidity
-      - small-cap
-      - control
-      - catalyst
-      - coverage
-      - balance sheet
-      - illiquid
+      - concept: value realization
+        any_of: [trading liquidity, small-cap illiquidity, lack of coverage, missing catalyst]
+      - concept: minority ownership
+        any_of: [control discount, controlling holder, minority shareholder protections]
+      - concept: financial resilience
+        any_of: [cash burn, NCAV erosion, balance-sheet protection]
 
   numerical_grounding:
     min_specific_numbers: 3
@@ -50,7 +48,7 @@ expectations:
   deep_value:
     require_ev_ebit: true
     require_ncav: true
-    require_value_trap_risk: true
+    require_value_trap_assessment: true
     require_universe_note: true
     require_decision_contract: true
     require_decision_recomputation: true
