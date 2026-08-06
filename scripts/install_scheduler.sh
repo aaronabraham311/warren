@@ -1,5 +1,6 @@
 #!/bin/bash
-# Install Warren as a launchd LaunchAgent that runs the nightly gem hunt at 2 AM (macOS only).
+# Install Warren as a launchd LaunchAgent that runs the weekly gem hunt Sunday at 7 AM
+# in the Mac's system timezone (macOS only).
 set -euo pipefail
 
 if [[ "$(uname)" != "Darwin" ]]; then
@@ -49,5 +50,5 @@ sed \
 # job silently keeps running the old command (e.g. one installed before --gem-hunt).
 launchctl unload "$PLIST_DEST" 2>/dev/null || true
 launchctl load "$PLIST_DEST"
-echo "Warren scheduler installed. Next run: tonight at 2 AM (gem-hunt mode)."
+echo "Warren scheduler installed. Runs Sundays at 7 AM system time (gem-hunt mode)."
 echo "Logs: $PROJECT_DIR/logs/launchd_stdout.log and launchd_stderr.log"

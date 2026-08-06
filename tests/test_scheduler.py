@@ -35,10 +35,10 @@ def test_plist_template_has_no_api_keys() -> None:
     assert "sk-ant-" not in content
 
 
-def test_plist_template_schedule_is_2am() -> None:
-    content = PLIST_TEMPLATE.read_text()
-    assert "<integer>2</integer>" in content  # Hour
-    assert "<integer>0</integer>" in content  # Minute
+def test_plist_template_schedule_is_sunday_at_7am() -> None:
+    plist = plistlib.loads(PLIST_TEMPLATE.read_bytes())
+    schedule = plist["StartCalendarInterval"]
+    assert schedule == {"Weekday": 0, "Hour": 7, "Minute": 0}
 
 
 def _program_arguments() -> list[str]:
@@ -63,6 +63,12 @@ def test_plist_program_arguments_order() -> None:
 
 def test_cron_entry_runs_gem_hunt() -> None:
     assert "-m agent.run --gem-hunt" in INSTALL_CRON.read_text()
+
+
+def test_cron_entry_schedule_is_sunday_at_7am_et() -> None:
+    content = INSTALL_CRON.read_text()
+    assert 'CRON_TIMEZONE="CRON_TZ=America/New_York"' in content
+    assert 'CRON_ENTRY="0 7 * * 0 ' in content
 
 
 def test_cron_entry_keeps_flock_guard_and_cd() -> None:
