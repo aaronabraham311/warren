@@ -50,7 +50,7 @@ class LiveToolRunner:
 _MAX_ITERATIONS = 8
 _MAX_DIRT_ITERATIONS = 12
 _MAX_TOOL_REPEATS = 3
-_FORCE_FINAL_MAX_TOKENS = 2048
+_ANALYSIS_MAX_TOKENS = 8192
 
 # Max *retries* (not total attempts) per transient error code.
 _RETRY_POLICY: dict[str, int] = {"rate_limit": 3, "network": 2}
@@ -263,6 +263,7 @@ def _call_and_record(
     run_context: RunContext,
     ticker: str,
     temperature: float | None = None,
+    response_observer: Callable[[anthropic.types.Message], None] | None = None,
 ) -> anthropic.types.Message:
     """Time the call, record token/cost usage, and emit an llm_call WAL event."""
     t0 = time.monotonic()
@@ -274,6 +275,8 @@ def _call_and_record(
     run_context.logger.log_llm_call(
         response, ticker=ticker, phase="deep", model=model, latency_ms=latency_ms
     )
+    if response_observer is not None:
+        response_observer(response)
     return response
 
 
@@ -287,6 +290,7 @@ def analyze_ticker(
     _sleep: Callable[[float], None] = time.sleep,
     temperature: float | None = None,
     tool_runner: ToolRunner | None = None,
+    response_observer: Callable[[anthropic.types.Message], None] | None = None,
 ) -> AnalysisOutput:
     if client is None:
         client = anthropic.Anthropic()
@@ -324,10 +328,11 @@ def analyze_ticker(
                 persona.system_prompt,
                 portfolio_context,
                 messages,
-                _FORCE_FINAL_MAX_TOKENS,
+                _ANALYSIS_MAX_TOKENS,
                 run_context,
                 ticker,
                 temperature,
+                response_observer,
             )
             try:
                 result = _validate_persona_output(
@@ -353,10 +358,11 @@ def analyze_ticker(
             # A structured analysis (4–6 thesis bullets + Lynch/Buffett signals + risks +
             # data-quality notes) can exceed 4096 output tokens for verbose names (e.g. a
             # conglomerate). 4096 truncated the final JSON → stop_reason="max_tokens" → crash.
-            8192,
+            _ANALYSIS_MAX_TOKENS,
             run_context,
             ticker,
             temperature,
+            response_observer,
         )
 
         # ── end_turn → try to parse output ───────────────────────────────────
@@ -497,10 +503,11 @@ def analyze_ticker(
                     persona.system_prompt,
                     portfolio_context,
                     messages,
-                    _FORCE_FINAL_MAX_TOKENS,
+                    _ANALYSIS_MAX_TOKENS,
                     run_context,
                     ticker,
                     temperature,
+                    response_observer,
                 )
                 try:
                     result = _validate_persona_output(

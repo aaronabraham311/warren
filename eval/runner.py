@@ -21,6 +21,7 @@ import json
 import os
 import sqlite3
 import sys
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -28,14 +29,21 @@ import anthropic
 from dotenv import load_dotenv
 
 from agent.budget import Budget, RunContext
-from agent.loop import analyze_ticker
+from agent.loop import SchemaRepairError, analyze_ticker
+from agent.models import SONNET_4_6, AnalysisOutput
 from agent.persona import DefaultPersona, DirtPersona
 from agent.routing import HardcodedSonnetRouting
 from data_sources.cache import CacheStore
 from data_sources.forensics import ForensicEvidenceBundle
+from eval.artifacts import (
+    CapturedResponse,
+    EvalArtifactWriter,
+    make_artifact_record,
+)
 from eval.golden_set import EvalExample, load_all_examples
-from eval.grader import EvalGrade, failed_grade, grade_analysis
+from eval.grader import CheckResult, EvalGrade, failed_grade, grade_analysis
 from eval.judge import SonnetThesisJudge, ThesisJudge
+from eval.reporting import write_eval_report
 from eval.tool_fixtures import FIXTURES_DIR, FixtureToolRunner, has_tool_fixtures
 
 load_dotenv()  # must precede storage.engine import so WARREN_DB applies before engine creation
@@ -56,6 +64,16 @@ _EVAL_MAX_COST_USD = 5.00
 _EVAL_TEMPERATURE = 0.0
 
 
+@dataclass(frozen=True)
+class TickerEvaluation:
+    grade: EvalGrade
+    result: AnalysisOutput | None
+    failure: BaseException | None
+    fixture_runner: FixtureToolRunner
+    responses: list[CapturedResponse]
+    started_at: datetime
+
+
 def _new_eval_run_id() -> str:
     return f"eval-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S')}"
 
@@ -70,6 +88,18 @@ def resolve_persona(example: EvalExample) -> DefaultPersona | DirtPersona:
     return DirtPersona() if example.persona == "dirt" else DefaultPersona()
 
 
+def _append_check(grade: EvalGrade, check: CheckResult) -> EvalGrade:
+    checks = [*grade.checks, check]
+    passed = all(item.passed for item in checks if item.severity == "must")
+    n_passed = sum(item.passed for item in checks)
+    return EvalGrade(
+        ticker=grade.ticker,
+        passed=passed,
+        checks=checks,
+        overall_notes=f"{n_passed}/{len(checks)} checks passed",
+    )
+
+
 def _grade_one(
     example: EvalExample,
     run_id: str,
@@ -80,15 +110,25 @@ def _grade_one(
     client: anthropic.Anthropic,
     fixtures_root: Path,
     judge: ThesisJudge | None = None,
-) -> EvalGrade:
+) -> TickerEvaluation:
+    started_at = datetime.now(timezone.utc)
+    fixture_runner = FixtureToolRunner(example.ticker, fixtures_root)
+    responses: list[CapturedResponse] = []
     if not has_tool_fixtures(example.ticker, fixtures_root):
         logger.log("ticker_skipped", ticker=example.ticker, reason="fixture_missing")
-        return failed_grade(
-            example.ticker,
-            check_name="fixture_missing",
-            expected=f"recorded tool fixtures under {fixtures_root / example.ticker / 'tools'}",
-            actual="none found",
-            notes="No tool fixtures recorded for this ticker; skipped without an LLM call.",
+        return TickerEvaluation(
+            grade=failed_grade(
+                example.ticker,
+                check_name="fixture_missing",
+                expected=f"recorded tool fixtures under {fixtures_root / example.ticker / 'tools'}",
+                actual="none found",
+                notes="No tool fixtures recorded for this ticker; skipped without an LLM call.",
+            ),
+            result=None,
+            failure=None,
+            fixture_runner=fixture_runner,
+            responses=responses,
+            started_at=started_at,
         )
 
     logger.log("ticker_started", ticker=example.ticker, phase="deep")
@@ -103,15 +143,32 @@ def _grade_one(
             client=client,
             temperature=_EVAL_TEMPERATURE,
             tool_runner=fixture_runner,
+            response_observer=lambda response: responses.append(
+                CapturedResponse.from_response(response)
+            ),
         )
     except Exception as exc:  # noqa: BLE001 — one bad ticker must not abort the sweep
         logger.log("ticker_failed", ticker=example.ticker, error=str(exc))
-        return failed_grade(
-            example.ticker,
-            check_name="run_completed",
-            expected="no exception",
-            actual=f"{type(exc).__name__}: {exc}",
-            notes=f"Exception: {exc}",
+        check_name = (
+            "structured_output_valid" if isinstance(exc, SchemaRepairError) else "run_completed"
+        )
+        return TickerEvaluation(
+            grade=failed_grade(
+                example.ticker,
+                check_name=check_name,
+                expected=(
+                    "valid structured AnalysisOutput"
+                    if check_name == "structured_output_valid"
+                    else "no exception"
+                ),
+                actual=f"{type(exc).__name__}: {exc}",
+                notes=f"Exception: {exc}",
+            ),
+            result=None,
+            failure=exc,
+            fixture_runner=fixture_runner,
+            responses=responses,
+            started_at=started_at,
         )
 
     logger.log(
@@ -128,7 +185,92 @@ def _grade_one(
         if forensic_result is not None and isinstance(forensic_result.data, ForensicEvidenceBundle)
         else None
     )
-    return grade_analysis(result, example, judge, forensic_evidence)
+    try:
+        grade = grade_analysis(result, example, judge, forensic_evidence)
+    except Exception as exc:  # noqa: BLE001 — preserve deterministic checks and raw output
+        logger.log("judge_failed", ticker=example.ticker, error=str(exc))
+        grade = grade_analysis(result, example, None, forensic_evidence)
+        grade = _append_check(
+            grade,
+            CheckResult(
+                check_name="judge_available",
+                passed=False,
+                expected="all configured judges return a verdict",
+                actual=f"{type(exc).__name__}: {exc}",
+                severity="must",
+            ),
+        )
+
+    grade = _append_check(
+        grade,
+        CheckResult(
+            check_name="structured_output_valid",
+            passed=True,
+            expected="valid structured AnalysisOutput",
+            actual="validated",
+            severity="must",
+        ),
+    )
+
+    if fixture_runner.misses:
+        rendered = ", ".join(
+            f"{miss.tool_name}:{miss.input_hash}" for miss in fixture_runner.misses
+        )
+        grade = _append_check(
+            grade,
+            CheckResult(
+                check_name="fixture_completeness",
+                passed=False,
+                expected="every requested tool input has an exact offline fixture",
+                actual=f"missing {rendered}",
+                severity="must",
+            ),
+        )
+    else:
+        grade = _append_check(
+            grade,
+            CheckResult(
+                check_name="fixture_completeness",
+                passed=True,
+                expected="every requested tool input has an exact offline fixture",
+                actual="complete",
+                severity="must",
+            ),
+        )
+    if fixture_runner.evidence_issues:
+        rendered = "; ".join(
+            f"{issue.tool_name}:{issue.input_hash} {issue.reason}"
+            for issue in fixture_runner.evidence_issues
+        )
+        grade = _append_check(
+            grade,
+            CheckResult(
+                check_name="fixture_evidence_parity",
+                passed=False,
+                expected="requested mandatory evidence is substantive and concept-bearing",
+                actual=rendered,
+                severity="must",
+            ),
+        )
+    else:
+        grade = _append_check(
+            grade,
+            CheckResult(
+                check_name="fixture_evidence_parity",
+                passed=True,
+                expected="requested mandatory evidence is substantive and concept-bearing",
+                actual="complete",
+                severity="must",
+            ),
+        )
+    return TickerEvaluation(
+        grade=grade,
+        result=result,
+        failure=None,
+        fixture_runner=fixture_runner,
+        responses=responses,
+        started_at=started_at,
+    )
 
 
 def _print_summary(grades: list[EvalGrade]) -> None:
@@ -180,26 +322,64 @@ def run_eval(
     ensure_run_started(run_id, started_at, prompt_version_id=prompt_version_id)
 
     budget = Budget(max_cost_usd=_EVAL_MAX_COST_USD)
+    log_path = _LOG_DIR / f"{run_id}.jsonl"
+    log_path.unlink(missing_ok=True)
     logger = RunLogger(run_id, _LOG_DIR)
     logger.log("run_started", tickers=[e.ticker for e in examples], eval_run_id=run_id)
 
     grades: list[EvalGrade] = []
-    for example in examples:
-        persona = resolve_persona(example)
-        grade = _grade_one(
-            example, run_id, budget, logger, persona, routing_policy, client, fixtures_root, judge
-        )
-        grades.append(grade)
-        write_eval_run(
-            run_id,
-            grade.ticker,
-            grade.passed,
-            check_results=json.dumps([c.model_dump() for c in grade.checks]),
-            diff_notes=grade.overall_notes,
-        )
-        n_passed = sum(1 for c in grade.checks if c.passed)
-        status = "✅" if grade.passed else "❌"
-        print(f"{status} {grade.ticker}: {n_passed}/{len(grade.checks)} checks")
+    artifact_path = (
+        Path(f"{output_path}.audit.jsonl")
+        if output_path is not None
+        else _LOG_DIR / f"{run_id}.audit.jsonl"
+    )
+    with EvalArtifactWriter(artifact_path) as artifact_writer:
+        for example in examples:
+            persona = resolve_persona(example)
+            outcome = _grade_one(
+                example,
+                run_id,
+                budget,
+                logger,
+                persona,
+                routing_policy,
+                client,
+                fixtures_root,
+                judge,
+            )
+            grade = outcome.grade
+            grades.append(grade)
+            artifact_writer.write(
+                make_artifact_record(
+                    run_id=run_id,
+                    ticker=example.ticker,
+                    provider="anthropic",
+                    model=SONNET_4_6,
+                    service_tier="default",
+                    reasoning_effort="none",
+                    persona=type(persona).__name__,
+                    persona_prompt=persona.system_prompt,
+                    fixtures_root=fixtures_root,
+                    log_path=log_path,
+                    started_at=outcome.started_at,
+                    responses=outcome.responses,
+                    fixture_misses=outcome.fixture_runner.misses,
+                    fixture_evidence_issues=outcome.fixture_runner.evidence_issues,
+                    grade=grade,
+                    result=outcome.result,
+                    failure=outcome.failure,
+                )
+            )
+            write_eval_run(
+                run_id,
+                grade.ticker,
+                grade.passed,
+                check_results=json.dumps([c.model_dump() for c in grade.checks]),
+                diff_notes=grade.overall_notes,
+            )
+            n_passed = sum(1 for c in grade.checks if c.passed)
+            status = "✅" if grade.passed else "❌"
+            print(f"{status} {grade.ticker}: {n_passed}/{len(grade.checks)} checks")
 
     _print_summary(grades)
 
@@ -219,8 +399,13 @@ def run_eval(
 
     if output_path is not None:
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_text(json.dumps([g.model_dump() for g in grades], indent=2))
+        output_path.write_text(
+            json.dumps([g.model_dump() for g in grades], indent=2), encoding="utf-8"
+        )
+        report_path = write_eval_report(output_path, grades)
         print(f"Output written to {output_path}")
+        print(f"Audit output written to {artifact_path}")
+        print(f"Report written to {report_path}")
 
     return grades
 

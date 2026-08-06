@@ -214,6 +214,7 @@ def test_iteration_cap(db_engine: object, mock_claude: MagicMock) -> None:
     result = analyze_ticker("AAPL", _persona(), _routing(), _ctx())
     assert isinstance(result, AnalysisOutput)
     last_call_kwargs = mock_client.messages.create.call_args_list[-1][1]
+    assert last_call_kwargs["max_tokens"] == 8192
     last_user_msg = last_call_kwargs["messages"][-1]["content"]
     assert "iteration_capped" in _last_user_text(last_user_msg)
 
@@ -229,6 +230,7 @@ def test_token_cap(mock_claude: MagicMock) -> None:
     result = analyze_ticker("AAPL", _persona(), _routing(), ctx)
     assert isinstance(result, AnalysisOutput)
     last_call_kwargs = mock_client.messages.create.call_args_list[-1][1]
+    assert last_call_kwargs["max_tokens"] == 8192
     last_user_msg = last_call_kwargs["messages"][-1]["content"]
     assert "token_capped" in _last_user_text(last_user_msg)
 
@@ -254,8 +256,30 @@ def test_tool_loop_broken(db_engine: object, mock_claude: MagicMock) -> None:
     result = analyze_ticker("AAPL", _persona(), _routing(), _ctx())
     assert isinstance(result, AnalysisOutput)
     last_call_kwargs = mock_client.messages.create.call_args_list[-1][1]
+    assert last_call_kwargs["max_tokens"] == 8192
     last_user_msg = last_call_kwargs["messages"][-1]["content"]
     assert "tool_loop_broken" in _last_user_text(last_user_msg)
+
+
+def test_forced_final_accepts_valid_json_larger_than_2048_tokens(mock_claude: MagicMock) -> None:
+    budget = Budget(max_input_tokens=1)
+    budget.total_input_tokens = 1
+    payload = json.loads(VALID_ANALYSIS_JSON)
+    payload["thesis"] = " ".join(f"evidence{i}" for i in range(2_500))
+    raw = json.dumps(payload)
+    assert len(payload["thesis"].split()) > 2_048
+
+    mock_client = mock_claude([make_end_turn(raw)])
+    result = analyze_ticker(
+        "AAPL",
+        _persona(),
+        _routing(),
+        _ctx("run-long-forced-final", budget=budget),
+    )
+
+    assert len(result.thesis.split()) > 2_048
+    assert result.termination_reason == "token_capped"
+    assert mock_client.messages.create.call_args.kwargs["max_tokens"] == 8192
 
 
 # ── Forced-final invalid JSON → SchemaRepairError ────────────────────────────
