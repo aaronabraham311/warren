@@ -80,6 +80,20 @@ def test_happy_path(db_engine: object, mock_claude: MagicMock, db_session: Sessi
     assert isinstance(result, AnalysisOutput)
     assert result.ticker == "AAPL"
     assert result.recommendation in ("buy", "sell", "hold")
+    trace = [json.loads(line) for line in ctx.logger.path.read_text().splitlines()]
+    lifecycle = [record["event"] for record in trace]
+    assert lifecycle == [
+        "llm_call_started",
+        "llm_call",
+        "tool_call",
+        "llm_call_started",
+        "llm_call",
+    ]
+    starts = [record for record in trace if record["event"] == "llm_call_started"]
+    assert starts[0]["purpose"] == "planning"
+    assert starts[0]["tool_count"] == 0
+    assert starts[1]["purpose"] == "synthesis"
+    assert starts[1]["tool_count"] == 1
 
     upsert_analysis(
         "run-happy",

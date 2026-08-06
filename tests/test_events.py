@@ -5,6 +5,7 @@ from unittest.mock import patch
 from agent.events import (
     EventSink,
     LlmCallCompleted,
+    LlmCallStarted,
     RunCancelled,
     RunEvent,
     RunStarted,
@@ -104,3 +105,24 @@ def test_completion_projection_distinguishes_cancelled_and_llm_metrics() -> None
     assert llm.cache_read_tokens == 7
     assert llm.cache_creation_tokens == 3
     assert llm.cost_usd == 0.01
+
+
+def test_model_start_projection_is_typed_safe_and_immediate() -> None:
+    event = event_from_wal_record(
+        {
+            "event": "llm_call_started",
+            "run_id": "r1",
+            "ticker": "AMD",
+            "model": "claude-sonnet-4-6",
+            "purpose": "synthesis",
+            "iteration": 4,
+            "tool_count": 7,
+            "prompt": "must not escape",
+        }
+    )
+
+    assert isinstance(event, LlmCallStarted)
+    assert event.purpose == "synthesis"
+    assert event.iteration == 4
+    assert event.tool_count == 7
+    assert "must not escape" not in repr(event)

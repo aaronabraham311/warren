@@ -11,7 +11,7 @@ from pydantic import BaseModel, ValidationError
 
 from agent.budget import RunContext
 from agent.caching import call_claude_with_caching
-from agent.events import ToolCallStarted, emit_safely
+from agent.events import LlmCallPurpose, ToolCallStarted, emit_safely
 from agent.models import AnalysisOutput
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
@@ -264,11 +264,21 @@ def _call_and_record(
     max_tokens: int,
     run_context: RunContext,
     ticker: str,
+    purpose: LlmCallPurpose,
     temperature: float | None = None,
     response_observer: Callable[[anthropic.types.Message], None] | None = None,
 ) -> anthropic.types.Message:
-    """Time the call, record token/cost usage, and emit an llm_call WAL event."""
+    """Durably announce model I/O, then record its completion and usage."""
     run_context.cancellation.raise_if_cancelled()
+    run_context.logger.log(
+        "llm_call_started",
+        ticker=ticker,
+        phase="deep",
+        model=model,
+        purpose=purpose,
+        iteration=run_context.iterations,
+        tool_count=run_context.budget.total_tool_calls,
+    )
     t0 = time.monotonic()
     response = _call_claude(
         client, model, persona_prompt, portfolio_context, messages, max_tokens, temperature
@@ -276,7 +286,13 @@ def _call_and_record(
     latency_ms = int((time.monotonic() - t0) * 1000)
     _record_usage(run_context, response)
     run_context.logger.log_llm_call(
-        response, ticker=ticker, phase="deep", model=model, latency_ms=latency_ms
+        response,
+        ticker=ticker,
+        phase="deep",
+        model=model,
+        latency_ms=latency_ms,
+        purpose=purpose,
+        iteration=run_context.iterations,
     )
     if response_observer is not None:
         response_observer(response)
@@ -335,6 +351,7 @@ def analyze_ticker(
                 _ANALYSIS_MAX_TOKENS,
                 run_context,
                 ticker,
+                "finalizing",
                 temperature,
                 response_observer,
             )
@@ -353,6 +370,13 @@ def analyze_ticker(
 
         # ── Normal Claude call ────────────────────────────────────────────────
         model = routing_policy.select(iteration, messages, ticker)
+        purpose: LlmCallPurpose
+        if schema_repair_attempt:
+            purpose = "validation"
+        elif iteration == 1 and run_context.budget.total_tool_calls == 0:
+            purpose = "planning"
+        else:
+            purpose = "synthesis"
         response = _call_and_record(
             client,
             model,
@@ -365,6 +389,7 @@ def analyze_ticker(
             _ANALYSIS_MAX_TOKENS,
             run_context,
             ticker,
+            purpose,
             temperature,
             response_observer,
         )
@@ -519,6 +544,7 @@ def analyze_ticker(
                     _ANALYSIS_MAX_TOKENS,
                     run_context,
                     ticker,
+                    "finalizing",
                     temperature,
                     response_observer,
                 )
