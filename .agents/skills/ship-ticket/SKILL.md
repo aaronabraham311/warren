@@ -1,14 +1,15 @@
 ---
 name: ship-ticket
-description: Use when taking a Warren ticket from implementation through verification, commit, pull request, and CI follow-up.
+description: Use when taking a Warren ticket from implementation through verification, review-sized gh-stack pull requests, and CI follow-up.
 ---
 
 # Warren ship-ticket skill
 
 End-to-end autonomous flow for taking a ticket (usually a Notion task) all the way
-to a green PR: **understand → plan (HTML, auto-opened) → implement → verify → PR →
-watch CI → self-fix until green**. The goal is *minimal human involvement* — there is
-exactly **one** approval gate (the HTML plan). Everything after it runs unattended.
+to a green, reviewable PR stack: **understand → plan (HTML, auto-opened) → layer →
+implement → verify → submit with gh-stack → watch CI → self-fix until green**. The
+goal is *minimal human involvement* — there is exactly **one** approval gate (the
+HTML plan). Everything after it runs unattended.
 
 ## How to invoke
 
@@ -36,6 +37,11 @@ Read these first — they are the mistakes that cost human round-trips on past r
    all tool calls (Read, Edit, Write, Bash) target your private tree. **Never skip this
    even for a "quick" ticket** — the main checkout is always someone else's floor.
 
+4. **Design for reviewers before writing code.** Use `gh-stack` for every shipped
+   ticket. Split multiple concerns into dependency-ordered PRs, keep each layer
+   independently testable, and do not submit a large catch-all PR merely because the
+   implementation was completed on one branch.
+
 ---
 
 ## Phase 0 — Worktree setup (do this FIRST, always)
@@ -45,6 +51,10 @@ Each ticket gets its own isolated Git worktree. Start from the latest remote def
 ```bash
 git fetch origin main -q
 git worktree add .worktrees/<slug> -b codex/<slug> origin/main
+cd .worktrees/<slug>
+git config rerere.enabled true
+git config remote.pushDefault origin
+gh stack init --base main codex/<slug>
 ```
 
 Continue all edits and commands from the new worktree. Never switch the shared checkout onto the ticket branch. If the Codex app provides a native isolated-worktree action, it is also acceptable, but verify that it is based on `origin/main`.
@@ -64,11 +74,30 @@ Continue all edits and commands from the new worktree. Never switch the shared c
 
 ---
 
-## Phase 2 — HTML plan + auto-open + the one approval gate
+## Phase 2 — Stack plan + HTML plan + the one approval gate
+
+Before writing the HTML, divide the implementation into dependency-ordered review
+layers. Shared types, models, and utilities belong below their consumers. Each layer
+must be coherent, independently testable against its parent, and understandable
+without reviewing higher layers.
+
+Use one PR only when the ticket is a single cohesive concern and comfortably fits the
+review-size budget. Split before implementation when any of these apply:
+
+- Two or more concerns can be reviewed independently.
+- The projected diff exceeds 15 non-generated files or 800 non-generated added lines.
+- Generated fixtures or lockfiles dominate the diff and can be isolated from the code
+  that consumes them.
+
+A layer over 1,000 non-generated changed lines needs an explicit justification in its
+PR body. Never submit a single layer over 1,500 non-generated changed lines; split it
+or pause for a genuine architectural constraint. Do not manufacture arbitrary layers
+that leave the repository broken or force reviewers to jump repeatedly between PRs.
 
 1. Write a plan to **`local/<slug>-plan.html`** (the `local/` dir is gitignored scratch).
    Use the template at the bottom of this file. It must cover: **Context** (why),
    **Reuse** (existing utils to lean on), **Files** (new/edit, with code sketches),
+   **Stack layers** (bottom to top, with each layer's scope and expected size),
    **Acceptance criteria → tests**, and **Verification** commands.
 2. **Open it in the default browser immediately:**
    ```bash
@@ -85,6 +114,13 @@ Continue all edits and commands from the new worktree. Never switch the shared c
 ---
 
 ## Phase 3 — Implement
+
+- Implement bottom-up. Finish and commit one cohesive layer before creating the next
+  with `gh stack add codex/<slug>-<layer>`; this creates and switches to the child
+  branch. Always provide the branch name so `gh-stack` never opens an interactive
+  prompt.
+- Run the layer's focused tests before moving upward. A higher layer may depend on its
+  parent, but a lower layer must never depend on code introduced above it.
 
 - Follow `AGENTS.md` conventions exactly (empty `__init__.py`, import from submodules,
   SQLAlchemy 2.x style, all external calls in `data_sources/`, `os.environ[...]` not
@@ -109,14 +145,18 @@ uv run ruff check . && uv run ruff format . && uv run mypy . && uv run pytest -q
 
 Fix anything red and re-run until clean. Do not proceed to Phase 5 with a failing DoD.
 
+Run the full DoD at the top of the stack. Also verify every layer against its direct
+parent with `git diff --stat <parent>...HEAD` and `git diff --numstat
+<parent>...HEAD`. If a layer exceeds the Phase 2 budget, split it before pushing.
+
 ---
 
-## Phase 5 — Commit, push, open PR
+## Phase 5 — Commit and submit the stack
 
 1. **Verify the diff is scoped to this ticket** (catches a wrong-base branch early; run
    from `<worktree>`):
    ```bash
-   git diff --name-only origin/main...HEAD
+   git diff --name-only <parent>...HEAD
    ```
    If it lists files unrelated to the ticket, you branched off the wrong base — go fix
    it per Phase 6's rebase recipe **before** pushing.
@@ -124,10 +164,17 @@ Fix anything red and re-run until clean. Do not proceed to Phase 5 with a failin
    ```
    Co-Authored-By: Codex <noreply@openai.com>
    ```
-3. `git push -u origin <branch>`.
-4. `gh pr create` with a **descriptive** body: What & why, design decisions (and any
-   user-choice outcomes), the public API, an acceptance-criteria checklist, and
-   the DoD result. End PR bodies with:
+3. Inspect the non-interactive stack view with `gh stack view --json`, then publish all
+   branches and ready-for-review PRs with:
+   ```bash
+   gh stack submit --auto --open --remote origin
+   ```
+   Always use `--auto`; omitting it prompts for titles. Do not run `gh stack view`
+   without `--json`, because that launches an interactive TUI.
+4. Give every PR a **descriptive**, layer-specific title and body: layer number and
+   dependency, what & why, design decisions (and any user-choice outcomes), public
+   API, review guide, acceptance-criteria checklist, focused verification, and the
+   top-level DoD result when applicable. End PR bodies with:
    ```
    🤖 Generated with Codex
    ```
@@ -136,13 +183,16 @@ Fix anything red and re-run until clean. Do not proceed to Phase 5 with a failin
 
 ## Phase 6 — Watch CI and self-fix until green
 
-After opening the PR, arm a recurring Codex monitor (or the app's monitoring/automation mechanism) to poll the PR every minute so this survives idle turns. The monitor should:
+After opening the stack, arm a recurring Codex monitor (or the app's
+monitoring/automation mechanism) to poll every PR once a minute so this survives idle
+turns. The monitor should:
 
-1. Run `gh pr checks <N>` and report one compact line while checks are pending.
+1. Run `gh pr checks <N>` for every layer and report one compact stack summary while
+   checks are pending.
 2. If a check fails, run `gh run view --log-failed`, diagnose and fix the issue, rerun the DoD locally, commit, and push.
 3. Stop itself when all checks pass or no further action remains.
 
-Each tick:
+Each tick, work bottom-up:
 
 1. `gh pr checks <N>`.
 2. **If it says *"no checks reported"* — do not just wait. Diagnose:**
@@ -162,7 +212,7 @@ Each tick:
      on `pull_request`; otherwise nudge with an empty commit.
 3. **If a check fails:** `gh run view --log-failed`, fix the code, re-run the full DoD
    locally, `git push`. Let the next tick re-verify.
-4. **When all checks pass — verify mergeability before declaring done:**
+4. **When all checks pass — verify every PR's base and mergeability before declaring done:**
    ```bash
    gh pr view <N> --json mergeable,mergeStateStatus
    ```
@@ -202,6 +252,9 @@ Each tick:
    ```
    If `git branch -d` refuses (unmerged locally), use `-D` only after confirming the PR
    is merged on GitHub.
+
+If the user explicitly asks to merge, merge the stack with `gh stack merge
+<stack-or-top-PR-number> --yes --squash`. Do not use `gh pr merge` for stacked PRs.
 
 Only involve the human if you hit something you genuinely cannot resolve (e.g. a
 required secret is missing, or the fix needs a product decision) — otherwise drive it
@@ -247,6 +300,9 @@ Dark-themed, scannable, renders standalone. Fill the `<!-- … -->` slots.
   <h2>Reuse — don't reinvent</h2>
   <table><tr><th>Existing</th><th>What it gives us</th></tr>
     <!-- <tr><td>path</td><td>…</td></tr> --></table>
+  <h2>Stack layers</h2>
+  <table><tr><th>Layer</th><th>Scope</th><th>Expected size</th></tr>
+    <!-- <tr><td>1 · codex/slug-foundation</td><td>…</td><td>… files / … lines</td></tr> --></table>
   <h2>Files</h2>
   <h3><span class="pill new">NEW</span> &nbsp;<!-- path --></h3>
   <pre><code><!-- code sketch --></code></pre>

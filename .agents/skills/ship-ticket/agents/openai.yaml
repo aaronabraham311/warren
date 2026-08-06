@@ -1,6 +1,6 @@
 interface:
   display_name: "Warren shipping"
-  short_description: "Verify and hand off Warren changes"
-  default_prompt: "Use $ship-ticket to take a Warren change through verification and handoff."
+  short_description: "Ship Warren changes as reviewable PR stacks"
+  default_prompt: "Use $ship-ticket to take a Warren change through verification and a review-sized gh-stack handoff."
 policy:
   allow_implicit_invocation: true
