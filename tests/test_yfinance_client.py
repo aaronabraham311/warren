@@ -1083,6 +1083,61 @@ def test_get_valuation_multiples_price_to_ncav_consistency(yf_conn: sqlite3.Conn
     assert result.net_cash_positive is True
 
 
+def test_valuation_derives_ev_from_statements_when_vendor_ev_missing(
+    yf_conn: sqlite3.Connection,
+) -> None:
+    client = _make_client(yf_conn)
+    ticker = MagicMock()
+    ticker.info = {
+        "regularMarketPrice": 10.0,
+        "currency": "EUR",
+        "financialCurrency": "PLN",
+        "marketCap": 50_000_000,
+        "lastFiscalYearEnd": 1696032000,
+        "a": 1,
+        "b": 2,
+        "c": 3,
+    }
+    ticker.financials = _make_stmt_df_mock(
+        {"fiscal_years": [2025, 2024], "EBIT": [None, 10_000_000]}
+    )
+    ticker.balance_sheet = _make_stmt_df_mock(
+        {
+            "fiscal_years": [2025, 2024],
+            "Total Debt": [30_000_000, 30_000_000],
+            "Cash And Cash Equivalents": [5_000_000, 5_000_000],
+        }
+    )
+    ticker.cashflow = _make_stmt_df_mock({"fiscal_years": [2025, 2024]})
+
+    def dispatch(symbol: str) -> MagicMock:
+        if symbol == "EURUSD=X":
+            fx = MagicMock()
+            fx.fast_info.last_price = 1.1
+            return fx
+        if symbol == "PLNUSD=X":
+            fx = MagicMock()
+            fx.fast_info.last_price = 0.25
+            return fx
+        return ticker
+
+    with (
+        patch("data_sources.yfinance_client.yf.Ticker", side_effect=dispatch),
+        patch.object(client, "_build_financials", wraps=client._build_financials) as build,
+    ):
+        result = client.get_valuation_multiples("SPARSE.MI")
+        quality = client.get_quality_metrics("SPARSE.MI")
+
+    assert isinstance(result, ValuationData)
+    assert isinstance(quality, QualityData)
+    assert result.currency == "EUR"
+    assert result.enterprise_value == 55_681_818
+    assert result.enterprise_value_usd == 61_250_000
+    assert result.enterprise_value_source == "statements"
+    assert result.ev_to_ebit == pytest.approx(24.5)
+    assert build.call_count == 1  # quality reuses valuation's cached statement frames
+
+
 # ── get_valuation_multiples: missing cash fields → graceful None ──────────────
 
 

@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping
 from datetime import date
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from agent.screening import (
@@ -24,6 +26,7 @@ from data_sources.yfinance_client import (
     QualityData,
     ValuationData,
 )
+from storage.logger import RunLogger
 
 # ---------------------------------------------------------------------------
 # Builders + fake client
@@ -295,6 +298,7 @@ def _valuation(
     net_cash: bool = True,
     dividend_yield_pct: float | None = 3.0,
     ncav_to_mc: float | None = 0.5,
+    market_cap_usd: int | None = 50_000_000,
 ) -> ValuationData:
     return ValuationData(
         ticker=ticker,
@@ -305,12 +309,12 @@ def _valuation(
         acquirers_multiple=None,
         fcf_yield=None,
         earnings_yield=None,
-        market_cap_usd=None,
+        market_cap_usd=market_cap_usd,
         ncav=None,
         ncav_to_market_cap=ncav_to_mc,
         is_net_net=False,
         price_to_ncav=price_to_ncav,
-        net_cash_usd=None,
+        net_cash_usd=1 if net_cash else -1,
         net_cash_positive=net_cash,
         p_tangible_book=None,
         dividend_yield_pct=dividend_yield_pct,
@@ -379,8 +383,8 @@ def test_gem_hunt_criteria_are_distinct_from_garp() -> None:
         "pb_ratio_max",
         "max_ev_ebit",
         "max_price_to_ncav",
-        "require_net_cash",
-        "min_consecutive_profit_years",
+        "min_market_cap_usd",
+        "max_market_cap_usd",
         "min_dividend_yield_pct",
     }
     assert set(GEM_HUNT_SCREEN_CRITERIA).isdisjoint(DEFAULT_SCREEN_CRITERIA)
@@ -390,7 +394,7 @@ def test_value_screen_passes_a_clean_gem() -> None:
     yf = _value_yf()
     out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
     assert out.passed is True
-    assert out.score == 6.0 - 0.5  # ev_to_ebit − ncav_to_market_cap
+    assert out.score is not None and 0.0 <= out.score <= 1.0
 
 
 def test_value_screen_filters_high_ev_ebit() -> None:
@@ -416,10 +420,12 @@ def test_dividend_yield_pct_scale_is_percent() -> None:
     assert screen_ticker_value("GEM", below, GEM_HUNT_SCREEN_CRITERIA).passed is False  # type: ignore[arg-type]
 
 
-def test_value_screen_requires_net_cash() -> None:
+def test_value_screen_net_debt_survives_but_scores_worse() -> None:
     yf = _value_yf(net_cash=False)
     out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
-    assert out.passed is False
+    cash = screen_ticker_value("GEM", _value_yf(), GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+    assert out.passed is True
+    assert out.score is not None and cash.score is not None and out.score > cash.score
 
 
 def test_value_screen_short_circuits_on_fundamentals_failure() -> None:
@@ -435,20 +441,94 @@ def test_value_screen_short_circuits_on_fundamentals_failure() -> None:
     assert yf.quality_calls == []
 
 
-def test_deep_value_score_missing_ev_sinks_to_bottom() -> None:
-    assert _deep_value_score(_valuation(ev_ebit=None)) > 1e6
-    assert _deep_value_score(None) > 1e6
+def test_deep_value_score_missing_ev_is_bounded() -> None:
+    assert 0.0 <= _deep_value_score(_valuation(ev_ebit=None)) <= 1.0
+    assert 0.0 <= _deep_value_score(None) <= 1.0
+
+
+def test_sparse_value_screen_routes_to_deeper_fetch() -> None:
+    yf = _FakeValueYF(
+        {"GEM": _value_fundamentals(pb=0.8)},
+        {"GEM": _valuation(ev_ebit=None, price_to_ncav=None, dividend_yield_pct=None)},
+        {"GEM": _quality(profit_years=None)},
+    )
+    out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+    assert out.disposition == "needs_deeper_fetch"
+    assert out.present_metrics == 2  # P/B and market cap; two cap bounds count once
+
+
+def test_market_cap_hard_band_and_sweet_spot_score() -> None:
+    for cap in (2_000_000, 2_000_000_000):
+        out = screen_ticker_value(
+            "GEM",
+            _value_yf(market_cap_usd=cap),  # type: ignore[arg-type]
+            GEM_HUNT_SCREEN_CRITERIA,
+        )
+        assert out.disposition == "rejected"
+    fifty = screen_ticker_value(
+        "GEM",
+        _value_yf(market_cap_usd=50_000_000),  # type: ignore[arg-type]
+        GEM_HUNT_SCREEN_CRITERIA,
+    )
+    four_hundred = screen_ticker_value(
+        "GEM",
+        _value_yf(market_cap_usd=400_000_000),  # type: ignore[arg-type]
+        GEM_HUNT_SCREEN_CRITERIA,
+    )
+    assert fifty.score is not None and four_hundred.score is not None
+    assert fifty.score < four_hundred.score
+
+
+def test_value_screen_preserves_source_errors() -> None:
+    err = DataSourceError(error_code="network", message="temporary")
+    yf = _FakeValueYF({"GEM": err}, {"GEM": _valuation()}, {"GEM": _quality()})
+    out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+    assert out.disposition == "source_error"
+    assert out.error is not None and out.error.retryable is True
+
+
+def test_value_screen_marks_rate_limits_retryable() -> None:
+    err = DataSourceError(error_code="rate_limit", message="slow down")
+    yf = _FakeValueYF({"GEM": err}, {"GEM": _valuation()}, {"GEM": _quality()})
+
+    out = screen_ticker_value("GEM", yf, GEM_HUNT_SCREEN_CRITERIA)  # type: ignore[arg-type]
+
+    assert out.disposition == "source_error"
+    assert out.error is not None and out.error.retryable is True
+
+
+def test_sparse_outcome_is_returned_and_written_to_jsonl(tmp_path: Path) -> None:
+    yf = _FakeValueYF(
+        {"GEM": _value_fundamentals(pb=0.8)},
+        {"GEM": _valuation(ev_ebit=None, price_to_ncav=None, dividend_yield_pct=None)},
+        {"GEM": _quality(profit_years=None)},
+    )
+    logger = RunLogger("sparse", tmp_path)
+    result = run_screening_pass(
+        ["GEM"],
+        criteria=GEM_HUNT_SCREEN_CRITERIA,
+        client=yf,  # type: ignore[arg-type]
+        screen_fn=screen_ticker_value,
+        rank=True,
+        logger=logger,
+    )
+    logger.close()
+    assert result.needs_deeper_fetch == ["GEM"]
+    assert result.surfaced == ["GEM"]
+    events = [json.loads(line) for line in (tmp_path / "sparse.jsonl").read_text().splitlines()]
+    event = next(e for e in events if e["event"] == "screening_ticker_outcome")
+    assert event["ticker"] == "GEM"
+    assert event["disposition"] == "needs_deeper_fetch"
 
 
 def test_run_screening_ranks_best_value_first() -> None:
-    """rank=True sorts passing candidates cheapest-first (combined EV/EBIT + NCAV discount)."""
-    # X: ev 5, ncav_disc 0.5 → 4.5 | Z: ev 6, ncav_disc 0.1 → 5.9 | Y: ev 8, ncav_disc 2.0 → 6.0
+    """rank=True sorts passing candidates by the bounded composite value loss."""
     universe = ["Y", "X", "Z"]  # deliberately non-sorted, non-best-first
     fundamentals = {t: _value_fundamentals(ticker=t) for t in universe}
     valuation = {
-        "X": _valuation(ticker="X", ev_ebit=5.0, ncav_to_mc=0.5),
-        "Y": _valuation(ticker="Y", ev_ebit=8.0, ncav_to_mc=2.0),
-        "Z": _valuation(ticker="Z", ev_ebit=6.0, ncav_to_mc=0.1),
+        "X": _valuation(ticker="X", ev_ebit=6.0, price_to_ncav=0.3),
+        "Y": _valuation(ticker="Y", ev_ebit=6.0, price_to_ncav=1.4),
+        "Z": _valuation(ticker="Z", ev_ebit=6.0, price_to_ncav=0.8),
     }
     quality = {t: _quality(ticker=t) for t in universe}
     yf = _FakeValueYF(fundamentals, valuation, quality)

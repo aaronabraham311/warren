@@ -1,10 +1,9 @@
 """Gem-hunt canary — the acceptance test for the deep-value screen + rank (G6/G7).
 
 Unlike the golden-set harness (which grades *analysis* output), this asserts the
-*screening* stage does its one job: **the known gems get picked up.** It seeds a
-candidate pool of the three hand-verified gems (DIR.MI, CIRSA.MC, KPL.WA) plus
-decoys, runs the real gem-hunt screen + rank over a fully offline fake client, and
-asserts the gems survive screening AND rank in the nightly top-N cutoff.
+*screening* stage does its one job: preserve a current deep-value reference, route
+sparse/leveraged names correctly, and reject names whose current facts no longer fit.
+The dated profiles below were checked live on 2026-08-05, then frozen for offline replay.
 
 It guards against any regression to ``GEM_HUNT_SCREEN_CRITERIA``,
 ``screen_ticker_value``, ``_deep_value_score`` or the ranking in
@@ -34,8 +33,12 @@ from data_sources.yfinance_client import (
     ValuationData,
 )
 
-# The three hand-verified gems and the two decoys — the canary's fixed cast.
-GEMS = ["DIR.MI", "CIRSA.MC", "KPL.WA"]
+# Current references and deterministic policy probes — the canary's fixed cast.
+CURRENT_GEM = "KPL.WA"
+SPARSE_PROBE = "SPARSEPROBE.MI"
+LEVERAGED_PROBE = "LEVERAGEDPROBE.MC"
+STALE_TICKER = "DIR.MI"
+LARGE_CAP_REFERENCE = "CIRSA.MC"
 DECOY_PASS = "DECOYPASS.MI"  # clears the gates, but a worse composite score
 DECOY_FAIL = "DECOYFAIL.MC"  # violates a value gate (EV/EBIT far above the max)
 
@@ -65,11 +68,12 @@ def _fundamentals(ticker: str, pb: float) -> FundamentalsData:
 
 def _valuation(
     ticker: str,
-    ev_ebit: float,
-    price_to_ncav: float,
-    ncav_to_mc: float,
-    dividend_yield_pct: float,
+    ev_ebit: float | None,
+    price_to_ncav: float | None,
+    ncav_to_mc: float | None,
+    dividend_yield_pct: float | None,
     net_cash: bool = True,
+    market_cap_usd: int = 50_000_000,
 ) -> ValuationData:
     return ValuationData(
         ticker=ticker,
@@ -80,12 +84,12 @@ def _valuation(
         acquirers_multiple=None,
         fcf_yield=None,
         earnings_yield=None,
-        market_cap_usd=None,
+        market_cap_usd=market_cap_usd,
         ncav=None,
         ncav_to_market_cap=ncav_to_mc,
         is_net_net=False,
         price_to_ncav=price_to_ncav,
-        net_cash_usd=None,
+        net_cash_usd=1 if net_cash else -1,
         net_cash_positive=net_cash,
         p_tangible_book=None,
         dividend_yield_pct=dividend_yield_pct,
@@ -135,22 +139,69 @@ class _FakeValueYF:
         return self._q[ticker]
 
 
-# Per-ticker deep-value profiles.
-#   The 3 gems: cheap (low EV/EBIT), price-to-NCAV < 1, net cash, ≥ profit &
-#   dividend floors → PASS. Composite score = EV/EBIT − NCAV-to-market-cap
-#   (lower = cheaper = better rank):
-#     DIR.MI    → 4.0 − 0.60 = 3.40  (best)
-#     CIRSA.MC  → 5.0 − 0.40 = 4.60
-#     KPL.WA    → 6.0 − 0.30 = 5.70
-#   DECOY_PASS clears every gate but scores 9.0 − 0.10 = 8.90 → survives, ranks LAST.
-#   DECOY_FAIL has EV/EBIT 25.0 (> max_ev_ebit 10.0) → filtered OUT entirely.
-# fields: pb, ev_ebit, price_to_ncav, ncav_to_mc, dividend_yield_pct, profit_years
-_PROFILES: dict[str, dict[str, float]] = {
-    "DIR.MI": {"pb": 0.70, "ev_ebit": 4.0, "p_ncav": 0.70, "ncav_mc": 0.60, "div": 2.5, "years": 7},
-    "CIRSA.MC": {"pb": 0.9, "ev_ebit": 5.0, "p_ncav": 0.8, "ncav_mc": 0.4, "div": 3.0, "years": 6},
-    "KPL.WA": {"pb": 1.1, "ev_ebit": 6.0, "p_ncav": 0.85, "ncav_mc": 0.3, "div": 1.5, "years": 8},
-    DECOY_PASS: {"pb": 1.4, "ev_ebit": 9.0, "p_ncav": 1.2, "ncav_mc": 0.1, "div": 1.2, "years": 5},
-    DECOY_FAIL: {"pb": 1.4, "ev_ebit": 25.0, "p_ncav": 0.9, "ncav_mc": 0.5, "div": 2.0, "years": 6},
+# Live KPL/CIRSA observations are rounded only to stable fixture precision. The
+# leveraged/sparse probes isolate the two policy regressions named by G13.
+_PROFILES: dict[str, dict[str, float | None]] = {
+    CURRENT_GEM: {
+        "pb": 1.0215,
+        "ev_ebit": 3.71,
+        "p_ncav": None,
+        "ncav_mc": None,
+        "div": 6.05,
+        "years": 4,
+        "mc": 104_842_767,
+        "cash": 1,
+    },
+    LEVERAGED_PROBE: {
+        "pb": 0.9,
+        "ev_ebit": 5.0,
+        "p_ncav": 0.8,
+        "ncav_mc": 0.4,
+        "div": 3.0,
+        "years": 2,
+        "mc": 120_000_000,
+        "cash": 0,
+    },
+    SPARSE_PROBE: {
+        "pb": 0.5,
+        "ev_ebit": None,
+        "p_ncav": None,
+        "ncav_mc": None,
+        "div": None,
+        "years": 0,
+        "mc": 50_000_000,
+        "cash": 1,
+    },
+    LARGE_CAP_REFERENCE: {
+        "pb": 3.5798,
+        "ev_ebit": 10.23,
+        "p_ncav": None,
+        "ncav_mc": None,
+        "div": 3.33,
+        "years": 4,
+        "mc": 2_656_999_155,
+        "cash": 0,
+    },
+    DECOY_PASS: {
+        "pb": 1.4,
+        "ev_ebit": 9.0,
+        "p_ncav": 1.2,
+        "ncav_mc": 0.1,
+        "div": 1.2,
+        "years": 1,
+        "mc": 400_000_000,
+        "cash": 0,
+    },
+    DECOY_FAIL: {
+        "pb": 1.4,
+        "ev_ebit": 25.0,
+        "p_ncav": 0.9,
+        "ncav_mc": 0.5,
+        "div": 2.0,
+        "years": 2,
+        "mc": 80_000_000,
+        "cash": 1,
+    },
 }
 
 
@@ -159,21 +210,35 @@ def _build_client() -> _FakeValueYF:
     valuation: dict[str, ValuationData | DataSourceError] = {}
     quality: dict[str, QualityData | DataSourceError] = {}
     for ticker, p in _PROFILES.items():
-        fundamentals[ticker] = _fundamentals(ticker, pb=p["pb"])
+        fundamentals[ticker] = _fundamentals(ticker, pb=float(p["pb"] or 0.0))
         valuation[ticker] = _valuation(
             ticker,
             ev_ebit=p["ev_ebit"],
             price_to_ncav=p["p_ncav"],
             ncav_to_mc=p["ncav_mc"],
             dividend_yield_pct=p["div"],
+            market_cap_usd=int(p["mc"] or 0),
+            net_cash=bool(p["cash"]),
         )
-        quality[ticker] = _quality(ticker, profit_years=int(p["years"]))
+        quality[ticker] = _quality(ticker, profit_years=int(p["years"] or 0))
+    missing = DataSourceError(error_code="not_found", message="No data for DIR.MI")
+    fundamentals[STALE_TICKER] = missing
+    valuation[STALE_TICKER] = missing
+    quality[STALE_TICKER] = missing
     return _FakeValueYF(fundamentals, valuation, quality)
 
 
 # A deliberately non-sorted, non-best-first pool (a decoy sorts alphabetically ahead
 # of some gems) so ordering must come from the ranking, not from input/alpha order.
-_POOL = [DECOY_FAIL, "KPL.WA", DECOY_PASS, "CIRSA.MC", "DIR.MI"]
+_POOL = [
+    DECOY_FAIL,
+    CURRENT_GEM,
+    DECOY_PASS,
+    LARGE_CAP_REFERENCE,
+    STALE_TICKER,
+    SPARSE_PROBE,
+    LEVERAGED_PROBE,
+]
 
 
 def _run() -> object:
@@ -186,20 +251,24 @@ def _run() -> object:
     )
 
 
-def test_all_three_gems_survive_screening() -> None:
-    """(a) Every known gem clears the deep-value gates and is a surfaced candidate."""
+def test_current_reference_and_policy_probes_survive() -> None:
     result = _run()
-    for gem in GEMS:
-        assert gem in result.candidates, f"gem {gem} was filtered out of the screen"  # type: ignore[attr-defined]
+    assert CURRENT_GEM in result.candidates  # type: ignore[attr-defined]
+    assert LEVERAGED_PROBE in result.candidates  # type: ignore[attr-defined]
+    assert SPARSE_PROBE in result.needs_deeper_fetch  # type: ignore[attr-defined]
 
 
-def test_top_n_cutoff_is_exactly_the_three_gems() -> None:
-    """(b) With the nightly top-N cutoff (=3), the top-ranked names are exactly the gems."""
+def test_runtime_surfaced_top_n_includes_sparse_probe() -> None:
     result = _run()
     assert _MAX_SCREEN_CANDIDATES == 3
-    top_n = result.candidates[:_MAX_SCREEN_CANDIDATES]  # type: ignore[attr-defined]
-    # Best-value-first, and exactly the three gems in cheapest→dearest order.
-    assert top_n == ["DIR.MI", "CIRSA.MC", "KPL.WA"], f"top-{_MAX_SCREEN_CANDIDATES} was {top_n}"
+    top_n = result.surfaced[:_MAX_SCREEN_CANDIDATES]  # type: ignore[attr-defined]
+    assert top_n == [CURRENT_GEM, SPARSE_PROBE, LEVERAGED_PROBE]
+
+
+def test_stale_and_now_large_cap_references_are_not_silently_treated_as_gems() -> None:
+    result = _run()
+    assert STALE_TICKER in result.source_errors  # type: ignore[attr-defined]
+    assert LARGE_CAP_REFERENCE not in result.surfaced  # type: ignore[attr-defined]
 
 
 def test_failing_decoy_is_filtered_out() -> None:
@@ -208,12 +277,9 @@ def test_failing_decoy_is_filtered_out() -> None:
     assert DECOY_FAIL not in result.candidates  # type: ignore[attr-defined]
 
 
-def test_passing_decoy_survives_but_ranks_below_every_gem() -> None:
+def test_passing_decoy_survives_but_ranks_below_top_three() -> None:
     """(d) The passing-but-worse decoy survives screening yet ranks below all gems."""
     result = _run()
     assert DECOY_PASS in result.candidates  # type: ignore[attr-defined]
-    scores = result.scores  # type: ignore[attr-defined]
-    worst_gem_score = max(scores[g] for g in GEMS)
-    assert scores[DECOY_PASS] > worst_gem_score
     # And it lands strictly outside the nightly cutoff.
-    assert DECOY_PASS not in result.candidates[:_MAX_SCREEN_CANDIDATES]  # type: ignore[attr-defined]
+    assert DECOY_PASS not in result.surfaced[:_MAX_SCREEN_CANDIDATES]  # type: ignore[attr-defined]
