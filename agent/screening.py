@@ -21,6 +21,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from math import log10
 from typing import Literal
 
 from agent.tools._clients import yfinance_client
@@ -99,6 +100,18 @@ class ScreeningResult:
     needs_deeper_fetch: list[str] = field(default_factory=list)
     source_errors: dict[str, ScreeningError] = field(default_factory=dict)
     surfaced: list[str] = field(default_factory=list)
+    closability: dict[str, ClosabilitySignals] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class ClosabilitySignals:
+    """Free screen-time closability proxies; none of these are exclusion gates."""
+
+    daily_turnover_usd: float | None
+    free_float_pct: float | None
+    position_size_cap_usd: float | None
+    loss: float
+    data_quality: tuple[str, ...] = ()
 
 
 @dataclass
@@ -109,6 +122,7 @@ class TickerScore:
     score: float | None = None
     present_metrics: int = 0
     error: ScreeningError | None = None
+    closability: ClosabilitySignals | None = None
 
     @property
     def passed(self) -> bool:
@@ -239,6 +253,95 @@ def _market_cap_loss(market_cap_usd: int | None) -> float:
     )
 
 
+def _closability_checks(
+    fundamentals: FundamentalsData | None,
+    valuation: ValuationData | None,
+) -> ClosabilitySignals:
+    """Derive float/liquidity signals from payloads the screen already fetched.
+
+    Trading currency is deliberate: volume and price belong to the listing, not the
+    statement currency on ``FundamentalsData.currency``. The effective FX rate is recovered
+    from valuation's native/USD market-cap pair, which was already normalized by the client.
+    Missing inputs receive a neutral ranking loss and remain explicitly unknown.
+
+    The position cap is two days of average turnover, equivalent to participating at 10% of
+    average volume for 20 trading days. It is guidance, never an eligibility floor.
+    """
+
+    notes: list[str] = []
+    turnover: float | None = None
+    free_float_pct: float | None = None
+    if fundamentals is None or valuation is None:
+        notes.append("closability inputs unavailable")
+    else:
+        price = fundamentals.current_price
+        volume = fundamentals.avg_volume_3m
+        native_cap = valuation.market_cap_native
+        usd_cap = valuation.market_cap_usd
+        fx_rate: float | None = None
+        trading_currency = fundamentals.trading_currency
+        valuation_currency = valuation.currency
+        currencies_align = (
+            trading_currency is not None
+            and valuation_currency is not None
+            and trading_currency == valuation_currency
+        )
+        if (
+            currencies_align
+            and native_cap is not None
+            and native_cap > 0
+            and usd_cap is not None
+            and usd_cap > 0
+        ):
+            candidate_fx_rate = float(usd_cap) / float(native_cap)
+            if candidate_fx_rate > 0:
+                fx_rate = candidate_fx_rate
+        else:
+            notes.append("trading-currency FX alignment unavailable; turnover remains unknown")
+        if price is not None and price > 0 and volume is not None and volume >= 0 and fx_rate:
+            turnover = round(float(volume) * price * fx_rate, 2)
+        else:
+            notes.append("daily turnover unavailable")
+        if (
+            fundamentals.float_shares is not None
+            and fundamentals.float_shares >= 0
+            and native_cap is not None
+            and native_cap > 0
+            and price is not None
+            and price > 0
+        ):
+            implied_shares_outstanding = float(native_cap) / price
+            if implied_shares_outstanding > 0:
+                free_float_fraction = float(fundamentals.float_shares) / implied_shares_outstanding
+                if 0.0 <= free_float_fraction <= 1.0:
+                    free_float_pct = round(free_float_fraction * 100, 2)
+                else:
+                    notes.append("free-float inputs are inconsistent")
+        if free_float_pct is None:
+            notes.append("free-float denominator unavailable")
+
+    # Low float makes a discount harder for an outside holder to close. Illiquidity remains
+    # investable but receives a smaller ranking penalty and a position-size cap.
+    float_loss = _clamp((50.0 - free_float_pct) / 50.0) if free_float_pct is not None else 0.5
+    if turnover is None:
+        liquidity_loss = 0.5
+    elif turnover <= 3_000:
+        liquidity_loss = 1.0
+    elif turnover >= 100_000:
+        liquidity_loss = 0.0
+    else:
+        liquidity_loss = 1.0 - ((log10(turnover) - log10(3_000)) / (log10(100_000) - log10(3_000)))
+    loss = _clamp(0.75 * float_loss + 0.25 * liquidity_loss)
+    position_cap = round(turnover * 2.0, 2) if turnover is not None else None
+    return ClosabilitySignals(
+        daily_turnover_usd=turnover,
+        free_float_pct=free_float_pct,
+        position_size_cap_usd=position_cap,
+        loss=loss,
+        data_quality=tuple(notes),
+    )
+
+
 def _deep_value_score(
     valuation: ValuationData | None,
     fundamentals: FundamentalsData | None = None,
@@ -325,7 +428,9 @@ def screen_ticker_value(ticker: str, client: YFinanceClient, criteria: Criteria)
         return _source_error("quality", q)
     quality = q if isinstance(q, QualityData) else None
 
-    score = _deep_value_score(valuation, fundamentals, quality)
+    closability = _closability_checks(fundamentals, valuation)
+    value_loss = _deep_value_score(valuation, fundamentals, quality)
+    score = _clamp(0.80 * value_loss + 0.20 * closability.loss)
     present = _present_value_metrics(fundamentals, valuation)
     if valuation is None or valuation.market_cap_usd is None:
         disposition: ScreenDisposition = "needs_deeper_fetch" if present > 0 else "rejected"
@@ -335,7 +440,12 @@ def screen_ticker_value(ticker: str, client: YFinanceClient, criteria: Criteria)
         disposition = "needs_deeper_fetch"
     else:
         disposition = "rejected"
-    return TickerScore(disposition=disposition, score=score, present_metrics=present)
+    return TickerScore(
+        disposition=disposition,
+        score=score,
+        present_metrics=present,
+        closability=closability,
+    )
 
 
 # A per-ticker screening function: (ticker, client, criteria) → TickerScore. The GARP
@@ -411,6 +521,12 @@ def run_screening_pass(
         for t, o in zip(universe, outcomes, strict=True)
         if o.disposition in ("candidate", "needs_deeper_fetch") and o.score is not None
     }
+    closability = {
+        ticker: outcome.closability
+        for ticker, outcome in zip(universe, outcomes, strict=True)
+        if outcome.closability is not None
+        and outcome.disposition in ("candidate", "needs_deeper_fetch")
+    }
     pass_rate = len(candidates) / len(universe) if universe else 0.0
 
     surfaced = candidates + needs_deeper_fetch
@@ -425,6 +541,16 @@ def run_screening_pass(
 
     if logger is not None:
         for ticker, outcome in zip(universe, outcomes, strict=True):
+            if outcome.closability is not None:
+                logger.log(
+                    "screening_closability",
+                    ticker=ticker,
+                    daily_turnover_usd=outcome.closability.daily_turnover_usd,
+                    free_float_pct=outcome.closability.free_float_pct,
+                    position_size_cap_usd=outcome.closability.position_size_cap_usd,
+                    closability_loss=outcome.closability.loss,
+                    data_quality=list(outcome.closability.data_quality),
+                )
             if outcome.disposition not in ("needs_deeper_fetch", "source_error"):
                 continue
             logger.log(
@@ -450,4 +576,5 @@ def run_screening_pass(
         needs_deeper_fetch=needs_deeper_fetch,
         source_errors=source_errors,
         surfaced=surfaced,
+        closability=closability,
     )

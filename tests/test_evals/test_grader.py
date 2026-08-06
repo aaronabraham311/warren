@@ -11,6 +11,7 @@ from data_sources.forensics import (
     HolderPosition,
 )
 from eval.golden_set import (
+    ClosabilityExpectation,
     DeepValueExpectation,
     EvalExample,
     EvalExpectations,
@@ -262,6 +263,33 @@ def _dirt_example() -> EvalExample:
     )
 
 
+def _closability_example(expectation: ClosabilityExpectation) -> EvalExample:
+    example = _dirt_example()
+    example.expectations.closability = expectation
+    return example
+
+
+def _forensic_with_catalyst(evidence_id: str) -> ForensicEvidenceBundle:
+    ref = EvidenceRef.model_construct(  # type: ignore[call-arg]
+        evidence_id=evidence_id
+    )
+    return ForensicEvidenceBundle.model_construct(  # type: ignore[call-arg]
+        cap_table=[],
+        stake_events=[],
+        agreements=[],
+        related_party_transactions=[],
+        auditor_history=[],
+        debt_facilities=[],
+        capital_returns=[],
+        leadership_events=[],
+        catalysts=[
+            CatalystEvidence.model_construct(  # type: ignore[call-arg]
+                evidence_refs=[ref]
+            )
+        ],
+    )
+
+
 _DIRT_CHECKS = {
     "ev_ebit_present",
     "ncav_cited",
@@ -373,6 +401,130 @@ def test_forensic_claims_pass_with_compact_evidence_ids() -> None:
     check = next(c for c in grade.checks if c.check_name == "forensic_claims_cited")
     assert check.passed
     assert check.severity == "must"
+
+
+def test_closability_checks_are_opt_in() -> None:
+    grade = grade_analysis(_dirt_analysis(), _dirt_example())
+    assert not any(check.check_name.startswith("closability_") for check in grade.checks)
+
+
+def test_sparse_forensic_coverage_stays_unknown() -> None:
+    analysis = _dirt_analysis(
+        dirt_signals=DirtSignals(
+            ev_ebit=6.1,
+            price_to_ncav=0.8,
+            controller_identified=None,
+            closability_status="unknown",
+            closability_score=0.5,
+            closability_confidence=0.2,
+            closability_reasons=["Partial forensic coverage; controller status is unknown."],
+        )
+    )
+    example = _closability_example(
+        ClosabilityExpectation(
+            allowed_status=["unknown"],
+            min_score=0.4,
+            max_score=0.6,
+            max_confidence=0.4,
+            require_unknown_semantics=True,
+        )
+    )
+
+    grade = grade_analysis(analysis, example)
+
+    closability_checks = [
+        check for check in grade.checks if check.check_name.startswith("closability_")
+    ]
+    assert closability_checks
+    assert all(check.passed for check in closability_checks)
+
+
+def test_unknown_closability_rejects_false_controller_inference() -> None:
+    analysis = _dirt_analysis(
+        dirt_signals=DirtSignals(
+            ev_ebit=6.1,
+            price_to_ncav=0.8,
+            closability_status="unknown",
+            closability_score=0.5,
+            closability_confidence=0.2,
+            closability_reasons=["Coverage is partial."],
+        )
+    )
+    assert analysis.dirt_signals is not None
+    analysis.dirt_signals.controller_identified = False
+    example = _closability_example(
+        ClosabilityExpectation(
+            allowed_status=["unknown"],
+            require_unknown_semantics=True,
+        )
+    )
+
+    grade = grade_analysis(analysis, example)
+
+    check = next(
+        check for check in grade.checks if check.check_name == "closability_unknown_stays_unknown"
+    )
+    assert not check.passed
+    assert not grade.passed
+
+
+def test_supported_closability_requires_cited_observable_catalyst() -> None:
+    example = _closability_example(
+        ClosabilityExpectation(
+            allowed_status=["supported"],
+            require_observable_or_contractual_catalyst=True,
+        )
+    )
+    uncited = _dirt_analysis(
+        dirt_signals=DirtSignals(
+            ev_ebit=6.1,
+            price_to_ncav=0.8,
+            closability_status="supported",
+            closability_score=0.8,
+            closability_confidence=0.8,
+            closability_reasons=["Board-authorized tender offer."],
+            catalyst_strength="observable",
+            catalyst_stage="board_authorized",
+            catalyst_description="Board-authorized tender offer",
+            forensic_evidence_ids=["temporarily-cited"],
+        )
+    )
+    assert uncited.dirt_signals is not None
+    uncited.dirt_signals.forensic_evidence_ids = []
+    cited = uncited.model_copy(deep=True)
+    assert cited.dirt_signals is not None
+    cited.dirt_signals.forensic_evidence_ids = ["catalyst-board-1"]
+    hallucinated = cited.model_copy(deep=True)
+    assert hallucinated.dirt_signals is not None
+    hallucinated.dirt_signals.forensic_evidence_ids = ["not-in-the-served-bundle"]
+
+    failed = grade_analysis(uncited, example)
+    passed = grade_analysis(
+        cited,
+        example,
+        forensic_evidence=_forensic_with_catalyst("catalyst-board-1"),
+    )
+    hallucinated_grade = grade_analysis(
+        hallucinated,
+        example,
+        forensic_evidence=_forensic_with_catalyst("catalyst-board-1"),
+    )
+
+    assert not next(
+        check
+        for check in failed.checks
+        if check.check_name == "closability_catalyst_is_cited_and_observable"
+    ).passed
+    assert next(
+        check
+        for check in passed.checks
+        if check.check_name == "closability_catalyst_is_cited_and_observable"
+    ).passed
+    assert not next(
+        check
+        for check in hallucinated_grade.checks
+        if check.check_name == "closability_catalyst_is_cited_and_observable"
+    ).passed
 
 
 def test_deep_value_checks_omitted_for_default_examples() -> None:

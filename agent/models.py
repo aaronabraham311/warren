@@ -113,6 +113,15 @@ class DirtSignals(BaseModel):
     ) = None
     catalyst_description: str | None = None
     forensic_evidence_ids: list[str] = Field(default_factory=list)
+    daily_turnover_usd: float | None = Field(default=None, ge=0.0)
+    free_float_pct: float | None = Field(default=None, ge=0.0, le=100.0)
+    position_size_cap_usd: float | None = Field(default=None, ge=0.0)
+    founder_age_years: int | None = Field(default=None, ge=0, le=130)
+    own_history_pb_percentile: float | None = Field(default=None, ge=0.0, le=100.0)
+    closability_status: Literal["supported", "constrained", "unknown"] | None = None
+    closability_score: float | None = Field(default=None, ge=0.0, le=1.0)
+    closability_confidence: float | None = Field(default=None, ge=0.0, le=1.0)
+    closability_reasons: list[str] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def forensic_claims_are_cited_and_coherent(self) -> Self:

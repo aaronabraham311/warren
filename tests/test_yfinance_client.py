@@ -209,6 +209,7 @@ def test_get_fundamentals_returns_valid_data(yf_conn: sqlite3.Connection) -> Non
     assert result.float_shares == 15_000_000_000
     assert result.avg_volume_3m == 55_000_000
     assert result.analyst_count == 34
+    assert result.current_price == pytest.approx(182.5)
     assert result.data_age_hours >= 0
     assert result.source == "yfinance"
 

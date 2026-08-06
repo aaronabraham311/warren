@@ -1,0 +1,70 @@
+{
+  "data": {
+    "as_of": "2026-08-05",
+    "controlling_holder_identified": null,
+    "data_age_hours": 5224,
+    "persons": [
+      {
+        "age": null,
+        "age_as_of": null,
+        "birth_year": null,
+        "name": "Dr. Andrea  Busi",
+        "ownership_pct": null,
+        "role": "CEO & Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "age": null,
+        "age_as_of": null,
+        "birth_year": null,
+        "name": "Dr. Fabio  Braida",
+        "ownership_pct": null,
+        "role": "Compliance Officer",
+        "source": "yfinance_officers"
+      },
+      {
+        "age": null,
+        "age_as_of": null,
+        "birth_year": null,
+        "name": "Dr. Stefano  D'Orazio",
+        "ownership_pct": null,
+        "role": "Sales Director",
+        "source": "yfinance_officers"
+      },
+      {
+        "age": null,
+        "age_as_of": null,
+        "birth_year": null,
+        "name": "Mr. Roberto  Barbero",
+        "ownership_pct": null,
+        "role": "Head of the Private Division",
+        "source": "yfinance_officers"
+      },
+      {
+        "age": null,
+        "age_as_of": null,
+        "birth_year": null,
+        "name": "Dr. Claudia  Pinzi",
+        "ownership_pct": null,
+        "role": "Organization & Personnel Manager",
+        "source": "yfinance_officers"
+      },
+      {
+        "age": null,
+        "age_as_of": null,
+        "birth_year": null,
+        "name": "Carola  Montaldo",
+        "ownership_pct": null,
+        "role": "Assistant General Manager",
+        "source": "yfinance_officers"
+      }
+    ],
+    "source": "combined",
+    "source_notes": [
+      "EDGAR SC 13G/D unavailable (not_found): ticker D-MI not found in EDGAR"
+    ],
+    "ticker": "D.MI"
+  },
+  "recorded_at": "2026-08-05T16:37:17.231195+00:00",
+  "status": "ok"
+}

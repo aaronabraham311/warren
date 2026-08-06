@@ -106,6 +106,10 @@ class FundamentalsData(BaseModel):
     float_shares: int | None = None
     avg_volume_3m: int | None = None
     analyst_count: int | None = None
+    # Same ``.info`` payload as the fundamentals above. These fields let the nightly
+    # screen compute liquidity/free float without calling the separate price endpoint.
+    current_price: float | None = None
+    trading_currency: str | None = None
     # Native statement currency (yfinance ``financialCurrency``); None ⇒ unknown/USD.
     # ``fcf_ttm_usd`` is normalized to USD from this currency at populate time.
     currency: str | None = None
@@ -216,6 +220,7 @@ class OfficerRecord(BaseModel):
     name: str
     title: str
     year_born: int | None
+    reported_age: int | None = None
     total_pay_usd: int | None
 
 
@@ -231,6 +236,7 @@ class KeyPersonsRaw(BaseModel):
     as_of: date
     officers: list[OfficerRecord]
     institutional_holders: list[InstitutionalHolderRecord]
+    shares_outstanding: int | None = None
     data_age_hours: int
     source: Literal["yfinance"] = "yfinance"
 
@@ -603,6 +609,10 @@ class YFinanceClient:
         sector = str(sector_raw) if isinstance(sector_raw, str) else None
         # freeCashflow is statement-derived → financialCurrency; normalize to USD.
         currency = normalize_currency(_as_str(info.get("financialCurrency")))
+        trading_currency = normalize_currency(_as_str(info.get("currency")))
+        current_price = _as_float(info.get("currentPrice"))
+        if current_price is None:
+            current_price = _as_float(info.get("regularMarketPrice"))
         fcf_usd = to_usd(_as_int(info.get("freeCashflow")), currency, self._rate_to_usd(currency))
         return FundamentalsData(
             ticker=ticker.upper(),
@@ -619,6 +629,8 @@ class YFinanceClient:
             float_shares=_as_int(info.get("floatShares")),
             avg_volume_3m=_as_int(info.get("averageVolume")),
             analyst_count=_as_int(info.get("numberOfAnalystOpinions")),
+            current_price=current_price,
+            trading_currency=trading_currency,
             currency=currency,
             data_age_hours=_fiscal_age_hours(info),
             source="yfinance",
@@ -1706,6 +1718,7 @@ class YFinanceClient:
                         name=name,
                         title=title,
                         year_born=_as_int(off.get("yearBorn")),
+                        reported_age=_as_int(off.get("age")),
                         total_pay_usd=total_pay,
                     )
                 )
@@ -1735,5 +1748,6 @@ class YFinanceClient:
             as_of=date.today(),
             officers=officers,
             institutional_holders=institutional,
+            shares_outstanding=_as_int(info.get("sharesOutstanding")),
             data_age_hours=_fiscal_age_hours(info),
         )
