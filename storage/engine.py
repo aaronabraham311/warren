@@ -61,7 +61,7 @@ def get_engine() -> Engine:
     return engine
 
 
-def migrate() -> None:
+def migrate(*, quiet: bool = False) -> None:
     from alembic import command
     from alembic.config import Config
 
@@ -78,7 +78,16 @@ def migrate() -> None:
 
     alembic_ini = Path(__file__).parent.parent / "alembic.ini"
     alembic_cfg = Config(str(alembic_ini))
-    command.upgrade(alembic_cfg, "head")
+    alembic_cfg.attributes["configure_logger"] = not quiet
+    alembic_logger = logging.getLogger("alembic")
+    previous_level = alembic_logger.level
+    if quiet:
+        alembic_logger.setLevel(logging.WARNING)
+    try:
+        command.upgrade(alembic_cfg, "head")
+    finally:
+        if quiet:
+            alembic_logger.setLevel(previous_level)
 
 
 @contextmanager

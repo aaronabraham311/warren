@@ -155,3 +155,32 @@ def test_console_help_from_temp_directory_creates_no_runtime_state(tmp_path: Pat
     assert not (tmp_path / ".warren").exists()
     assert not (tmp_path / "logs").exists()
     assert not (tmp_path / "warren.db").exists()
+
+
+def test_console_startup_is_generic_and_hides_migration_details(tmp_path: Path) -> None:
+    executable = Path(sys.executable).with_name("warren")
+    if not executable.exists():
+        pytest.skip("the warren console script is not installed in the current environment")
+    environment = os.environ.copy()
+    environment["WARREN_STATE_DIR"] = str(tmp_path / ".warren")
+    environment["WARREN_LOGS_DIR"] = str(tmp_path / "logs" / "runs")
+    environment["WARREN_DB"] = str(tmp_path / "warren.db")
+    environment["NO_COLOR"] = "1"
+
+    completed = subprocess.run(
+        [str(executable)],
+        cwd=Path(__file__).parents[1],
+        env=environment,
+        input="/quit\n",
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+
+    transcript = completed.stdout + completed.stderr
+    assert completed.returncode == 0, transcript
+    assert "Starting Warren…" in transcript
+    assert "Warren  ·  stock analysis" in transcript
+    assert "alembic.runtime.migration" not in transcript
+    assert "Running upgrade" not in transcript

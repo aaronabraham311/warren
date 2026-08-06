@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import signal
+from contextlib import nullcontext
 from io import StringIO
 from pathlib import Path
 from types import SimpleNamespace
@@ -309,10 +310,12 @@ def test_prompt_toolkit_reader_installs_local_completer(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     captured: dict[str, object] = {}
+    prompts: list[object] = []
 
     class Session:
-        def prompt(self, prompt: str) -> str:
-            return prompt
+        def prompt(self, prompt: object) -> str:
+            prompts.append(prompt)
+            return "Analyze AAPL"
 
     def make_session(**kwargs: object) -> Session:
         captured.update(kwargs)
@@ -321,8 +324,11 @@ def test_prompt_toolkit_reader_installs_local_completer(
     monkeypatch.setattr(terminal_app, "PromptSession", make_session)
     reader = terminal_app._PromptToolkitReader(None)
 
-    assert reader("warren> ") == "warren> "
+    assert reader("warren> ") == "Analyze AAPL"
     assert isinstance(captured["completer"], WarrenCompleter)
+    assert "style" in captured
+    assert "warren" in str(prompts[0])
+    assert "›" in str(prompts[0])
 
 
 @pytest.mark.parametrize(
@@ -392,10 +398,11 @@ def test_first_run_sigint_cancels_and_handler_is_always_restored(
         assert cancellation.is_cancelled
         return _result(status="cancelled")
 
+    stderr = StringIO()
     app = create_app(
         stdin=StringIO(),
         stdout=StringIO(),
-        stderr=StringIO(),
+        stderr=stderr,
         executor=executor,
         settings=TerminalSettings(color="never"),
         api_key_available=lambda: True,
@@ -403,6 +410,7 @@ def test_first_run_sigint_cancels_and_handler_is_always_restored(
     app._execute_service("Analyze AAPL", RunRequest(mode=RunMode.TICKERS, tickers=("AAPL",)))
 
     assert installed[-1] is previous_handler
+    assert "Stopping…" in stderr.getvalue()
 
 
 def test_second_run_sigint_unwinds_immediately_and_restores_handler(
@@ -458,7 +466,10 @@ def test_startup_recovery_uses_configured_log_directory(
         return 2
 
     monkeypatch.setenv("WARREN_LOGS_DIR", str(tmp_path / "run-traces"))
-    monkeypatch.setattr("storage.engine.migrate", lambda: migrated.append(True))
+    monkeypatch.setattr(
+        "storage.engine.migrate",
+        lambda *, quiet=False: migrated.append(quiet),
+    )
     monkeypatch.setattr("storage.recovery.reconcile_orphans", reconcile)
 
     assert terminal_app._recover_interrupted_runs() == 2
@@ -470,12 +481,23 @@ def test_main_reports_recovered_runs_before_entering_repl(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     notices: list[object] = []
+    activities: list[str] = []
+
+    def activity(message: str) -> object:
+        activities.append(message)
+        return nullcontext()
+
     fake_app = SimpleNamespace(
-        renderer=SimpleNamespace(notice=notices.append, diagnostic=lambda message: None),
+        renderer=SimpleNamespace(
+            notice=notices.append,
+            diagnostic=lambda message: None,
+            activity=activity,
+        ),
         run=lambda: 0,
     )
     monkeypatch.setattr(terminal_app, "create_app", lambda: fake_app)
     monkeypatch.setattr(terminal_app, "_recover_interrupted_runs", lambda: 3)
 
     assert terminal_app.main() == 0
+    assert activities == ["Starting Warren…"]
     assert notices == ["Recovered 3 interrupted run(s)."]
