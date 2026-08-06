@@ -15,7 +15,7 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
 - `eval/`: deterministic golden-set replay, graders, fixtures, and analysis helpers.
 - `dashboard/`: Streamlit read-only dashboard and its data layer.
 - `tests/`: offline unit and integration tests.
-- `.agents/skills/`: Codex-native project skills. Load the matching skill before working on evals, migrations, Streamlit, or shipping workflows.
+- `.agents/skills/`: Codex-native project skills. Load the matching skill before working on evals, migrations, Streamlit, the interactive terminal, or shipping workflows.
 - `.claude/commands/`: Claude Code compatibility commands; they are not Codex skills.
 
 ## Working rules
