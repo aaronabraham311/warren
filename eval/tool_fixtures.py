@@ -28,6 +28,7 @@ Refresh with ``python -m eval.fixtures.recorder`` — see ``eval/fixtures/README
 
 import json
 import warnings
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from hashlib import sha256
@@ -38,13 +39,41 @@ from pydantic import BaseModel
 from agent.budget import RunContext
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
 from agent.tools.dirt_scenarios import ModelDirtScenariosInput, model_dirt_scenarios
+from eval.fixture_evidence import validate_fixture_result
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
 STALE_AFTER = timedelta(days=90)
 
+# ``EstimateIntrinsicValueTool`` converts these explicit values and ``None`` to the same
+# behavioral assumptions.  Keep the fixture key equally semantic without importing the
+# tool module (which would couple the offline replay layer to a concrete implementation).
+_DCF_DEFAULTS: dict[str, object] = {
+    "growth_rate": 0.08,
+    "discount_rate": 0.10,
+    "terminal_growth_rate": 0.025,
+    "projection_years": 10,
+}
 
-def tool_input_hash(tool_input: dict[str, object]) -> str:
+
+def canonical_tool_input(tool_name: str, tool_input: Mapping[str, object]) -> dict[str, object]:
+    """Return the semantic input used to key a tool fixture.
+
+    Pydantic validation already supplies ordinary schema defaults and canonical scalar
+    types before this function is called.  The DCF is the exceptional case: its schema
+    uses ``None`` to mean a behavioral default, so an explicit default must collapse to
+    the same key.  True overrides remain distinct.  News windows deliberately receive no
+    special treatment because seven and thirty days are different requests.
+    """
+    canonical = dict(tool_input)
+    if tool_name == "estimate_intrinsic_value":
+        for field_name, default in _DCF_DEFAULTS.items():
+            if canonical.get(field_name) == default:
+                canonical[field_name] = None
+    return canonical
+
+
+def tool_input_hash(tool_input: Mapping[str, object]) -> str:
     """First 8 hex chars of sha256 over the canonical input JSON."""
     return sha256(json.dumps(tool_input, sort_keys=True).encode()).hexdigest()[:8]
 
@@ -52,10 +81,11 @@ def tool_input_hash(tool_input: dict[str, object]) -> str:
 def tool_fixture_path(
     ticker: str,
     tool_name: str,
-    tool_input: dict[str, object],
+    tool_input: Mapping[str, object],
     root: Path = FIXTURES_DIR,
 ) -> Path:
-    return root / ticker / "tools" / tool_name / f"{tool_input_hash(tool_input)}.json"
+    canonical = canonical_tool_input(tool_name, tool_input)
+    return root / ticker / "tools" / tool_name / f"{tool_input_hash(canonical)}.json"
 
 
 def has_tool_fixtures(ticker: str, root: Path = FIXTURES_DIR) -> bool:
@@ -74,6 +104,13 @@ class FixtureMiss:
     input_hash: str
 
 
+@dataclass(frozen=True)
+class FixtureEvidenceIssue:
+    tool_name: str
+    input_hash: str
+    reason: str
+
+
 @dataclass
 class FixtureToolRunner:
     """Serves recorded tool results from disk instead of calling the real tool."""
@@ -82,6 +119,7 @@ class FixtureToolRunner:
     root: Path = FIXTURES_DIR
     misses: list[FixtureMiss] = field(default_factory=list)
     served: dict[str, ToolResultOk] = field(default_factory=dict)
+    evidence_issues: list[FixtureEvidenceIssue] = field(default_factory=list)
 
     def run(self, tool: Tool, tool_input: BaseModel, ctx: RunContext) -> ToolResult:
         # Recompute the one deterministic arithmetic contract directly through its pure
@@ -105,9 +143,10 @@ class FixtureToolRunner:
             self.served[tool.name] = pure_result
             return pure_result
         raw_input: dict[str, object] = tool_input.model_dump(mode="json")
-        path = tool_fixture_path(self.ticker, tool.name, raw_input, self.root)
+        canonical_input = canonical_tool_input(tool.name, raw_input)
+        path = tool_fixture_path(self.ticker, tool.name, canonical_input, self.root)
         if not path.exists():
-            self.misses.append(FixtureMiss(tool.name, tool_input_hash(raw_input)))
+            self.misses.append(FixtureMiss(tool.name, tool_input_hash(canonical_input)))
             return ToolResultError(
                 error_code="not_found",
                 message=(
@@ -119,6 +158,17 @@ class FixtureToolRunner:
         payload: dict[str, object] = json.loads(path.read_text())
         warn_if_stale(payload, path)
         result = _deserialize(payload, tool)
+        try:
+            validate_fixture_result(self.ticker, tool, tool_input, result)
+        except ValueError as exc:
+            self.evidence_issues.append(
+                FixtureEvidenceIssue(tool.name, tool_input_hash(canonical_input), str(exc))
+            )
+            return ToolResultError(
+                error_code="not_found",
+                message=f"recorded fixture is unusable: {exc}",
+                retryable=False,
+            )
         if isinstance(result, ToolResultOk):
             self.served[tool.name] = result
         return result
