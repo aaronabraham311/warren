@@ -27,6 +27,7 @@ from pathlib import Path
 import anthropic
 from sqlalchemy.orm import Session
 
+from agent.providers.base import ProviderResponse
 from storage.cost import compute_cost
 from storage.engine import truncate_tool_output
 
@@ -54,32 +55,67 @@ class RunLogger:
 
     def log_llm_call(
         self,
-        response: anthropic.types.Message,
+        response: ProviderResponse | anthropic.types.Message,
         *,
         ticker: str | None,
         phase: str,
-        model: str,
+        model: str | None = None,
         latency_ms: int,
+        provider: str = "anthropic",
+        service_tier: str = "default",
+        reasoning_effort: str = "none",
     ) -> None:
-        usage = response.usage
-        cache_read = usage.cache_read_input_tokens or 0
-        cache_creation = usage.cache_creation_input_tokens or 0
+        if isinstance(response, ProviderResponse):
+            normalized_usage = response.usage
+            response_model = response.model_id
+            resolved_model = model or response_model
+            input_tokens = normalized_usage.input_tokens
+            output_tokens = normalized_usage.output_tokens
+            cache_read = normalized_usage.cache_read_tokens
+            cache_creation = normalized_usage.cache_write_tokens
+            reasoning_tokens = normalized_usage.reasoning_tokens
+            tool_use_tokens = normalized_usage.tool_use_tokens
+            total_tokens = normalized_usage.total_tokens
+            raw_usage = normalized_usage.raw
+        else:
+            anthropic_usage = response.usage
+            resolved_model = model or response.model
+            response_model = response.model
+            input_tokens = anthropic_usage.input_tokens
+            output_tokens = anthropic_usage.output_tokens
+            cache_read = anthropic_usage.cache_read_input_tokens or 0
+            cache_creation = anthropic_usage.cache_creation_input_tokens or 0
+            reasoning_tokens = None
+            tool_use_tokens = 0
+            total_tokens = input_tokens + cache_read + cache_creation + output_tokens
+            raw_usage = anthropic_usage.model_dump(mode="json")
+
         cost_usd = compute_cost(
-            model,
-            input_tokens=usage.input_tokens,
+            resolved_model,
+            input_tokens=input_tokens,
             cache_read_tokens=cache_read,
             cache_creation_tokens=cache_creation,
-            output_tokens=usage.output_tokens,
+            output_tokens=output_tokens,
+            provider=provider,
+            service_tier=service_tier,
         )
         self.log(
             "llm_call",
             ticker=ticker,
             phase=phase,
-            model=model,
-            input_tokens=usage.input_tokens,
+            provider=provider,
+            model=resolved_model,
+            response_model=response_model,
+            service_tier=service_tier,
+            reasoning_effort=reasoning_effort,
+            input_tokens=input_tokens,
             cache_read_tokens=cache_read,
             cache_creation_tokens=cache_creation,
-            output_tokens=usage.output_tokens,
+            output_tokens=output_tokens,
+            reasoning_tokens=reasoning_tokens,
+            tool_use_tokens=tool_use_tokens,
+            total_tokens=total_tokens,
+            raw_usage=raw_usage,
             latency_ms=latency_ms,
             cost_usd=cost_usd,
         )

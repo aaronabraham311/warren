@@ -15,6 +15,9 @@ HAIKU_4_5: Final = "claude-haiku-4-5-20251001"
 SONNET_4_6: Final = "claude-sonnet-4-6"
 SONNET_5: Final = "claude-sonnet-5"
 OPUS_4_7: Final = "claude-opus-4-7"
+LUNA_5_6: Final = "gpt-5.6-luna"
+TERRA_5_6: Final = "gpt-5.6-terra"
+GEMINI_3_6_FLASH: Final = "gemini-3.6-flash"
 
 DEFAULT_MODEL_ID: Final = SONNET_4_6
 
@@ -25,7 +28,7 @@ class ModelPricing(TypedDict):
     input: float
     output: float
     cache_read: float
-    cache_write_5m: float
+    cache_write_5m: float | None
 
 
 def _per_mtok(rate: float) -> float:
@@ -35,8 +38,8 @@ def _per_mtok(rate: float) -> float:
 # Per-token pricing keyed by model id. Source: Tech Spec §8 pricing tiers.
 #   Haiku 4.5: $1/$5 in/out, cache read $0.10, cache write 5m $1.25
 #   Sonnet 4.6: $3/$15 in/out, cache read $0.30, cache write 5m = 1.25× input
-#   Sonnet 5:  $3/$15 in/out, cache read $0.30, cache write 5m = 1.25× input
-#              (standard sticker; the intro $2/$10 rate lapses 2026-08-31)
+#   Sonnet 5:  introductory $2/$10 in/out, cache read $0.20, cache write 5m $2.50.
+#              These rates lapse 2026-08-31 and must then be updated to sticker price.
 #   Opus 4.7:  $5/$25 in/out, cache read $0.50, cache write 5m = 1.25× input
 PRICING: dict[str, ModelPricing] = {
     HAIKU_4_5: {
@@ -52,16 +55,59 @@ PRICING: dict[str, ModelPricing] = {
         "cache_write_5m": _per_mtok(3.0) * 1.25,
     },
     SONNET_5: {
-        "input": _per_mtok(3.0),
-        "output": _per_mtok(15.0),
-        "cache_read": _per_mtok(0.30),
-        "cache_write_5m": _per_mtok(3.0) * 1.25,
+        "input": _per_mtok(2.0),
+        "output": _per_mtok(10.0),
+        "cache_read": _per_mtok(0.20),
+        "cache_write_5m": _per_mtok(2.50),
     },
     OPUS_4_7: {
         "input": _per_mtok(5.0),
         "output": _per_mtok(25.0),
         "cache_read": _per_mtok(0.50),
         "cache_write_5m": _per_mtok(5.0) * 1.25,
+    },
+    LUNA_5_6: {
+        "input": _per_mtok(0.20),
+        "output": _per_mtok(1.20),
+        "cache_read": _per_mtok(0.02),
+        "cache_write_5m": _per_mtok(0.25),
+    },
+    TERRA_5_6: {
+        "input": _per_mtok(2.0),
+        "output": _per_mtok(12.0),
+        "cache_read": _per_mtok(0.20),
+        "cache_write_5m": _per_mtok(2.50),
+    },
+    GEMINI_3_6_FLASH: {
+        "input": _per_mtok(1.50),
+        "output": _per_mtok(7.50),
+        "cache_read": _per_mtok(0.15),
+        # Gemini does not publish a separate implicit cache-write token rate.
+        "cache_write_5m": None,
+    },
+}
+
+# Flex processing is currently published for the two OpenAI models and Gemini Flash.
+# Anthropic has no Flex tier; asking to price one must fail rather than silently using
+# standard rates.
+FLEX_PRICING: dict[str, ModelPricing] = {
+    LUNA_5_6: {
+        "input": _per_mtok(0.10),
+        "output": _per_mtok(0.60),
+        "cache_read": _per_mtok(0.01),
+        "cache_write_5m": _per_mtok(0.125),
+    },
+    TERRA_5_6: {
+        "input": _per_mtok(1.0),
+        "output": _per_mtok(6.0),
+        "cache_read": _per_mtok(0.10),
+        "cache_write_5m": _per_mtok(1.25),
+    },
+    GEMINI_3_6_FLASH: {
+        "input": _per_mtok(0.75),
+        "output": _per_mtok(3.75),
+        "cache_read": _per_mtok(0.075),
+        "cache_write_5m": None,
     },
 }
 

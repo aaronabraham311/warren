@@ -5,7 +5,7 @@ Warren is an AI stock-analysis agent. The user asks a natural-language question;
 ## Tech stack
 
 - **Python 3.13**, managed with **uv** (`uv sync` to install, `uv add <pkg>` to add dependencies)
-- **Anthropic SDK** — tool-use / agentic loop lives in `agent/`
+- **Anthropic, OpenAI, and Google GenAI SDKs** — provider-normalized tool-use loop lives in `agent/`; production still defaults to Anthropic
 - **SQLAlchemy 2.x** with a local SQLite file `warren.db`
 - **ruff** for linting (`ruff check .` / `ruff format .`)
 - **mypy** for type checking
@@ -20,7 +20,12 @@ agent/
   portfolio.py    # load_portfolio/load_watchlist (validated) + sync_*_to_db snapshots
   universe.py     # get_current_universe(session, watchlist) → sorted S&P 500 ∪ watchlist; get_gem_hunt_universe(session, watchlist, fetchers=) → sorted Milan∪Madrid∪Warsaw∪watchlist. Weekly-refreshed via UniverseSnapshot (per-`kind` row: "sp500" | "gem_hunt"); SP500Client/ExchangeClient fetch with data/*.csv fallback. Weekly cadence just avoids a re-scrape — the universe never enters an LLM prompt (screening is deterministic Python).
   screening.py    # run_screening_pass(universe, ..., screen_fn=, rank=) → ScreeningResult — deterministic, data-grounded quantitative filter over the universe via the yfinance client; no LLM. GARP keeps its ≥3-present-metric floor unchanged. Gem hunt uses typed candidate/rejected/needs_deeper_fetch/source_error dispositions, hard USD market-cap bounds ($5.4m–$540m), and a bounded 0–1 score blending valuation, the $21.6m–$162m sweet spot, net cash, and profit history. Sparse names with no known violations are logged and routed to deep analysis; data-source failures remain distinct. Missing vendor EV falls back to currency-aligned statement EV = market cap + debt − cash.
-  loop.py         # Main agentic loop — sends messages, handles tool calls
+  loop.py         # Provider-normalized agentic loop — sends messages, handles tool calls; defaults to Anthropic for production
+  providers/      # Typed LLM boundary: normalized messages/usage + Anthropic, OpenAI Responses, and Gemini Interactions adapters
+    base.py       # Provider Protocol and normalized Message/ProviderResponse/Usage/tool-schema helpers
+    anthropic.py  # Production-compatible Messages adapter with existing explicit cache breakpoints
+    openai.py     # Stateless Responses adapter; strict tools, encrypted reasoning replay, explicit prefix caching
+    gemini.py     # Stateless Interactions adapter; exact signed-step replay across tool calls
   persona.py      # System prompt / persona definition
   routing.py      # RoutingPolicy Protocol + strategy objects: PhaseBasedRouting (screen→Haiku, deep→Sonnet, synthesize→Opus via DefaultOpusTrigger's 3 independent §4.2 conditions) and HardcodedSonnetRouting (eval baseline). Swappable into analyze_ticker() with zero loop changes.
   budget.py       # Token / cost budget tracking
@@ -200,7 +205,7 @@ load; refresh quarterly.
 
 ## Code conventions
 
-- `__init__.py` files are empty, with one deliberate exception: `agent/tools/__init__.py` holds the `TOOL_REGISTRY` / `TOOL_DEFINITIONS`. Everywhere else import directly from the submodule, e.g. `from storage.engine import get_session`. Do not re-export through `__init__.py`.
+- `__init__.py` files are empty, with one deliberate exception: `agent/tools/__init__.py` holds the `TOOL_REGISTRY`, legacy `TOOL_DEFINITIONS`, and normalized `PROVIDER_TOOL_DEFINITIONS`. Everywhere else import directly from the submodule, e.g. `from storage.engine import get_session`. Do not re-export through `__init__.py`.
 - **Tools return errors as data, never raise** (Tech Spec §5). A `Tool.run(tool_input, ctx)` returns `ToolResultOk(data=<BaseModel>)` or `ToolResultError(error_code, message, retryable, stage?, source?)`; `error_code ∈ {rate_limit, not_found, stale_data, network, parse, unknown}`. Map a `DataSourceError` with `error_from_data_source()` (in `agent/tools/base.py`); wrap the body in `try/except` so any stray exception becomes `ToolResultError(error_code="unknown")`. The loop validates `block.input` against the tool's `input_schema` and serializes the result back to the agent (ok → `data.model_dump_json()`; error → `{error_code,message,retryable,stage?,source?}` with `is_error=True`).
 - Tools reach data-source clients only via the lazy singletons in `agent/tools/_clients.py` (bound to the `$WARREN_DB` cache); tests reset them with the autouse `_reset_tool_clients` fixture (which also points `WARREN_DB` at `:memory:`). The §5.4 loop-level retry/backoff is intentionally **not** in the loop yet — it's a separate W3 ticket.
 - Use SQLAlchemy 2.x style (`with Session(engine) as s:`, not legacy `Session()` context).

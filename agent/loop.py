@@ -4,15 +4,25 @@ import sys
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Protocol, cast
+from typing import Protocol
 
 import anthropic
 from pydantic import BaseModel, ValidationError
 
 from agent.budget import RunContext
-from agent.caching import call_claude_with_caching
 from agent.models import AnalysisOutput
-from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
+from agent.providers.anthropic import AnthropicProvider
+from agent.providers.base import (
+    Message,
+    Provider,
+    ProviderResponse,
+    ReasoningEffort,
+    ServiceTier,
+    TextBlock,
+    ToolCallBlock,
+    ToolResultBlock,
+)
+from agent.tools import PROVIDER_TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
 
 
@@ -25,9 +35,7 @@ class _Persona(Protocol):
 
 
 class _RoutingPolicy(Protocol):
-    def select(
-        self, iteration: int, messages: list[anthropic.types.MessageParam], ticker: str
-    ) -> str: ...
+    def select(self, iteration: int, messages: list[Message], ticker: str) -> str: ...
 
 
 class ToolRunner(Protocol):
@@ -95,6 +103,16 @@ class CostAbortedError(Exception):
 
 class SchemaRepairError(Exception):
     pass
+
+
+class ProviderTerminalError(Exception):
+    """A provider stopped without a final answer or executable tool call."""
+
+    def __init__(self, provider: str, model: str, stop_reason: str) -> None:
+        self.provider = provider
+        self.model = model
+        self.stop_reason = stop_reason
+        super().__init__(f"{provider} model {model!r} terminated with stop_reason {stop_reason!r}")
 
 
 def _initial_prompt(ticker: str) -> str:
@@ -211,68 +229,83 @@ def _iteration_limit(persona: _Persona) -> int:
     )
 
 
-def _last_text(content: list[anthropic.types.ContentBlock]) -> str:
-    for block in reversed(content):
-        if isinstance(block, anthropic.types.TextBlock):
+def _last_text(response: ProviderResponse) -> str:
+    for block in reversed(response.blocks):
+        if isinstance(block, TextBlock):
             return block.text
     return ""
 
 
-def _force_final_message(label: str) -> anthropic.types.MessageParam:
-    return cast(
-        anthropic.types.MessageParam,
-        {
-            "role": "user",
-            "content": (
-                f"[{label}] You have reached a stopping condition. "
-                "Produce your best analysis now as a JSON object matching the schema "
-                "in your instructions. Output ONLY the JSON — no markdown, no explanation."
-            ),
-        },
+def _force_final_message(label: str) -> Message:
+    return Message.text(
+        "user",
+        f"[{label}] You have reached a stopping condition. "
+        "Produce your best analysis now as a JSON object matching the schema "
+        "in your instructions. Output ONLY the JSON — no markdown, no explanation.",
     )
 
 
-def _call_claude(
-    client: anthropic.Anthropic,
+def _call_provider(
+    provider: Provider,
     model: str,
     persona_prompt: str,
     portfolio_context: str,
-    messages: list[anthropic.types.MessageParam],
+    messages: list[Message],
     max_tokens: int,
     temperature: float | None = None,
-) -> anthropic.types.Message:
-    return call_claude_with_caching(
-        client,
+    reasoning_effort: ReasoningEffort = "none",
+    service_tier: ServiceTier = "auto",
+) -> ProviderResponse:
+    return provider.complete(
         model=model,
-        persona_prompt=persona_prompt,
-        tool_defs=TOOL_DEFINITIONS,
+        system_prompt=persona_prompt,
         portfolio_context=portfolio_context,
         messages=messages,
+        tools=PROVIDER_TOOL_DEFINITIONS,
         max_tokens=max_tokens,
         temperature=temperature,
+        reasoning_effort=reasoning_effort,
+        service_tier=service_tier,
     )
 
 
 def _call_and_record(
-    client: anthropic.Anthropic,
+    provider: Provider,
     model: str,
     persona_prompt: str,
     portfolio_context: str,
-    messages: list[anthropic.types.MessageParam],
+    messages: list[Message],
     max_tokens: int,
     run_context: RunContext,
     ticker: str,
     temperature: float | None = None,
-) -> anthropic.types.Message:
+    reasoning_effort: ReasoningEffort = "none",
+    service_tier: ServiceTier = "auto",
+) -> ProviderResponse:
     """Time the call, record token/cost usage, and emit an llm_call WAL event."""
     t0 = time.monotonic()
-    response = _call_claude(
-        client, model, persona_prompt, portfolio_context, messages, max_tokens, temperature
+    response = _call_provider(
+        provider,
+        model,
+        persona_prompt,
+        portfolio_context,
+        messages,
+        max_tokens,
+        temperature,
+        reasoning_effort,
+        service_tier,
     )
     latency_ms = int((time.monotonic() - t0) * 1000)
-    _record_usage(run_context, response)
+    _record_usage(run_context, response, model, provider.name, service_tier)
     run_context.logger.log_llm_call(
-        response, ticker=ticker, phase="deep", model=model, latency_ms=latency_ms
+        response,
+        ticker=ticker,
+        phase="deep",
+        model=model,
+        latency_ms=latency_ms,
+        provider=provider.name,
+        service_tier=service_tier,
+        reasoning_effort=reasoning_effort,
     )
     return response
 
@@ -287,14 +320,17 @@ def analyze_ticker(
     _sleep: Callable[[float], None] = time.sleep,
     temperature: float | None = None,
     tool_runner: ToolRunner | None = None,
+    provider: Provider | None = None,
+    reasoning_effort: ReasoningEffort = "none",
+    service_tier: ServiceTier = "auto",
 ) -> AnalysisOutput:
-    if client is None:
-        client = anthropic.Anthropic()
+    if provider is not None and client is not None:
+        raise ValueError("pass provider or client, not both")
+    if provider is None:
+        provider = AnthropicProvider(client)
     if tool_runner is None:
         tool_runner = LiveToolRunner()
-    messages: list[anthropic.types.MessageParam] = [
-        cast(anthropic.types.MessageParam, {"role": "user", "content": _initial_prompt(ticker)})
-    ]
+    messages = [Message.text("user", _initial_prompt(ticker))]
     iteration = 0
     schema_repair_attempt = False
     expected_dirt_decision: BaseModel | None = None
@@ -319,7 +355,7 @@ def analyze_ticker(
             messages.append(_force_final_message(force_label))
             model = routing_policy.select(iteration, messages, ticker)
             response = _call_and_record(
-                client,
+                provider,
                 model,
                 persona.system_prompt,
                 portfolio_context,
@@ -328,12 +364,12 @@ def analyze_ticker(
                 run_context,
                 ticker,
                 temperature,
+                reasoning_effort,
+                service_tier,
             )
             try:
                 result = _validate_persona_output(
-                    _parse_persona_output(
-                        _last_text(response.content), persona, expected_dirt_decision
-                    ),
+                    _parse_persona_output(_last_text(response), persona, expected_dirt_decision),
                     persona,
                     expected_dirt_decision,
                 )
@@ -342,10 +378,10 @@ def analyze_ticker(
             except (ValidationError, ValueError, json.JSONDecodeError) as exc:
                 raise SchemaRepairError("Forced-final response was not valid JSON") from exc
 
-        # ── Normal Claude call ────────────────────────────────────────────────
+        # ── Normal provider call ──────────────────────────────────────────────
         model = routing_policy.select(iteration, messages, ticker)
         response = _call_and_record(
-            client,
+            provider,
             model,
             persona.system_prompt,
             portfolio_context,
@@ -357,11 +393,13 @@ def analyze_ticker(
             run_context,
             ticker,
             temperature,
+            reasoning_effort,
+            service_tier,
         )
 
         # ── end_turn → try to parse output ───────────────────────────────────
-        if response.stop_reason == "end_turn":
-            text = _last_text(response.content)
+        if response.stop_reason in {"end_turn", "completed"}:
+            text = _last_text(response)
             try:
                 result = _validate_persona_output(
                     _parse_persona_output(text, persona, expected_dirt_decision),
@@ -377,33 +415,25 @@ def analyze_ticker(
                         "Schema repair failed: Claude produced invalid JSON twice"
                     ) from None
                 schema_repair_attempt = True
+                messages.append(response.assistant_message())
                 messages.append(
-                    cast(
-                        anthropic.types.MessageParam,
-                        {"role": "assistant", "content": response.content},
-                    )
-                )
-                messages.append(
-                    cast(
-                        anthropic.types.MessageParam,
-                        {
-                            "role": "user",
-                            "content": _schema_repair_prompt(persona, expected_dirt_decision),
-                        },
+                    Message.text(
+                        "user",
+                        _schema_repair_prompt(persona, expected_dirt_decision),
                     )
                 )
                 continue
 
         # ── tool_use → dispatch tools ─────────────────────────────────────────
         if response.stop_reason == "tool_use":
-            tool_results: list[anthropic.types.ToolResultBlockParam] = []
+            tool_results: list[ToolResultBlock] = []
             force_tool_loop = False
 
-            for block in response.content:
-                if not isinstance(block, anthropic.types.ToolUseBlock):
+            for block in response.blocks:
+                if not isinstance(block, ToolCallBlock):
                     continue
 
-                call_count = run_context.record_tool_call(block.name, dict(block.input))
+                call_count = run_context.record_tool_call(block.name, dict(block.arguments))
                 if call_count >= _MAX_TOOL_REPEATS:
                     force_tool_loop = True
 
@@ -424,7 +454,7 @@ def analyze_ticker(
                     error_msg = f"unknown tool '{block.name}'"
                 else:
                     try:
-                        parsed = tool.input_schema.model_validate(dict(block.input))
+                        parsed = tool.input_schema.model_validate(dict(block.arguments))
                     except ValidationError as exc:
                         tool_result: ToolResult = ToolResultError(
                             error_code="not_found",
@@ -455,7 +485,7 @@ def analyze_ticker(
 
                 run_context.logger.log_tool_call(
                     tool_name=block.name,
-                    tool_input=dict(block.input),
+                    tool_input=dict(block.arguments),
                     output=result_content,
                     cached=cached,
                     latency_ms=latency_ms,
@@ -467,32 +497,22 @@ def analyze_ticker(
                 )
 
                 tool_results.append(
-                    {
-                        "type": "tool_result",
-                        "tool_use_id": block.id,
-                        "content": result_content,
-                        "is_error": error_msg is not None,
-                    }
+                    ToolResultBlock(
+                        call_id=block.id,
+                        name=block.name,
+                        content=result_content,
+                        is_error=error_msg is not None,
+                    )
                 )
 
-            messages.append(
-                cast(
-                    anthropic.types.MessageParam,
-                    {"role": "assistant", "content": response.content},
-                )
-            )
-            messages.append(
-                cast(
-                    anthropic.types.MessageParam,
-                    {"role": "user", "content": tool_results},
-                )
-            )
+            messages.append(response.assistant_message())
+            messages.extend(provider.tool_result_turn(tool_results))
 
             if force_tool_loop:
                 messages.append(_force_final_message("tool_loop_broken"))
                 model = routing_policy.select(iteration, messages, ticker)
                 response = _call_and_record(
-                    client,
+                    provider,
                     model,
                     persona.system_prompt,
                     portfolio_context,
@@ -501,11 +521,13 @@ def analyze_ticker(
                     run_context,
                     ticker,
                     temperature,
+                    reasoning_effort,
+                    service_tier,
                 )
                 try:
                     result = _validate_persona_output(
                         _parse_persona_output(
-                            _last_text(response.content), persona, expected_dirt_decision
+                            _last_text(response), persona, expected_dirt_decision
                         ),
                         persona,
                         expected_dirt_decision,
@@ -517,14 +539,19 @@ def analyze_ticker(
 
             continue
 
-        raise RuntimeError(f"Unexpected stop_reason: {response.stop_reason!r}")
+        raise ProviderTerminalError(provider.name, response.model_id, response.stop_reason)
 
 
-def _record_usage(run_context: RunContext, response: anthropic.types.Message) -> None:
-    usage = response.usage
-    run_context.budget.record_usage(
-        input_tokens=usage.input_tokens,
-        output_tokens=usage.output_tokens,
-        cache_read_tokens=usage.cache_read_input_tokens or 0,
-        cache_creation_tokens=usage.cache_creation_input_tokens or 0,
+def _record_usage(
+    run_context: RunContext,
+    response: ProviderResponse,
+    requested_model: str,
+    provider: str,
+    service_tier: str,
+) -> None:
+    run_context.budget.record_provider_usage(
+        response.usage,
+        model=requested_model,
+        provider=provider,
+        service_tier=service_tier,
     )
