@@ -529,6 +529,32 @@ class TerminalApp:
             self.renderer.notice(f"No trace found for run{label}.")
             return
         self.renderer.notice(f"Trace {_display(getattr(trace, 'run_id', run_id))}:")
+        summary = getattr(trace, "summary", None)
+        if summary is not None:
+            self.renderer.notice(
+                "Health: "
+                + _display(getattr(summary, "verdict", None), "unknown")
+                + " | phase "
+                + _display(getattr(summary, "current_or_final_phase", None), "unknown")
+                + " | unmatched "
+                + str(int(getattr(summary, "unmatched_starts", 0) or 0))
+                + " | retries "
+                + str(int(getattr(summary, "retries", 0) or 0))
+                + " | failures "
+                + str(int(getattr(summary, "failures", 0) or 0))
+            )
+            slowest = getattr(summary, "slowest", ())
+            if isinstance(slowest, (list, tuple)):
+                for operation in slowest:
+                    self.renderer.notice(
+                        "Slowest "
+                        + _display(getattr(operation, "kind", None))
+                        + ": "
+                        + _display(getattr(operation, "name", None))
+                        + " | "
+                        + str(int(getattr(operation, "duration_ms", 0) or 0))
+                        + "ms"
+                    )
         events = getattr(trace, "events", ())
         if isinstance(events, (list, tuple)):
             for event in events:

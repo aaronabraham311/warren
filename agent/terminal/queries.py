@@ -16,6 +16,7 @@ from pathlib import Path
 
 from sqlalchemy import func, select
 
+from agent.lifecycle import LifecycleSummary, validate_trace
 from storage.engine import get_session
 from storage.models import Analysis, Holding, Run, Watchlist
 
@@ -98,6 +99,7 @@ class TraceResult:
     run_id: str
     events: tuple[TraceEvent, ...]
     warnings: tuple[QueryWarning, ...]
+    summary: LifecycleSummary | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -387,6 +389,7 @@ def get_trace(
         default=0,
     )
     events: list[TraceEvent] = []
+    records: list[dict[str, object]] = []
     warnings: list[QueryWarning] = []
     for line_number, line in enumerate(lines, 1):
         if not line.strip():
@@ -404,12 +407,20 @@ def get_trace(
         if not isinstance(record, dict):
             warnings.append(QueryWarning(line_number, "Ignored a non-object JSONL record."))
             continue
-        events.append(_trace_event(len(events) + 1, record))
+        records.append(record)
+        stored_sequence = record.get("sequence")
+        sequence = (
+            stored_sequence
+            if isinstance(stored_sequence, int) and not isinstance(stored_sequence, bool)
+            else len(events) + 1
+        )
+        events.append(_trace_event(sequence, record))
 
     return TraceResult(
         run_id=selected_run_id,
         events=tuple(events),
         warnings=tuple(warnings),
+        summary=validate_trace(records),
     )
 
 

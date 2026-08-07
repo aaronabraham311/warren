@@ -94,6 +94,18 @@ class LlmCallCompleted:
 
 
 @dataclass(frozen=True, slots=True)
+class LlmCallFailed:
+    run_id: str
+    ticker: str | None
+    model: str | None
+    error_type: str
+    purpose: LlmCallPurpose = "synthesis"
+    iteration: int = 0
+    timestamp: str = field(default_factory=_utc_now_iso)
+    kind: Literal["llm_call_failed"] = "llm_call_failed"
+
+
+@dataclass(frozen=True, slots=True)
 class ToolCallStarted:
     run_id: str
     ticker: str | None
@@ -159,6 +171,7 @@ RunEvent: TypeAlias = (
     | TickerStarted
     | LlmCallStarted
     | LlmCallCompleted
+    | LlmCallFailed
     | ToolCallStarted
     | ToolCallCompleted
     | AnalysisCompleted
@@ -296,6 +309,25 @@ def event_from_wal_record(record: dict[str, object]) -> RunEvent | None:
             iteration=_int(record, "iteration"),
             timestamp=_timestamp(record),
         )
+    if event == "llm_call_failed":
+        return LlmCallFailed(
+            run_id=run_id,
+            ticker=_str(record, "ticker"),
+            model=_str(record, "model"),
+            error_type=_str(record, "error_type") or "ProviderError",
+            purpose=_llm_purpose(record),
+            iteration=_int(record, "iteration"),
+            timestamp=_timestamp(record),
+        )
+    if event == "tool_call_started":
+        tool_name = _str(record, "tool")
+        if tool_name is not None:
+            return ToolCallStarted(
+                run_id=run_id,
+                ticker=_str(record, "ticker"),
+                tool_name=tool_name,
+                timestamp=_timestamp(record),
+            )
     if event == "tool_call":
         tool_name = _str(record, "tool")
         if tool_name is not None:

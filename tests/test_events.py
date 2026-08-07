@@ -5,6 +5,7 @@ from unittest.mock import patch
 from agent.events import (
     EventSink,
     LlmCallCompleted,
+    LlmCallFailed,
     LlmCallStarted,
     RunCancelled,
     RunEvent,
@@ -126,3 +127,22 @@ def test_model_start_projection_is_typed_safe_and_immediate() -> None:
     assert event.iteration == 4
     assert event.tool_count == 7
     assert "must not escape" not in repr(event)
+
+
+def test_model_failure_projection_exposes_only_safe_error_type() -> None:
+    event = event_from_wal_record(
+        {
+            "event": "llm_call_failed",
+            "run_id": "r1",
+            "ticker": "AMD",
+            "model": "sonnet",
+            "purpose": "synthesis",
+            "iteration": 4,
+            "error_type": "APITimeoutError",
+            "error_msg": "authorization=secret must not escape",
+        }
+    )
+
+    assert isinstance(event, LlmCallFailed)
+    assert event.error_type == "APITimeoutError"
+    assert "secret" not in repr(event)

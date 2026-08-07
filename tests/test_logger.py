@@ -47,6 +47,14 @@ def _read_lines(path: Path) -> list[dict[str, object]]:
 def _emit_full_run(logger: RunLogger) -> None:
     logger.log("run_started", tickers=["AAPL"])
     logger.log("ticker_started", ticker="AAPL", phase="deep", model=SONNET_4_6)
+    logger.log(
+        "llm_call_started",
+        ticker="AAPL",
+        phase="deep",
+        model=SONNET_4_6,
+        purpose="synthesis",
+        iteration=0,
+    )
     logger.log_llm_call(
         _llm_response(4523, 1840, cache_read=4200, cache_creation=323),
         ticker="AAPL",
@@ -54,6 +62,7 @@ def _emit_full_run(logger: RunLogger) -> None:
         model=SONNET_4_6,
         latency_ms=3200,
     )
+    logger.log_tool_started(ticker="AAPL", tool_name="get_quote")
     logger.log_tool_call(
         tool_name="get_quote",
         tool_input={"ticker": "AAPL"},
@@ -93,7 +102,9 @@ def test_six_event_types_in_sequence(tmp_path: Path) -> None:
     assert events == [
         "run_started",
         "ticker_started",
+        "llm_call_started",
         "llm_call",
+        "tool_call_started",
         "tool_call",
         "ticker_completed",
         "run_completed",
