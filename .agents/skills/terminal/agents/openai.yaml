@@ -1,0 +1,4 @@
+interface:
+  display_name: "Warren Terminal"
+  short_description: "Build and test the Warren terminal UI"
+  default_prompt: "Use $terminal to change and verify the Warren interactive terminal."
