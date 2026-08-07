@@ -415,7 +415,7 @@ def execute_run(
     started_at = datetime.now(timezone.utc)
 
     with RunLock(selected_state_dir).acquire(run_id=run_id, mode=request.mode.value):
-        migrate()
+        migrate(quiet=True)
         reconcile_orphans(selected_log_dir)
         sync_input_data(request.skip_ticker_validation)
         persona = resolve_persona(request.persona, request.mode is RunMode.GEM_HUNT)

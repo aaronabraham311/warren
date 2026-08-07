@@ -12,7 +12,9 @@ from types import FrameType
 from typing import TYPE_CHECKING, Iterator, Protocol, TextIO, cast
 
 from prompt_toolkit import PromptSession
+from prompt_toolkit.formatted_text import FormattedText
 from prompt_toolkit.history import FileHistory
+from prompt_toolkit.styles import Style
 
 from agent.cancellation import CancellationToken
 from agent.chat import RecentContext
@@ -34,7 +36,7 @@ from agent.terminal.commands import (
     WatchlistCommand,
 )
 from agent.terminal.completion import WarrenCompleter
-from agent.terminal.renderer import ColorMode, TerminalRenderer
+from agent.terminal.renderer import NAVY_BRAND, NAVY_MUTED, ColorMode, TerminalRenderer
 from agent.terminal.settings import TerminalSettings, save_settings
 
 if TYPE_CHECKING:
@@ -76,13 +78,28 @@ class CommandHandler(Protocol):
 class _PromptToolkitReader:
     def __init__(self, history_file: Path | None) -> None:
         history = FileHistory(str(history_file)) if history_file is not None else None
+        no_color = bool(os.environ.get("NO_COLOR"))
         self._session: PromptSession[str] = PromptSession(
             history=history,
             completer=WarrenCompleter(),
+            style=Style.from_dict(
+                {
+                    "prompt.brand": "bold" if no_color else f"{NAVY_MUTED} bold",
+                    "prompt.chevron": "bold" if no_color else f"{NAVY_BRAND} bold",
+                }
+            ),
         )
 
     def __call__(self, prompt: str) -> str:
-        return self._session.prompt(prompt)
+        del prompt
+        return self._session.prompt(
+            FormattedText(
+                [
+                    ("class:prompt.brand", "warren "),
+                    ("class:prompt.chevron", "› "),
+                ]
+            )
+        )
 
 
 class _StreamReader:
@@ -202,7 +219,10 @@ def _joined(values: object, fallback: str = "-") -> str:
 
 
 @contextmanager
-def _cancel_on_sigint(token: CancellationToken) -> Iterator[None]:
+def _cancel_on_sigint(
+    token: CancellationToken,
+    on_cancel: Callable[[], None] | None = None,
+) -> Iterator[None]:
     """Turn the first SIGINT into cancellation and let the second interrupt unwind."""
 
     previous_handler = signal.getsignal(signal.SIGINT)
@@ -214,6 +234,8 @@ def _cancel_on_sigint(token: CancellationToken) -> Iterator[None]:
         interrupt_count += 1
         if interrupt_count == 1:
             token.cancel()
+            if on_cancel is not None:
+                on_cancel()
             return
         raise KeyboardInterrupt
 
@@ -263,7 +285,7 @@ class TerminalApp:
         self._interrupt_armed = False
 
     def run(self) -> int:
-        self.renderer.notice("Warren interactive terminal. Type /quit to exit.")
+        self.renderer.welcome()
         while True:
             try:
                 raw = self.reader("warren> ")
@@ -321,13 +343,7 @@ class TerminalApp:
                 message += f" Usage: {command.usage}"
             self.renderer.diagnostic(message)
         elif isinstance(command, HelpCommand):
-            self.renderer.notice(
-                "Commands: /help /new /history [ticker] /show RUN_ID /trace [RUN_ID] "
-                "/portfolio /watchlist /discover /gem-hunt /persona [default|dirt] "
-                "/budget [USD] /tools /quit\n"
-                "Examples: Analyze AAPL | Compare COST with WMT | Review my portfolio | "
-                "Run discovery | Run gem hunt | Show the risks"
-            )
+            self.renderer.render_help()
         elif isinstance(command, PersonaCommand):
             if command.persona is None:
                 self.renderer.notice(f"Persona: {self.default_persona}")
@@ -607,8 +623,11 @@ class TerminalApp:
             )
             return
         token = CancellationToken()
-        with self.renderer:
-            with _cancel_on_sigint(token):
+        with self.renderer.activity("Preparing analysis…"):
+            with _cancel_on_sigint(
+                token,
+                on_cancel=self.renderer.show_stopping,
+            ):
                 result = self.executor(
                     request,
                     event_sink=self.renderer,
@@ -744,7 +763,7 @@ def _recover_interrupted_runs() -> int:
     from storage.engine import migrate
     from storage.recovery import reconcile_orphans
 
-    migrate()
+    migrate(quiet=True)
     log_dir = Path(os.environ.get("WARREN_LOGS_DIR", "logs/runs"))
     return reconcile_orphans(log_dir)
 
@@ -752,7 +771,8 @@ def _recover_interrupted_runs() -> int:
 def main() -> int:
     app = create_app()
     try:
-        recovered = _recover_interrupted_runs()
+        with app.renderer.activity("Starting Warren…", announce=True):
+            recovered = _recover_interrupted_runs()
     except Exception:
         # A missing/unmigrated database must not prevent offline help and local
         # read-only commands from starting. Service runs migrate before writing.

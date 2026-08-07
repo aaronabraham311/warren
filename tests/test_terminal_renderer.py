@@ -2,10 +2,22 @@ from __future__ import annotations
 
 from io import StringIO
 
-from agent.events import LlmCallCompleted, RunCompleted, RunFailed, RunStarted, ToolCallCompleted
+from agent.events import (
+    LlmCallCompleted,
+    RunCompleted,
+    RunFailed,
+    RunStarted,
+    ToolCallCompleted,
+    ToolCallStarted,
+)
 from agent.models import AnalysisOutput, LynchBuffettSignals
 from agent.service import RunResult, TickerRunResult
 from agent.terminal.renderer import TerminalRenderer, sanitize_terminal_text
+
+
+class _TTYBuffer(StringIO):
+    def isatty(self) -> bool:
+        return True
 
 
 def _analysis(ticker: str, thesis: str | None = None) -> AnalysisOutput:
@@ -126,17 +138,94 @@ def test_progress_diagnostics_include_cache_retry_error_duration_and_run_id() ->
 
     diagnostic = stderr.getvalue()
     assert "cache-read=70 cache-write=5" in diagnostic
-    assert "retries=2" in diagnostic
+    assert "2 retries" in diagnostic
+    assert "✗ Market quote  ·  11ms" in diagnostic
     assert "secret-value" not in diagnostic
     assert "run-1 success, $0.0100, 1.2s" in diagnostic
     assert stdout.getvalue() == ""
 
 
+def test_plain_activity_is_immediate_and_completed_tools_persist_once() -> None:
+    stderr = StringIO()
+    renderer = TerminalRenderer(stdout=StringIO(), stderr=stderr, color="never")
+
+    with renderer.activity("Preparing analysis…"):
+        assert stderr.getvalue() == "Preparing analysis…\n"
+        renderer.emit(ToolCallStarted("run-1", "AAPL", "read_filing"))
+        renderer.emit(ToolCallCompleted("run-1", "AAPL", "read_filing", "ok", False, 1420, 0))
+
+    transcript = stderr.getvalue()
+    assert "Using: Regulatory filing" in transcript
+    assert transcript.count("✓ Regulatory filing  ·  1.4s") == 1
+    assert "Analyzing AAPL…" in transcript
+
+
+def test_forced_color_uses_the_shared_navy_theme(monkeypatch: object) -> None:
+    from pytest import MonkeyPatch
+
+    assert isinstance(monkeypatch, MonkeyPatch)
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    stdout = StringIO()
+    renderer = TerminalRenderer(stdout=stdout, stderr=StringIO(), color="always")
+
+    renderer.welcome()
+
+    rendered = stdout.getvalue()
+    assert "Warren" in rendered
+    assert "\x1b[" in rendered
+    assert "/help" in rendered
+
+
+def test_tty_activity_always_stops_live_renderer(monkeypatch: object) -> None:
+    from pytest import MonkeyPatch
+
+    assert isinstance(monkeypatch, MonkeyPatch)
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.setenv("TERM", "xterm-256color")
+    stderr = _TTYBuffer()
+    renderer = TerminalRenderer(
+        stdout=_TTYBuffer(),
+        stderr=stderr,
+        color="always",
+        animation=True,
+    )
+
+    with renderer.activity("Preparing analysis…"):
+        assert bool(renderer._live)
+        renderer.update_activity("Using Market quote")
+
+    assert renderer._live is None
+    assert renderer._progress is None
+    assert "Using Market quote" in stderr.getvalue()
+    assert "\x1b[?25h" in stderr.getvalue()
+
+
+def test_dumb_terminal_uses_plain_activity_without_live_control_codes(
+    monkeypatch: object,
+) -> None:
+    from pytest import MonkeyPatch
+
+    assert isinstance(monkeypatch, MonkeyPatch)
+    monkeypatch.setenv("TERM", "dumb")
+    stderr = _TTYBuffer()
+    renderer = TerminalRenderer(
+        stdout=_TTYBuffer(),
+        stderr=stderr,
+        color="never",
+        animation=True,
+    )
+
+    with renderer.activity("Preparing analysis…"):
+        assert renderer._live is None
+
+    assert stderr.getvalue() == "Preparing analysis…\n"
+
+
 def test_renderer_builds_safe_latest_run_evidence_index() -> None:
     renderer = TerminalRenderer(stdout=StringIO(), stderr=StringIO(), color="never")
     renderer.emit(RunStarted("run-1", "tickers", ("AAPL",)))
-    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "success", False, 5, 0))
-    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "success", True, 1, 0))
+    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "ok", False, 5, 0))
+    renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_quote", "ok", True, 1, 0))
     renderer.emit(ToolCallCompleted("run-1", "AAPL", "get_news", "error", False, 5, 0))
 
     assert renderer.evidence_for("AAPL") == ("get_quote",)
@@ -161,3 +250,24 @@ def test_non_normal_termination_reason_is_visible() -> None:
     TerminalRenderer(stdout=stdout, stderr=StringIO(), color="never").render_analysis(analysis)
 
     assert "Termination: iteration_capped" in stdout.getvalue()
+
+
+def test_cancelled_result_has_one_durable_interruption_summary() -> None:
+    stdout = StringIO()
+    stderr = StringIO()
+    result = RunResult(
+        run_id="cancelled-run",
+        status="cancelled",
+        ticker_results=(),
+        total_cost_usd=0.0987,
+        total_input_tokens=5,
+        total_output_tokens=443,
+        total_tool_calls=7,
+        duration_seconds=99.9,
+        error_msg="cancelled by user",
+    )
+
+    TerminalRenderer(stdout=stdout, stderr=stderr, color="never").render_result(result)
+
+    assert "■ Interrupted · 7 tools · 99.9s · $0.0987 · Run cancelled-run" in stdout.getvalue()
+    assert "cancelled by user" not in stderr.getvalue()

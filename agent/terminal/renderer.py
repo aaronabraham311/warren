@@ -7,15 +7,18 @@ import re
 import sys
 import unicodedata
 from collections.abc import Sequence
+from contextlib import contextmanager
 from dataclasses import dataclass
 from io import TextIOBase
-from typing import IO, Literal, TextIO
+from typing import IO, Iterator, Literal, TextIO
 
 from rich.console import Console, Group
 from rich.live import Live
 from rich.panel import Panel
+from rich.progress import Progress, SpinnerColumn, TaskID, TextColumn, TimeElapsedColumn
 from rich.table import Table
 from rich.text import Text
+from rich.theme import Theme
 
 from agent.events import (
     AnalysisCompleted,
@@ -37,6 +40,48 @@ from agent.service import RunResult, TickerRunResult
 
 ColorMode = Literal["auto", "always", "never"]
 ColorSystem = Literal["auto", "standard", "256", "truecolor", "windows"]
+
+NAVY_BRAND = "#4A9CFF"
+NAVY_STRONG = "#93C5FD"
+NAVY_MUTED = "#6B8FB3"
+NAVY_BORDER = "#294766"
+NAVY_ACTIVITY = "#7CB7E8"
+
+WARREN_THEME = Theme(
+    {
+        "warren.brand": f"bold {NAVY_BRAND}",
+        "warren.strong": f"bold {NAVY_STRONG}",
+        "warren.muted": f"dim {NAVY_MUTED}",
+        "warren.border": NAVY_BORDER,
+        "warren.activity": NAVY_ACTIVITY,
+        "warren.success": f"bold {NAVY_STRONG}",
+        "warren.warning": "#BFA66A",
+        "warren.error": "bold #C9828E",
+    }
+)
+
+_TOOL_LABELS = {
+    "get_quote": "Market quote",
+    "get_fundamentals": "Company fundamentals",
+    "get_growth_metrics": "Growth metrics",
+    "get_news": "Company news",
+    "read_filing": "Regulatory filing",
+    "get_valuation_multiples": "Valuation multiples",
+    "get_valuation_history": "Valuation history",
+    "get_quality_metrics": "Quality metrics",
+    "get_financial_strength": "Financial strength",
+    "estimate_intrinsic_value": "Intrinsic value",
+    "model_dirt_scenarios": "DIRT scenarios",
+    "get_capital_allocation": "Capital allocation",
+    "get_key_persons": "Key people",
+    "get_insider_activity": "Insider activity",
+    "get_peer_comparison": "Peer comparison",
+    "get_adverse_media": "Adverse media",
+    "get_forensic_evidence": "Forensic evidence",
+    "screen_watchlists": "Watchlist screening",
+    "get_holding_context": "Portfolio context",
+    "screen_universe": "Market screening",
+}
 
 _SECRET_ASSIGNMENT = re.compile(
     r"(?i)\b(api[_-]?key|access[_-]?token|token|authorization|secret)\b"
@@ -68,6 +113,21 @@ def sanitize_terminal_text(value: object) -> str:
     return _ANTHROPIC_KEY.sub("[redacted]", sanitized)
 
 
+def _tool_label(tool_name: str) -> str:
+    sanitized = sanitize_terminal_text(tool_name)
+    return _TOOL_LABELS.get(sanitized, sanitized.replace("_", " ").strip().title())
+
+
+def _tool_succeeded(status: str) -> bool:
+    return status.casefold() in {"ok", "success"}
+
+
+def _format_duration(latency_ms: int) -> str:
+    if latency_ms < 1000:
+        return f"{latency_ms}ms"
+    return f"{latency_ms / 1000:.1f}s"
+
+
 def _is_tty(stream: IO[str]) -> bool:
     isatty = getattr(stream, "isatty", None)
     return bool(callable(isatty) and isatty())
@@ -79,12 +139,14 @@ def _console(
     color: ColorMode,
     width: int | None,
 ) -> Console:
-    no_color = "NO_COLOR" in os.environ
+    no_color = bool(os.environ.get("NO_COLOR"))
     terminal = _is_tty(stream)
     force_terminal = color == "always" and not no_color
     if color == "never" or no_color or (color == "auto" and not terminal):
         color_system: ColorSystem | None = None
         force_terminal = False
+    elif color == "always":
+        color_system = "truecolor"
     else:
         color_system = "auto"
     return Console(
@@ -92,6 +154,7 @@ def _console(
         force_terminal=force_terminal,
         color_system=color_system,
         no_color=color_system is None,
+        theme=WARREN_THEME,
         width=width,
         highlight=False,
         markup=False,
@@ -101,8 +164,7 @@ def _console(
 
 @dataclass(slots=True)
 class _ProgressState:
-    phase: str = "ready"
-    detail: str = ""
+    message: str = "Preparing analysis…"
 
 
 class TerminalRenderer:
@@ -127,22 +189,20 @@ class TerminalRenderer:
         self.show_cost = show_cost
         self._state = _ProgressState()
         self._evidence_by_ticker: dict[str, list[str]] = {}
-        self._live_enabled = animation and _is_tty(stderr)
+        self._live_enabled = (
+            animation and _is_tty(stderr) and os.environ.get("TERM", "").casefold() != "dumb"
+        )
         self._live: Live | None = None
+        self._progress: Progress | None = None
+        self._progress_task_id: TaskID | None = None
+        self._plain_activity_started = False
 
     @property
     def narrow(self) -> bool:
         return self.stdout.width < 72
 
     def __enter__(self) -> TerminalRenderer:
-        if self._live_enabled and self._live is None:
-            self._live = Live(
-                self._progress_renderable(),
-                console=self.stderr,
-                transient=True,
-                refresh_per_second=8,
-            )
-            self._live.start(refresh=True)
+        self.start_activity(self._state.message)
         return self
 
     def __exit__(self, exc_type: object, exc: object, traceback: object) -> None:
@@ -153,6 +213,102 @@ class TerminalRenderer:
         if self._live is not None:
             self._live.stop()
             self._live = None
+        self._progress = None
+        self._progress_task_id = None
+        self._plain_activity_started = False
+
+    @contextmanager
+    def activity(
+        self,
+        message: str,
+        *,
+        announce: bool = False,
+    ) -> Iterator[TerminalRenderer]:
+        """Show immediate activity and guarantee terminal cleanup on every exit path."""
+
+        self.start_activity(message, announce=announce)
+        try:
+            yield self
+        finally:
+            self.stop_live()
+
+    def start_activity(self, message: str, *, announce: bool = False) -> None:
+        self._state.message = sanitize_terminal_text(message)
+        if announce:
+            self.stderr.print(Text(self._state.message, style="warren.activity"))
+            self._plain_activity_started = True
+        if self._live_enabled:
+            if self._live is None:
+                self._progress = Progress(
+                    SpinnerColumn(style="warren.activity"),
+                    TextColumn("{task.description}", style="warren.activity"),
+                    TimeElapsedColumn(),
+                    console=self.stderr,
+                    auto_refresh=False,
+                    expand=False,
+                )
+                self._progress_task_id = self._progress.add_task(
+                    self._state.message,
+                    total=None,
+                )
+                self._live = Live(
+                    self._progress,
+                    console=self.stderr,
+                    transient=True,
+                    refresh_per_second=10,
+                )
+                self._live.start(refresh=True)
+            else:
+                self.update_activity(self._state.message)
+        elif not self._plain_activity_started:
+            self.stderr.print(Text(self._state.message, style="warren.activity"))
+            self._plain_activity_started = True
+
+    def update_activity(self, message: str) -> None:
+        self._state.message = sanitize_terminal_text(message)
+        if self._progress is not None and self._progress_task_id is not None:
+            self._progress.update(self._progress_task_id, description=self._state.message)
+            if self._live is not None:
+                self._live.refresh()
+        elif self._plain_activity_started:
+            self.stderr.print(Text(self._state.message, style="warren.activity"))
+        else:
+            self.start_activity(self._state.message)
+
+    def welcome(self) -> None:
+        line = Text()
+        line.append("Warren", style="warren.strong")
+        line.append("  ·  stock analysis  ·  ", style="warren.muted")
+        line.append("/help", style="warren.brand")
+        line.append(" for commands", style="warren.muted")
+        self.stdout.print(line)
+
+    def render_help(self) -> None:
+        self.stdout.print(Text("Commands", style="warren.strong"))
+        table = Table.grid(padding=(0, 2), expand=False)
+        table.add_column(style="warren.brand", no_wrap=True)
+        table.add_column()
+        for command, description in (
+            ("Analyze", "Analyze AAPL · Compare COST with WMT · Review my portfolio"),
+            ("Research", "/discover · /gem-hunt"),
+            ("Runs", "/history [ticker] · /show RUN_ID · /trace [RUN_ID]"),
+            ("Holdings", "/portfolio · /watchlist"),
+            ("Session", "/new · /persona [default|dirt] · /budget [USD]"),
+            ("Reference", "/tools · /help · /quit"),
+        ):
+            table.add_row(command, description)
+        self.stdout.print(table)
+
+    def show_stopping(self) -> None:
+        """Make cancellation visible even while a provider call is still blocking."""
+
+        self.stop_live()
+        self.stderr.print(
+            Text(
+                "■ Stopping… press Ctrl-C again to stop immediately",
+                style="warren.warning",
+            )
+        )
 
     def emit(self, event: RunEvent) -> None:
         if isinstance(event, RunStarted):
@@ -160,64 +316,69 @@ class TerminalRenderer:
         elif (
             isinstance(event, ToolCallCompleted)
             and event.ticker is not None
-            and event.status == "success"
+            and _tool_succeeded(event.status)
         ):
             evidence = self._evidence_by_ticker.setdefault(event.ticker, [])
             if event.tool_name not in evidence:
                 evidence.append(event.tool_name)
+        if isinstance(event, ToolCallCompleted):
+            self._render_tool_completion(event)
+            ticker = sanitize_terminal_text(event.ticker) if event.ticker else "the request"
+            self.update_activity(f"Analyzing {ticker}…")
+            return
         line = self._event_line(event)
         if line is None:
             return
-        self._state.phase, self._state.detail = line
+        message = f"{line[0]}: {line[1]}"
         if self._live is not None:
-            self._live.update(self._progress_renderable(), refresh=True)
+            self.update_activity(message)
         else:
-            self.stderr.print(Text(f"{line[0]}: {line[1]}"))
+            self.stderr.print(Text(message, style="warren.activity"))
 
     def evidence_for(self, ticker: str) -> tuple[str, ...]:
         """Return the safe tool-name evidence index captured for the latest run."""
 
         return tuple(self._evidence_by_ticker.get(ticker, ()))
 
-    def _progress_renderable(self) -> Text:
-        return Text(f"{self._state.phase}: {self._state.detail}", style="cyan")
+    def _render_tool_completion(self, event: ToolCallCompleted) -> None:
+        success = _tool_succeeded(event.status)
+        glyph = "✓" if success else "✗"
+        style = "warren.success" if success else "warren.error"
+        label = _tool_label(event.tool_name)
+        line = Text()
+        line.append(glyph + " ", style=style)
+        line.append(label, style=style)
+        if event.cached:
+            line.append("  ·  cached", style="warren.muted")
+        if event.latency_ms is not None:
+            line.append(f"  ·  {_format_duration(event.latency_ms)}", style="warren.muted")
+        if event.retry_count:
+            line.append(f"  ·  {event.retry_count} retries", style="warren.muted")
+        if event.error_summary:
+            line.append(
+                "  ·  " + sanitize_terminal_text(event.error_summary),
+                style="warren.error",
+            )
+        self.stderr.print(line)
 
     def _event_line(self, event: RunEvent) -> tuple[str, str] | None:
         if isinstance(event, RunStarted):
-            mode = sanitize_terminal_text(event.mode or "run")
             tickers = ", ".join(sanitize_terminal_text(t) for t in event.tickers)
-            return (
-                "run",
-                f"{sanitize_terminal_text(event.run_id)} started {mode}"
-                + (f" [{tickers}]" if tickers else ""),
-            )
+            mode = sanitize_terminal_text(event.mode or "analysis").replace("_", " ")
+            return "Analyzing", tickers or mode
         if isinstance(event, ScreeningStarted):
             total = "?" if event.total is None else str(event.total)
-            return "screen", f"screening {total} securities"
+            return "Screening", f"{total} securities"
         if isinstance(event, ScreeningProgress):
             ticker = f" {sanitize_terminal_text(event.ticker)}" if event.ticker else ""
-            return "screen", f"{event.completed}/{event.total}{ticker}"
+            return "Screening", f"{event.completed}/{event.total}{ticker}"
         if isinstance(event, CandidateSelected):
             rank = f"#{event.rank} " if event.rank is not None else ""
-            return "candidate", f"{rank}{sanitize_terminal_text(event.ticker)}"
+            return "Selected", f"{rank}{sanitize_terminal_text(event.ticker)}"
         if isinstance(event, TickerStarted):
-            return "analyze", sanitize_terminal_text(event.ticker)
+            return "Analyzing", sanitize_terminal_text(event.ticker)
         if isinstance(event, ToolCallStarted):
-            return "tool", f"starting {sanitize_terminal_text(event.tool_name)}"
-        if isinstance(event, ToolCallCompleted):
-            cached = " cached" if event.cached else ""
-            latency = f" {event.latency_ms}ms" if event.latency_ms is not None else ""
-            retries = f" retries={event.retry_count}" if event.retry_count else ""
-            error = (
-                f" error={sanitize_terminal_text(event.error_summary)}"
-                if event.error_summary
-                else ""
-            )
-            return (
-                "tool",
-                f"{sanitize_terminal_text(event.tool_name)} {sanitize_terminal_text(event.status)}"
-                f"{cached}{latency}{retries}{error}",
-            )
+            return "Using", _tool_label(event.tool_name)
         if isinstance(event, LlmCallCompleted):
             cost = f" ${event.cost_usd:.4f}" if self.show_cost else ""
             cache = ""
@@ -226,19 +387,19 @@ class TerminalRenderer:
                     f" cache-read={event.cache_read_tokens}"
                     f" cache-write={event.cache_creation_tokens}"
                 )
-            return "model", f"{event.input_tokens} in / {event.output_tokens} out{cache}{cost}"
+            return "Model", f"{event.input_tokens} in / {event.output_tokens} out{cache}{cost}"
         if isinstance(event, AnalysisCompleted):
             recommendation = sanitize_terminal_text(event.recommendation or "unknown")
             confidence = "?" if event.confidence is None else f"{event.confidence:.0%}"
             return (
-                "analysis",
+                "Analysis",
                 f"{sanitize_terminal_text(event.ticker)} {recommendation} {confidence}",
             )
         if isinstance(event, RunCancelled):
-            return "run", f"{sanitize_terminal_text(event.run_id)} cancelled safely"
+            return "Stopping", "run cancelled safely"
         if isinstance(event, RunFailed):
             return (
-                "run",
+                "Failed",
                 f"{sanitize_terminal_text(event.run_id)} failed: "
                 f"{sanitize_terminal_text(event.error_msg or 'unknown error')}",
             )
@@ -248,10 +409,11 @@ class TerminalRenderer:
                 f", {event.duration_seconds:.1f}s" if event.duration_seconds is not None else ""
             )
             return (
-                "run",
+                "Done",
                 f"{sanitize_terminal_text(event.run_id)} "
                 f"{sanitize_terminal_text(event.status)}{cost}{duration}",
             )
+        return None
 
     def render_result(self, result: RunResult, *, compare: bool = False) -> None:
         """Render final structured results deterministically to stdout."""
@@ -266,7 +428,7 @@ class TerminalRenderer:
                     self.render_analysis(ticker_result.analysis)
                 else:
                     self._render_ticker_error(ticker_result)
-        if result.status != "success" and result.error_msg:
+        if result.status not in {"success", "cancelled"} and result.error_msg:
             self.diagnostic(result.error_msg, error=result.status == "failed")
         self._render_run_footer(result)
 
@@ -323,22 +485,22 @@ class TerminalRenderer:
         body: list[Text] = [
             Text(thesis),
             Text(),
-            Text("Lynch signals", style="bold"),
+            Text("Lynch signals", style="warren.strong"),
             Text("+ " + ("; ".join(lynch_pros) or "none")),
             Text("- " + ("; ".join(lynch_cons) or "none")),
             Text(),
-            Text("Buffett signals", style="bold"),
+            Text("Buffett signals", style="warren.strong"),
             Text("+ " + ("; ".join(buffett_pros) or "none")),
             Text("- " + ("; ".join(buffett_cons) or "none")),
             Text(),
-            Text("Key risks", style="bold"),
+            Text("Key risks", style="warren.strong"),
         ]
         if analysis.termination_reason != "success":
             body[1:1] = [
                 Text(),
                 Text(
                     "Termination: " + sanitize_terminal_text(analysis.termination_reason),
-                    style="yellow",
+                    style="warren.warning",
                 ),
             ]
         body.extend(Text(f"• {risk}") for risk in risks)
@@ -346,7 +508,7 @@ class TerminalRenderer:
             body.extend(
                 [
                     Text(),
-                    Text("DIRT decision", style="bold"),
+                    Text("DIRT decision", style="warren.strong"),
                     Text(
                         f"{sanitize_terminal_text(decision.outcome).upper()} · "
                         f"weighted IRR {decision.probability_weighted_irr:.1%} · "
@@ -355,10 +517,10 @@ class TerminalRenderer:
                 ]
             )
         if quality:
-            body.extend([Text(), Text("Data quality", style="bold")])
+            body.extend([Text(), Text("Data quality", style="warren.strong")])
             body.extend(Text(f"• {note}") for note in quality)
-        title = Text(f"{ticker}  {recommendation}  {confidence}")
-        self.stdout.print(Panel(Group(*body), title=title, border_style="blue"))
+        title = Text(f"{ticker}  {recommendation}  {confidence}", style="warren.strong")
+        self.stdout.print(Panel(Group(*body), title=title, border_style="warren.border"))
 
     def render_comparison(self, ticker_results: Sequence[TickerRunResult]) -> None:
         """Render every requested ticker in order, including failed positions."""
@@ -371,10 +533,16 @@ class TerminalRenderer:
                     self._render_ticker_error(ticker_result)
             return
 
-        table = Table(title="Comparison", show_lines=True, expand=True)
-        table.add_column("Ticker", no_wrap=True)
-        table.add_column("Call", no_wrap=True)
-        table.add_column("Confidence", justify="right", no_wrap=True)
+        table = Table(
+            title=Text("Comparison", style="warren.strong"),
+            show_lines=False,
+            expand=True,
+            border_style="warren.border",
+            header_style="warren.brand",
+        )
+        table.add_column("Ticker", no_wrap=True, style="warren.strong")
+        table.add_column("Call", no_wrap=True, style="warren.brand")
+        table.add_column("Confidence", justify="right", no_wrap=True, style="warren.muted")
         table.add_column("Thesis")
         table.add_column("Key risks")
         for ticker_result in ticker_results:
@@ -405,9 +573,17 @@ class TerminalRenderer:
     def _render_ticker_error(self, ticker_result: TickerRunResult) -> None:
         ticker = sanitize_terminal_text(ticker_result.ticker)
         message = sanitize_terminal_text(ticker_result.error or "analysis unavailable")
-        self.stdout.print(Text(f"{ticker} | ERROR | {message}", style="red"))
+        self.stdout.print(Text(f"{ticker} | ERROR | {message}", style="warren.error"))
 
     def _render_run_footer(self, result: RunResult) -> None:
+        if result.status == "cancelled":
+            footer = (
+                f"■ Interrupted · {result.total_tool_calls} tools · "
+                f"{result.duration_seconds:.1f}s · ${result.total_cost_usd:.4f} · "
+                f"Run {sanitize_terminal_text(result.run_id)}"
+            )
+            self.stdout.print(Text(footer, style="warren.warning"))
+            return
         footer = (
             f"Run {sanitize_terminal_text(result.run_id)} | "
             f"{sanitize_terminal_text(result.status)} | "
@@ -415,13 +591,13 @@ class TerminalRenderer:
             f"tokens {result.total_input_tokens} in/{result.total_output_tokens} out | "
             f"tools {result.total_tool_calls} | {result.duration_seconds:.1f}s"
         )
-        self.stdout.print(Text(footer, style="dim"))
+        self.stdout.print(Text(footer, style="warren.muted"))
 
     def notice(self, message: object) -> None:
         self.stdout.print(Text(sanitize_terminal_text(message)))
 
     def diagnostic(self, message: object, *, error: bool = False) -> None:
-        style = "red" if error else "yellow"
+        style = "warren.error" if error else "warren.warning"
         self.stderr.print(Text(sanitize_terminal_text(message), style=style))
 
 
