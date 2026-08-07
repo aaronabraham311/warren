@@ -122,6 +122,72 @@ def test_real_pty_keeps_model_activity_after_durable_tool_output() -> None:
     assert "\x1b[?25h" in transcript
 
 
+@pytest.mark.skipif(os.name == "nt", reason="PTY lifecycle is POSIX-specific")
+def test_real_pty_binder_restores_alternate_screen_and_cursor() -> None:
+    import pty
+    import select
+    import time
+    from textwrap import dedent
+
+    child = dedent(
+        """
+        from agent.terminal.binder import BinderBlock, BinderDocument, BinderPage, ResultBinder
+
+        pages = tuple(
+            BinderPage(label, label, (BinderBlock(label, "A long but safe report section."),))
+            for label in ("Summary", "Thesis", "Signals", "Risks", "Evidence")
+        )
+        ResultBinder().run(BinderDocument("AMD", "HOLD", "68%", pages))
+        print("prompt-restored")
+        """
+    )
+    master_fd, slave_fd = pty.openpty()
+    environment = os.environ.copy()
+    environment.pop("NO_COLOR", None)
+    environment["TERM"] = "xterm-256color"
+    process = subprocess.Popen(
+        [sys.executable, "-c", child],
+        cwd=Path(__file__).parents[1],
+        env=environment,
+        stdin=slave_fd,
+        stdout=slave_fd,
+        stderr=slave_fd,
+        close_fds=True,
+    )
+    os.close(slave_fd)
+    chunks: list[bytes] = []
+    try:
+        time.sleep(0.2)
+        os.write(master_fd, b"2jq")
+        while True:
+            ready, _, _ = select.select([master_fd], [], [], 2.0)
+            if ready:
+                try:
+                    chunk = os.read(master_fd, 16_384)
+                except OSError:
+                    break
+                if chunk:
+                    chunks.append(chunk)
+                else:
+                    break
+            if process.poll() is not None and not ready:
+                break
+        assert process.wait(timeout=5) == 0
+    finally:
+        os.close(master_fd)
+        if process.poll() is None:
+            process.kill()
+
+    transcript = b"".join(chunks).decode(errors="replace")
+    assert "Summary" in transcript
+    assert "Thesis" in transcript
+    assert "prompt-restored" in transcript
+    assert "\x1b[?1049h" in transcript
+    assert "\x1b[?1049l" in transcript
+    assert "\x1b[?25l" in transcript
+    assert "\x1b[?25h" in transcript
+
+
 def test_piped_compare_preserves_order_settings_partial_failure_and_plain_text() -> None:
     result = RunResult(
         run_id="run-integration",

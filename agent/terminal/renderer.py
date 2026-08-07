@@ -242,6 +242,7 @@ class TerminalRenderer:
         self.stdout = _console(stdout, color=color, width=width)
         self.stderr = _console(stderr, color=color, width=width)
         self.show_cost = show_cost
+        self._interactive_results_enabled = animation
         self._state = _ProgressState()
         self._evidence_by_ticker: dict[str, list[str]] = {}
         self._live_enabled = (
@@ -256,6 +257,16 @@ class TerminalRenderer:
     @property
     def narrow(self) -> bool:
         return self.stdout.width < 72
+
+    @property
+    def supports_result_binder(self) -> bool:
+        """Whether stdout can safely host a temporary interactive result view."""
+
+        return (
+            self._interactive_results_enabled
+            and _is_tty(self.stdout.file)
+            and os.environ.get("TERM", "").casefold() != "dumb"
+        )
 
     def __enter__(self) -> TerminalRenderer:
         self.start_activity(self._state.message)
@@ -545,6 +556,20 @@ class TerminalRenderer:
         if result.status not in {"success", "cancelled"} and result.error_msg:
             self.diagnostic(result.error_msg, error=result.status == "failed")
         self._render_run_footer(result)
+
+    def render_compact_result(self, result: RunResult) -> None:
+        """Leave a durable one-line recommendation before opening the binder."""
+
+        self.stop_live()
+        analysis = result.analyses[0]
+        self.stdout.print(
+            Text(
+                f"{sanitize_terminal_text(analysis.ticker)} | "
+                f"{sanitize_terminal_text(analysis.recommendation).upper()} | "
+                f"confidence {analysis.confidence:.0%} | "
+                f"Run {sanitize_terminal_text(result.run_id)}"
+            )
+        )
 
     def render_analysis(self, analysis: AnalysisOutput) -> None:
         ticker = sanitize_terminal_text(analysis.ticker)

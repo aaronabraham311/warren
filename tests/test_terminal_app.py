@@ -67,6 +67,22 @@ class _Executor(RunExecutor):
         return self.result
 
 
+class _Binder:
+    def __init__(self, *, fail: bool = False) -> None:
+        self.fail = fail
+        self.documents: list[object] = []
+
+    def run(self, document: object) -> None:
+        self.documents.append(document)
+        if self.fail:
+            raise RuntimeError("terminal unavailable")
+
+
+class _TTYBuffer(StringIO):
+    def isatty(self) -> bool:
+        return True
+
+
 def test_piped_repl_analyze_follow_up_and_quit_uses_settings() -> None:
     stdout = StringIO()
     stderr = StringIO()
@@ -101,6 +117,77 @@ def test_piped_repl_analyze_follow_up_and_quit_uses_settings() -> None:
     assert "Key risks: execution" in stdout.getvalue()
     assert "warren>" not in stdout.getvalue()
     assert "\x1b" not in stdout.getvalue() + stderr.getvalue()
+
+
+def test_successful_single_ticker_tty_uses_compact_summary_and_binder(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("TERM", "xterm-256color")
+    stdout = _TTYBuffer()
+    binder = _Binder()
+    app = create_app(
+        reader=lambda prompt: "/quit",
+        stdout=stdout,
+        stderr=_TTYBuffer(),
+        executor=_Executor(),
+        settings=TerminalSettings(color="never", animation=True),
+        api_key_available=lambda: True,
+        binder=binder,
+    )
+
+    app._execute_service("Analyze AAPL", RunRequest(mode=RunMode.TICKERS, tickers=("AAPL",)))
+
+    assert len(binder.documents) == 1
+    assert "AAPL | HOLD | confidence 70% | Run run-app" in stdout.getvalue()
+    assert "sufficiently detailed thesis" not in stdout.getvalue()
+
+
+def test_binder_failure_falls_back_to_plain_report(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("TERM", "xterm-256color")
+    stdout = _TTYBuffer()
+    stderr = _TTYBuffer()
+    app = create_app(
+        reader=lambda prompt: "/quit",
+        stdout=stdout,
+        stderr=stderr,
+        executor=_Executor(),
+        settings=TerminalSettings(color="never", animation=True),
+        api_key_available=lambda: True,
+        binder=_Binder(fail=True),
+    )
+
+    app._execute_service("Analyze AAPL", RunRequest(mode=RunMode.TICKERS, tickers=("AAPL",)))
+
+    assert "sufficiently detailed thesis" in stdout.getvalue()
+    assert "Interactive result view was unavailable" in stderr.getvalue()
+
+
+@pytest.mark.parametrize(
+    ("term", "animation"),
+    [("dumb", True), ("xterm-256color", False)],
+)
+def test_incapable_terminal_keeps_plain_report(
+    monkeypatch: pytest.MonkeyPatch,
+    term: str,
+    animation: bool,
+) -> None:
+    monkeypatch.setenv("TERM", term)
+    stdout = _TTYBuffer()
+    binder = _Binder()
+    app = create_app(
+        reader=lambda prompt: "/quit",
+        stdout=stdout,
+        stderr=_TTYBuffer(),
+        executor=_Executor(),
+        settings=TerminalSettings(color="never", animation=animation),
+        api_key_available=lambda: True,
+        binder=binder,
+    )
+
+    app._execute_service("Analyze AAPL", RunRequest(mode=RunMode.TICKERS, tickers=("AAPL",)))
+
+    assert binder.documents == []
+    assert "sufficiently detailed thesis" in stdout.getvalue()
 
 
 def test_missing_api_key_does_not_start_executor() -> None:
