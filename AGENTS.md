@@ -9,6 +9,8 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
   portfolio/universe screening, and typed tools.
 - `agent/lifecycle.py`: versioned trace-envelope integrity validation and derived,
   display-safe run diagnostics.
+- `agent/activity.py`: pure lifecycle-to-activity reducer shared by terminal rendering,
+  active-run health, deterministic replay, and tests.
 - `agent/terminal/`: prompt lifecycle, typed slash commands, local completion,
   control-safe rendering, deterministic semantic-screen reliability lab, non-secret
   settings, and read-only persisted-state queries.
@@ -41,6 +43,8 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
   unsupported input must not fall through to a model or external data source.
 - Test terminal semantics with the pure activity reducer and `pyte` screen checkpoints;
   reserve byte assertions for ANSI/cursor hygiene and real PTYs for OS integration.
+- Keep health metrics metadata-only and bounded-cardinality. OpenTelemetry/Datadog are
+  optional export adapters; local fsynced JSONL remains authoritative.
 - Interactive and batch entry points call the shared run service; the terminal must
   not shell out to or parse output from `agent.run`.
 - Prefer dataclasses for multi-value returns and keep public boundaries typed and validated.

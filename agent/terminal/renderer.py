@@ -41,6 +41,7 @@ from agent.events import (
 )
 from agent.models import AnalysisOutput
 from agent.service import RunResult, TickerRunResult
+from agent.terminal.health import DiagnosticsSnapshot, HealthMonitor
 
 ColorMode = Literal["auto", "always", "never"]
 ColorSystem = Literal["auto", "standard", "256", "truecolor", "windows"]
@@ -268,6 +269,7 @@ class TerminalRenderer:
         self._interactive_results_enabled = animation
         self._clock = clock
         self._terminal_type = terminal_type or os.environ.get("TERM", "")
+        self._health = HealthMonitor(clock=clock)
         self._state = _ProgressState()
         self._evidence_by_ticker: dict[str, list[str]] = {}
         self._live_enabled = (
@@ -292,6 +294,12 @@ class TerminalRenderer:
             and _is_tty(self.stdout.file)
             and os.environ.get("TERM", "").casefold() != "dumb"
         )
+
+    @property
+    def diagnostics(self) -> DiagnosticsSnapshot:
+        """Return the latest metadata-only run-health snapshot."""
+
+        return self._health.snapshot()
 
     def __enter__(self) -> TerminalRenderer:
         self.start_activity(self._state.message)
@@ -359,6 +367,7 @@ class TerminalRenderer:
         elif not self._plain_activity_started:
             self.stderr.print(Text(self._state.message, style="warren.activity"))
             self._plain_activity_started = True
+        self._health.frame_rendered()
 
     def update_activity(self, message: str) -> None:
         self._state.message = sanitize_terminal_text(message)
@@ -371,12 +380,14 @@ class TerminalRenderer:
             self.stderr.print(Text(self._state.message, style="warren.activity"))
         else:
             self.start_activity(self._state.message)
+        self._health.frame_rendered()
 
     def refresh_activity(self) -> None:
         """Refresh the current frame; deterministic tests advance an injected clock."""
 
         if self._live is not None:
             self._live.refresh()
+            self._health.frame_rendered()
 
     def resize(self, width: int) -> None:
         """Apply a terminal-width change to subsequent activity frames."""
@@ -458,6 +469,15 @@ class TerminalRenderer:
         )
 
     def emit(self, event: RunEvent) -> None:
+        """Reduce one durable event, render it, then record a successful frame."""
+
+        self._health.observe_event(event)
+        if isinstance(event, ToolCallCompleted):
+            self._health.record_retries(event.retry_count)
+        self._emit_event(event)
+        self._health.frame_rendered()
+
+    def _emit_event(self, event: RunEvent) -> None:
         if isinstance(event, RunStarted):
             self._evidence_by_ticker.clear()
             self._last_research_tool_count = 0
