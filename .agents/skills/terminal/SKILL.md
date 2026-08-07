@@ -51,7 +51,8 @@ and real PTY behavior are one contract.
 3. Map every visible state: startup, preparing, screening, ticker, tool start, tool
    completion, model, success, error, stopping, cancelled.
 4. Add focused tests first. Use `StringIO` for deterministic transcripts and a fake TTY
-   stream for Rich live cleanup/cursor behavior.
+   stream for Rich live cleanup/cursor behavior. For viewport regressions, drive
+   `TerminalScenario` with a `FakeClock` and assert the normalized `pyte` cell grid.
 5. Run the smoke script and manual live checks in [references/testing.md](references/testing.md).
 6. For a substantive UX change, ask an independent subagent (when available) to use
    the real terminal and critique it without seeing the intended fix. Iterate on verified
@@ -62,7 +63,8 @@ and real PTY behavior are one contract.
 
 ```bash
 uv run pytest -q tests/test_terminal_renderer.py tests/test_terminal_app.py \
-  tests/test_terminal_integration.py tests/test_terminal_restart_integration.py
+  tests/test_terminal_integration.py tests/test_terminal_restart_integration.py \
+  tests/test_terminal_reliability.py
 uv run python .agents/skills/terminal/scripts/pty_smoke.py
 uv run python .agents/skills/terminal/scripts/pty_smoke.py --no-color --columns 60
 uv run ruff check . && uv run ruff format --check . && uv run mypy . && uv run pytest -q
