@@ -83,3 +83,13 @@ def test_settings_validation_rejects_out_of_bounds_and_extra_fields() -> None:
         TerminalSettings(max_cost_usd=10.01)
     with pytest.raises(ValidationError):
         TerminalSettings.model_validate({"api_key": "secret"})
+
+
+def test_default_paths_honor_warren_state_dir(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    configured = tmp_path / "terminal-state"
+    monkeypatch.setenv("WARREN_STATE_DIR", str(configured))
+
+    assert settings_path() == configured / "settings.json"
+    assert history_path() == configured / "history"

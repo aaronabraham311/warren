@@ -4,8 +4,11 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
 
 ## Project map
 
-- `agent/`: shared run service, lifecycle events/cancellation/locking, agent loop, routing,
-  personas, budgets, portfolio/universe screening, and typed tools.
+- `agent/`: shared run service, lifecycle events/cancellation/locking, deterministic
+  request parsing, interactive terminal, agent loop, routing, personas, budgets,
+  portfolio/universe screening, and typed tools.
+- `agent/terminal/`: prompt lifecycle, typed slash commands, local completion,
+  control-safe rendering, non-secret settings, and read-only persisted-state queries.
 - `data_sources/`: all external API clients and cache behavior, including typed
   junior-market identity sources used by universe refresh and regional filings.
 - `storage/`: SQLAlchemy models, SQLite engine, Alembic migrations, JSONL WAL recovery.
@@ -25,6 +28,14 @@ Warren is a Python 3.13 stock-analysis agent. The runtime agent uses Anthropic's
 - Keep tests offline. Do not fall back from missing eval fixtures to live tools.
 - Use SQLAlchemy 2.x style and Alembic batch mode for SQLite schema alterations.
 - Load environment variables once at startup. Never commit `.env`, API keys, `warren.db`, `logs/`, caches, or generated worktrees.
+- Keep terminal state under gitignored `.warren/` by default, with one consistent
+  `WARREN_STATE_DIR` override; never persist API configuration there, and sanitize displayed
+  user content. JSONL remains
+  authoritative for traces and SQLite remains the read/query projection.
+- Keep natural-language terminal routing deterministic. Ambiguous, invalid, and
+  unsupported input must not fall through to a model or external data source.
+- Interactive and batch entry points call the shared run service; the terminal must
+  not shell out to or parse output from `agent.run`.
 - Prefer dataclasses for multi-value returns and keep public boundaries typed and validated.
 - Do not push, open PRs, modify external systems, or use destructive Git commands unless the user asks.
 
@@ -36,6 +47,7 @@ uv run ruff check .
 uv run ruff format --check .
 uv run mypy .
 uv run pytest -q
+uv run warren
 uv run python -m agent.run AAPL
 uv run python -m agent.eval --golden-set
 uv run streamlit run dashboard/app.py

@@ -275,3 +275,22 @@ def test_reconcile_orphans_sweeps_running_runs(
     assert run is not None
     assert run.status == "failed"  # no run_completed → crashed
     assert db_session.query(ToolCall).filter_by(run_id="r_orphan").count() == 1
+
+
+def test_reconcile_orphans_tolerates_torn_final_utf8_record(
+    db_engine: object, db_session: Session, tmp_path: Path
+) -> None:
+    from datetime import datetime, timezone
+
+    write_run_start("r_utf8_orphan", datetime.now(timezone.utc))
+    trace = tmp_path / "r_utf8_orphan.jsonl"
+    trace.write_bytes(
+        json.dumps({"event": "run_started", "run_id": "r_utf8_orphan"}).encode()
+        + b'\n{"event":"tool_call","output":"\xe2'
+    )
+
+    assert reconcile_orphans(tmp_path) == 1
+    db_session.expire_all()
+    run = db_session.get(Run, "r_utf8_orphan")
+    assert run is not None
+    assert run.status == "failed"

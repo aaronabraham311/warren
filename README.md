@@ -14,16 +14,74 @@ uv sync
 cp .env.example .env
 # Fill in ANTHROPIC_API_KEY and FINNHUB_API_KEY in .env
 
-# 3. Run a single-ticker analysis
-python -m agent.run AAPL
+# 3. Open the interactive terminal
+uv run warren
 
-# 4. Nightly mode: screen the S&P 500 + watchlist for candidates, then
+# 4. Or run a single batch analysis
+uv run python -m agent.run AAPL
+
+# 5. Nightly mode: screen the S&P 500 + watchlist for candidates, then
 #    deep-analyse your holdings plus the top 3 candidates (more API calls/cost)
-python -m agent.run
+uv run python -m agent.run
 
-# 5. Launch the dashboard
-streamlit run dashboard/app.py
+# 6. Launch the dashboard
+uv run streamlit run dashboard/app.py
 ```
+
+## Interactive terminal
+
+`uv run warren` opens a terminal transcript backed by the same run service, JSONL
+traces, and SQLite projection as the batch CLI. It accepts a deliberately small,
+deterministic natural-language grammar, so unsupported or ambiguous requests do not
+silently start an analysis.
+
+Examples:
+
+```text
+Analyze AAPL
+Compare COST with WMT
+Review my portfolio
+Run discovery
+Run gem hunt
+Show the risks
+```
+
+The terminal supports these slash commands:
+
+| Command | Behavior |
+|---|---|
+| `/help` | Show commands and request examples. |
+| `/new` | Clear transient recent-result context without deleting history. |
+| `/history [ticker]` | List recent analyses, optionally for one ticker. |
+| `/show RUN_ID` | Render analyses from a completed or partial run. |
+| `/trace [RUN_ID]` | Show the latest or selected run's tool and model events. |
+| `/portfolio` | Show current holdings and snapshot prices. |
+| `/watchlist` | Show current watchlist entries and notes. |
+| `/discover` | Run the existing US GARP discovery workflow. |
+| `/gem-hunt` | Run global deep-value discovery with the DIRT persona. |
+| `/persona [default\|dirt]` | Show or set the default analysis persona. |
+| `/budget [USD]` | Show or set the per-run cost ceiling, greater than $0 and at most $10. |
+| `/tools` | List Warren's available financial tools by category. |
+| `/quit` | Exit cleanly. |
+
+Input history and non-secret preferences persist under `.warren/` by default (or the
+directory selected by `WARREN_STATE_DIR`):
+
+- `.warren/history` stores prompt history.
+- `.warren/settings.json` stores persona, budget, and display preferences.
+- `.warren/active-run.lock` prevents interactive, batch, and scheduled analyses from
+  overlapping.
+
+These files are gitignored, and Warren never writes API configuration to them. Prompt
+history contains the text you enter, so do not paste credentials at the prompt. JSONL
+files under `logs/runs/` remain the authoritative run traces; SQLite remains the query
+projection used by history views. The terminal can use read-only commands without
+`ANTHROPIC_API_KEY`, but it rejects analysis commands before creating a run when the
+key is absent.
+
+Ctrl-C during a run requests cooperative cancellation; a second Ctrl-C may exit
+immediately. EOF or `/quit` exits cleanly. Piped and `NO_COLOR` output is stable and
+line-oriented.
 
 ## Stack
 
@@ -71,7 +129,7 @@ python -m agent.eval --golden-set --output runs/eval-$(date +%F).json
 
 ```
 warren/
-├── agent/          # Agentic loop, routing, persona, budget, and tools
+├── agent/          # Shared run service, interactive terminal, loop, routing, and tools
 ├── data_sources/   # Thin clients for yfinance, EDGAR, Finnhub, GDELT, OFAC
 ├── storage/        # SQLAlchemy models, schema, migrations
 ├── eval/           # Golden-set evaluation harness
@@ -105,7 +163,7 @@ tail -f logs/launchd_stdout.log
 tail -f logs/launchd_stderr.log
 
 # Manual trigger (runs immediately, same as the scheduled run)
-python -m agent.run --gem-hunt
+uv run python -m agent.run --gem-hunt
 
 # Uninstall
 bash scripts/uninstall_scheduler.sh
@@ -128,7 +186,7 @@ crontab -l | grep warren
 tail -f logs/cron.log
 
 # Manual trigger
-python -m agent.run --gem-hunt
+uv run python -m agent.run --gem-hunt
 
 # Uninstall — remove the warren line from your crontab
 crontab -e
@@ -142,6 +200,7 @@ crontab -e
 | `FINNHUB_API_KEY` | Real-time quotes and news |
 | `WARREN_DB` | Optional: override the SQLite path (default `warren.db`) |
 | `WARREN_LOGS_DIR` | Optional: override the JSONL run-log dir the dashboard reads (default `logs/runs`) |
+| `WARREN_STATE_DIR` | Optional: override terminal settings, prompt history, and active-run lock directory (default `.warren`) |
 | `WARREN_FILINGS_DIR` | Optional: content-addressed raw filing/text artifacts (default `local/filings`; excluded from Git) |
 | `WARREN_TRANSLATION_MODEL` | Optional: explicit Anthropic model for filing-page translation; unset keeps translation fail-closed |
 | `WARREN_TRANSLATION_INPUT_USD_PER_MILLION_TOKENS` | Required with a translation model: current input-token price used by the estimated cost admission budget |

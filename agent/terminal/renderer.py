@@ -126,6 +126,7 @@ class TerminalRenderer:
         self.stderr = _console(stderr, color=color, width=width)
         self.show_cost = show_cost
         self._state = _ProgressState()
+        self._evidence_by_ticker: dict[str, list[str]] = {}
         self._live_enabled = animation and _is_tty(stderr)
         self._live: Live | None = None
 
@@ -154,6 +155,16 @@ class TerminalRenderer:
             self._live = None
 
     def emit(self, event: RunEvent) -> None:
+        if isinstance(event, RunStarted):
+            self._evidence_by_ticker.clear()
+        elif (
+            isinstance(event, ToolCallCompleted)
+            and event.ticker is not None
+            and event.status == "success"
+        ):
+            evidence = self._evidence_by_ticker.setdefault(event.ticker, [])
+            if event.tool_name not in evidence:
+                evidence.append(event.tool_name)
         line = self._event_line(event)
         if line is None:
             return
@@ -162,6 +173,11 @@ class TerminalRenderer:
             self._live.update(self._progress_renderable(), refresh=True)
         else:
             self.stderr.print(Text(f"{line[0]}: {line[1]}"))
+
+    def evidence_for(self, ticker: str) -> tuple[str, ...]:
+        """Return the safe tool-name evidence index captured for the latest run."""
+
+        return tuple(self._evidence_by_ticker.get(ticker, ()))
 
     def _progress_renderable(self) -> Text:
         return Text(f"{self._state.phase}: {self._state.detail}", style="cyan")
@@ -270,6 +286,10 @@ class TerminalRenderer:
         if self.narrow or not _is_tty(self.stdout.file):
             self.stdout.print(Text(f"{ticker} | {recommendation} | confidence {confidence}"))
             self.stdout.print(Text(f"Thesis: {thesis}"))
+            if analysis.termination_reason != "success":
+                self.stdout.print(
+                    Text(f"Termination: {sanitize_terminal_text(analysis.termination_reason)}")
+                )
             self.stdout.print(
                 Text(
                     "Lynch: + "
@@ -313,6 +333,14 @@ class TerminalRenderer:
             Text(),
             Text("Key risks", style="bold"),
         ]
+        if analysis.termination_reason != "success":
+            body[1:1] = [
+                Text(),
+                Text(
+                    "Termination: " + sanitize_terminal_text(analysis.termination_reason),
+                    style="yellow",
+                ),
+            ]
         body.extend(Text(f"• {risk}") for risk in risks)
         if decision is not None:
             body.extend(
@@ -360,11 +388,16 @@ class TerminalRenderer:
                     "—",
                 )
             else:
+                thesis = sanitize_terminal_text(analysis.thesis)
+                if analysis.termination_reason != "success":
+                    thesis += "\nTermination: " + sanitize_terminal_text(
+                        analysis.termination_reason
+                    )
                 table.add_row(
                     sanitize_terminal_text(analysis.ticker),
                     sanitize_terminal_text(analysis.recommendation).upper(),
                     f"{analysis.confidence:.0%}",
-                    sanitize_terminal_text(analysis.thesis),
+                    thesis,
                     "\n".join(sanitize_terminal_text(risk) for risk in analysis.key_risks),
                 )
         self.stdout.print(table)

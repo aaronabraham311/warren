@@ -3,6 +3,7 @@ from __future__ import annotations
 import signal
 from io import StringIO
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -134,6 +135,113 @@ def test_help_persona_and_budget_work_and_persist_without_service() -> None:
     assert saved[-1].persona == "dirt"
     assert saved[-1].max_cost_usd == 3.5
     assert "Commands:" in stdout.getvalue()
+
+
+def test_stored_data_and_snapshot_commands_work_without_api_key(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    executor = _Executor()
+    stdout = StringIO()
+    stderr = StringIO()
+    monkeypatch.setattr(
+        terminal_app,
+        "_list_history",
+        lambda ticker: (
+            SimpleNamespace(
+                run_id="run-old",
+                status="success",
+                started_at="2026-08-05T10:00:00Z",
+                tickers=(ticker or "AAPL",),
+                total_cost_usd=0.12,
+            ),
+        ),
+    )
+    monkeypatch.setattr(
+        terminal_app,
+        "_get_run",
+        lambda run_id: SimpleNamespace(
+            run_id=run_id,
+            status="success",
+            started_at="start",
+            completed_at="end",
+            total_cost_usd=0.12,
+            total_input_tokens=100,
+            total_output_tokens=25,
+            num_tool_calls=3,
+            analyses=(
+                SimpleNamespace(
+                    ticker="AAPL",
+                    recommendation="hold",
+                    confidence=0.75,
+                    thesis="Stored thesis",
+                ),
+            ),
+        ),
+    )
+    monkeypatch.setattr(
+        terminal_app,
+        "_get_trace",
+        lambda run_id: SimpleNamespace(
+            run_id=run_id or "run-old",
+            events=(SimpleNamespace(timestamp="10:00", event="run_started", summary="AAPL"),),
+            warnings=(SimpleNamespace(message="ignored torn final line"),),
+        ),
+    )
+    monkeypatch.setattr(
+        terminal_app,
+        "_list_portfolio",
+        lambda: (SimpleNamespace(ticker="AAPL", shares=10, cost_basis=150, current_price=201),),
+    )
+    monkeypatch.setattr(
+        terminal_app,
+        "_list_watchlist",
+        lambda: (SimpleNamespace(ticker="COST", notes="compounder"),),
+    )
+
+    app = create_app(
+        stdin=StringIO("/history AAPL\n/show run-old\n/trace\n/portfolio\n/watchlist\n/quit\n"),
+        stdout=stdout,
+        stderr=stderr,
+        executor=executor,
+        settings=TerminalSettings(color="never"),
+        api_key_available=lambda: False,
+    )
+
+    assert app.run() == 0
+    assert executor.requests == []
+    output = stdout.getvalue()
+    assert "run-old | success" in output
+    assert "AAPL | HOLD | 75% | Stored thesis" in output
+    assert "run_started | AAPL" in output
+    assert "AAPL | 10 shares | cost $150.00 | snapshot $201.00" in output
+    assert "COST | compounder" in output
+    assert "ignored torn final line" in stderr.getvalue()
+
+
+def test_empty_stored_data_commands_report_clear_results(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(terminal_app, "_list_history", lambda ticker: ())
+    monkeypatch.setattr(terminal_app, "_get_run", lambda run_id: None)
+    monkeypatch.setattr(terminal_app, "_get_trace", lambda run_id: None)
+    monkeypatch.setattr(terminal_app, "_list_portfolio", lambda: ())
+    monkeypatch.setattr(terminal_app, "_list_watchlist", lambda: ())
+    stdout = StringIO()
+    app = create_app(
+        stdin=StringIO("/history\n/show absent\n/trace absent\n/portfolio\n/watchlist\n/quit\n"),
+        stdout=stdout,
+        stderr=StringIO(),
+        settings=TerminalSettings(color="never"),
+        api_key_available=lambda: False,
+    )
+
+    assert app.run() == 0
+    output = stdout.getvalue()
+    assert "No stored runs." in output
+    assert "Run absent was not found." in output
+    assert "No trace found for run absent." in output
+    assert "No stored portfolio holdings." in output
+    assert "Watchlist is empty." in output
 
 
 class _InterruptReader:
@@ -337,3 +445,37 @@ def test_second_run_sigint_unwinds_immediately_and_restores_handler(
     with pytest.raises(KeyboardInterrupt):
         app._execute_service("Analyze AAPL", RunRequest(mode=RunMode.TICKERS, tickers=("AAPL",)))
     assert installed[-1] is previous_handler
+
+
+def test_startup_recovery_uses_configured_log_directory(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    seen: list[Path] = []
+    migrated: list[bool] = []
+
+    def reconcile(log_dir: Path) -> int:
+        seen.append(log_dir)
+        return 2
+
+    monkeypatch.setenv("WARREN_LOGS_DIR", str(tmp_path / "run-traces"))
+    monkeypatch.setattr("storage.engine.migrate", lambda: migrated.append(True))
+    monkeypatch.setattr("storage.recovery.reconcile_orphans", reconcile)
+
+    assert terminal_app._recover_interrupted_runs() == 2
+    assert migrated == [True]
+    assert seen == [tmp_path / "run-traces"]
+
+
+def test_main_reports_recovered_runs_before_entering_repl(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    notices: list[object] = []
+    fake_app = SimpleNamespace(
+        renderer=SimpleNamespace(notice=notices.append, diagnostic=lambda message: None),
+        run=lambda: 0,
+    )
+    monkeypatch.setattr(terminal_app, "create_app", lambda: fake_app)
+    monkeypatch.setattr(terminal_app, "_recover_interrupted_runs", lambda: 3)
+
+    assert terminal_app.main() == 0
+    assert notices == ["Recovered 3 interrupted run(s)."]
