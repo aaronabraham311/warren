@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from math import log10
 from typing import Literal
 
+from agent.cancellation import CancellationToken, NeverCancelToken
 from agent.tools._clients import yfinance_client
 from data_sources.errors import DataSourceError
 from data_sources.yfinance_client import (
@@ -467,6 +468,7 @@ def run_screening_pass(
     max_workers: int | None = None,
     screen_fn: ScreenFn | None = None,
     rank: bool = False,
+    cancellation: CancellationToken | None = None,
 ) -> ScreeningResult:
     """Screen the universe and return tickers that clear all available criteria.
 
@@ -488,8 +490,10 @@ def run_screening_pass(
     """
     effective_criteria: Criteria = criteria if criteria is not None else DEFAULT_SCREEN_CRITERIA
     fn: ScreenFn = screen_fn if screen_fn is not None else _garp_screen_fn
+    token = cancellation if cancellation is not None else NeverCancelToken()
     yf = client if client is not None else yfinance_client()
     universe = universe[:MAX_UNIVERSE_SIZE]
+    progress_interval = max(1, len(universe) // 20)
 
     if logger is not None:
         logger.log(
@@ -499,13 +503,37 @@ def run_screening_pass(
             method="quantitative",
         )
 
+    outcomes: list[TickerScore] = []
+
+    def record_progress(completed: int, ticker: str) -> None:
+        if logger is not None and (
+            completed % progress_interval == 0 or completed == len(universe)
+        ):
+            logger.log(
+                "screening_progress",
+                completed=completed,
+                total=len(universe),
+                ticker=ticker,
+            )
+
     if max_workers is not None and max_workers > 1 and universe:
-        # ThreadPoolExecutor.map preserves input order, so zipping back against the
-        # (sorted) universe keeps the candidate list deterministic across worker counts.
+        # Execute in worker-sized batches: each batch remains parallel and ordered,
+        # while cancellation/progress can be observed between bounded groups.
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            outcomes = list(executor.map(lambda t: fn(t, yf, effective_criteria), universe))
+            for start in range(0, len(universe), max_workers):
+                token.raise_if_cancelled()
+                batch = universe[start : start + max_workers]
+                batch_outcomes = list(
+                    executor.map(lambda ticker: fn(ticker, yf, effective_criteria), batch)
+                )
+                outcomes.extend(batch_outcomes)
+                for offset, ticker in enumerate(batch, start=1):
+                    record_progress(start + offset, ticker)
     else:
-        outcomes = [fn(t, yf, effective_criteria) for t in universe]
+        for completed, ticker in enumerate(universe, start=1):
+            token.raise_if_cancelled()
+            outcomes.append(fn(ticker, yf, effective_criteria))
+            record_progress(completed, ticker)
 
     candidates = [t for t, o in zip(universe, outcomes, strict=True) if o.passed]
     needs_deeper_fetch = [

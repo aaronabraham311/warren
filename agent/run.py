@@ -1,89 +1,41 @@
+"""Batch CLI adapter over Warren's shared run service."""
+
 import argparse
 import sys
-from datetime import datetime, timezone
-from pathlib import Path
 from typing import Literal
-from uuid import uuid4
 
 import anthropic
 from dotenv import load_dotenv
 
-from agent.budget import Budget, RunContext
-from agent.cooldown import filter_universe_for_cooldown
-from agent.loop import CostAbortedError, analyze_ticker
-from agent.models import DEFAULT_MODEL_ID
-from agent.persona import DefaultPersona, DirtPersona
-from agent.portfolio import (
-    Holding,
-    WatchlistEntry,
-    load_portfolio,
-    load_watchlist,
-    sync_holdings_to_db,
-    sync_watchlist_to_db,
-)
-from agent.routing import PhaseBasedRouting
-from agent.screening import (
-    GEM_HUNT_SCREEN_CRITERIA,
-    run_screening_pass,
-    screen_ticker_value,
-)
-from agent.tools._clients import yfinance_client
-from agent.universe import get_current_universe, get_gem_hunt_universe
-from data_sources.yfinance_client import PriceData
+load_dotenv()  # must precede service/storage imports so WARREN_DB is applied once
 
-load_dotenv()  # must precede storage.engine import so WARREN_DB is applied before engine creation
-
-from storage.engine import (  # noqa: E402
-    ensure_prompt_version,
-    get_session,
-    migrate,
-    upsert_analysis,
-    write_run_start,
+from agent.budget import Budget  # noqa: E402
+from agent.cancellation import CancellationToken  # noqa: E402
+from agent.events import EventSink  # noqa: E402
+from agent.locking import RunLockHeldError  # noqa: E402
+from agent.loop import analyze_ticker  # noqa: E402
+from agent.persona import DefaultPersona, DirtPersona  # noqa: E402
+from agent.routing import PhaseBasedRouting  # noqa: E402
+from agent.service import (  # noqa: E402
+    MAX_SCREEN_CANDIDATES,
+    RunMode,
+    RunRequest,
+    build_portfolio_context,
+    execute_run,
+    sync_input_data,
+)
+from agent.service import (  # noqa: E402
+    _analyze_and_persist as _service_analyze_and_persist,
+)
+from agent.service import (  # noqa: E402
+    resolve_persona as _resolve_persona,
 )
 from storage.logger import RunLogger  # noqa: E402
-from storage.models import AnalysisData, RunStatus  # noqa: E402
-from storage.recovery import reconcile_orphans  # noqa: E402
 
-_LOG_DIR = Path("logs/runs")
-_PORTFOLIO_FILE = Path("data/portfolio.csv")
-_WATCHLIST_FILE = Path("data/watchlist.csv")
-_MAX_SCREEN_CANDIDATES = 3
-# Gem-hunt screens a low-thousands global universe; fan the per-ticker fetches out.
-_GEM_HUNT_SCREEN_WORKERS = 8
-
-
-def _build_portfolio_context(portfolio_file: Path) -> str:
-    if not portfolio_file.exists():
-        return ""
-    holdings = load_portfolio(portfolio_file, validate_tickers=False)
-    if not holdings:
-        return ""
-    lines = ["User's current portfolio holdings:"]
-    for h in holdings:
-        lines.append(
-            f"  {h.ticker}: {h.shares:.2f} shares, cost basis ${h.cost_basis:.2f}"
-            f" (purchased {h.purchase_date})"
-        )
-    return "\n".join(lines)
-
-
-def _sync_input_data(skip_ticker_validation: bool) -> None:
-    """Load, validate, and snapshot the portfolio + watchlist into SQLite.
-
-    Fails loudly on malformed input (the whole point of W2) before any analysis runs.
-    """
-    holdings = load_portfolio(_PORTFOLIO_FILE, validate_tickers=not skip_ticker_validation)
-    entries = load_watchlist(_WATCHLIST_FILE) if _WATCHLIST_FILE.exists() else []
-
-    current_prices: dict[str, float] = {}
-    for h in holdings:
-        price = yfinance_client().get_price(h.ticker)
-        if isinstance(price, PriceData) and price.current_price is not None:
-            current_prices[h.ticker] = price.current_price
-
-    with get_session() as session:
-        sync_holdings_to_db(holdings, session, current_prices)
-        sync_watchlist_to_db(entries, session)
+_MAX_SCREEN_CANDIDATES = MAX_SCREEN_CANDIDATES
+_build_portfolio_context = build_portfolio_context
+_sync_input_data = sync_input_data
+resolve_persona = _resolve_persona
 
 
 def _analyze_and_persist(
@@ -96,129 +48,31 @@ def _analyze_and_persist(
     routing_policy: PhaseBasedRouting,
     client: anthropic.Anthropic,
     portfolio_context: str,
+    *,
+    cancellation: CancellationToken | None = None,
 ) -> None:
-    """Run analysis for one ticker and persist the result. Raises on hard failure."""
-    tokens_before = budget.total_input_tokens + budget.total_output_tokens
-    calls_before = budget.total_tool_calls
+    """Compatibility seam for tests and integrations that used the former helper."""
 
-    run_context = RunContext(run_id=run_id, budget=budget, logger=logger)
-    logger.log("ticker_started", ticker=ticker, phase="deep", model=DEFAULT_MODEL_ID)
-
-    result = analyze_ticker(
-        ticker=ticker,
-        persona=persona,
-        routing_policy=routing_policy,
-        run_context=run_context,
-        client=client,
-        portfolio_context=portfolio_context,
-    )
-    result.analysis_type = analysis_type
-    result.tool_calls_made = budget.total_tool_calls - calls_before
-    result.tokens_used = (budget.total_input_tokens + budget.total_output_tokens) - tokens_before
-    dirt_signals = (
-        result.dirt_signals.model_dump(mode="json") if result.dirt_signals is not None else None
-    )
-    dirt_decision = (
-        result.dirt_decision.model_dump(mode="json") if result.dirt_decision is not None else None
-    )
-    decision_outcome = None if result.dirt_decision is None else result.dirt_decision.outcome
-    probability_weighted_irr = (
-        None if result.dirt_decision is None else result.dirt_decision.probability_weighted_irr
-    )
-
-    logger.log(
-        "ticker_completed",
-        ticker=ticker,
-        recommendation=result.recommendation,
-        confidence=result.confidence,
-        iterations=run_context.iterations,
-        tokens=result.tokens_used,
-        cost_usd=budget.total_cost_usd,
-        termination=result.termination_reason,
-        decision_outcome=decision_outcome,
-        probability_weighted_irr=probability_weighted_irr,
-        hurdle_irr=None if result.dirt_decision is None else result.dirt_decision.hurdle_irr,
-        required_entry_price=(
-            None if result.dirt_decision is None else result.dirt_decision.required_entry_price
-        ),
-    )
-    upsert_analysis(
-        run_id,
+    if analysis_type not in ("holding", "discovery"):
+        raise ValueError(f"unsupported analysis type: {analysis_type}")
+    _service_analyze_and_persist(
         ticker,
-        AnalysisData(
-            analysis_type=result.analysis_type,
-            recommendation=result.recommendation,
-            confidence=result.confidence,
-            thesis=result.thesis,
-            lynch_signals=result.lynch_signals.model_dump(),
-            buffett_signals=result.buffett_signals.model_dump(),
-            key_risks=result.key_risks,
-            data_quality_notes=result.data_quality_notes,
-            tool_calls_made=result.tool_calls_made,
-            tokens_used=result.tokens_used,
-            termination_reason=result.termination_reason,
-            dirt_signals=dirt_signals,
-            dirt_decision=dirt_decision,
-            decision_outcome=decision_outcome,
-            probability_weighted_irr=probability_weighted_irr,
-        ),
+        analysis_type,
+        run_id,
+        budget,
+        logger,
+        persona,
+        routing_policy,
+        client,
+        portfolio_context,
+        cancellation=cancellation,
+        analyzer=analyze_ticker,
     )
-    print(f"[{ticker}] {result.recommendation} ({result.confidence:.2f}): {result.thesis[:80]}")
-
-
-def _run_tickers(
-    tickers: list[tuple[str, Literal["holding", "discovery"]]],
-    run_id: str,
-    budget: Budget,
-    logger: RunLogger,
-    persona: DefaultPersona | DirtPersona,
-    routing_policy: PhaseBasedRouting,
-    client: anthropic.Anthropic,
-    portfolio_context: str,
-) -> tuple[RunStatus, str | None]:
-    logger.log("run_started", tickers=[t for t, _ in tickers])
-
-    status: RunStatus = "success"
-    error_msg: str | None = None
-
-    for ticker, analysis_type in tickers:
-        try:
-            _analyze_and_persist(
-                ticker,
-                analysis_type,
-                run_id,
-                budget,
-                logger,
-                persona,
-                routing_policy,
-                client,
-                portfolio_context,
-            )
-        except CostAbortedError as e:
-            status = "cost_aborted"
-            error_msg = str(e)
-            print(f"Cost ceiling reached after {ticker}: {e}", file=sys.stderr)
-            break
-        except Exception as e:
-            print(f"[{ticker}] Error: {e}", file=sys.stderr)
-            logger.log("ticker_failed", ticker=ticker, error=str(e))
-
-    return status, error_msg
-
-
-def resolve_persona(persona_arg: str, gem_hunt: bool) -> DefaultPersona | DirtPersona:
-    """Resolve the analysis persona from the CLI args.
-
-    Gem-hunt mode always implies the DIRT (deep-value) persona, overriding
-    ``--persona``. Otherwise the explicit ``--persona`` choice is honoured.
-    """
-    if gem_hunt or persona_arg == "dirt":
-        return DirtPersona()
-    return DefaultPersona()
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """The CLI surface. Split out of main() so tests can exercise the real parser."""
+    """The stable batch CLI surface used by people and scheduler scripts."""
+
     parser = argparse.ArgumentParser(description="Warren stock analysis agent")
     parser.add_argument(
         "ticker",
@@ -249,105 +103,66 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main() -> None:
-    args = build_parser().parse_args()
-
-    migrate()
-    reconcile_orphans(_LOG_DIR)  # self-heal any run left "running" by a previous crash
-    _sync_input_data(args.skip_ticker_validation)
-
-    persona: DefaultPersona | DirtPersona = resolve_persona(args.persona, args.gem_hunt)
-    routing_policy = PhaseBasedRouting()
-
-    prompt_version_id = ensure_prompt_version(
-        version_tag="v1",
-        persona_system_prompt=persona.system_prompt,
-        routing_policy_name=type(routing_policy).__name__,
-    )
-
-    run_id = str(uuid4())
-    started_at = datetime.now(timezone.utc)
-    write_run_start(run_id, started_at, prompt_version_id=prompt_version_id)
-
-    budget = Budget()
-    logger = RunLogger(run_id, _LOG_DIR)
-    client = anthropic.Anthropic()
-    portfolio_context = _build_portfolio_context(_PORTFOLIO_FILE)
-
-    holdings: list[Holding] = load_portfolio(_PORTFOLIO_FILE, validate_tickers=False)
-    watchlist: list[WatchlistEntry] = (
-        load_watchlist(_WATCHLIST_FILE) if _WATCHLIST_FILE.exists() else []
-    )
-
+def _request_from_args(args: argparse.Namespace) -> RunRequest:
     if args.ticker is not None:
-        # Single-ticker deep analysis
-        tickers: list[tuple[str, Literal["holding", "discovery"]]] = [
-            (args.ticker.upper(), "holding")
-        ]
-    else:
-        # Nightly mode: screen S&P 500 union watchlist, then analyse holdings + top candidates
-        gem_hunt = args.gem_hunt
-        watchlist_tickers = [e.ticker for e in watchlist]
-        with get_session() as session:
-            if gem_hunt:
-                # Global 3-exchange universe (Milan ∪ Madrid ∪ Warsaw ∪ watchlist).
-                universe = get_gem_hunt_universe(session, watchlist_tickers)
-            else:
-                universe = get_current_universe(session, watchlist_tickers)
-            cooldown_result = filter_universe_for_cooldown(universe, session, recent_news={})
-        logger.log(
-            "discovery_cooldown_applied",
-            suppressed_count=len(cooldown_result.suppressed),
-            suppressed_tickers=cooldown_result.suppressed,
+        return RunRequest(
+            mode=RunMode.TICKERS,
+            tickers=[args.ticker],
+            persona="dirt" if args.gem_hunt else args.persona,
+            skip_ticker_validation=args.skip_ticker_validation,
         )
+    return RunRequest(
+        mode=RunMode.GEM_HUNT if args.gem_hunt else RunMode.DISCOVERY,
+        persona=args.persona,
+        skip_ticker_validation=args.skip_ticker_validation,
+    )
 
-        if gem_hunt:
-            # Deep-value screen over the global universe: distinct cheap-quality-on-assets
-            # criteria (NOT the GARP pe/peg/roe/de/rev_growth gates), with score-based
-            # ranking so ``candidates`` arrive cheapest-first. The top-N truncation below
-            # therefore takes the best-value names, not the alphabetically-first.
-            screening = run_screening_pass(
-                cooldown_result.active,
-                criteria=GEM_HUNT_SCREEN_CRITERIA,
-                logger=logger,
-                max_workers=_GEM_HUNT_SCREEN_WORKERS,
-                screen_fn=screen_ticker_value,
-                rank=True,
-            )
-            candidates = screening.surfaced[:_MAX_SCREEN_CANDIDATES]
+
+def _print_result(result: object) -> None:
+    from agent.service import RunResult
+
+    if not isinstance(result, RunResult):
+        raise TypeError("unexpected run result")
+    if result.screening is not None:
+        summary = result.screening
+        if summary.gem_hunt:
             print(
                 "Gem screen: "
-                f"{len(screening.candidates)} confirmed, "
-                f"{len(screening.needs_deeper_fetch)} need deeper fetch, "
-                f"{len(screening.source_errors)} source errors"
+                f"{summary.confirmed_count} confirmed, "
+                f"{summary.needs_deeper_fetch_count} need deeper fetch, "
+                f"{summary.source_error_count} source errors"
             )
-        else:
-            screening = run_screening_pass(cooldown_result.active, logger=logger)
-            candidates = screening.candidates[:_MAX_SCREEN_CANDIDATES]
         print(
-            f"Screening surfaced {len(screening.candidates)} candidates; "
-            f"analysing top {len(candidates)}: {candidates}"
+            f"Screening surfaced {summary.confirmed_count} candidates; "
+            f"analysing top {len(summary.selected_candidates)}: "
+            f"{list(summary.selected_candidates)}"
         )
+    for ticker_result in result.ticker_results:
+        if ticker_result.analysis is not None:
+            analysis = ticker_result.analysis
+            print(
+                f"[{ticker_result.ticker}] {analysis.recommendation} "
+                f"({analysis.confidence:.2f}): {analysis.thesis[:80]}"
+            )
+        elif ticker_result.error is not None:
+            print(f"[{ticker_result.ticker}] Error: {ticker_result.error}", file=sys.stderr)
+    if result.status == "cost_aborted" and result.error_msg:
+        print(f"Cost ceiling reached: {result.error_msg}", file=sys.stderr)
+    elif result.status == "cancelled":
+        print("Run cancelled safely.", file=sys.stderr)
+    elif result.status == "failed" and result.error_msg:
+        print(f"Run failed: {result.error_msg}", file=sys.stderr)
 
-        tickers = [(h.ticker, "holding") for h in holdings] + [(c, "discovery") for c in candidates]
 
-    status, error_msg = _run_tickers(
-        tickers, run_id, budget, logger, persona, routing_policy, client, portfolio_context
-    )
-
-    duration_seconds = (datetime.now(timezone.utc) - started_at).total_seconds()
-    logger.log(
-        "run_completed",
-        status=status,
-        total_cost_usd=budget.total_cost_usd,
-        duration_seconds=duration_seconds,
-        error_msg=error_msg,
-    )
-    with get_session() as session:
-        logger.flush_to_db(session)
-    logger.close()
-
-    if status not in ("success",):
+def main(*, event_sink: EventSink | None = None) -> None:
+    args = build_parser().parse_args()
+    try:
+        result = execute_run(_request_from_args(args), event_sink=event_sink)
+    except RunLockHeldError as exc:
+        print(str(exc), file=sys.stderr)
+        sys.exit(1)
+    _print_result(result)
+    if result.status != "success":
         sys.exit(1)
 
 

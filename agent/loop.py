@@ -11,6 +11,7 @@ from pydantic import BaseModel, ValidationError
 
 from agent.budget import RunContext
 from agent.caching import call_claude_with_caching
+from agent.events import ToolCallStarted, emit_safely
 from agent.models import AnalysisOutput
 from agent.tools import TOOL_DEFINITIONS, TOOL_REGISTRY
 from agent.tools.base import Tool, ToolResult, ToolResultError, ToolResultOk
@@ -74,6 +75,7 @@ def _run_with_retry(
     retries = 0
     last_error_code: str | None = None
     while True:
+        run_context.cancellation.raise_if_cancelled()
         result = tool_runner.run(tool, parsed, run_context)
         if isinstance(result, ToolResultOk):
             return _RetryOutcome(result, retries, last_error_code)
@@ -266,6 +268,7 @@ def _call_and_record(
     response_observer: Callable[[anthropic.types.Message], None] | None = None,
 ) -> anthropic.types.Message:
     """Time the call, record token/cost usage, and emit an llm_call WAL event."""
+    run_context.cancellation.raise_if_cancelled()
     t0 = time.monotonic()
     response = _call_claude(
         client, model, persona_prompt, portfolio_context, messages, max_tokens, temperature
@@ -307,6 +310,7 @@ def analyze_ticker(
     while True:
         iteration += 1
         run_context.iterations = iteration
+        run_context.cancellation.raise_if_cancelled()
 
         # ── Cost ceiling (hard abort — no force-final, run is over) ──────────
         if run_context.budget.cost_exceeded():
@@ -409,6 +413,7 @@ def analyze_ticker(
                 if not isinstance(block, anthropic.types.ToolUseBlock):
                     continue
 
+                run_context.cancellation.raise_if_cancelled()
                 call_count = run_context.record_tool_call(block.name, dict(block.input))
                 if call_count >= _MAX_TOOL_REPEATS:
                     force_tool_loop = True
@@ -438,6 +443,14 @@ def analyze_ticker(
                             retryable=False,
                         )
                     else:
+                        emit_safely(
+                            run_context.event_sink,
+                            ToolCallStarted(
+                                run_id=run_context.run_id,
+                                ticker=ticker,
+                                tool_name=block.name,
+                            ),
+                        )
                         outcome = _run_with_retry(tool, parsed, run_context, _sleep, tool_runner)
                         tool_result = outcome.result
                         retry_count = outcome.retry_count

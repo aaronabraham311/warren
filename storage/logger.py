@@ -21,8 +21,10 @@ different tool after the first one (signal that it didn't trust the first answer
 
 import json
 import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import anthropic
 from sqlalchemy.orm import Session
@@ -30,19 +32,23 @@ from sqlalchemy.orm import Session
 from storage.cost import compute_cost
 from storage.engine import truncate_tool_output
 
+if TYPE_CHECKING:
+    from agent.events import EventSink
+
 
 def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 class RunLogger:
-    def __init__(self, run_id: str, log_dir: Path) -> None:
+    def __init__(self, run_id: str, log_dir: Path, event_sink: "EventSink | None" = None) -> None:
         self.run_id = run_id
         self.log_dir = log_dir
         self.path = log_dir / f"{run_id}.jsonl"
         log_dir.mkdir(parents=True, exist_ok=True)
         self._fh = self.path.open("a", encoding="utf-8")
         self._tool_seq = 0
+        self._event_sink = event_sink
 
     def log(self, event: str, **fields: object) -> None:
         """Append one JSON line atomically: ts + run_id + event + fields, then fsync."""
@@ -51,6 +57,25 @@ class RunLogger:
         self._fh.write(json.dumps(record) + "\n")
         self._fh.flush()
         os.fsync(self._fh.fileno())
+        self._emit_display_event(record)
+
+    def _emit_display_event(self, record: dict[str, object]) -> None:
+        """Fan out a redacted event only after its authoritative WAL record is durable."""
+        if self._event_sink is None:
+            return
+        from agent.events import event_from_wal_record
+
+        display_event = event_from_wal_record(record)
+        if display_event is None:
+            return
+        try:
+            self._event_sink.emit(display_event)
+        except Exception as exc:
+            # Rendering is subordinate to persistence and must never fail a run.
+            print(
+                f"[warren] display event sink failed ({type(exc).__name__})",
+                file=sys.stderr,
+            )
 
     def log_llm_call(
         self,
@@ -100,7 +125,12 @@ class RunLogger:
     ) -> None:
         # Reuse the engine's >8 KB sidecar truncation so the JSONL line stays small
         # while the full payload remains recoverable from logs/runs/{run_id}/tool_outputs/.
-        stored_output = truncate_tool_output(output, self.run_id, self._tool_seq)
+        stored_output = truncate_tool_output(
+            output,
+            self.run_id,
+            self._tool_seq,
+            base_dir=self.log_dir,
+        )
         self._tool_seq += 1
         self.log(
             "tool_call",
