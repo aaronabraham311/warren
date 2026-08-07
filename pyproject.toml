@@ -18,7 +18,22 @@ dependencies = [
     "finnhub-python>=2.4.28",
     "pyyaml>=6.0.3",
     "pypdf>=6.14.2",
+    "rich>=15.0.0",
+    "prompt-toolkit>=3.0.53",
 ]
+
+[project.scripts]
+warren = "agent.chat:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agent", "dashboard", "data_sources", "eval", "storage"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"alembic.ini" = "alembic.ini"
 
 [dependency-groups]
 dev = [
