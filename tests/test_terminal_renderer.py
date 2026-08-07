@@ -4,6 +4,7 @@ from io import StringIO
 
 from agent.events import (
     LlmCallCompleted,
+    LlmCallStarted,
     RunCompleted,
     RunFailed,
     RunStarted,
@@ -12,7 +13,12 @@ from agent.events import (
 )
 from agent.models import AnalysisOutput, LynchBuffettSignals
 from agent.service import RunResult, TickerRunResult
-from agent.terminal.renderer import TerminalRenderer, sanitize_terminal_text
+from agent.terminal.renderer import (
+    TerminalRenderer,
+    _model_wait_message,
+    _ModelWait,
+    sanitize_terminal_text,
+)
 
 
 class _TTYBuffer(StringIO):
@@ -160,6 +166,42 @@ def test_plain_activity_is_immediate_and_completed_tools_persist_once() -> None:
     assert "Analyzing AAPL…" in transcript
 
 
+def test_model_wait_is_visible_before_network_completion_and_persists_result() -> None:
+    stderr = StringIO()
+    renderer = TerminalRenderer(stdout=StringIO(), stderr=stderr, color="never")
+
+    with renderer.activity("Preparing analysis…"):
+        renderer.emit(LlmCallStarted("run-1", "AMD", "sonnet", "planning", 1, 0))
+        renderer.emit(
+            LlmCallCompleted(
+                "run-1",
+                "AMD",
+                "sonnet",
+                81549,
+                1,
+                3693,
+                0.20287215,
+                purpose="synthesis",
+                iteration=4,
+            )
+        )
+
+    transcript = stderr.getvalue()
+    assert "Planning research · AMD" in transcript
+    assert "✓ Model synthesis  ·  3,693 tokens  ·  1m 21.5s  ·  $0.2029" in transcript
+
+
+def test_model_wait_wording_becomes_explicit_without_claiming_progress() -> None:
+    wait = _ModelWait("AMD", "synthesis", 7)
+
+    assert _model_wait_message(wait, 0, 100) == ("Synthesizing analysis · AMD · 7 tools complete")
+    assert _model_wait_message(wait, 16, 100) == "Waiting for model response · AMD"
+    assert _model_wait_message(wait, 46, 100) == (
+        "Still waiting for model · AMD · Ctrl-C to cancel"
+    )
+    assert _model_wait_message(wait, 46, 34) == "AMD · waiting · Ctrl-C"
+
+
 def test_forced_color_uses_the_shared_navy_theme(monkeypatch: object) -> None:
     from pytest import MonkeyPatch
 
@@ -191,12 +233,17 @@ def test_tty_activity_always_stops_live_renderer(monkeypatch: object) -> None:
     )
 
     with renderer.activity("Preparing analysis…"):
-        assert bool(renderer._live)
-        renderer.update_activity("Using Market quote")
+        live = renderer._live
+        assert live is not None
+        renderer.emit(ToolCallCompleted("run-1", "AMD", "get_quote", "ok", False, 178, 0))
+        renderer.emit(LlmCallStarted("run-1", "AMD", "sonnet", "synthesis", 4, 1))
+        live.refresh()
+        assert "Synthesizing analysis" in stderr.getvalue()
+        assert "Research pass" in stderr.getvalue()
 
     assert renderer._live is None
     assert renderer._progress is None
-    assert "Using Market quote" in stderr.getvalue()
+    assert "Market quote" in stderr.getvalue()
     assert "\x1b[?25h" in stderr.getvalue()
 
 

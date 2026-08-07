@@ -9,7 +9,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Literal, Protocol, TypeAlias
+from typing import Literal, Protocol, TypeAlias, cast
+
+LlmCallPurpose: TypeAlias = Literal["planning", "synthesis", "finalizing", "validation"]
 
 
 def _utc_now_iso() -> str:
@@ -63,6 +65,18 @@ class TickerStarted:
 
 
 @dataclass(frozen=True, slots=True)
+class LlmCallStarted:
+    run_id: str
+    ticker: str | None
+    model: str | None
+    purpose: LlmCallPurpose
+    iteration: int
+    tool_count: int
+    timestamp: str = field(default_factory=_utc_now_iso)
+    kind: Literal["llm_call_started"] = "llm_call_started"
+
+
+@dataclass(frozen=True, slots=True)
 class LlmCallCompleted:
     run_id: str
     ticker: str | None
@@ -73,6 +87,8 @@ class LlmCallCompleted:
     cost_usd: float
     cache_read_tokens: int = 0
     cache_creation_tokens: int = 0
+    purpose: LlmCallPurpose = "synthesis"
+    iteration: int = 0
     timestamp: str = field(default_factory=_utc_now_iso)
     kind: Literal["llm_call_completed"] = "llm_call_completed"
 
@@ -141,6 +157,7 @@ RunEvent: TypeAlias = (
     | ScreeningProgress
     | CandidateSelected
     | TickerStarted
+    | LlmCallStarted
     | LlmCallCompleted
     | ToolCallStarted
     | ToolCallCompleted
@@ -200,6 +217,13 @@ def _timestamp(record: dict[str, object]) -> str:
     return _str(record, "ts") or _utc_now_iso()
 
 
+def _llm_purpose(record: dict[str, object]) -> LlmCallPurpose:
+    value = _str(record, "purpose")
+    if value in {"planning", "synthesis", "finalizing", "validation"}:
+        return cast(LlmCallPurpose, value)
+    return "synthesis"
+
+
 def event_from_wal_record(record: dict[str, object]) -> RunEvent | None:
     """Project a durable WAL record into its redacted display event, if applicable."""
     run_id = _str(record, "run_id")
@@ -247,6 +271,16 @@ def event_from_wal_record(record: dict[str, object]) -> RunEvent | None:
         ticker = _str(record, "ticker")
         if ticker is not None:
             return TickerStarted(run_id, ticker, timestamp=_timestamp(record))
+    if event == "llm_call_started":
+        return LlmCallStarted(
+            run_id=run_id,
+            ticker=_str(record, "ticker"),
+            model=_str(record, "model"),
+            purpose=_llm_purpose(record),
+            iteration=_int(record, "iteration"),
+            tool_count=_int(record, "tool_count"),
+            timestamp=_timestamp(record),
+        )
     if event == "llm_call":
         return LlmCallCompleted(
             run_id=run_id,
@@ -258,6 +292,8 @@ def event_from_wal_record(record: dict[str, object]) -> RunEvent | None:
             cost_usd=_float(record, "cost_usd"),
             cache_read_tokens=_int(record, "cache_read_tokens"),
             cache_creation_tokens=_int(record, "cache_creation_tokens"),
+            purpose=_llm_purpose(record),
+            iteration=_int(record, "iteration"),
             timestamp=_timestamp(record),
         )
     if event == "tool_call":

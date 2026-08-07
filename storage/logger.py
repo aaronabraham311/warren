@@ -7,7 +7,8 @@ of this trace, rebuilt by :func:`storage.recovery.reconcile_run` (via
 :meth:`RunLogger.flush_to_db`) — never written incrementally during the loop.
 
 Wired event types (single-ticker loop): ``run_started``, ``ticker_started``,
-``llm_call``, ``tool_call``, ``ticker_completed``, ``run_completed``. The generic
+``llm_call_started``, ``llm_call``, ``tool_call``, ``ticker_completed``,
+``run_completed``. The generic
 :meth:`log` also supports ``phase_started`` / ``phase_completed`` for the future
 screening orchestrator.
 
@@ -33,7 +34,7 @@ from storage.cost import compute_cost
 from storage.engine import truncate_tool_output
 
 if TYPE_CHECKING:
-    from agent.events import EventSink
+    from agent.events import EventSink, LlmCallPurpose
 
 
 def _utc_now_iso() -> str:
@@ -85,6 +86,8 @@ class RunLogger:
         phase: str,
         model: str,
         latency_ms: int,
+        purpose: "LlmCallPurpose" = "synthesis",
+        iteration: int = 0,
     ) -> None:
         usage = response.usage
         cache_read = usage.cache_read_input_tokens or 0
@@ -107,6 +110,8 @@ class RunLogger:
             output_tokens=usage.output_tokens,
             latency_ms=latency_ms,
             cost_usd=cost_usd,
+            purpose=purpose,
+            iteration=iteration,
         )
 
     def log_tool_call(

@@ -15,7 +15,7 @@ from typing import IO, Iterator, Literal, TextIO
 from rich.console import Console, Group
 from rich.live import Live
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TaskID, TextColumn, TimeElapsedColumn
+from rich.progress import Progress, ProgressColumn, SpinnerColumn, Task, TaskID, TimeElapsedColumn
 from rich.table import Table
 from rich.text import Text
 from rich.theme import Theme
@@ -24,6 +24,8 @@ from agent.events import (
     AnalysisCompleted,
     CandidateSelected,
     LlmCallCompleted,
+    LlmCallPurpose,
+    LlmCallStarted,
     RunCancelled,
     RunCompleted,
     RunEvent,
@@ -125,6 +127,9 @@ def _tool_succeeded(status: str) -> bool:
 def _format_duration(latency_ms: int) -> str:
     if latency_ms < 1000:
         return f"{latency_ms}ms"
+    if latency_ms >= 60_000:
+        minutes, remainder_ms = divmod(latency_ms, 60_000)
+        return f"{minutes}m {remainder_ms / 1000:.1f}s"
     return f"{latency_ms / 1000:.1f}s"
 
 
@@ -141,12 +146,13 @@ def _console(
 ) -> Console:
     no_color = bool(os.environ.get("NO_COLOR"))
     terminal = _is_tty(stream)
-    force_terminal = color == "always" and not no_color
+    force_terminal: bool | None = None
     if color == "never" or no_color or (color == "auto" and not terminal):
         color_system: ColorSystem | None = None
         force_terminal = False
     elif color == "always":
         color_system = "truecolor"
+        force_terminal = True
     else:
         color_system = "auto"
     return Console(
@@ -165,6 +171,55 @@ def _console(
 @dataclass(slots=True)
 class _ProgressState:
     message: str = "Preparing analysis…"
+    model_wait: _ModelWait | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class _ModelWait:
+    ticker: str
+    purpose: LlmCallPurpose
+    tool_count: int
+
+
+def _model_wait_message(wait: _ModelWait, elapsed: float, width: int) -> str:
+    """Return honest, width-aware model activity without inventing progress."""
+
+    if elapsed >= 45:
+        if width < 48:
+            return f"{wait.ticker} · waiting · Ctrl-C"
+        return f"Still waiting for model · {wait.ticker} · Ctrl-C to cancel"
+    if elapsed >= 15:
+        if width < 48:
+            return f"Waiting on model · {wait.ticker}"
+        return f"Waiting for model response · {wait.ticker}"
+    action = {
+        "planning": "Planning research",
+        "synthesis": "Synthesizing analysis",
+        "finalizing": "Finalizing analysis",
+        "validation": "Validating analysis",
+    }[wait.purpose]
+    if width < 48:
+        return f"{action} · {wait.ticker}"
+    tools = f" · {wait.tool_count} tools complete" if wait.tool_count else ""
+    return f"{action} · {wait.ticker}{tools}"
+
+
+class _ActivityColumn(ProgressColumn):
+    def __init__(self, state: _ProgressState, width: int) -> None:
+        super().__init__()
+        self._state = state
+        self._width = width
+
+    def render(self, task: Task) -> Text:
+        if self._state.model_wait is None:
+            message = self._state.message
+        else:
+            message = _model_wait_message(
+                self._state.model_wait,
+                task.elapsed or 0.0,
+                self._width,
+            )
+        return Text(message, style="warren.activity", no_wrap=True, overflow="ellipsis")
 
 
 class TerminalRenderer:
@@ -196,6 +251,7 @@ class TerminalRenderer:
         self._progress: Progress | None = None
         self._progress_task_id: TaskID | None = None
         self._plain_activity_started = False
+        self._last_research_tool_count = 0
 
     @property
     def narrow(self) -> bool:
@@ -234,6 +290,7 @@ class TerminalRenderer:
 
     def start_activity(self, message: str, *, announce: bool = False) -> None:
         self._state.message = sanitize_terminal_text(message)
+        self._state.model_wait = None
         if announce:
             self.stderr.print(Text(self._state.message, style="warren.activity"))
             self._plain_activity_started = True
@@ -241,7 +298,7 @@ class TerminalRenderer:
             if self._live is None:
                 self._progress = Progress(
                     SpinnerColumn(style="warren.activity"),
-                    TextColumn("{task.description}", style="warren.activity"),
+                    _ActivityColumn(self._state, self.stderr.width),
                     TimeElapsedColumn(),
                     console=self.stderr,
                     auto_refresh=False,
@@ -256,6 +313,8 @@ class TerminalRenderer:
                     console=self.stderr,
                     transient=True,
                     refresh_per_second=10,
+                    redirect_stdout=False,
+                    redirect_stderr=False,
                 )
                 self._live.start(refresh=True)
             else:
@@ -266,6 +325,7 @@ class TerminalRenderer:
 
     def update_activity(self, message: str) -> None:
         self._state.message = sanitize_terminal_text(message)
+        self._state.model_wait = None
         if self._progress is not None and self._progress_task_id is not None:
             self._progress.update(self._progress_task_id, description=self._state.message)
             if self._live is not None:
@@ -274,6 +334,37 @@ class TerminalRenderer:
             self.stderr.print(Text(self._state.message, style="warren.activity"))
         else:
             self.start_activity(self._state.message)
+
+    def _start_model_activity(self, event: LlmCallStarted) -> None:
+        ticker = sanitize_terminal_text(event.ticker or "request")
+        self._state.model_wait = _ModelWait(ticker, event.purpose, event.tool_count)
+        if event.tool_count > self._last_research_tool_count:
+            self._render_research_transition(event.tool_count)
+            self._last_research_tool_count = event.tool_count
+        if self._progress is not None and self._progress_task_id is not None:
+            self._progress.reset(self._progress_task_id, start=True)
+            if self._live is not None:
+                self._live.refresh()
+        elif self._plain_activity_started:
+            self.stderr.print(
+                Text(
+                    _model_wait_message(self._state.model_wait, 0.0, self.stderr.width),
+                    style="warren.activity",
+                )
+            )
+        else:
+            wait = self._state.model_wait
+            self.start_activity(_model_wait_message(wait, 0.0, self.stderr.width))
+            self._state.model_wait = wait
+            if self._live is not None:
+                self._live.refresh()
+
+    def _render_research_transition(self, tool_count: int) -> None:
+        line = Text()
+        line.append("✓ ", style="warren.success")
+        line.append("Research pass", style="warren.success")
+        line.append(f"  ·  {tool_count} tools gathered", style="warren.muted")
+        self.stderr.print(line)
 
     def welcome(self) -> None:
         line = Text()
@@ -313,6 +404,7 @@ class TerminalRenderer:
     def emit(self, event: RunEvent) -> None:
         if isinstance(event, RunStarted):
             self._evidence_by_ticker.clear()
+            self._last_research_tool_count = 0
         elif (
             isinstance(event, ToolCallCompleted)
             and event.ticker is not None
@@ -321,6 +413,14 @@ class TerminalRenderer:
             evidence = self._evidence_by_ticker.setdefault(event.ticker, [])
             if event.tool_name not in evidence:
                 evidence.append(event.tool_name)
+        if isinstance(event, LlmCallStarted):
+            self._start_model_activity(event)
+            return
+        if isinstance(event, LlmCallCompleted):
+            self._render_model_completion(event)
+            ticker = sanitize_terminal_text(event.ticker) if event.ticker else "the request"
+            self.update_activity(f"Analyzing {ticker}…")
+            return
         if isinstance(event, ToolCallCompleted):
             self._render_tool_completion(event)
             ticker = sanitize_terminal_text(event.ticker) if event.ticker else "the request"
@@ -361,6 +461,29 @@ class TerminalRenderer:
             )
         self.stderr.print(line)
 
+    def _render_model_completion(self, event: LlmCallCompleted) -> None:
+        label = {
+            "planning": "Research plan",
+            "synthesis": "Model synthesis",
+            "finalizing": "Final analysis",
+            "validation": "Analysis validation",
+        }[event.purpose]
+        line = Text()
+        line.append("✓ ", style="warren.success")
+        line.append(label, style="warren.success")
+        line.append(f"  ·  {event.output_tokens:,} tokens", style="warren.muted")
+        if event.latency_ms is not None:
+            line.append(f"  ·  {_format_duration(event.latency_ms)}", style="warren.muted")
+        if event.cache_read_tokens or event.cache_creation_tokens:
+            line.append(
+                f"  ·  cache-read={event.cache_read_tokens:,}"
+                f" cache-write={event.cache_creation_tokens:,}",
+                style="warren.muted",
+            )
+        if self.show_cost:
+            line.append(f"  ·  ${event.cost_usd:.4f}", style="warren.muted")
+        self.stderr.print(line)
+
     def _event_line(self, event: RunEvent) -> tuple[str, str] | None:
         if isinstance(event, RunStarted):
             tickers = ", ".join(sanitize_terminal_text(t) for t in event.tickers)
@@ -379,15 +502,6 @@ class TerminalRenderer:
             return "Analyzing", sanitize_terminal_text(event.ticker)
         if isinstance(event, ToolCallStarted):
             return "Using", _tool_label(event.tool_name)
-        if isinstance(event, LlmCallCompleted):
-            cost = f" ${event.cost_usd:.4f}" if self.show_cost else ""
-            cache = ""
-            if event.cache_read_tokens or event.cache_creation_tokens:
-                cache = (
-                    f" cache-read={event.cache_read_tokens}"
-                    f" cache-write={event.cache_creation_tokens}"
-                )
-            return "Model", f"{event.input_tokens} in / {event.output_tokens} out{cache}{cost}"
         if isinstance(event, AnalysisCompleted):
             recommendation = sanitize_terminal_text(event.recommendation or "unknown")
             confidence = "?" if event.confidence is None else f"{event.confidence:.0%}"

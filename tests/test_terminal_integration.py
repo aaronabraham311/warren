@@ -48,6 +48,80 @@ class _RecordingExecutor:
         return self.result
 
 
+@pytest.mark.skipif(os.name == "nt", reason="PTY lifecycle is POSIX-specific")
+def test_real_pty_keeps_model_activity_after_durable_tool_output() -> None:
+    import pty
+    import re
+    import select
+    from textwrap import dedent
+
+    child = dedent(
+        """
+        import sys
+        import time
+        from agent.events import LlmCallStarted, ToolCallCompleted
+        from agent.terminal.renderer import TerminalRenderer
+
+        renderer = TerminalRenderer(
+            stdout=sys.stdout,
+            stderr=sys.stderr,
+            color="auto",
+            animation=True,
+            width=80,
+        )
+        with renderer.activity("Preparing analysis…"):
+            renderer.emit(
+                ToolCallCompleted("run-1", "AMD", "get_quote", "ok", False, 178, 0)
+            )
+            renderer.emit(
+                LlmCallStarted("run-1", "AMD", "sonnet", "synthesis", 4, 7)
+            )
+            time.sleep(0.3)
+        """
+    )
+    master_fd, slave_fd = pty.openpty()
+    environment = os.environ.copy()
+    environment.pop("NO_COLOR", None)
+    environment["TERM"] = "xterm-256color"
+    process = subprocess.Popen(
+        [sys.executable, "-c", child],
+        cwd=Path(__file__).parents[1],
+        env=environment,
+        stdout=slave_fd,
+        stderr=slave_fd,
+        close_fds=True,
+    )
+    os.close(slave_fd)
+    chunks: list[bytes] = []
+    try:
+        while True:
+            ready, _, _ = select.select([master_fd], [], [], 2.0)
+            if ready:
+                try:
+                    chunk = os.read(master_fd, 16_384)
+                except OSError:
+                    break
+                if chunk:
+                    chunks.append(chunk)
+                else:
+                    break
+            if process.poll() is not None and not ready:
+                break
+        assert process.wait(timeout=5) == 0
+    finally:
+        os.close(master_fd)
+        if process.poll() is None:
+            process.kill()
+
+    transcript = b"".join(chunks).decode(errors="replace")
+    plain = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", transcript)
+    assert "✓ Market quote" in plain
+    assert "Research pass" in plain
+    assert "Synthesizing analysis · AMD · 7 tools complete" in plain
+    assert "\x1b[?25l" in transcript
+    assert "\x1b[?25h" in transcript
+
+
 def test_piped_compare_preserves_order_settings_partial_failure_and_plain_text() -> None:
     result = RunResult(
         run_id="run-integration",
