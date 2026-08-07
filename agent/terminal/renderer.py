@@ -93,6 +93,7 @@ _SECRET_ASSIGNMENT = re.compile(
     r"(\s*[:=]\s*)(\S+)"
 )
 _ANTHROPIC_KEY = re.compile(r"\bsk-ant-[A-Za-z0-9_-]+\b")
+_HOME_PATH = re.compile(r"(?<!\w)(?:/Users|/home)/[^/\s]+")
 
 
 def sanitize_terminal_text(value: object) -> str:
@@ -115,7 +116,8 @@ def sanitize_terminal_text(value: object) -> str:
             safe.append(char)
     sanitized = "".join(safe)
     sanitized = _SECRET_ASSIGNMENT.sub(r"\1\2[redacted]", sanitized)
-    return _ANTHROPIC_KEY.sub("[redacted]", sanitized)
+    sanitized = _ANTHROPIC_KEY.sub("[redacted]", sanitized)
+    return _HOME_PATH.sub("<home>", sanitized)
 
 
 def _tool_label(tool_name: str) -> str:

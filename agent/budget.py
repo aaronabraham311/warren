@@ -80,6 +80,12 @@ class RunContext:
     # key = (tool_name, input_hash_prefix) → call count; for tool-loop detection
     tool_call_counts: dict[tuple[str, str], int] = field(default_factory=dict)
 
+    def __post_init__(self) -> None:
+        # RunLogger owns durable-before-display fan-out. Preserve the public
+        # RunContext(event_sink=...) boundary for callers that construct the logger
+        # separately, while leaving an explicitly configured logger sink untouched.
+        self.logger.set_event_sink_if_unset(self.event_sink)
+
     def record_tool_call(self, tool_name: str, tool_input: dict[str, object]) -> int:
         digest = hashlib.sha256(json.dumps(tool_input, sort_keys=True).encode()).hexdigest()[:8]
         key = (tool_name, digest)

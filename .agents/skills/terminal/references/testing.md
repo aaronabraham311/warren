@@ -20,7 +20,9 @@ uv run pytest -q \
   tests/test_terminal_app.py \
   tests/test_terminal_integration.py \
   tests/test_terminal_restart_integration.py \
-  tests/test_terminal_reliability.py
+  tests/test_terminal_reliability.py \
+  tests/test_terminal_health.py \
+  tests/test_terminal_replay.py
 ```
 
 ## Deterministic startup PTY smoke

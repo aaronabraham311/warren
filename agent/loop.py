@@ -458,6 +458,7 @@ def analyze_ticker(
                 tool = TOOL_REGISTRY.get(block.name)
                 t0 = time.monotonic()
                 run_context.logger.log_tool_started(ticker=ticker, tool_name=block.name)
+                run_context.cancellation.raise_if_cancelled()
                 error_msg: str | None = None
                 cached = False
                 retry_count = 0

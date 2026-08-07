@@ -32,6 +32,8 @@ and scheduled runs. Preserve that architecture: never shell from the terminal in
 - `agent/activity.py`: renderer-independent activity state and reducer.
 - `agent/terminal/health.py`: metadata-only active-run diagnostics, bounded metrics,
   and external-wait/renderer/agent/trace stall classification.
+- `agent/terminal/replay.py`: offline typed-event replay, centralized bundle allow-list,
+  and the `warren-terminal` validate/replay/bundle command.
 - `agent/terminal/queries.py`: read-only persisted run/trace/portfolio/watchlist views.
 - `agent/terminal/settings.py`: versioned local terminal preferences and history paths.
 - `agent/service.py`: migration/recovery, input sync, target selection, run locking,
